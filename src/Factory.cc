@@ -6,6 +6,7 @@
 #include "CTOFhit.h"
 #include "ctofHitR_factory.h"
 
+#include "marcoCluster_factory.h"
 
 
 
@@ -23,6 +24,7 @@ jerror_t Factory::GenerateFactories(JEventLoop *loop)
 	// CTOF
 	loop->AddFactory(new JFactory<CTOFhit>());
 	loop->AddFactory(new ctofHitR_factory());
+	loop->AddFactory(new marcoCluster_factory());
 	
 	return NOERROR;
 }

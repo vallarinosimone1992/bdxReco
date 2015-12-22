@@ -32,6 +32,12 @@ class EventProcessor:public JEventProcessor
 
 		string           ofile;    // Output file name
 		evioFileChannel *ochan;    // Output evio chan
+	
+	
+	
+		TFile *outf;
+
+	
 };
 
 #endif

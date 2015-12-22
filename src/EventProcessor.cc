@@ -8,6 +8,7 @@ using namespace std;
 
 // CTOF
 #include "ctofHitR.h"
+#include "marcoCluster.h"
 
 
 
@@ -42,6 +43,10 @@ EventProcessor::~EventProcessor()
 // init
 jerror_t EventProcessor::init(void)
 {
+	
+	outf = new TFile("raffa.root", "RECREATE");
+
+	
 	// Create histograms here
 	return NOERROR;
 }
@@ -56,9 +61,13 @@ jerror_t EventProcessor::brun(JEventLoop *eventLoop, int runnumber)
 jerror_t EventProcessor::evnt(JEventLoop *loop, int eventnumber)
 {
 //
-	vector<const ctofHitR*> ctofh;
-	loop->Get(ctofh);
+//	vector<const marcoCluster*> marcoC;
+//	loop->Get(marcoC);
 
+	vector<const ctofHitR*> marcoC;
+	loop->Get(marcoC);
+	
+	
 	
 	return NOERROR;
 }

@@ -13,6 +13,7 @@ env.Append(LIBS = ['system', 'detectors'])
 #                  """)
 
 detectors = Split("""ctof/ctofHitR_factory.cc
+							ctof/marcoCluster_factory.cc
 						""")
 
 
