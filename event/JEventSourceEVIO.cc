@@ -76,13 +76,16 @@ jerror_t JEventSourceEvio::GetEvent(JEvent &event)
 	{
 		
 		evioDOMTree EDT(chan);
+		
+		
 		Mevent *this_evt = new Mevent(EDT, hitTypes, &banksMap, 0);
 
-		
 		event.SetJEventSource(this);
 		event.SetEventNumber(1);
 		event.SetRef(this_evt);
 
+		
+		
 		return NOERROR;
 	}
 	else
@@ -120,7 +123,6 @@ jerror_t JEventSourceEvio::GetObjects(JEvent &event, JFactory_base *factory)
 		// getting EVIO bank
 		vector<hitOutput> bankDgt = this_evt->dgtBanks["ctof"];
 		
-		
 		vector<CTOFhit*> ctofhits;
 		for(unsigned int ih=0; ih<bankDgt.size(); ih++)
 		{
@@ -137,6 +139,9 @@ jerror_t JEventSourceEvio::GetObjects(JEvent &event, JFactory_base *factory)
 		return NOERROR;
 		
 	}
+	
+	
+	
 	
 	
 	// Just return. The _data vector should already be reset to have zero objects

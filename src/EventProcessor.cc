@@ -44,7 +44,7 @@ EventProcessor::~EventProcessor()
 jerror_t EventProcessor::init(void)
 {
 	
-	outf = new TFile("raffa.root", "RECREATE");
+	// outf = new TFile("raffa.root", "RECREATE");
 
 	
 	// Create histograms here
