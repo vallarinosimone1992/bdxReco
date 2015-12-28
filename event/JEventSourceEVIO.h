@@ -18,6 +18,8 @@ using namespace jana;
 // EVIO headers
 #include "evioUtil.hxx"
 #include "evioFileChannel.hxx"
+#include "EvioCompositeDecoder.h"
+
 using namespace evio;
 
 // banks header
@@ -42,6 +44,10 @@ class JEventSourceEvio:public JEventSource
 	
 	private:
 		evioFileChannel *chan;   // EVIO input channel
+		evioDOMTree *EDT;        // single-event evio-DOM-tree
+		int mother_tag;
+		int child_mode1_tag;
+		int child_mode7_tag;
 };
 
 #endif

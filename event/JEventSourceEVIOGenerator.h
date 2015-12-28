@@ -14,7 +14,7 @@ class JEventSourceEvioGenerator:public JEventSourceGenerator
 		 JEventSourceEvioGenerator(goptions Opt){bdxOpt = Opt;}
 		~JEventSourceEvioGenerator(){}
 
-		goptions bdxOpt;
+
 		const char* className(void)               {return static_className();}
 		static const char* static_className(void) {return "JEventSourceEvioGenerator";}
 		
@@ -24,6 +24,8 @@ class JEventSourceEvioGenerator:public JEventSourceGenerator
 		
 		JEventSource* MakeJEventSource(string source);
 		
+	private:
+		goptions bdxOpt;
 };
 
 #endif // _JEventSourceEvioGenerator_

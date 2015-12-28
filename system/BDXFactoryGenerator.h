@@ -2,6 +2,7 @@
 #define _Factory_
 
 // JANA headers
+#include "JANA/JObject.h"
 #include "JANA/JFactoryGenerator.h"
 #include "JANA/jerror.h"
 using namespace jana;
@@ -10,17 +11,20 @@ using namespace jana;
 #include "options.h"
 
 // class definition
-class Factory: public JFactoryGenerator
+class BDXFactoryGenerator: public JFactoryGenerator
 {
 	public:
-		Factory(goptions Opt);
-		goptions bdxOpt;
+		JOBJECT_PUBLIC(BDXFactoryGenerator);
+		BDXFactoryGenerator(goptions Opt);
 
-		virtual ~Factory();
-		virtual const char* className(void){return static_className();}
-		static const char* static_className(void){return "Factory";}
+		virtual ~BDXFactoryGenerator();
+
 		
 		jerror_t GenerateFactories(JEventLoop*);
+
+	private:
+		goptions bdxOpt;
+
 };
 
 #endif

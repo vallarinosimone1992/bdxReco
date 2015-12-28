@@ -16,11 +16,11 @@ using namespace jana;
 #include "evioFileChannel.hxx"
 using namespace evio;
 
-class EventProcessor:public JEventProcessor
+class BDXEventProcessor:public JEventProcessor
 {
 	public:
-		 EventProcessor(goptions bdxOpt);
-		~EventProcessor();
+		 BDXEventProcessor(goptions bdxOpt);
+		~BDXEventProcessor();
 		const char* className(void){return "EventProcessor";}
 
 	private:

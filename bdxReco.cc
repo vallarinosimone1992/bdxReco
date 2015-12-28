@@ -7,8 +7,8 @@ using namespace jana;
 // bdx headers
 #include "options.h"
 #include "JEventSourceEVIOGenerator.h"
-#include "EventProcessor.h"
-#include "Factory.h"
+#include "BDXEventProcessor.h"
+#include "BDXFactoryGenerator.h"
 
 
 // C++ headers
@@ -32,9 +32,12 @@ int main(int narg, char *argv[])
  
 	
 	JApplication app(narg, argv);
+
+	if(narg==1) app.Usage();
+
 	app.AddEventSourceGenerator(new JEventSourceEvioGenerator(bdxOpt));
-	app.AddFactoryGenerator(new Factory(bdxOpt));
-	app.AddProcessor(new EventProcessor(bdxOpt));
+	app.AddFactoryGenerator(new BDXFactoryGenerator(bdxOpt));
+	app.AddProcessor(new BDXEventProcessor(bdxOpt));
 
 	app.Run();
 

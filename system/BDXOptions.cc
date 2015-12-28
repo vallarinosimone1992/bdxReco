@@ -458,7 +458,7 @@ void goptions::setGoptions()
 	
 	
 	// Output
-	optMap["OUTPUT"].args = "no, output";
+	optMap["OUTPUT"].args = "none";
 	optMap["OUTPUT"].help = "Type of output, output filename. Supported output: evio, txt. Example: -OUTPUT=\"evio, out.ev\"";
 	optMap["OUTPUT"].name = "Type of output, output filename. ";
 	optMap["OUTPUT"].type = 1;

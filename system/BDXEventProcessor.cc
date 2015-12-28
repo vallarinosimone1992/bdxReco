@@ -4,16 +4,18 @@
 using namespace std;
 
 // bdx headers
-#include "EventProcessor.h"
+#include "BDXEventProcessor.h"
 
+//DAQ
+#include "fa250Mode1Hit_factory.h"
 // CTOF
-#include "ctofHitR.h"
-#include "marcoCluster.h"
+//#include "ctofHitR.h"
+//#include "marcoCluster.h"
 
 
 
 // Constructor
-EventProcessor::EventProcessor(goptions bdxOpt)
+BDXEventProcessor::BDXEventProcessor(goptions bdxOpt)
 {
 	// Opens output file if specified
 	ofile  = bdxOpt.optMap["OUTPUT"].args;
@@ -29,7 +31,7 @@ EventProcessor::EventProcessor(goptions bdxOpt)
 }
 
 // Destructor
-EventProcessor::~EventProcessor()
+BDXEventProcessor::~BDXEventProcessor()
 {
 
 	if(ofile != "none")
@@ -41,7 +43,7 @@ EventProcessor::~EventProcessor()
 }
 
 // init
-jerror_t EventProcessor::init(void)
+jerror_t BDXEventProcessor::init(void)
 {
 	
 	// outf = new TFile("raffa.root", "RECREATE");
@@ -52,28 +54,30 @@ jerror_t EventProcessor::init(void)
 }
 
 // brun
-jerror_t EventProcessor::brun(JEventLoop *eventLoop, int runnumber)
+jerror_t BDXEventProcessor::brun(JEventLoop *eventLoop, int runnumber)
 {
 	return NOERROR;
 }
 
 // evnt
-jerror_t EventProcessor::evnt(JEventLoop *loop, int eventnumber)
+jerror_t BDXEventProcessor::evnt(JEventLoop *loop, int eventnumber)
 {
 //
 //	vector<const marcoCluster*> marcoC;
 //	loop->Get(marcoC);
 
-	vector<const ctofHitR*> marcoC;
-	loop->Get(marcoC);
+	//vector<const ctofHitR*> marcoC;
+	//loop->Get(marcoC);
 	
+	vector<const fa250Mode1Hit*> faHit;
+	loop->Get(faHit);
 	
 	
 	return NOERROR;
 }
 
 // erun
-jerror_t EventProcessor::erun(void)
+jerror_t BDXEventProcessor::erun(void)
 {
 	// Any final calculations on histograms (like dividing them)
 	// should be done here. This may get called more than once.
@@ -81,7 +85,7 @@ jerror_t EventProcessor::erun(void)
 }
 
 // fini
-jerror_t EventProcessor::fini(void)
+jerror_t BDXEventProcessor::fini(void)
 {
 	// If another DEventProcessor is in the list ahead of this one, then
 	// it will have finished before this is called. e.g. closed the

@@ -16,8 +16,7 @@ const char* JEventSourceEvioGenerator::Description(void)
 double JEventSourceEvioGenerator::CheckOpenable(string source)
 {
 	/// This always returns 100% probability of 
-	/// opening the source since it doesn't read from
-	/// anything and should only be used for testing.
+	/// opening the source
 	return 1.0;
 }
 
