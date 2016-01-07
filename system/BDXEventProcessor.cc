@@ -5,7 +5,7 @@ using namespace std;
 
 // bdx headers
 #include "BDXEventProcessor.h"
-
+#include "string_utilities.h"
 //DAQ
 #include "fa250Mode1Hit_factory.h"
 // CTOF
@@ -17,38 +17,82 @@ using namespace std;
 // Constructor
 BDXEventProcessor::BDXEventProcessor(goptions bdxOpt)
 {
-	// Opens output file if specified
-	ofile  = bdxOpt.optMap["OUTPUT"].args;
-	string hd_msg = bdxOpt.optMap["LOG_MSG"].args + " Event: >> " ;
-	ochan = NULL;
-	
-	if(ofile != "none")
+	/* Opens output file if specified
+	the string should be of the form
+	type filename
+	with type: TXT EVIO ROOT
+	and filename anything
+	 */
+	string type,name;
+	optf  = bdxOpt.optMap["OUTPUT"].args;
+
+
+	outType.assign(optf, 0, optf.find(",")) ;
+	outFile.assign(optf,    optf.find(",") + 1, optf.size()) ;
+
+
+
+
+	if(optf!= "none")
 	{
-		cout << hd_msg << " Opening output file " << ofile << "." << endl;
-		ochan = new evioFileChannel(ofile, "w", 3000000);
-		ochan->open();
+		cout<<"Out file type is: "<<outType<<endl;
+		if(outType == "txt")  return;
+		else if(outType == "evio")
+		{
+			outFileEvio = new evioFileChannel(TrimSpaces(outFile).c_str(), "w", 3000000);
+			outFileEvio->open();
+		}
+		else if(outType == "root"){
+			outFileRoot = new TFile(TrimSpaces(outFile).c_str(), "RECREATE");
+
+		}
+
+
 	}
+
+	//string hd_msg = bdxOpt.optMap["LOG_MSG"].args + " Event: >> " ;
+
+
 }
 
 // Destructor
 BDXEventProcessor::~BDXEventProcessor()
 {
 
-	if(ofile != "none")
+	if(optf != "none")
 	{
-		cout << " Closing output file " << ofile << "." << endl;
-		ochan->close();
-		delete ochan;
+		if(outType == "txt")  return;
+			else if(outType == "evio")
+			{
+				cout << " Closing evio file "<<endl;
+				outFileEvio -> close();
+			}
+			else if(outType == "root"){
+				cout << " Closing output file root " << endl;
+				outFileRoot -> Close();
+			}
 	}
 }
 
 // init
 jerror_t BDXEventProcessor::init(void)
 {
-	
+
 	// outf = new TFile("raffa.root", "RECREATE");
 
-	
+	jout<<"BDXEventProcessor::init is called"<<endl;
+
+	app->RootWriteLock();
+
+	vector<JEventProcessor*>::iterator it;
+	it=app->GetProcessors().begin();
+	jout<<" AAA "<<app->GetProcessors().size()<<" "<<(*it)->static_className()<<std::endl;
+
+	for (it=app->GetProcessors().begin();it<app->GetProcessors().end();it++){
+		printf("%p %p \n",*it,this);
+		if ((*it)!= NULL) jout<<"hereAA: "<<(*it)->className()<<std::endl;
+	}
+	app->RootUnLock();
 	// Create histograms here
 	return NOERROR;
 }
@@ -62,17 +106,19 @@ jerror_t BDXEventProcessor::brun(JEventLoop *eventLoop, int runnumber)
 // evnt
 jerror_t BDXEventProcessor::evnt(JEventLoop *loop, int eventnumber)
 {
-//
-//	vector<const marcoCluster*> marcoC;
-//	loop->Get(marcoC);
+	//
+	//	vector<const marcoCluster*> marcoC;
+	//	loop->Get(marcoC);
 
 	//vector<const ctofHitR*> marcoC;
 	//loop->Get(marcoC);
-	
+
 	vector<const fa250Mode1Hit*> faHit;
 	loop->Get(faHit);
-	
-	
+
+
+
+
 	return NOERROR;
 }
 

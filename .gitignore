@@ -1,5 +1,12 @@
 .sconsign.dblite
+#binaries
 bdxReco
 lib
 bin
 *.o
+*.os
+#Evio files - may be here for tests
+*.evio.*
+#Root files - may be here for tests
+*.root
+

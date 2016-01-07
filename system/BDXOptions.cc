@@ -11,7 +11,7 @@ void goptions::setGoptions()
 	// help = Long explanation.
 	// name = Short description.
 	// type = 1 for argumenst that are strings, 0 for numbers.
-    
+    /*
 	// Generator
 	optMap["BEAM_P"].args  = "e-, 11*GeV, 0*deg, 0*deg";
 	optMap["BEAM_P"].help  = "Beam particle, momentum, angles (in respect of z-axis). \n";
@@ -20,14 +20,14 @@ void goptions::setGoptions()
 	optMap["BEAM_P"].name  = "Primary particle, Energy, Theta, Phi";
 	optMap["BEAM_P"].type  = 1;
 	optMap["BEAM_P"].ctgr  = "generator";
-	
+
 	optMap["SPREAD_P"].args  = "0*GeV, 0*deg, 0*deg";
 	optMap["SPREAD_P"].help  = "Spread Primary Particle energy and angles (in respect of z-axis). \n";
 	optMap["SPREAD_P"].help += "      Example: -SPREAD_P=\"0*GeV, 10*deg, 20*deg\" spreads 10 degrees in theta, 20 degrees in phi. \n";
 	optMap["SPREAD_P"].name  = "delta_Energy, delta_Theta, delta_phi";
 	optMap["SPREAD_P"].type  = 1;
 	optMap["SPREAD_P"].ctgr  = "generator";
-	
+
 	optMap["ALIGN_ZAXIS"].args  = "no";
 	optMap["ALIGN_ZAXIS"].help  = "Align z axis to a custom direction. Options:\n";
 	optMap["ALIGN_ZAXIS"].help += "      - \"beamp\"  aligns z axis to the beam directions specified by BEAM_P.\n";
@@ -35,19 +35,19 @@ void goptions::setGoptions()
 	optMap["ALIGN_ZAXIS"].name  = "Align z axis to a custom direction.";
 	optMap["ALIGN_ZAXIS"].type  = 1;
 	optMap["ALIGN_ZAXIS"].ctgr  = "generator";
-	
+
 	optMap["BEAM_V"].args = "(0, 0, 0)cm";
 	optMap["BEAM_V"].help = "Primary Particle Vertex. Example: -BEAM_V=\"(0, 0, -20)cm\". ";
 	optMap["BEAM_V"].name = "Primary Particle Vertex";
 	optMap["BEAM_V"].type = 1;
 	optMap["BEAM_V"].ctgr = "generator";
-	
+
 	optMap["SPREAD_V"].args = "(0, 0)cm";
 	optMap["SPREAD_V"].help = "Spread Primary Particle Radius, Z position. Example: -SPREAD_V=\"(0.1, 10)cm\". ";
 	optMap["SPREAD_V"].name = "Primary Particle Vertex Spread";
 	optMap["SPREAD_V"].type = 1;
 	optMap["SPREAD_V"].ctgr = "generator";
-	
+
 	optMap["POLAR"].args  = "100, 0*deg, 0*deg";
 	optMap["POLAR"].help  = "Primary Particle polarization percentage and angles  (in respect of z-axis). \n";
 	optMap["POLAR"].help += "      Example: -POLAR=\"90, 90*deg, 270*deg\" sets 90% polarization 90 degrees in theta, 270 degrees in phi. \n";
@@ -55,13 +55,13 @@ void goptions::setGoptions()
 	optMap["POLAR"].name  = "Primary Particle polarization in %, Theta, Phi";
 	optMap["POLAR"].type  = 1;
 	optMap["POLAR"].ctgr  = "generator";
-	
+
 	optMap["N"].arg  = 0;
 	optMap["N"].help = "Number of events to be simulated.";
 	optMap["N"].name = "Number of events to be simulated";
 	optMap["N"].type = 0;
 	optMap["N"].ctgr = "generator";
-	
+
 	optMap["INPUT_GEN_FILE"].args = "gemc_internal";
 	optMap["INPUT_GEN_FILE"].help = "Generator Input. Current availables file formats:\n";
 	optMap["INPUT_GEN_FILE"].help += "      LUND. \n";
@@ -69,19 +69,19 @@ void goptions::setGoptions()
 	optMap["INPUT_GEN_FILE"].name = "Generator Input File";
 	optMap["INPUT_GEN_FILE"].type = 1;
 	optMap["INPUT_GEN_FILE"].ctgr = "generator";
-	
+
 	optMap["NGENP"].arg  = 10;
 	optMap["NGENP"].help = "Max Number of Generated Particles to save in the Output.";
 	optMap["NGENP"].name = "Max Number of Generated Particles to save in the Output";
 	optMap["NGENP"].type = 0;
 	optMap["NGENP"].ctgr = "generator";
-	
+
 	optMap["STEER_BEAM"].arg = 0;
 	optMap["STEER_BEAM"].type = 0;
 	optMap["STEER_BEAM"].ctgr = "generator";
 	optMap["STEER_BEAM"].name = "STEER_BEAM";
 	optMap["STEER_BEAM"].help = "Steer the beam, and translate the vertex, of an StdHep file by the amount specified in Beam_P, Beam_V, Spread_V \n";
-	
+
 	optMap["COSMICRAYS"].args = "no";
 	optMap["COSMICRAYS"].help = "Cosmic Generator. The model has a (cos(theta), p) probability function:\n\n";
 	optMap["COSMICRAYS"].help += "              a^(b*cos(theta))/(c*p^2). \n\n";
@@ -102,7 +102,7 @@ void goptions::setGoptions()
 	optMap["COSMICAREA"].name = "Target (x,y,z) location and radius of area of interest";
 	optMap["COSMICAREA"].type = 1;
 	optMap["COSMICAREA"].ctgr = "generator";
-	
+
 
 	
 	// Luminosity Beam
@@ -113,33 +113,33 @@ void goptions::setGoptions()
 	optMap["LUMI_P"].name  = "Luminosity Particle, Energy, Theta, Phi";
 	optMap["LUMI_P"].type  = 1;
 	optMap["LUMI_P"].ctgr = "luminosity";
-	
+
 	optMap["LUMI_SPREAD_P"].args  = "0*GeV, 0*deg, 0*deg";
 	optMap["LUMI_SPREAD_P"].help  = "Spread Luminosity Particle energy and angles (in respect of z-axis). \n";
 	optMap["LUMI_SPREAD_P"].help += "      Example: -LUMI_SPREAD_P=\"0*GeV, 10*deg, 20*deg\" spreads 10 degrees in theta, 20 degrees in phi. \n";
 	optMap["LUMI_SPREAD_P"].name  = "delta_Energy, delta_Theta, delta_phi";
 	optMap["LUMI_SPREAD_P"].type  = 1;
 	optMap["LUMI_SPREAD_P"].ctgr  = "generator";
-	
+
 	optMap["LUMI_V"].args = "(0, 0, -20)cm";
 	optMap["LUMI_V"].help = "Luminosity Particle Vertex. Example: -LUMI_V=\"(0, 0, -20)cm\". ";
 	optMap["LUMI_V"].name = "Luminosity Particle Vertex";
 	optMap["LUMI_V"].type = 1;
 	optMap["LUMI_V"].ctgr = "luminosity";
-	
+
 	optMap["LUMI_SPREAD_V"].args = "(0, 0)cm";
 	optMap["LUMI_SPREAD_V"].help = "Spread Luminosity Particle Radius, Z position. Example: -SPREAD_V=\"(0.1, 10)cm\". ";
 	optMap["LUMI_SPREAD_V"].name = "Luminosity Particle Vertex Spread";
 	optMap["LUMI_SPREAD_V"].type = 1;
 	optMap["LUMI_SPREAD_V"].ctgr = "luminosity";
-	
+
 	optMap["LUMI_EVENT"].args = "0, 0*ns, 2*ns";
 	optMap["LUMI_EVENT"].help = "Luminosity Particle Parameters: number of Particles/Event, Time Window, Time Between Bunches\n";
 	optMap["LUMI_EVENT"].help += "            Example: -LUMI_EVENT=\"10000, 120*ns, 2*ns\" simulate 10K particles per event distributed over 120 ns, at 2ns intervals. \n";
 	optMap["LUMI_EVENT"].name = "Luminosity Particle Parameters";
 	optMap["LUMI_EVENT"].type = 1;
 	optMap["LUMI_EVENT"].ctgr = "luminosity";
-	
+
 	optMap["LUMI2_P"].args  = "proton, 50*GeV, 175*deg, 180*deg";
 	optMap["LUMI2_P"].help  = "Luminosity Particle 2, momentum, angles (in respect of z-axis). \n";
 	optMap["LUMI2_P"].help += "            Example: -LUMI2_P=\"proton, 1*GeV, 25*deg, 2*deg\" sets 1 GeV protons, 25 degrees in theta, 2 degrees in phi. \n";
@@ -147,35 +147,35 @@ void goptions::setGoptions()
 	optMap["LUMI2_P"].name  = "Luminosity Particle 2, Energy, Theta, Phi";
 	optMap["LUMI2_P"].type  = 1;
 	optMap["LUMI2_P"].ctgr = "luminosity";
-	
+
 	optMap["LUMI2_SPREAD_P"].args  = "0*GeV, 0*deg, 0*deg";
 	optMap["LUMI2_SPREAD_P"].help  = "Spread Luminosity Particle 2 energy and angles (in respect of z-axis). \n";
 	optMap["LUMI2_SPREAD_P"].help += "      Example: -LUMI2_SPREAD_P=\"0*GeV, 10*deg, 20*deg\" spreads 10 degrees in theta, 20 degrees in phi. \n";
 	optMap["LUMI2_SPREAD_P"].name  = "delta_Energy, delta_Theta, delta_phi";
 	optMap["LUMI2_SPREAD_P"].type  = 1;
 	optMap["LUMI2_SPREAD_P"].ctgr  = "generator";
-	
+
 	optMap["LUMI2_V"].args = "(4, 0, 50)cm";
 	optMap["LUMI2_V"].help = "Luminosity Particle 2 Vertex. Example: -LUMI2_V=\"(0, 0, -20)cm\". ";
 	optMap["LUMI2_V"].name = "Luminosity Particle 2 Vertex";
 	optMap["LUMI2_V"].type = 1;
 	optMap["LUMI2_V"].ctgr = "luminosity";
-	
+
 	optMap["LUMI2_SPREAD_V"].args = "(0, 0)cm";
 	optMap["LUMI2_SPREAD_V"].help = "Spread Luminosity Particle 2 Radius, Z position. Example: -SPREAD_V=\"(0.1, 10)cm\". ";
 	optMap["LUMI2_SPREAD_V"].name = "Luminosity Particle Vertex 2 Spread";
 	optMap["LUMI2_SPREAD_V"].type = 1;
 	optMap["LUMI2_SPREAD_V"].ctgr = "luminosity";
-	
+
 	optMap["LUMI2_EVENT"].args = "0, 2*ns";
 	optMap["LUMI2_EVENT"].help = "Luminosity Particle 2 Parameters: number of Particles/Event, Time Between Bunches. The Time Window is specified with the LUMI_EVENT flag\n";
 	optMap["LUMI2_EVENT"].help += "            Example: -LUMI2_EVENT=\"10000, 2*ns\" simulate 10K particles per event at 2ns intervals. \n";
 	optMap["LUMI2_EVENT"].name = "Luminosity Particle 2 Parameters";
 	optMap["LUMI2_EVENT"].type = 1;
 	optMap["LUMI2_EVENT"].ctgr = "luminosity";
-	
-	
-	
+
+	*/
+
 	// MySQL Database
 	optMap["DBHOST"].args = "no";
 	optMap["DBHOST"].help = "Selects mysql server host name.";
@@ -213,6 +213,12 @@ void goptions::setGoptions()
 	
 	
 	// Verbosity
+	/*
+	optMap["VERBOSITY"].arg  = 1;
+	optMap["VERBOSITY"].help = "Controls Log Output.";
+	optMap["VERBOSITY"].name = "Verbosity";
+	optMap["VERBOSITY"].type = 0;
+	optMap["VERBOSITY"].ctgr = "verbosity";
 	optMap["G4P_VERBOSITY"].arg  = 1;
 	optMap["G4P_VERBOSITY"].help = "Controls Physical Volumes Construction Log Output.";
 	optMap["G4P_VERBOSITY"].name = "Logical Volume Verbosity";
@@ -224,25 +230,25 @@ void goptions::setGoptions()
 	optMap["GEO_VERBOSITY"].name = "Geometry Verbosity";
 	optMap["GEO_VERBOSITY"].type = 0;
 	optMap["GEO_VERBOSITY"].ctgr = "verbosity";
-	
+
 	optMap["GUI_VERBOSITY"].arg  = 1;
 	optMap["GUI_VERBOSITY"].help = "Controls GUI Construction Log Output.";
 	optMap["GUI_VERBOSITY"].name = "GUI Verbosity";
 	optMap["GUI_VERBOSITY"].type = 0;
 	optMap["GUI_VERBOSITY"].ctgr = "verbosity";
-	
+
 	optMap["HIT_VERBOSITY"].arg  = 1;
 	optMap["HIT_VERBOSITY"].help = "Controls Hits Log Output. ";
 	optMap["HIT_VERBOSITY"].name = "Hit Verbosity";
 	optMap["HIT_VERBOSITY"].type = 0;
 	optMap["HIT_VERBOSITY"].ctgr = "verbosity";
-	
+	*//*
 	optMap["CATCH"].args = "Maurizio";
 	optMap["CATCH"].help = "Catch volumes matching the given string.";
 	optMap["CATCH"].name = "Volume catcher";
 	optMap["CATCH"].type = 1;
 	optMap["CATCH"].ctgr = "verbosity";
-	
+
 	optMap["FIELD_VERBOSITY"].arg   = 0;
 	optMap["FIELD_VERBOSITY"].help  = "Controls Electro-Magnetic Fields Log Output:\n";
 	optMap["FIELD_VERBOSITY"].help += "  0: no log";
@@ -251,61 +257,62 @@ void goptions::setGoptions()
 	optMap["FIELD_VERBOSITY"].name  = "Electro-Magnetic Fields Verbosity";
 	optMap["FIELD_VERBOSITY"].type  = 0;
 	optMap["FIELD_VERBOSITY"].ctgr  = "verbosity";
-	
+
 	optMap["PRINT_EVENT"].arg  = 1000;
 	optMap["PRINT_EVENT"].help = "-PRINT_EVENT=N: Print Event Number every N events.";
 	optMap["PRINT_EVENT"].name = "Print Event Modulus";
 	optMap["PRINT_EVENT"].type = 0;
 	optMap["PRINT_EVENT"].ctgr = "verbosity";
-	
+
 	optMap["BANK_VERBOSITY"].arg  = 1;
 	optMap["BANK_VERBOSITY"].help = "Controls Bank Log Output.";
 	optMap["BANK_VERBOSITY"].name = "Bank Output Verbosity";
 	optMap["BANK_VERBOSITY"].type = 0;
 	optMap["BANK_VERBOSITY"].ctgr = "verbosity";
-	
+
 	optMap["PHY_VERBOSITY"].arg  = 1;
 	optMap["PHY_VERBOSITY"].help = "Controls Physics List Log Output.";
 	optMap["PHY_VERBOSITY"].name = "Physics List Verbosity";
 	optMap["PHY_VERBOSITY"].type = 0;
 	optMap["PHY_VERBOSITY"].ctgr = "verbosity";
-	
+
 	optMap["GEN_VERBOSITY"].arg  = 0;
 	optMap["GEN_VERBOSITY"].help = "Controls Geant4 Generator Verbosity.";
 	optMap["GEN_VERBOSITY"].name = "Geant4 Generator Verbosity";
 	optMap["GEN_VERBOSITY"].type = 0;
 	optMap["GEN_VERBOSITY"].ctgr = "verbosity";
-	
+
 	optMap["G4TRACK_VERBOSITY"].arg  = 0;
 	optMap["G4TRACK_VERBOSITY"].help = "Controls Geant4 Track Verbosity.";
 	optMap["G4TRACK_VERBOSITY"].name = "Geant4 Track Verbosity";
 	optMap["G4TRACK_VERBOSITY"].type = 0;
 	optMap["G4TRACK_VERBOSITY"].ctgr = "verbosity";
-	
+
 	optMap["MATERIAL_VERBOSITY"].arg  = 0;
 	optMap["MATERIAL_VERBOSITY"].help = "Controls Geant4 Material Verbosity.";
 	optMap["MATERIAL_VERBOSITY"].name = "Geant4 Material Verbosity";
 	optMap["MATERIAL_VERBOSITY"].type = 0;
 	optMap["MATERIAL_VERBOSITY"].ctgr = "verbosity";
-	
+
 	optMap["PARAMETER_VERBOSITY"].arg  = 0;
 	optMap["PARAMETER_VERBOSITY"].help = "Controls Parameters Verbosity.";
 	optMap["PARAMETER_VERBOSITY"].name = "Parameters Verbosity";
 	optMap["PARAMETER_VERBOSITY"].type = 0;
 	optMap["PARAMETER_VERBOSITY"].ctgr = "verbosity";
-	
+
 	optMap["MIRROR_VERBOSITY"].arg  = 0;
 	optMap["MIRROR_VERBOSITY"].help = "Controls Mirrors Verbosity.";
 	optMap["MIRROR_VERBOSITY"].name = "Mirrors Verbosity";
 	optMap["MIRROR_VERBOSITY"].type = 0;
 	optMap["MIRROR_VERBOSITY"].ctgr = "verbosity";
 	
-	
+	*/
 	
 	
 	
 	
 	// Run Control
+	/*
 	optMap["EXEC_MACRO"].args = "no";
 	optMap["EXEC_MACRO"].help = "Executes commands in macro file.";
 	optMap["EXEC_MACRO"].name = "Executes commands in macro file";
@@ -320,7 +327,7 @@ void goptions::setGoptions()
 	optMap["CHECK_OVERLAPS"].name = "Checks Overlapping Volumes";
 	optMap["CHECK_OVERLAPS"].type = 0;
 	optMap["CHECK_OVERLAPS"].ctgr = "control";
-	
+	*/
 	optMap["USE_GUI"].arg   = 1;
 	optMap["USE_GUI"].help  = " GUI switch\n";
 	optMap["USE_GUI"].help += "      0.  Don't use the graphical interface\n";
@@ -332,6 +339,7 @@ void goptions::setGoptions()
 	optMap["USE_GUI"].type  = 0;
 	optMap["USE_GUI"].ctgr  = "control";
 	
+	/*
 	optMap["geometry"].args="620x620";
 	optMap["geometry"].help = "Specify the size of the QT display window. Default '600x600' ";
 	optMap["geometry"].name="geometry";
@@ -354,13 +362,13 @@ void goptions::setGoptions()
 	optMap["QTSTYLE"].help += "      - QMotifStyle";
 	optMap["QTSTYLE"].type  = 1;
 	optMap["QTSTYLE"].ctgr  = "control";
-	
+	*/
 	optMap["RANDOM"].args = "TIME";
 	optMap["RANDOM"].help = "Random Engine Initialization. The argument (seed) can be an integer or the string TIME.";
 	optMap["RANDOM"].name = "Random Engine Initialization";
 	optMap["RANDOM"].type = 1;
 	optMap["RANDOM"].ctgr = "control";
-	
+	/*
 	optMap["gcard"].args = "no";
 	optMap["gcard"].help = "gemc card file.";
 	optMap["gcard"].name = "gemc card file";
@@ -454,16 +462,18 @@ void goptions::setGoptions()
 	optMap["RUN_WEIGHTS"].type  = 1;
 	optMap["RUN_WEIGHTS"].ctgr  = "control";
 	
-	
+	*/
 	
 	
 	// Output
+
 	optMap["OUTPUT"].args = "none";
-	optMap["OUTPUT"].help = "Type of output, output filename. Supported output: evio, txt. Example: -OUTPUT=\"evio, out.ev\"";
+	optMap["OUTPUT"].help = "Type of output, output filename. Supported output: evio, txt, root. Example: -OUTPUT=\"evio, out.ev\"";
 	optMap["OUTPUT"].name = "Type of output, output filename. ";
 	optMap["OUTPUT"].type = 1;
 	optMap["OUTPUT"].ctgr = "output";
 	
+	/*
 	// disabled by default
 	optMap["INTEGRATEDRAW"].args = "no";
 	optMap["INTEGRATEDRAW"].help = "Activates integrated geant4 raw output for system(s). Example: -INTEGRATEDRAW=\"DC, TOF\"";
@@ -639,6 +649,8 @@ void goptions::setGoptions()
 	optMap["DC_MSTAG_R2"].type = 0;
 	optMap["DC_MSTAG_R2"].ctgr = "general";
 	
+	*/
+
 }
 
 
