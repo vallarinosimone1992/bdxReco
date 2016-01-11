@@ -5,10 +5,10 @@
 using namespace jana;
 
 // bdx headers
-#include "options.h"
-#include "JEventSourceEVIOGenerator.h"
-#include "BDXEventProcessor.h"
-#include "BDXFactoryGenerator.h"
+#include <system/options.h>
+#include <DAQ/JEventSourceEVIOGenerator.h>
+#include <system/BDXEventProcessor.h>
+#include <system/BDXFactoryGenerator.h>
 
 
 // C++ headers
