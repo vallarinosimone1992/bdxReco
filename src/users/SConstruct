@@ -1,0 +1,16 @@
+from utils import *
+Import('env')
+
+users_names = getSubdirs('./')
+
+for user in users_names :
+	plugins = getSubdirs(str(user))
+	for plugin in plugins:
+		print  bcolors.OKGREEN,"Found plugin ",plugin," for user ",user,bcolors.ENDC
+		#We do not want to increment "at libitum" CPPPATH
+		tmp_cpppath=env['CPPPATH'];
+		dir = str(user)+'/'+str(plugin)
+		user_plugin_src  =  Glob(dir+'/*.cc');
+		env.Append(CPPPATH=dir)
+		env.SharedLibrary(source=user_plugin_src,target='#/lib/users/'+user+'_'+plugin)
+		env.Replace(CPPPATH = tmp_cpppath)		

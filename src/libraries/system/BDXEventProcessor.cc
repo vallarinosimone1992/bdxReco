@@ -13,9 +13,12 @@ using namespace std;
 //#include "marcoCluster.h"
 
 
+#include "JOutput.h"
+#include "JROOTOutput.h"
 
 // Constructor
-BDXEventProcessor::BDXEventProcessor(goptions bdxOpt)
+BDXEventProcessor::BDXEventProcessor(goptions bdxOpt):
+m_output(0)
 {
 	/* Opens output file if specified
 	the string should be of the form
@@ -23,7 +26,7 @@ BDXEventProcessor::BDXEventProcessor(goptions bdxOpt)
 	with type: TXT EVIO ROOT
 	and filename anything
 	 */
-	string type,name;
+	string type,name,fname;
 	optf  = bdxOpt.optMap["OUTPUT"].args;
 
 
@@ -35,18 +38,20 @@ BDXEventProcessor::BDXEventProcessor(goptions bdxOpt)
 
 	if(optf!= "none")
 	{
-		cout<<"Out file type is: "<<outType<<endl;
-		if(outType == "txt")  return;
-		else if(outType == "evio")
-		{
-			outFileEvio = new evioFileChannel(TrimSpaces(outFile).c_str(), "w", 3000000);
-			outFileEvio->open();
+		jout<<"Out file type is: "<<outType<<endl;
+		if(outType == "root"){
+			fname=TrimSpaces(outFile);
+			m_output=new JROOTOutput(outFile);
 		}
-		else if(outType == "root"){
-			outFileRoot = new TFile(TrimSpaces(outFile).c_str(), "RECREATE");
-
+		else if (outType == "evio"){
+			jerr<<"evio not yet implemented"<<endl;
 		}
-
+		else if (outType == "txt"){
+			jerr<<"txt not yet implemented"<<endl;
+		}
+		else{
+			jerr<<"file type not recognized"<<endl;
+		}
 
 	}
 
@@ -59,40 +64,13 @@ BDXEventProcessor::BDXEventProcessor(goptions bdxOpt)
 BDXEventProcessor::~BDXEventProcessor()
 {
 
-	if(optf != "none")
-	{
-		if(outType == "txt")  return;
-			else if(outType == "evio")
-			{
-				cout << " Closing evio file "<<endl;
-				outFileEvio -> close();
-			}
-			else if(outType == "root"){
-				cout << " Closing output file root " << endl;
-				outFileRoot -> Close();
-			}
-	}
 }
 
 // init
 jerror_t BDXEventProcessor::init(void)
 {
 
-	// outf = new TFile("raffa.root", "RECREATE");
-
 	jout<<"BDXEventProcessor::init is called"<<endl;
-
-	app->RootWriteLock();
-
-	vector<JEventProcessor*>::iterator it;
-	it=app->GetProcessors().begin();
-	jout<<" AAA "<<app->GetProcessors().size()<<" "<<(*it)->static_className()<<std::endl;
-
-	for (it=app->GetProcessors().begin();it<app->GetProcessors().end();it++){
-		printf("%p %p \n",*it,this);
-		if ((*it)!= NULL) jout<<"hereAA: "<<(*it)->className()<<std::endl;
-	}
-	app->RootUnLock();
 	// Create histograms here
 	return NOERROR;
 }
@@ -113,11 +91,6 @@ jerror_t BDXEventProcessor::evnt(JEventLoop *loop, int eventnumber)
 	//vector<const ctofHitR*> marcoC;
 	//loop->Get(marcoC);
 
-	vector<const fa250Mode1Hit*> faHit;
-	loop->Get(faHit);
-
-
-
 
 	return NOERROR;
 }
@@ -136,6 +109,11 @@ jerror_t BDXEventProcessor::fini(void)
 	// If another DEventProcessor is in the list ahead of this one, then
 	// it will have finished before this is called. e.g. closed the
 	// ROOT file!
+	if (m_output){
+		m_output->CloseOutput();
+	}
+
+
 	return NOERROR;
 }
 

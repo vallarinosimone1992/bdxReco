@@ -20,6 +20,7 @@ using namespace evio;
 //ROOT headers
 #include "TFile.h"
 
+class JOutput;
 
 /*This class is the "main" event processor, that gets called in any case,
  * also if we use users plugins
@@ -31,7 +32,9 @@ class BDXEventProcessor:public JEventProcessor
 	public:
 		 BDXEventProcessor(goptions bdxOpt);
 		~BDXEventProcessor();
-		const char* className(void){return "EventProcessor";}
+		const char* className(void){return "BDXEventProcessor";}  /*A.C. DO NOT TOUCH THIS!*/
+
+		JOutput* getOutput(){return m_output;}
 
 	private:
 		jerror_t init();                                 // Called once at program start.
@@ -43,9 +46,8 @@ class BDXEventProcessor:public JEventProcessor
 		string           optf;     // Output file
 		string			 outType,outFile;
 
-		evioFileChannel *outFileEvio;    // Output evio chan
-		TFile			*outFileRoot;
-	
+		JOutput		*m_output;
+
 	//		TFile *outf;
 
 

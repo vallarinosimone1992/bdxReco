@@ -176,7 +176,7 @@ jerror_t JEventSourceEvio::GetObjects(JEvent &event, JFactory_base *factory)
 									 * 3) fa250Mode1Hit is a more complex class, used within JANA
 									 * */
 
-									hit->crate=child_mode1_tag;  ///TODO better
+									hit->crate=0;  ///TODO better
 									hit->slot=decdata[loop].slot;
 									hit->channel=decdata[loop].channel;
 									hit->samples=decdata[loop].samples;
@@ -234,7 +234,7 @@ jerror_t JEventSourceEvio::GetObjects(JEvent &event, JFactory_base *factory)
 									 * 3) fa250Mode7Hit is a more complex class, used within JANA
 									 * */
 
-									hit->crate=child_mode1_tag;  ///TODO better
+									hit->crate=0;  ///TODO better
 									hit->slot=decdata[loop].slot;
 									hit->channel=decdata[loop].channel;
 									hit->trigger=decdata[loop].trigger;
@@ -247,7 +247,6 @@ jerror_t JEventSourceEvio::GetObjects(JEvent &event, JFactory_base *factory)
 										pulse.max=decdata[loop].pulses[ipulse].max;
 										hit->pulses.push_back(pulse);
 									}
-
 									data.push_back(hit);
 								}
 							} catch (exception e){

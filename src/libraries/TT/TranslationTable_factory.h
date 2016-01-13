@@ -1,23 +1,21 @@
 // $Id$
 //
-//    File: JEventProcessor_test.h
-// Created: Mon Dec 28 15:48:21 CET 2015
+//    File: TranslationTable_factory.h
+// Created: Tue Jan 12 09:29:14 CET 2016
 // Creator: celentan (on Linux apcx4 2.6.32-504.30.3.el6.x86_64 x86_64)
 //
 
-#ifndef _JEventProcessor_test_
-#define _JEventProcessor_test_
+#ifndef _TranslationTable_factory_
+#define _TranslationTable_factory_
 
-#include <JANA/JEventProcessor.h>
+#include <JANA/JFactory.h>
+#include "TranslationTable.h"
 
-class TH1D;
-class JROOTOutput;
-
-class JEventProcessor_test:public jana::JEventProcessor{
+class TranslationTable_factory:public jana::JFactory<TranslationTable>{
 	public:
-		JEventProcessor_test();
-		~JEventProcessor_test();
-		const char* className(void){return "JEventProcessor_test";}
+		TranslationTable_factory(){};
+		~TranslationTable_factory(){};
+
 
 	private:
 		jerror_t init(void);						///< Called once at program start.
@@ -26,11 +24,9 @@ class JEventProcessor_test:public jana::JEventProcessor{
 		jerror_t erun(void);						///< Called everytime run number changes, provided brun has been called.
 		jerror_t fini(void);						///< Called after last event of last event source has been processed.
 
-		int m_isFirstCallToBrun;
-		TH1D *h;
-		JROOTOutput *m_ROOTOutput;
 
+		TranslationTable *tt;
 };
 
-#endif // _JEventProcessor_test_
+#endif // _TranslationTable_factory_
 

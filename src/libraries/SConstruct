@@ -1,7 +1,7 @@
 Import('env')
 
 # Loop over libraries, building each
-libs=['system','ctof','DAQ']
+libs=['VETO_INT','system','ctof','DAQ','TT']
 
 for lib in libs:
     src =Glob(lib+'/*.cc')

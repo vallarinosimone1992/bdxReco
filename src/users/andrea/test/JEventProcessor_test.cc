@@ -5,19 +5,30 @@
 // Creator: celentan (on Linux apcx4 2.6.32-504.30.3.el6.x86_64 x86_64)
 //
 
+#include <iostream>
+#include <iomanip>
+using namespace std;
+
 #include "JEventProcessor_test.h"
-#include "fa250Mode1Hit.h"
+#include "system/BDXEventProcessor.h"
+
+#include <DAQ/fa250Mode1Hit.h>
+#include <TT/TranslationTable.h>
+#include <VETO_INT/VetoIntDigiHit.h>
+#include <system/JROOTOutput.h>
 
 #include "TApplication.h"
 #include "TH1D.h"
 #include "TCanvas.h"
 
-using namespace jana;
-
-
 // Routine used to create our JEventProcessor
 #include <JANA/JApplication.h>
 #include <JANA/JFactory.h>
+
+using namespace jana;
+
+
+
 extern "C"{
 void InitPlugin(JApplication *app){
 	InitJANAPlugin(app);
@@ -29,7 +40,7 @@ void InitPlugin(JApplication *app){
 //------------------
 // JEventProcessor_test (Constructor)
 //------------------
-JEventProcessor_test::JEventProcessor_test()
+JEventProcessor_test::JEventProcessor_test():m_isFirstCallToBrun(1)
 {
 
 }
@@ -41,7 +52,6 @@ JEventProcessor_test::~JEventProcessor_test()
 {
 
 }
-
 //------------------
 // init
 //------------------
@@ -56,18 +66,11 @@ jerror_t JEventProcessor_test::init(void)
 	// japp->RootUnLock();
 	//
 	jout<<"test::init is called"<<std::endl;
+	h=new TH1D("h","h1",400,-111110.5,11399.5);
 	app->RootWriteLock();
 
-	vector<JEventProcessor*>::iterator it;
-	it=app->GetProcessors().begin();
 
 
-	for (it=app->GetProcessors().begin();it<app->GetProcessors().end();it++){
-
-		if ((*it)!= NULL) jout<<"here: "<<(*it)->className()<<std::endl;
-	}
-
-	h=new TH1D("h","h",400,-0.5,399.5);
 	app->RootUnLock();
 	return NOERROR;
 }
@@ -75,10 +78,46 @@ jerror_t JEventProcessor_test::init(void)
 //------------------
 // brun
 //------------------
-jerror_t JEventProcessor_test::brun(JEventLoop *eventLoop, int runnumber)
+jerror_t JEventProcessor_test::brun(JEventLoop *loop, int runnumber)
 {
+
 	// This is called whenever the run number changes
+	/* To get access to the ROOT output, use exactly the following code */
+	if (m_isFirstCallToBrun){
+		string class_name,this_class_name;
+		BDXEventProcessor *m_BDXEventProcessor;
+		vector<JEventProcessor*> m_processors=app->GetProcessors();
+		vector<JEventProcessor*>::iterator m_processors_it;
+
+		m_isFirstCallToBrun=0;
+		class_name="BDXEventProcessor";
+		//Now I need to determine which processor is the one holding the output. Discussing with David, he suggested just to check the class name, since
+		//a dynamic cast may not work with plugins
+		for (m_processors_it=m_processors.begin();m_processors_it!=m_processors.end();m_processors_it++){
+			if ((*m_processors_it)!=0){
+				this_class_name=(*m_processors_it)->className();
+				if (this_class_name==class_name){
+					m_BDXEventProcessor=(BDXEventProcessor*)(*m_processors_it);
+					if (m_ROOTOutput=dynamic_cast<JROOTOutput*>(m_BDXEventProcessor->getOutput())){
+						jout<<"Got JROOTOutput!"<<endl;
+					}
+					else{
+						if (m_BDXEventProcessor->getOutput()==0)	jerr<<"BDXEventProcessor JOutput is null!"<<endl;
+						else jerr<<"BDXEventProcessor JOutput is not null BUT can't dynamic_cast to JROOTOUtput"<<endl;
+					}
+				}
+			}
+		}
+		/*For ALL objects you want to add to ROOT file, use the following:*/
+		if (m_ROOTOutput){
+			m_ROOTOutput->AddObject(h);
+		}
+
+	}
+
 	return NOERROR;
+
+
 }
 
 //------------------
@@ -93,21 +132,21 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop, int eventnumber)
 	// since multiple threads may call this method at the same time.
 	// Here's an example:
 	//
-	vector<const fa250Mode1Hit*> data;
-	vector<const fa250Mode1Hit*>::const_iterator data_it;
+	vector<const VetoIntDigiHit*> data;
+	vector<const VetoIntDigiHit*>::const_iterator data_it;
 	loop->Get(data);
 
-	 japp->RootWriteLock();
+	japp->RootWriteLock();
 	//  ... fill historgrams or trees ...
-		for (data_it=data.begin();data_it<data.end();data_it++){
-			if (((*data_it)->slot==4)&&((*data_it)->channel==3)){
-				for (int ii=0;ii<(*data_it)->samples.size();ii++){
-					h->Fill(ii,(*data_it)->samples.at(ii));
-				}
+	for (data_it=data.begin();data_it<data.end();data_it++){
+			if (((*data_it)->m_channel.CSC.slot==4)&&((*data_it)->m_channel.CSC.channel==1)){
+				h->Fill((*data_it)->Q);
 			}
 		}
 
-	 japp->RootUnLock();
+	japp->RootUnLock();
+
+
 
 
 	return NOERROR;
@@ -132,9 +171,9 @@ jerror_t JEventProcessor_test::fini(void)
 	// Called before program exit after event processing is finished.
 	TCanvas *c=new TCanvas("c","c");
 	h->Draw();
-//	TApplication gui("gui",0,NULL);
+	//	TApplication gui("gui",0,NULL);
 	c->Print("out.ps");
-//	gui.Run(1);
+	//	gui.Run(1);
 	return NOERROR;
 }
 
