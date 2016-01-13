@@ -13,9 +13,9 @@
 
 #include <TT/TranslationTable.h>
 
-class VetoIntDigiHit:public jana::JObject{
+class IntVetoDigiHit:public jana::JObject{
 	public:
-		JOBJECT_PUBLIC(VetoIntDigiHit);
+		JOBJECT_PUBLIC(IntVetoDigiHit);
 		
 		// Add data members here. For example:
 		// int id;

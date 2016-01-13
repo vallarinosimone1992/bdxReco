@@ -1,22 +1,20 @@
 // $Id$
 //
-//    File: VetoIntDigiHit_factory.h
-// Created: Tue Jan 12 11:52:41 CET 2016
-// Creator: celentan (on Linux apcx4 2.6.32-504.30.3.el6.x86_64 x86_64)
+//    File: ExtVetoDigiHit_factory.h
+// Created: Wed Jan 13 21:06:40 CET 2016
+// Creator: celentan (on Linux localhost.localdomain 2.6.32-504.30.3.el6.x86_64 x86_64)
 //
 
-#ifndef _VetoIntDigiHit_factory_
-#define _VetoIntDigiHit_factory_
+#ifndef _ExtVetoDigiHit_factory_
+#define _ExtVetoDigiHit_factory_
 
 #include <JANA/JFactory.h>
-#include "VetoIntDigiHit.h"
+#include "ExtVetoDigiHit.h"
 
-class TranslationTable;
-
-class VetoIntDigiHit_factory:public jana::JFactory<VetoIntDigiHit>{
+class ExtVetoDigiHit_factory:public jana::JFactory<ExtVetoDigiHit>{
 	public:
-		VetoIntDigiHit_factory(){};
-		~VetoIntDigiHit_factory(){};
+		ExtVetoDigiHit_factory(){};
+		~ExtVetoDigiHit_factory(){};
 
 
 	private:
@@ -25,10 +23,7 @@ class VetoIntDigiHit_factory:public jana::JFactory<VetoIntDigiHit>{
 		jerror_t evnt(jana::JEventLoop *eventLoop, int eventnumber);	///< Called every event.
 		jerror_t erun(void);						///< Called everytime run number changes, provided brun has been called.
 		jerror_t fini(void);						///< Called after last event of last event source has been processed.
-
-		const TranslationTable *m_tt;
-
 };
 
-#endif // _VetoIntDigiHit_factory_
+#endif // _ExtVetoDigiHit_factory_
 

@@ -15,16 +15,16 @@ using namespace std;
 #include <DAQ/fa250Mode7Hit.h>
 #include <TT/TranslationTable.h>
 //objects we put in the framework
-#include <VETO_INT/VetoIntDigiHit.h>
+#include <IntVeto/IntVetoDigiHit.h>
 
 
-#include "VetoIntDigiHit_factory.h"
+#include "IntVetoDigiHit_factory.h"
 using namespace jana;
 
 //------------------
 // init
 //------------------
-jerror_t VetoIntDigiHit_factory::init(void)
+jerror_t IntVetoDigiHit_factory::init(void)
 {
 	return NOERROR;
 }
@@ -32,7 +32,7 @@ jerror_t VetoIntDigiHit_factory::init(void)
 //------------------
 // brun
 //------------------
-jerror_t VetoIntDigiHit_factory::brun(jana::JEventLoop *eventLoop, int runnumber)
+jerror_t IntVetoDigiHit_factory::brun(jana::JEventLoop *eventLoop, int runnumber)
 {
 	jout<<"VetoIntDigiHit_factory::brun new run number: "<<runnumber<<endl;
 	m_tt=0;
@@ -47,11 +47,11 @@ jerror_t VetoIntDigiHit_factory::brun(jana::JEventLoop *eventLoop, int runnumber
 //------------------
 // evnt
 //------------------
-jerror_t VetoIntDigiHit_factory::evnt(JEventLoop *loop, int eventnumber)
+jerror_t IntVetoDigiHit_factory::evnt(JEventLoop *loop, int eventnumber)
 {
 	TranslationTable::ChannelInfo m_channel;
 	TranslationTable::csc_t		  m_csc;
-	VetoIntDigiHit *m_VetoIntDigiHit=0;
+	IntVetoDigiHit *m_VetoIntDigiHit=0;
 
 	//1: Here, we get from the framework the objects we need to process
 	//1a: create vectors
@@ -85,7 +85,7 @@ jerror_t VetoIntDigiHit_factory::evnt(JEventLoop *loop, int eventnumber)
 		//jout<<m_csc.rocid<<" "<<m_csc.slot<<" "<<m_csc.channel<<" "<<endl;
 		if (m_channel.det_sys==TranslationTable::VETO_INT){
 
-			m_VetoIntDigiHit=new VetoIntDigiHit;
+			m_VetoIntDigiHit=new IntVetoDigiHit;
 			m_VetoIntDigiHit->m_channel=m_channel;
 
 			m_VetoIntDigiHit->Q=(*it_fa250Mode1Hit)->samples.at(0)+(*it_fa250Mode1Hit)->samples.at(1)+(*it_fa250Mode1Hit)->samples.at(2);
@@ -119,7 +119,7 @@ jerror_t VetoIntDigiHit_factory::evnt(JEventLoop *loop, int eventnumber)
 //------------------
 // erun
 //------------------
-jerror_t VetoIntDigiHit_factory::erun(void)
+jerror_t IntVetoDigiHit_factory::erun(void)
 {
 	return NOERROR;
 }
@@ -127,7 +127,7 @@ jerror_t VetoIntDigiHit_factory::erun(void)
 //------------------
 // fini
 //------------------
-jerror_t VetoIntDigiHit_factory::fini(void)
+jerror_t IntVetoDigiHit_factory::fini(void)
 {
 	return NOERROR;
 }

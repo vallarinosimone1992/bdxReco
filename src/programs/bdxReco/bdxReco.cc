@@ -12,7 +12,7 @@ using namespace jana;
 //factory generators
 #include <DAQ/JFactoryGenerator_DAQ.h>
 #include <TT/JFactoryGenerator_TT.h>
-#include <VETO_INT/JFactoryGenerator_VETO_INT.h>
+#include <IntVeto/JFactoryGenerator_IntVeto.h>
 
 
 // C++ headers
