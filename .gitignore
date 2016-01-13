@@ -1,6 +1,5 @@
 .sconsign.dblite
-#binaries
-bdxReco
+#binaries and libraries
 lib
 bin
 *.o
