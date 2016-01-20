@@ -1,24 +1,21 @@
 // $Id$
 //
-//    File: VetoIntDigiHit_factory.cc
-// Created: Tue Jan 12 11:52:41 CET 2016
+//    File: IntVetoDigiHit_factory.cc
+// Created: Wed Jan 20 16:42:38 CET 2016
 // Creator: celentan (on Linux apcx4 2.6.32-504.30.3.el6.x86_64 x86_64)
 //
 
 
 #include <iostream>
 #include <iomanip>
+#include <map>
 using namespace std;
 
-//objects we need from the framework
-#include <DAQ/fa250Mode1Hit.h>
-#include <DAQ/fa250Mode7Hit.h>
-#include <TT/TranslationTable.h>
-//objects we put in the framework
-#include <IntVeto/IntVetoDigiHit.h>
-
-
 #include "IntVetoDigiHit_factory.h"
+
+#include <IntVeto/IntVetoSiPMHit.h>
+#include <TT/TranslationTable.h>
+
 using namespace jana;
 
 //------------------
@@ -34,6 +31,8 @@ jerror_t IntVetoDigiHit_factory::init(void)
 //------------------
 jerror_t IntVetoDigiHit_factory::brun(jana::JEventLoop *eventLoop, int runnumber)
 {
+	return NOERROR;
+
 	jout<<"VetoIntDigiHit_factory::brun new run number: "<<runnumber<<endl;
 	m_tt=0;
 	eventLoop->GetSingle(m_tt);
@@ -49,69 +48,57 @@ jerror_t IntVetoDigiHit_factory::brun(jana::JEventLoop *eventLoop, int runnumber
 //------------------
 jerror_t IntVetoDigiHit_factory::evnt(JEventLoop *loop, int eventnumber)
 {
+
 	TranslationTable::ChannelInfo m_channel;
+	TranslationTable::INT_VETO_Index_t m_index;
 	TranslationTable::csc_t		  m_csc;
 	IntVetoDigiHit *m_VetoIntDigiHit=0;
 
 	//1: Here, we get from the framework the objects we need to process
 	//1a: create vectors
-	vector <const fa250Mode1Hit*> m_fa250Mode1Hit;
-	vector <const fa250Mode7Hit*> m_fa250Mode7Hit;
-	vector <const fa250Mode1Hit*>::const_iterator it_fa250Mode1Hit;
-	vector <const fa250Mode7Hit*>::const_iterator it_fa250Mode7Hit;
+	vector <const IntVetoSiPMHit*> m_IntVetoSiPMHit;
+	vector <const IntVetoSiPMHit*>::const_iterator it;
 
-	//1b: retrieve objects
-	loop->Get(m_fa250Mode1Hit);
-	loop->Get(m_fa250Mode7Hit);
+	//1b: retrieve IntVetoSiPMHit objects
+	loop->Get(m_IntVetoSiPMHit);
 
-	/*2: Now we have the daq objects, still indexed as "crate-slot-channel"
-	 *	 Use the translation table to produce the digitized hit of the inner veto
-	 *	 Note that we can produce a single object type here, i.e. VetoIntDigiHit,
-	 *	 but we have 2 possible source, mode 1 and mode 7.
-	 *	 Therefore, we will use the TranslationTable ONLY to check if this crate-slot-channel
-	 *	 combination refers to a InnerVeto hit and, in case, to determine which one, i.e. which ID in the InnerVeto scheme.
-	 *	 Then, we will proceed in two different ways.
+	/*Do the matching
+	/*Proceed in this way:
+	 * loop over the hits
+	 * get the hit index, but put the readout to 0 (active detector element!)
+	 * check if, in the map, a key with this detector index already exists.
+	 * if not exist, add it, and create a new IntVetoDigiHit
+	 * if exist, get it, and add the SiPM hit to the list of sipm hits of the IntVetoDigiHit
+	 */
+	for (it=m_IntVetoSiPMHit.begin(); it != m_IntVetoSiPMHit.end() ; it++){
+		m_channel = (*it)->m_channel;
+		m_channel.veto_int.readout = 0;
+		m_index   = m_channel.veto_int;
+		m_index.readout = 0;
+ 		m_map_it=m_map.find(m_index);
+
+ 		if (m_map_it == m_map.end()){ //not here. Create a new IntVetoDigiHit object, and associate the id of this SiPM hit with it
+ 			m_VetoIntDigiHit=new IntVetoDigiHit;
+ 			m_VetoIntDigiHit->m_channel=m_channel;
+ 			m_VetoIntDigiHit->IntVetoSIPMHit_id.push_back((*it)->id);
+ 			m_map.insert(std::make_pair(m_index,m_VetoIntDigiHit));
+		}
+ 		else{ //element already exists. Get the VetoIntDigiHit and add this hit as id.
+ 			m_VetoIntDigiHit=m_map[m_index];
+ 			m_VetoIntDigiHit->IntVetoSIPMHit_id.push_back((*it)->id);
+ 		}
+
+	}
+
+	/*Now the map is full of all the hits in different active elements of active veto, i.e. with different identifiers, BUT readout, that maps the sipm hits.
+	 * Each hit has a reference to the SiPM hits that made it
 	 */
 
-	/*First, mode 1*/
-	/*Note that in this case we have to integrate the pulse - it is a mode 1 pulse! */
-	for (it_fa250Mode1Hit=m_fa250Mode1Hit.begin();it_fa250Mode1Hit!=m_fa250Mode1Hit.end();it_fa250Mode1Hit++){
-		m_csc.rocid=(*it_fa250Mode1Hit)->crate;
-		m_csc.slot=(*it_fa250Mode1Hit)->slot;
-		m_csc.channel=(*it_fa250Mode1Hit)->channel;
+	for (m_map_it=m_map.begin();m_map_it!=m_map.end();m_map_it++){
+		//do here what is needed
 
-		m_channel=m_tt->getChannelInfo(m_csc);
-
-		//jout<<m_csc.rocid<<" "<<m_csc.slot<<" "<<m_csc.channel<<" "<<endl;
-		if (m_channel.det_sys==TranslationTable::VETO_INT){
-
-			m_VetoIntDigiHit=new IntVetoDigiHit;
-			m_VetoIntDigiHit->m_channel=m_channel;
-
-			m_VetoIntDigiHit->Q=(*it_fa250Mode1Hit)->samples.at(0)+(*it_fa250Mode1Hit)->samples.at(1)+(*it_fa250Mode1Hit)->samples.at(2);
-			m_VetoIntDigiHit->T=0;
-			_data.push_back(m_VetoIntDigiHit);
-		}
+		_data.push_back((m_map_it)->second); //publish it
 	}
-
-
-	/*Then, mode 7*/
-	/*Note that in this case we do not have to integrate the pulse - it is a mode 7 pulse! */
-	for (it_fa250Mode7Hit=m_fa250Mode7Hit.begin();it_fa250Mode7Hit!=m_fa250Mode7Hit.end();it_fa250Mode7Hit++){
-		m_csc.rocid=(*it_fa250Mode7Hit)->crate;
-		m_csc.slot=(*it_fa250Mode7Hit)->slot;
-		m_csc.channel=(*it_fa250Mode7Hit)->channel;
-		m_channel=m_tt->getChannelInfo(m_csc);
-		if (m_channel.det_sys==TranslationTable::VETO_INT){
-			m_VetoIntDigiHit->m_channel=m_channel;
-
-			m_VetoIntDigiHit->Q=0;
-			m_VetoIntDigiHit->T=0;
-			_data.push_back(m_VetoIntDigiHit);
-		}
-	}
-
-
 
 	return NOERROR;
 }

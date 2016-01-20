@@ -1,8 +1,8 @@
 // $Id$
 //
 //    File: ExtVetoDigiHit.h
-// Created: Wed Jan 20 18:22:52 CET 2016
-// Creator: celentan (on Linux apcx4 2.6.32-504.30.3.el6.x86_64 x86_64)
+// Created: Wed Jan 13 21:06:40 CET 2016
+// Creator: celentan (on Linux localhost.localdomain 2.6.32-504.30.3.el6.x86_64 x86_64)
 //
 
 #ifndef _ExtVetoDigiHit_
@@ -11,7 +11,7 @@
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
 
-class ExtVetoDigiHit:public jana::JObject{
+class ExtVetoPMTHit:public jana::JObject{
 	public:
 		JOBJECT_PUBLIC(ExtVetoDigiHit);
 		

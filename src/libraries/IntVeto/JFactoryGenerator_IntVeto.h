@@ -11,6 +11,7 @@
 #include <JANA/jerror.h>
 #include <JANA/JFactoryGenerator.h>
 
+#include "IntVetoSiPMHit_factory.h"
 #include "IntVetoDigiHit_factory.h"
 #include "IntVetoHit_factory.h"
 class JFactoryGenerator_VETO_INT: public jana::JFactoryGenerator{
@@ -21,6 +22,7 @@ class JFactoryGenerator_VETO_INT: public jana::JFactoryGenerator{
 		static const char* static_className(void){return "JFactoryGenerator_VETO_INT";}
 		
 		jerror_t GenerateFactories(jana::JEventLoop *loop){
+			loop->AddFactory(new IntVetoSiPMHit_factory());
 			loop->AddFactory(new IntVetoDigiHit_factory());
 			loop->AddFactory(new IntVetoHit_factory());
 

@@ -36,10 +36,11 @@ map<TranslationTable::csc_t, TranslationTable::ChannelInfo>& TranslationTable::G
 // the map<csc_t, XX> to order the entires by key
 bool operator<(const TranslationTable::csc_t &a, const TranslationTable::csc_t &b) {
 	if (a.rocid < b.rocid) return true;
-	if (a.rocid > b.rocid) return false;
+	if (a.rocid >= b.rocid) return false;
 	if (a.slot < b.slot) return true;
-	if (a.slot > b.slot) return false;
+	if (a.slot >= b.slot) return false;
 	if (a.channel < b.channel) return true;
+	if (a.channel >= b.channel) return true;
 	return false;
 }
 
@@ -241,10 +242,10 @@ TranslationTable::ChannelInfo TranslationTable::getChannelInfo(int crate,int slo
 //---------------------------------
 TranslationTable::Detector_t DetectorStr2DetID(string &type)
 {
-	if ( type == "veto_ext" ) {
-		return TranslationTable::VETO_EXT;
-	} else if ( type == "veto_int" ) {
-		return TranslationTable::VETO_INT;
+	if ( type == "ext_veto" ) {
+		return TranslationTable::EXT_VETO;
+	} else if ( type == "int_veto" ) {
+		return TranslationTable::INT_VETO;
 	} else if ( type == "calo" ) {
 		return TranslationTable::CALO;
 	} else if ( type == "other" ) {
@@ -277,7 +278,7 @@ void StartElement(void *userData, const char *xmlname, const char **atts)
 	int channel = 0;
 	string Detector, locSystem;
 	int end=0;
-	int row=0,column=0,module=0,sector=0,layer=0,component=0;
+	int row=0,column=0,module=0,sector=0,layer=0,component=0,readout=0;
 	int id=0;
 	int side=0;
 
@@ -330,11 +331,13 @@ void StartElement(void *userData, const char *xmlname, const char **atts)
 				channel = ival;
 			else if (tag == "detector")
 				Detector = sval;
-			else if (tag == "row")
+			else if (tag == "sector")
+				sector = ival;
+			else if (tag == "readout")
+				readout = ival;
+			else if ((tag == "row")||(tag == "iy"))
 				row = ival;
-			else if (tag == "column")
-				column = ival;
-			else if (tag == "col")
+			else if ((tag == "col")|| (tag == "column")||(tag == "ix"))
 				column = ival;
 			else if (tag == "module")
 				module = ival;
@@ -365,14 +368,23 @@ void StartElement(void *userData, const char *xmlname, const char **atts)
 		// detector-specific indexes
 		//This is the part that - probably - has to be modified
 		switch (ci.det_sys) {
-		case TranslationTable::VETO_EXT:
-			ci.veto_ext.id = id;
+		case TranslationTable::EXT_VETO:
+			ci.veto_ext.sector = sector;
+			ci.veto_ext.layer = layer;
+			ci.veto_ext.component = component;
+			ci.veto_ext.readout = readout;
 			break;
-		case TranslationTable::VETO_INT:
-			ci.veto_int.id = id;
+		case TranslationTable::INT_VETO:
+			ci.veto_int.sector = sector;
+			ci.veto_int.layer = layer;
+			ci.veto_int.component = component;
+			ci.veto_int.readout = readout;
 			break;
 		case TranslationTable::CALO:
-			ci.calo.id = id;
+			ci.calo.sector = sector;
+			ci.calo.x = column;  //A.C. fine, x is a row
+			ci.calo.y = row;
+			ci.calo.readout = readout;
 			break;
 		case TranslationTable::OTHER:
 			ci.other.id = id;

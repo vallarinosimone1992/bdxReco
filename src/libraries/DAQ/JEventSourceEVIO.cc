@@ -25,7 +25,7 @@ using namespace std;
 
 // Constructor
 JEventSourceEvio::JEventSourceEvio(const char* source_name, goptions Opt):JEventSource(source_name),
-		chan(0),EDT(0),mother_tag(0),child_mode1_tag(0)
+		chan(0),EDT(0),mother_tag(0),child_mode1_tag(0),child_mode7_tag(0)
 {
 	bdxOpt = Opt;
 

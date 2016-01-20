@@ -43,8 +43,8 @@ public:
 
 	enum Detector_t{
 		UNKNOWN_DETECTOR,
-		VETO_EXT,
-		VETO_INT,
+		EXT_VETO,
+		INT_VETO,
 		CALO,
 		OTHER,
 		NUM_DETECTOR_TYPES
@@ -52,8 +52,8 @@ public:
 
 	string DetectorName(Detector_t type) const {
 		switch(type){
-		case VETO_EXT: return "VETO_EXT";
-		case VETO_INT: return "VETO_INT";
+		case EXT_VETO: return "ExtVeto";
+		case INT_VETO: return "IntVeto";
 		case CALO: return "CALO";
 		case OTHER: return "OTHER";
 		case UNKNOWN_DETECTOR:
@@ -63,37 +63,70 @@ public:
 	}
 
 
-	/*Here follows the classes to handle the IDs and intrinsic indexes of the different detectors*/
-	class VETO_EXTIndex_t{
+	/*Here follows the classes to handle the IDs and intrinsic indexes of the different detectors
+	 *
+	 * There are some conventions on few indexes:
+	 *
+	 * - sector is an index regarding different, identical, detectors (in BDX we think about independent, but equal, detectors)
+	 * - readout is an index to handle the case of different sensors reading out the same active volume
+	 *
+	 * Since we use these indexes both for the readout sensor and for the active volume, the convention is to use
+	 * readout = 0 when dealing with the PHYSICAL volume
+	 * readout = 1 ... Nreadouts when dealing with the sensors
+	 * */
+	class EXT_VETO_Index_t{
 	public:
-		int id;
-		inline bool operator==(const VETO_EXTIndex_t &rhs) const {
-			return (id==rhs.id) && (1);
+		int sector;
+		int layer;
+		int component;
+		int readout;
+		inline bool isSameActive(const EXT_VETO_Index_t &rhs) const {
+			return (sector==rhs.sector) && (layer==rhs.layer) && (component==rhs.component);
+		}
+		inline bool operator==(const EXT_VETO_Index_t &rhs) const {
+			return isSameActive(rhs) && (readout==rhs.readout);
 		}
 	};
 
-	class VETO_INTIndex_t{
+	class INT_VETO_Index_t{
 	public:
-		int id;
-		inline bool operator==(const VETO_INTIndex_t &rhs) const {
-			return (id==rhs.id) && (1);
+		int sector;
+		int layer;
+		int component;
+		int readout;
+		inline bool isSameActive(const INT_VETO_Index_t &rhs) const{
+			return (sector==rhs.sector) && (layer==rhs.layer) && (component==rhs.component);
+		}
+		inline bool operator==(const INT_VETO_Index_t &rhs) const {
+			return isSameActive(rhs) && (readout==rhs.readout);
 		}
 	};
 
-	class CALOIndex_t{
+	class CALO_Index_t{
 	public:
-		int id;
-		inline bool operator==(const CALOIndex_t &rhs) const {
-			return (id==rhs.id) && (1);
+		int sector;
+		int x,y;
+		int readout;
+		inline bool isSameActive(const CALO_Index_t &rhs) const{
+			return (sector==rhs.sector) && (x==rhs.x) && (y==rhs.y);
+		}
+		inline bool operator==(const CALO_Index_t &rhs) const {
+			return isSameActive(rhs) && (readout == rhs.readout);
 		}
 	};
 
-	class OTHERIndex_t{
+	class OTHER_Index_t{
 	public:
+		int sector;
 		int id;
-		inline bool operator==(const OTHERIndex_t &rhs) const {
-			return (id==rhs.id) && (1);
+		int readout;
+		inline bool isSameActive(const OTHER_Index_t &rhs) const{
+			return  (sector==rhs.sector) && (id==rhs.id);
 		}
+		inline bool operator==(const OTHER_Index_t &rhs) const {
+			return  isSameActive(rhs)&&(readout==rhs.readout);
+		}
+
 	};
 
 	/*A single class that handles ALL the possible indexes trough a C++ union*/
@@ -103,10 +136,10 @@ public:
 		//DModuleType::type_id_t module_type;
 		Detector_t det_sys;
 		union{
-			VETO_EXTIndex_t veto_ext;
-			VETO_INTIndex_t veto_int;
-			CALOIndex_t calo;
-			OTHERIndex_t other;
+			EXT_VETO_Index_t veto_ext;
+			INT_VETO_Index_t veto_int;
+			CALO_Index_t calo;
+			OTHER_Index_t other;
 		};
 	};
 
