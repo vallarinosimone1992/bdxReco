@@ -10,7 +10,7 @@
 
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
-
+#include <TT/TranslationTable.h>
 /*
  * A.C.
  * This object represents a not-yet calibrated it in the inner veto.

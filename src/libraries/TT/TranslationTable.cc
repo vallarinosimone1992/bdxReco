@@ -36,11 +36,11 @@ map<TranslationTable::csc_t, TranslationTable::ChannelInfo>& TranslationTable::G
 // the map<csc_t, XX> to order the entires by key
 bool operator<(const TranslationTable::csc_t &a, const TranslationTable::csc_t &b) {
 	if (a.rocid < b.rocid) return true;
-	if (a.rocid >= b.rocid) return false;
+	if (a.rocid > b.rocid) return false;
 	if (a.slot < b.slot) return true;
-	if (a.slot >= b.slot) return false;
+	if (a.slot > b.slot) return false;
 	if (a.channel < b.channel) return true;
-	if (a.channel >= b.channel) return true;
+	if (a.channel > b.channel) return true;
 	return false;
 }
 

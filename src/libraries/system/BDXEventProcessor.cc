@@ -8,7 +8,8 @@ using namespace std;
 #include "string_utilities.h"
 //DAQ
 #include <DAQ/fa250Mode1Hit_factory.h>
-// CTOF
+// TT
+#include <TT/TranslationTable.h>
 //#include "ctofHitR.h"
 //#include "marcoCluster.h"
 
@@ -18,7 +19,7 @@ using namespace std;
 
 // Constructor
 BDXEventProcessor::BDXEventProcessor(goptions bdxOpt):
-m_output(0)
+m_output(0),m_tt(0)
 {
 	/* Opens output file if specified
 	the string should be of the form
@@ -78,6 +79,7 @@ jerror_t BDXEventProcessor::init(void)
 // brun
 jerror_t BDXEventProcessor::brun(JEventLoop *eventLoop, int runnumber)
 {
+	eventLoop->GetSingle(m_tt);
 	return NOERROR;
 }
 

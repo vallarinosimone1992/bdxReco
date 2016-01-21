@@ -10,10 +10,10 @@
 
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
-
+#include <DAQ/faIntegratedHit.h>
 #include <TT/TranslationTable.h>
 
-class IntVetoSiPMHit:public jana::JObject{
+class IntVetoSiPMHit:public faIntegratedHit{
 	public:
 		JOBJECT_PUBLIC(IntVetoSiPMHit);
 		

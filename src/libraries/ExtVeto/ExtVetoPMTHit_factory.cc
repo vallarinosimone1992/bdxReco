@@ -12,8 +12,13 @@ using namespace std;
 
 #include "ExtVetoPMTHit_factory.h"
 
-#include <ExtVeto/ExtVetoPMTHit.h>
+//objects we need from the framework
+#include <DAQ/fa250Mode1Hit.h>
+#include <DAQ/fa250Mode7Hit.h>
 #include <TT/TranslationTable.h>
+
+#include <ExtVeto/ExtVetoPMTHit.h>
+
 using namespace jana;
 
 //------------------
@@ -47,7 +52,7 @@ jerror_t ExtVetoPMTHit_factory::evnt(JEventLoop *loop, int eventnumber)
 {
 	TranslationTable::ChannelInfo m_channel;
 	TranslationTable::csc_t		  m_csc;
-	IntVetoSiPMHit *m_ExtVetoPMTHit=0;
+	ExtVetoPMTHit *m_ExtVetoPMTHit=0;
 
 	//1: Here, we get from the framework the objects we need to process
 	//1a: create vectors
@@ -108,7 +113,7 @@ jerror_t ExtVetoPMTHit_factory::evnt(JEventLoop *loop, int eventnumber)
 
 
 			//A.C. do not touch these
-			m_ExtVetoPMTHit=new IntVetoSiPMHit;
+			m_ExtVetoPMTHit=new ExtVetoPMTHit;
 			m_ExtVetoPMTHit->m_channel=m_channel;
 			m_ExtVetoPMTHit->fa250Hit_id==(*it_fa250Mode1Hit)->id;
 
@@ -119,10 +124,6 @@ jerror_t ExtVetoPMTHit_factory::evnt(JEventLoop *loop, int eventnumber)
 			_data.push_back(m_ExtVetoPMTHit);
 		}
 	}
-
-
-
-	return NOERROR;
 
 
 	return NOERROR;

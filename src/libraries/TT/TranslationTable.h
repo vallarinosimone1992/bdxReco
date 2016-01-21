@@ -86,6 +86,17 @@ public:
 		inline bool operator==(const EXT_VETO_Index_t &rhs) const {
 			return isSameActive(rhs) && (readout==rhs.readout);
 		}
+		inline bool operator<(const EXT_VETO_Index_t &rhs) const {  //A.C. for the maps
+			if (sector>rhs.sector) return true;
+			if (sector<rhs.sector) return false;
+			if (layer>rhs.layer)   return true;
+			if (layer<rhs.layer)   return false;
+			if (component>rhs.component) return true;
+			if (component<rhs.component) return false;
+			if (readout>rhs.readout) return true;
+			if (readout<rhs.readout) return false;
+			return false;
+		}
 	};
 
 	class INT_VETO_Index_t{
@@ -100,6 +111,17 @@ public:
 		inline bool operator==(const INT_VETO_Index_t &rhs) const {
 			return isSameActive(rhs) && (readout==rhs.readout);
 		}
+		inline bool operator<(const INT_VETO_Index_t &rhs) const {  //A.C. for the maps
+			if (sector>rhs.sector) return true;
+			if (sector<rhs.sector) return false;
+			if (layer>rhs.layer)   return true;
+			if (layer<rhs.layer)   return false;
+			if (component>rhs.component) return true;
+			if (component<rhs.component) return false;
+			if (readout>rhs.readout) return true;
+			if (readout<rhs.readout) return false;
+			return false;
+		}
 	};
 
 	class CALO_Index_t{
@@ -112,6 +134,17 @@ public:
 		}
 		inline bool operator==(const CALO_Index_t &rhs) const {
 			return isSameActive(rhs) && (readout == rhs.readout);
+		}
+		inline bool operator<(const CALO_Index_t &rhs) const {  //A.C. for the maps
+			if (sector>rhs.sector) return true;
+			if (sector<rhs.sector) return false;
+			if (x>rhs.x)   return true;
+			if (x<rhs.x)   return false;
+			if (y>rhs.y) return true;
+			if (y<rhs.y) return false;
+			if (readout>rhs.readout) return true;
+			if (readout<rhs.readout) return false;
+			return false;
 		}
 	};
 
@@ -126,6 +159,7 @@ public:
 		inline bool operator==(const OTHER_Index_t &rhs) const {
 			return  isSameActive(rhs)&&(readout==rhs.readout);
 		}
+
 
 	};
 
@@ -173,29 +207,29 @@ protected:
 
 private:
 
-		/****************************************** STATIC-VARIABLE-ACCESSING PRIVATE MEMBER FUNCTIONS ******************************************/
+	/****************************************** STATIC-VARIABLE-ACCESSING PRIVATE MEMBER FUNCTIONS ******************************************/
 
-		//Some variables needs to be shared amongst threads (e.g. the memory used for the branch variables)
-		//However, you cannot make them global/extern/static/static-member variables in the header file:
-			//The header file is included in the TTAB library AND in each plugin that uses it
-				//When a header file is included in a src file, it's contents are essentially copied directly into it
-			//Thus there are two instances of each static variable: one in each translation unit (library)
-			//Supposedly(?) they are linked together during runtime when loading, so there is (supposedly) no undefined behavior.
-			//However, this causes a double free (double-deletion) when these libraries are closed at the end of the program, crashing it.
-		//Thus the variables must be in a single source file that is compiled into a single library
-		//However, you (somehow?) cannot make them global/extern variables in the cpp function
-			//This also (somehow?) causes the double-free problem above for (at least) stl containers
-			//It works for pointers-to-stl-containers and fundamental types, but I dunno why.
-			//It's not good encapsulation anyway though.
-		//THE SOLUTION:
-			//Define the variables as static, in the source file, WITHIN A PRIVATE MEMBER FUNCTION.
-			//Thus the static variables themselves only have function scope.
-			//Access is only available via the private member functions, thus access is fully controlled.
-			//They are shared amongst threads, so locks are necessary, but since they are private this class can handle it internally
+	//Some variables needs to be shared amongst threads (e.g. the memory used for the branch variables)
+	//However, you cannot make them global/extern/static/static-member variables in the header file:
+	//The header file is included in the TTAB library AND in each plugin that uses it
+	//When a header file is included in a src file, it's contents are essentially copied directly into it
+	//Thus there are two instances of each static variable: one in each translation unit (library)
+	//Supposedly(?) they are linked together during runtime when loading, so there is (supposedly) no undefined behavior.
+	//However, this causes a double free (double-deletion) when these libraries are closed at the end of the program, crashing it.
+	//Thus the variables must be in a single source file that is compiled into a single library
+	//However, you (somehow?) cannot make them global/extern variables in the cpp function
+	//This also (somehow?) causes the double-free problem above for (at least) stl containers
+	//It works for pointers-to-stl-containers and fundamental types, but I dunno why.
+	//It's not good encapsulation anyway though.
+	//THE SOLUTION:
+	//Define the variables as static, in the source file, WITHIN A PRIVATE MEMBER FUNCTION.
+	//Thus the static variables themselves only have function scope.
+	//Access is only available via the private member functions, thus access is fully controlled.
+	//They are shared amongst threads, so locks are necessary, but since they are private this class can handle it internally
 
-		pthread_mutex_t& Get_TT_Mutex(void) const;
-		bool& Get_TT_Initialized(void) const;
-		map<TranslationTable::csc_t, TranslationTable::ChannelInfo>& Get_TT(void) const;
+	pthread_mutex_t& Get_TT_Mutex(void) const;
+	bool& Get_TT_Initialized(void) const;
+	map<TranslationTable::csc_t, TranslationTable::ChannelInfo>& Get_TT(void) const;
 
 
 };
