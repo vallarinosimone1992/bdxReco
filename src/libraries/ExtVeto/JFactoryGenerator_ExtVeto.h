@@ -11,6 +11,7 @@
 #include <JANA/jerror.h>
 #include <JANA/JFactoryGenerator.h>
 
+#include "ExtVetoPMTHit_factory.h"
 #include "ExtVetoDigiHit_factory.h"
 #include "ExtVetoHit_factory.h"
 
@@ -23,6 +24,7 @@ class JFactoryGenerator_ExtVeto: public jana::JFactoryGenerator{
 		static const char* static_className(void){return "JFactoryGenerator_ExtVeto";}
 		
 		jerror_t GenerateFactories(jana::JEventLoop *loop){
+			loop->AddFactory(new ExtVetoPMTHit_factory());
 			loop->AddFactory(new ExtVetoDigiHit_factory());
 			loop->AddFactory(new ExtVetoHit_factory());
 			return NOERROR;

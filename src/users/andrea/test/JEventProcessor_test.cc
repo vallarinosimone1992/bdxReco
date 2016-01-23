@@ -15,6 +15,7 @@ using namespace std;
 #include <DAQ/fa250Mode1Hit.h>
 #include <TT/TranslationTable.h>
 #include <IntVeto/IntVetoDigiHit.h>
+#include <IntVeto/IntVetoSiPMHit.h>
 #include <system/JROOTOutput.h>
 
 #include "TApplication.h"
@@ -132,8 +133,8 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop, int eventnumber)
 	// since multiple threads may call this method at the same time.
 	// Here's an example:
 	//
-	vector<const IntVetoDigiHit*> data;
-	vector<const IntVetoDigiHit*>::const_iterator data_it;
+	vector<const IntVetoSiPMHit*> data;
+	vector<const IntVetoSiPMHit*>::const_iterator data_it;
 	loop->Get(data);
 
 	japp->RootWriteLock();

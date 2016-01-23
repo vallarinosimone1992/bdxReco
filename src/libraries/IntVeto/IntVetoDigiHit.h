@@ -1,38 +1,43 @@
 // $Id$
 //
-//    File: VetoIntDigiHit.h
-// Created: Tue Jan 12 11:52:41 CET 2016
+//    File: IntVetoDigiHit.h
+// Created: Wed Jan 20 16:42:38 CET 2016
 // Creator: celentan (on Linux apcx4 2.6.32-504.30.3.el6.x86_64 x86_64)
 //
 
-#ifndef _VetoIntDigiHit_
-#define _VetoIntDigiHit_
+#ifndef _IntVetoDigiHit_
+#define _IntVetoDigiHit_
 
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
-
 #include <TT/TranslationTable.h>
+/*
+ * A.C.
+ * This object represents a not-yet calibrated it in the inner veto.
+ * The goal of this object is dual:
+ * - Do the matching of the different IntVetoSiPMhit hits corresponding to the SAME active volume (sector / layer / component)
+ * - Be as similar as possible to what is obtained from GEMC, while we wait GEMC producing composite, fadc-like, banks.
+ */
 
 class IntVetoDigiHit:public jana::JObject{
-	public:
-		JOBJECT_PUBLIC(IntVetoDigiHit);
-		
-		// Add data members here. For example:
-		// int id;
-		// double E;
-		
-		// This method is used primarily for pretty printing
-		// the second argument to AddString is printf style format
-		void toStrings(vector<pair<string,string> > &items)const{
-			// AddString(items, "id", "%4d", id);
-			// AddString(items, "E", "%f", E);
-		}
-		
-	public: //yes, these are public to keep this simple.
-		TranslationTable::ChannelInfo m_channel; //both crate-slot channel and detector-specific ID
-		double Q,T;
+public:
+	JOBJECT_PUBLIC(IntVetoDigiHit);
+
+	// Add data members here. For example:
+	// int id;
+	// double E;
+
+	// This method is used primarily for pretty printing
+	// the second argument to AddString is printf style format
+	void toStrings(vector<pair<string,string> > &items)const{
+		// AddString(items, "id", "%4d", id);
+		// AddString(items, "E", "%f", E);
+	}
+	//A.C. do not touch these
+	TranslationTable::ChannelInfo m_channel; //both crate-slot channel and detector-specific ID. Since this is a sensor-based object, the readout field will be !=0
+	vector <oid_t> IntVetoSIPMHit_id;
 
 };
 
-#endif // _VetoIntDigiHit_
+#endif // _IntVetoDigiHit_
 

@@ -1,21 +1,19 @@
 // $Id$
 //
-//    File: ExtVetoHit.h
-// Created: Wed Jan 13 21:06:44 CET 2016
-// Creator: celentan (on Linux localhost.localdomain 2.6.32-504.30.3.el6.x86_64 x86_64)
+//    File: FadcConverter.h
+// Created: Wed Jan 20 19:27:33 CET 2016
+// Creator: celentan (on Linux apcx4 2.6.32-504.30.3.el6.x86_64 x86_64)
 //
 
-#ifndef _ExtVetoHit_
-#define _ExtVetoHit_
+#ifndef _FadcConverter_
+#define _FadcConverter_
 
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
 
-#include <DAQ/faIntegratedHit.h>
-
-class ExtVetoHit:public faIntegratedHit{
+class FadcConverter:public jana::JObject{
 	public:
-		JOBJECT_PUBLIC(ExtVetoHit);
+		JOBJECT_PUBLIC(FadcConverter);
 		
 		// Add data members here. For example:
 		// int id;
@@ -30,5 +28,5 @@ class ExtVetoHit:public faIntegratedHit{
 		
 };
 
-#endif // _ExtVetoHit_
+#endif // _FadcConverter_
 

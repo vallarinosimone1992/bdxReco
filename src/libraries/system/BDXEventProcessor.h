@@ -20,6 +20,7 @@ using namespace evio;
 //ROOT headers
 #include "TFile.h"
 
+class TranslationTable;
 class JOutput;
 
 /*This class is the "main" event processor, that gets called in any case,
@@ -47,7 +48,7 @@ class BDXEventProcessor:public JEventProcessor
 		string			 outType,outFile;
 
 		JOutput		*m_output;
-
+		const TranslationTable *m_tt;
 	//		TFile *outf;
 
 

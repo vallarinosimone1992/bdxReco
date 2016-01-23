@@ -1,7 +1,7 @@
 // $Id$
 //
-//    File: ExtVetoDigiHit_factory.cc
-// Created: Wed Jan 20 18:22:52 CET 2016
+//    File: FadcConverter_factory.cc
+// Created: Wed Jan 20 19:27:33 CET 2016
 // Creator: celentan (on Linux apcx4 2.6.32-504.30.3.el6.x86_64 x86_64)
 //
 
@@ -10,13 +10,13 @@
 #include <iomanip>
 using namespace std;
 
-#include "ExtVetoDigiHit_factory.h"
+#include "FadcConverter_factory.h"
 using namespace jana;
 
 //------------------
 // init
 //------------------
-jerror_t ExtVetoDigiHit_factory::init(void)
+jerror_t FadcConverter_factory::init(void)
 {
 	return NOERROR;
 }
@@ -24,7 +24,7 @@ jerror_t ExtVetoDigiHit_factory::init(void)
 //------------------
 // brun
 //------------------
-jerror_t ExtVetoDigiHit_factory::brun(jana::JEventLoop *eventLoop, int runnumber)
+jerror_t FadcConverter_factory::brun(jana::JEventLoop *eventLoop, int runnumber)
 {
 	return NOERROR;
 }
@@ -32,16 +32,16 @@ jerror_t ExtVetoDigiHit_factory::brun(jana::JEventLoop *eventLoop, int runnumber
 //------------------
 // evnt
 //------------------
-jerror_t ExtVetoDigiHit_factory::evnt(JEventLoop *loop, int eventnumber)
+jerror_t FadcConverter_factory::evnt(JEventLoop *loop, int eventnumber)
 {
 
 	// Code to generate factory data goes here. Add it like:
 	//
-	// ExtVetoDigiHit *myExtVetoDigiHit = new ExtVetoDigiHit;
-	// myExtVetoDigiHit->x = x;
-	// myExtVetoDigiHit->y = y;
+	// FadcConverter *myFadcConverter = new FadcConverter;
+	// myFadcConverter->x = x;
+	// myFadcConverter->y = y;
 	// ...
-	// _data.push_back(myExtVetoDigiHit);
+	// _data.push_back(myFadcConverter);
 	//
 	// Note that the objects you create here will be deleted later
 	// by the system and the _data vector will be cleared automatically.
@@ -52,7 +52,7 @@ jerror_t ExtVetoDigiHit_factory::evnt(JEventLoop *loop, int eventnumber)
 //------------------
 // erun
 //------------------
-jerror_t ExtVetoDigiHit_factory::erun(void)
+jerror_t FadcConverter_factory::erun(void)
 {
 	return NOERROR;
 }
@@ -60,7 +60,7 @@ jerror_t ExtVetoDigiHit_factory::erun(void)
 //------------------
 // fini
 //------------------
-jerror_t ExtVetoDigiHit_factory::fini(void)
+jerror_t FadcConverter_factory::fini(void)
 {
 	return NOERROR;
 }

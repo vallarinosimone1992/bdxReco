@@ -1,21 +1,20 @@
 // $Id$
 //
-//    File: IntVetoDigiHit_factory.h
-// Created: Wed Jan 20 16:42:38 CET 2016
+//    File: FadcConverter_factory.h
+// Created: Wed Jan 20 19:27:33 CET 2016
 // Creator: celentan (on Linux apcx4 2.6.32-504.30.3.el6.x86_64 x86_64)
 //
 
-#ifndef _IntVetoDigiHit_factory_
-#define _IntVetoDigiHit_factory_
+#ifndef _FadcConverter_factory_
+#define _FadcConverter_factory_
 
 #include <JANA/JFactory.h>
-#include "IntVetoDigiHit.h"
-#include <TT/TranslationTable.h>
+#include "FadcConverter.h"
 
-class IntVetoDigiHit_factory:public jana::JFactory<IntVetoDigiHit>{
+class FadcConverter_factory:public jana::JFactory<FadcConverter>{
 	public:
-		IntVetoDigiHit_factory(){};
-		~IntVetoDigiHit_factory(){};
+		FadcConverter_factory(){};
+		~FadcConverter_factory(){};
 
 
 	private:
@@ -24,12 +23,7 @@ class IntVetoDigiHit_factory:public jana::JFactory<IntVetoDigiHit>{
 		jerror_t evnt(jana::JEventLoop *eventLoop, int eventnumber);	///< Called every event.
 		jerror_t erun(void);						///< Called everytime run number changes, provided brun has been called.
 		jerror_t fini(void);						///< Called after last event of last event source has been processed.
-
-		const TranslationTable *m_tt;
-
-		std::map<TranslationTable::INT_VETO_Index_t,IntVetoDigiHit*> m_map;
-		std::map<TranslationTable::INT_VETO_Index_t,IntVetoDigiHit*>::iterator m_map_it;
 };
 
-#endif // _IntVetoDigiHit_factory_
+#endif // _FadcConverter_factory_
 
