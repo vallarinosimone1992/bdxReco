@@ -169,10 +169,10 @@ jerror_t JEventProcessor_test::erun(void)
 jerror_t JEventProcessor_test::fini(void)
 {
 	// Called before program exit after event processing is finished.
-	TCanvas *c=new TCanvas("c","c");
-	h->Draw();
+//	TCanvas *c=new TCanvas("c","c");
+//	h->Draw();
 	//	TApplication gui("gui",0,NULL);
-	c->Print("out.ps");
+	//c->Print("out.ps");
 	//	gui.Run(1);
 	return NOERROR;
 }
