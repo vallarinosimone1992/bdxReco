@@ -14,15 +14,17 @@
 #include "IntVetoSiPMHit_factory.h"
 #include "IntVetoDigiHit_factory.h"
 #include "IntVetoHit_factory.h"
-class JFactoryGenerator_VETO_INT: public jana::JFactoryGenerator{
+#include "IntVetofa250Converter_factory.h"
+class JFactoryGenerator_IntVeto: public jana::JFactoryGenerator{
 	public:
-		JFactoryGenerator_VETO_INT(){}
-		virtual ~JFactoryGenerator_VETO_INT(){}
+		JFactoryGenerator_IntVeto(){}
+		virtual ~JFactoryGenerator_IntVeto(){}
 		virtual const char* className(void){return static_className();}
 		static const char* static_className(void){return "JFactoryGenerator_VETO_INT";}
 		
 		jerror_t GenerateFactories(jana::JEventLoop *loop){
 			loop->AddFactory(new IntVetoSiPMHit_factory());
+			loop->AddFactory(new IntVetofa250Converter_factory());
 			loop->AddFactory(new IntVetoDigiHit_factory());
 			loop->AddFactory(new IntVetoHit_factory());
 

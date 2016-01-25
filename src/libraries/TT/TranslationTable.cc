@@ -40,7 +40,7 @@ bool operator<(const TranslationTable::csc_t &a, const TranslationTable::csc_t &
 	if (a.slot < b.slot) return true;
 	if (a.slot > b.slot) return false;
 	if (a.channel < b.channel) return true;
-	if (a.channel > b.channel) return true;
+	if (a.channel > b.channel) return false;
 	return false;
 }
 
@@ -204,6 +204,13 @@ void TranslationTable::ReadTranslationTable(JCalibration *jcalib)
 
 	pthread_mutex_unlock(&Get_TT_Mutex());
 	Get_TT_Initialized() = true;
+	if (VERBOSE > 6){
+		std::map<TranslationTable::csc_t, TranslationTable::ChannelInfo>::const_iterator it;
+		for (it=Get_TT().begin();it!=Get_TT().end();it++){
+			jout<<"Crate: "<<(it)->first.rocid<<" Slot: "<<(it)->first.slot<<" "<<" Channel: "<<(it)->first.channel<<" Detector: "<<DetectorName((it)->second.det_sys)<<endl;
+		}
+	}
+
 }
 
 
@@ -325,6 +332,8 @@ void StartElement(void *userData, const char *xmlname, const char **atts)
 		for (int i=0; atts[i]; i+=2) {
 			string tag(atts[i+0]);
 			string sval(atts[i+1]);
+
+
 			int ival = atoi(atts[i+1]);
 
 			if (tag == "number")
@@ -369,20 +378,20 @@ void StartElement(void *userData, const char *xmlname, const char **atts)
 		//This is the part that - probably - has to be modified
 		switch (ci.det_sys) {
 		case TranslationTable::EXT_VETO:
-			ci.veto_ext.sector = sector;
-			ci.veto_ext.layer = layer;
-			ci.veto_ext.component = component;
-			ci.veto_ext.readout = readout;
+			ci.ext_veto.sector = sector;
+			ci.ext_veto.layer = layer;
+			ci.ext_veto.component = component;
+			ci.ext_veto.readout = readout;
 			break;
 		case TranslationTable::INT_VETO:
-			ci.veto_int.sector = sector;
-			ci.veto_int.layer = layer;
-			ci.veto_int.component = component;
-			ci.veto_int.readout = readout;
+			ci.int_veto.sector = sector;
+			ci.int_veto.layer = layer;
+			ci.int_veto.component = component;
+			ci.int_veto.readout = readout;
 			break;
 		case TranslationTable::CALO:
 			ci.calo.sector = sector;
-			ci.calo.x = column;  //A.C. fine, x is a row
+			ci.calo.x = column;  //A.C. fine, x is a column and y is a row
 			ci.calo.y = row;
 			ci.calo.readout = readout;
 			break;

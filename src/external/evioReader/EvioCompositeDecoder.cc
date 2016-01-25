@@ -63,14 +63,14 @@ void    EvioCompositeDecoder::decode(vector<uint32_t> *vec, int dataSize){
 		bankNChannels     = getInt32( data, offset + 1 + 4 + 8);
 		offset = offset + 1 + 4 + 8 + 4;
 
-		if (bankNChannels<=0) continue;
-		if ((bankSlot<0)||(bankSlot>21)) continue;
+		if (bankNChannels<=0) continue; //A.C. work-around
+		if (bankNChannels>16) continue;  //A.C. work-around
+		if ((bankSlot<=0)||(bankSlot>21)) continue;  //A.C. work-around
 
 		/* cout << " decoding : SLOT = " << (unsigned int) bankSlot
 	 << "  TRIGGER = " << bankTrigger 
 	 << "  TIME = " << bankTime 
-	 << " NCHAN = " << bankNChannels  << endl;
-		 */
+	 << " NCHAN = " << bankNChannels  << endl;*/
 
 
 		nchannels = 0;
@@ -81,7 +81,7 @@ void    EvioCompositeDecoder::decode(vector<uint32_t> *vec, int dataSize){
 			chan    = getInt8(data,offset);
 			samples = getInt32(data,offset+1);
 			offset = offset + 1 + 4;
-			//  cout << " CHANNEL = " << (unsigned int) chan << "  SAMPLES = " << (unsigned int) samples << "  " << endl;
+		//	cout << " CHANNEL = " << (unsigned int) chan << "  SAMPLES = " << (unsigned int) samples << "  " << endl;
 			//cout << offset <<" "<<dataSize*4<<endl;
 			//offset + samples*sizeof(short) << "  " << dataSize << endl;;
 			if(offset + samples*sizeof(short) > dataSize*4) break;

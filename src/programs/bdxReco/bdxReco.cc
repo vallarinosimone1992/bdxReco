@@ -13,7 +13,7 @@ using namespace jana;
 #include <DAQ/JFactoryGenerator_DAQ.h>
 #include <TT/JFactoryGenerator_TT.h>
 #include <IntVeto/JFactoryGenerator_IntVeto.h>
-
+#include <ExtVeto/JFactoryGenerator_ExtVeto.h>
 
 // C++ headers
 #include <iostream>
@@ -44,8 +44,8 @@ int main(int narg, char *argv[])
 
 	app.AddFactoryGenerator(new JFactoryGenerator_DAQ());
 	app.AddFactoryGenerator(new JFactoryGenerator_TT());
-	app.AddFactoryGenerator(new JFactoryGenerator_VETO_INT());
-
+	app.AddFactoryGenerator(new JFactoryGenerator_ExtVeto());
+	app.AddFactoryGenerator(new JFactoryGenerator_IntVeto());
 	app.AddProcessor(new BDXEventProcessor(bdxOpt));
 
 	app.Run();

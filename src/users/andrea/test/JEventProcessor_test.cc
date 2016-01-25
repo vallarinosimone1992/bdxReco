@@ -13,14 +13,22 @@ using namespace std;
 #include "system/BDXEventProcessor.h"
 
 #include <DAQ/fa250Mode1Hit.h>
+
 #include <TT/TranslationTable.h>
+
 #include <IntVeto/IntVetoDigiHit.h>
 #include <IntVeto/IntVetoSiPMHit.h>
+
+#include <ExtVeto/ExtVetoPMTHit.h>
+#include <ExtVeto/ExtVetoDigiHit.h>
+
+
 #include <system/JROOTOutput.h>
 
 #include "TApplication.h"
 #include "TH1D.h"
 #include "TCanvas.h"
+#include "TTree.h"
 
 // Routine used to create our JEventProcessor
 #include <JANA/JApplication.h>
@@ -68,6 +76,10 @@ jerror_t JEventProcessor_test::init(void)
 	//
 	jout<<"test::init is called"<<std::endl;
 	h=new TH1D("h","h1",400,-111110.5,11399.5);
+	t=new TTree("tout","tout");
+
+	t->Branch("component",&component);
+	t->Branch("Q",&Q);
 	app->RootWriteLock();
 
 
@@ -112,6 +124,7 @@ jerror_t JEventProcessor_test::brun(JEventLoop *loop, int runnumber)
 		/*For ALL objects you want to add to ROOT file, use the following:*/
 		if (m_ROOTOutput){
 			m_ROOTOutput->AddObject(h);
+			m_ROOTOutput->AddObject(t);
 		}
 
 	}
@@ -133,17 +146,20 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop, int eventnumber)
 	// since multiple threads may call this method at the same time.
 	// Here's an example:
 	//
-	vector<const IntVetoSiPMHit*> data;
-	vector<const IntVetoSiPMHit*>::const_iterator data_it;
+	vector<const ExtVetoPMTHit*> data;
+	vector<const ExtVetoPMTHit*>::const_iterator data_it;
 	loop->Get(data);
+
 
 	japp->RootWriteLock();
 	//  ... fill historgrams or trees ...
 	for (data_it=data.begin();data_it<data.end();data_it++){
-			if (((*data_it)->m_channel.CSC.slot==4)&&((*data_it)->m_channel.CSC.channel==1)){
-				h->Fill((*data_it)->Q);
-			}
-		}
+		component=(*data_it)->m_channel.ext_veto.component;
+		Q=(*data_it)->Q;
+
+		t->Fill();
+	}
+
 
 	japp->RootUnLock();
 

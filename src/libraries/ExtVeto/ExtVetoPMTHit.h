@@ -5,16 +5,17 @@
 // Creator: celentan (on Linux localhost.localdomain 2.6.32-504.30.3.el6.x86_64 x86_64)
 //
 
-#ifndef _ExtVetoDigiHit_
-#define _ExtVetoDigiHit_
+#ifndef _ExtVetoPMTHit_
+#define _ExtVetoPMTHit_
 
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
 #include <TT/TranslationTable.h>
 
-class ExtVetoPMTHit:public jana::JObject{
+#include <DAQ/fa250ConvertedHit.h>
+class ExtVetoPMTHit:public fa250ConvertedHit{
 public:
-	JOBJECT_PUBLIC(ExtVetoDigiHit);
+	JOBJECT_PUBLIC(ExtVetoPMTHit);
 
 	// Add data members here. For example:
 	// int id;
@@ -33,5 +34,5 @@ public:
 	double Q,T;
 };
 
-#endif // _ExtVetoDigiHit_
+#endif //
 

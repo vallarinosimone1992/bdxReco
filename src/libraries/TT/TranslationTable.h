@@ -170,8 +170,8 @@ public:
 		//DModuleType::type_id_t module_type;
 		Detector_t det_sys;
 		union{
-			EXT_VETO_Index_t veto_ext;
-			INT_VETO_Index_t veto_int;
+			EXT_VETO_Index_t ext_veto;
+			INT_VETO_Index_t int_veto;
 			CALO_Index_t calo;
 			OTHER_Index_t other;
 		};

@@ -5,8 +5,8 @@
 // Creator: celentan (on Linux apcx4 2.6.32-504.30.3.el6.x86_64 x86_64)
 //
 
-#ifndef _VetoIntDigiHit_factory_
-#define _VetoIntDigiHit_factory_
+#ifndef _VetoIntSIPMHit_factory_
+#define _VetoIntSIPMHit_factory_
 
 #include <JANA/JFactory.h>
 

@@ -11,11 +11,11 @@
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
 
-class faIntegratedHit :public jana::JObject {
+class fa250ConvertedHit :public jana::JObject {
 public:
-	JOBJECT_PUBLIC(faIntegratedHit);
+	JOBJECT_PUBLIC(fa250ConvertedHit);
 
-	virtual ~faIntegratedHit()=0; //A.C. purely virtual since I do not want to instantiate from this!
+	virtual ~fa250ConvertedHit()=0; //A.C. purely virtual since I do not want to instantiate from this!
 
 };
 

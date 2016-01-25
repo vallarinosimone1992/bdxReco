@@ -11,6 +11,7 @@
 #include <JANA/JEventProcessor.h>
 
 class TH1D;
+class TTree;
 class JROOTOutput;
 
 class JEventProcessor_test:public jana::JEventProcessor{
@@ -28,7 +29,12 @@ class JEventProcessor_test:public jana::JEventProcessor{
 
 		int m_isFirstCallToBrun;
 		TH1D *h;
+		TTree *t;
 		JROOTOutput *m_ROOTOutput;
+
+		double Q;
+		int component;
+
 
 };
 

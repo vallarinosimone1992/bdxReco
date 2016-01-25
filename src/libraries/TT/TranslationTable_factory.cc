@@ -33,7 +33,7 @@ jerror_t TranslationTable_factory::brun(jana::JEventLoop *eventLoop, int runnumb
 	// susequent events
 	_data.push_back(tt);
 	SetFactoryFlag(PERSISTANT);  /*This is very, very important: the Reset Method is not called at every event, so we do not clear data, and we
-	can gate the TranslationTable also in evnt method of other factories / event processors*/
+	can get the TranslationTable also in evnt method of other factories / event processors*/
 
 	// If restricting parsing, make sure it is set for this source
 //	tt->SetSystemsToParse(loop->GetJEvent().GetJEventSource());
@@ -48,17 +48,6 @@ jerror_t TranslationTable_factory::brun(jana::JEventLoop *eventLoop, int runnumb
 jerror_t TranslationTable_factory::evnt(JEventLoop *loop, int eventnumber)
 {
 
-	// Code to generate factory data goes here. Add it like:
-	//
-	// TranslationTable *myTranslationTable = new TranslationTable;
-	// myTranslationTable->x = x;
-	// myTranslationTable->y = y;
-	// ...
-	// _data.push_back(myTranslationTable);
-	//
-	// Note that the objects you create here will be deleted later
-	// by the system and the _data vector will be cleared automatically.
-
 	return NOERROR;
 }
 
@@ -67,12 +56,6 @@ jerror_t TranslationTable_factory::evnt(JEventLoop *loop, int eventnumber)
 //------------------
 jerror_t TranslationTable_factory::erun(void)
 {
-
-	// If we have a translation table already the delete it
-	if(tt){
-		delete tt;
-	}
-	_data.clear();
 	return NOERROR;
 
 }
@@ -82,6 +65,13 @@ jerror_t TranslationTable_factory::erun(void)
 //------------------
 jerror_t TranslationTable_factory::fini(void)
 {
+
+	// If we have a translation table already the delete it
+	if(tt){
+		delete tt;
+	}
+	_data.clear();
+	return NOERROR;
 	return NOERROR;
 }
 

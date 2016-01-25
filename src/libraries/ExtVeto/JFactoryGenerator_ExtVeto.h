@@ -14,7 +14,7 @@
 #include "ExtVetoPMTHit_factory.h"
 #include "ExtVetoDigiHit_factory.h"
 #include "ExtVetoHit_factory.h"
-
+#include "ExtVetofa250Converter_factory.h"
 
 class JFactoryGenerator_ExtVeto: public jana::JFactoryGenerator{
 	public:
@@ -25,8 +25,10 @@ class JFactoryGenerator_ExtVeto: public jana::JFactoryGenerator{
 		
 		jerror_t GenerateFactories(jana::JEventLoop *loop){
 			loop->AddFactory(new ExtVetoPMTHit_factory());
+			loop->AddFactory(new ExtVetofa250Converter_factory());
 			loop->AddFactory(new ExtVetoDigiHit_factory());
 			loop->AddFactory(new ExtVetoHit_factory());
+
 			return NOERROR;
 		}
 

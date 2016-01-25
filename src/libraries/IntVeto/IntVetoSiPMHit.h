@@ -5,15 +5,15 @@
 // Creator: celentan (on Linux apcx4 2.6.32-504.30.3.el6.x86_64 x86_64)
 //
 
-#ifndef _VetoIntDigiHit_
-#define _VetoIntDigiHit_
+#ifndef _VetoIntSiPMHit_
+#define _VetoIntSiPMHit_
 
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
-#include <DAQ/faIntegratedHit.h>
+#include <DAQ/fa250ConvertedHit.h>
 #include <TT/TranslationTable.h>
 
-class IntVetoSiPMHit:public faIntegratedHit{
+class IntVetoSiPMHit:public fa250ConvertedHit{
 	public:
 		JOBJECT_PUBLIC(IntVetoSiPMHit);
 		

@@ -60,6 +60,7 @@ jerror_t IntVetoDigiHit_factory::evnt(JEventLoop *loop, int eventnumber)
 
 	//1b: retrieve IntVetoSiPMHit objects
 	loop->Get(m_IntVetoSiPMHit);
+	jout<<"GOT: "<<m_IntVetoSiPMHit.size()<<endl;
 
 	/*Do the matching
 	/*Proceed in this way:
@@ -69,19 +70,19 @@ jerror_t IntVetoDigiHit_factory::evnt(JEventLoop *loop, int eventnumber)
 	 * if not exist, add it, and create a new IntVetoDigiHit
 	 * if exist, get it, and add the SiPM hit to the list of sipm hits of the IntVetoDigiHit
 	 */
+	m_map.clear();
 	for (it=m_IntVetoSiPMHit.begin(); it != m_IntVetoSiPMHit.end() ; it++){
 		m_channel = (*it)->m_channel;
-		m_channel.veto_int.readout = 0;
- 		m_map_it=m_map.find(m_channel.veto_int);
-
+		m_channel.int_veto.readout = 0;
+ 		m_map_it=m_map.find(m_channel.int_veto);
  		if (m_map_it == m_map.end()){ //not here. Create a new VetoIntDigiHit object, and associate the id of this SiPM hit with it
  			m_VetoIntDigiHit=new IntVetoDigiHit;
  			m_VetoIntDigiHit->m_channel=m_channel;
  			m_VetoIntDigiHit->IntVetoSIPMHit_id.push_back((*it)->id);
- 			m_map.insert(std::make_pair(m_channel.veto_int,m_VetoIntDigiHit));
+ 			m_map.insert(std::make_pair(m_channel.int_veto,m_VetoIntDigiHit));
 		}
  		else{ //element already exists. Get the VetoIntDigiHit and add this hit as id.
- 			m_VetoIntDigiHit=m_map[m_channel.veto_int];
+ 			m_VetoIntDigiHit=m_map[m_channel.int_veto];
  			m_VetoIntDigiHit->IntVetoSIPMHit_id.push_back((*it)->id);
  		}
 
@@ -92,7 +93,7 @@ jerror_t IntVetoDigiHit_factory::evnt(JEventLoop *loop, int eventnumber)
 	 */
 
 	for (m_map_it=m_map.begin();m_map_it!=m_map.end();m_map_it++){
-		//do here what is needed
+		//do here further elaborations!
 
 		_data.push_back((m_map_it)->second); //publish it
 	}

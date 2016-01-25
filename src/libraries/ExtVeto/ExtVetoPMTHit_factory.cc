@@ -18,7 +18,7 @@ using namespace std;
 #include <TT/TranslationTable.h>
 
 #include <ExtVeto/ExtVetoPMTHit.h>
-
+#include <ExtVeto/ExtVetofa250Converter.h>
 using namespace jana;
 
 //------------------
@@ -41,7 +41,14 @@ jerror_t ExtVetoPMTHit_factory::brun(jana::JEventLoop *eventLoop, int runnumber)
 		jerr<<" unable to get the TranslationTable from this run!"<<endl;
 		return OBJECT_NOT_AVAILABLE;
 	}
-	return NOERROR;
+
+	m_extVetofa250Converter=0;
+	eventLoop->GetSingle(m_extVetofa250Converter);
+	if (m_extVetofa250Converter==0){
+		jerr<<" unable to get the extVetofa250Converter!"<<endl;
+		return OBJECT_NOT_AVAILABLE;
+	}
+
 	return NOERROR;
 }
 
@@ -80,23 +87,11 @@ jerror_t ExtVetoPMTHit_factory::evnt(JEventLoop *loop, int eventnumber)
 		m_csc.rocid=(*it_fa250Mode1Hit)->crate;
 		m_csc.slot=(*it_fa250Mode1Hit)->slot;
 		m_csc.channel=(*it_fa250Mode1Hit)->channel;
-
 		m_channel=m_tt->getChannelInfo(m_csc);
-
 		//jout<<m_csc.rocid<<" "<<m_csc.slot<<" "<<m_csc.channel<<" "<<endl;
 		if (m_channel.det_sys==TranslationTable::INT_VETO){
-
 			//A.C. do not touch these
-			m_ExtVetoPMTHit=new ExtVetoPMTHit;
-			m_ExtVetoPMTHit->m_channel=m_channel;
-			m_ExtVetoPMTHit->fa250Hit_id=(*it_fa250Mode1Hit)->id;
-
-			//Routines to integrate charge and get time
-			m_ExtVetoPMTHit->Q=(*it_fa250Mode1Hit)->samples.at(0)+(*it_fa250Mode1Hit)->samples.at(1)+(*it_fa250Mode1Hit)->samples.at(2);
-			m_ExtVetoPMTHit->T=0;
-
-
-
+			m_ExtVetoPMTHit=m_extVetofa250Converter->convertHit((fa250Hit*)*it_fa250Mode1Hit,m_channel);
 			_data.push_back(m_ExtVetoPMTHit);
 		}
 	}
@@ -113,14 +108,7 @@ jerror_t ExtVetoPMTHit_factory::evnt(JEventLoop *loop, int eventnumber)
 
 
 			//A.C. do not touch these
-			m_ExtVetoPMTHit=new ExtVetoPMTHit;
-			m_ExtVetoPMTHit->m_channel=m_channel;
-			m_ExtVetoPMTHit->fa250Hit_id==(*it_fa250Mode1Hit)->id;
-
-
-			//Routines to get charge and get time
-			m_ExtVetoPMTHit->Q=0;
-			m_ExtVetoPMTHit->T=0;
+			m_ExtVetoPMTHit=m_extVetofa250Converter->convertHit((fa250Hit*)*it_fa250Mode7Hit,m_channel);
 			_data.push_back(m_ExtVetoPMTHit);
 		}
 	}

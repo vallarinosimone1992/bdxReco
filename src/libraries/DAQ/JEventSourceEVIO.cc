@@ -181,6 +181,7 @@ jerror_t JEventSourceEvio::GetObjects(JEvent &event, JFactory_base *factory)
 									hit->channel=decdata[loop].channel;
 									hit->samples=decdata[loop].samples;
 
+							//		jout<<hit->crate<<" "<<hit->slot<<" "<<hit->channel<<" "<<hit->samples.size()<<endl;
 									hit->trigger=decdata[loop].trigger;
 									hit->time=decdata[loop].time;
 									data.push_back(hit);

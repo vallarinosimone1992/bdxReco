@@ -64,6 +64,7 @@ jerror_t IntVetoSiPMHit_factory::evnt(JEventLoop *loop, int eventnumber)
 	loop->Get(m_fa250Mode1Hit);
 	loop->Get(m_fa250Mode7Hit);
 
+
 	/*2: Now we have the daq objects, still indexed as "crate-slot-channel"
 	 *	 Use the translation table to produce the digitized hit of the inner veto
 	 *	 Note that we can produce a single object type here, i.e. VetoIntDigiHit,
@@ -82,7 +83,7 @@ jerror_t IntVetoSiPMHit_factory::evnt(JEventLoop *loop, int eventnumber)
 
 		m_channel=m_tt->getChannelInfo(m_csc);
 
-		//jout<<m_csc.rocid<<" "<<m_csc.slot<<" "<<m_csc.channel<<" "<<endl;
+
 		if (m_channel.det_sys==TranslationTable::INT_VETO){
 
 			//A.C. do not touch these
@@ -93,8 +94,6 @@ jerror_t IntVetoSiPMHit_factory::evnt(JEventLoop *loop, int eventnumber)
 			//Routines to integrate charge and get time
 			m_VetoIntSiPMHit->Q=(*it_fa250Mode1Hit)->samples.at(0)+(*it_fa250Mode1Hit)->samples.at(1)+(*it_fa250Mode1Hit)->samples.at(2);
 			m_VetoIntSiPMHit->T=0;
-
-
 
 			_data.push_back(m_VetoIntSiPMHit);
 		}

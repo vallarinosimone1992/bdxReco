@@ -1,20 +1,20 @@
 // $Id$
 //
-//    File: FadcConverter_factory.h
-// Created: Wed Jan 20 19:27:33 CET 2016
+//    File: IntVetofa250Converter_factory.h
+// Created: Mon Jan 25 17:02:27 CET 2016
 // Creator: celentan (on Linux apcx4 2.6.32-504.30.3.el6.x86_64 x86_64)
 //
 
-#ifndef _FadcConverter_factory_
-#define _FadcConverter_factory_
+#ifndef _IntVetofa250Converter_factory_
+#define _IntVetofa250Converter_factory_
 
 #include <JANA/JFactory.h>
-#include "FadcConverter.h"
+#include "IntVetofa250Converter.h"
 
-class FadcConverter_factory:public jana::JFactory<FadcConverter>{
+class IntVetofa250Converter_factory:public jana::JFactory<IntVetofa250Converter>{
 	public:
-		FadcConverter_factory(){};
-		~FadcConverter_factory(){};
+		IntVetofa250Converter_factory():m_isFirstCallToBrun(1),m_intVetofa250Converter(0){};
+		~IntVetofa250Converter_factory(){};
 
 
 	private:
@@ -23,7 +23,10 @@ class FadcConverter_factory:public jana::JFactory<FadcConverter>{
 		jerror_t evnt(jana::JEventLoop *eventLoop, int eventnumber);	///< Called every event.
 		jerror_t erun(void);						///< Called everytime run number changes, provided brun has been called.
 		jerror_t fini(void);						///< Called after last event of last event source has been processed.
+
+		int m_isFirstCallToBrun;
+		IntVetofa250Converter *m_intVetofa250Converter;
 };
 
-#endif // _FadcConverter_factory_
+#endif // _IntVetofa250Converter_factory_
 

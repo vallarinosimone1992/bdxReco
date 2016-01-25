@@ -6,6 +6,8 @@
  */
 
 
-#include "faIntegratedHit.h"
+#include "fa250ConvertedHit.h"
 
-faIntegratedHit::~faIntegratedHit(){}
+fa250ConvertedHit::~fa250ConvertedHit(){
+
+}

@@ -5,13 +5,14 @@
 // Creator: celentan (on Linux localhost.localdomain 2.6.32-504.30.3.el6.x86_64 x86_64)
 //
 
-#ifndef _ExtVetoDigiHit_factory_
-#define _ExtVetoDigiHit_factory_
+#ifndef _ExtVetoPMTHit_factory_
+#define _ExtVetoPMTHit_factory_
 
 #include <JANA/JFactory.h>
 #include "ExtVetoPMTHit.h"
 
 class TranslationTable;
+class ExtVetofa250Converter;
 class ExtVetoPMTHit_factory:public jana::JFactory<ExtVetoPMTHit>{
 	public:
 		ExtVetoPMTHit_factory():m_tt(0){};
@@ -26,6 +27,7 @@ class ExtVetoPMTHit_factory:public jana::JFactory<ExtVetoPMTHit>{
 		jerror_t fini(void);						///< Called after last event of last event source has been processed.
 
 		const TranslationTable *m_tt;
+		const ExtVetofa250Converter *m_extVetofa250Converter;
 };
 
 #endif // _ExtVetoDigiHit_factory_

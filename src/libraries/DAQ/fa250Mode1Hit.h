@@ -11,7 +11,10 @@
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
 
-class fa250Mode1Hit:public jana::JObject{
+
+#include "fa250Hit.h"
+
+class fa250Mode1Hit:public fa250Hit{
 	public:
 		JOBJECT_PUBLIC(fa250Mode1Hit);
 		
@@ -19,8 +22,7 @@ class fa250Mode1Hit:public jana::JObject{
 		// int id;
 		// double E;
 		
-		int crate,slot,channel;
-		int time,trigger;
+
 		vector <short> samples;
 
 		// This method is used primarily for pretty printing

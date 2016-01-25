@@ -11,9 +11,9 @@
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
 
+#include "fa250Hit.h"
 
-
-class fa250Mode7Hit:public jana::JObject{
+class fa250Mode7Hit:public fa250Hit{
 
 public:
 	typedef struct{
@@ -31,15 +31,15 @@ public:
 	// Add data members here. For example:
 	// int id;
 	// double E;
-	int crate,slot,channel;
-	int time,trigger;
+
 	vector <pulse_t> pulses;
 
 	// This method is used primarily for pretty printing
 	// the second argument to AddString is printf style format
 	void toStrings(vector<pair<string,string> > &items)const{
-		// AddString(items, "id", "%4d", id);
-		// AddString(items, "E", "%f", E);
+		 AddString(items, "crate", "%4d", crate);
+		 AddString(items, "slot", "%4d", slot);
+		 AddString(items, "channel", "%4d", channel);
 	}
 
 
