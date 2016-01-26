@@ -31,7 +31,6 @@ jerror_t IntVetoDigiHit_factory::init(void)
 //------------------
 jerror_t IntVetoDigiHit_factory::brun(jana::JEventLoop *eventLoop, int runnumber)
 {
-	return NOERROR;
 
 	jout<<"VetoIntDigiHit_factory::brun new run number: "<<runnumber<<endl;
 	m_tt=0;

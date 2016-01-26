@@ -11,6 +11,7 @@
 using namespace std;
 
 #include "ExtVetoDigiHit_factory.h"
+#include <ExtVeto/ExtVetoPMTHit.h>
 using namespace jana;
 
 //------------------
@@ -35,16 +36,12 @@ jerror_t ExtVetoDigiHit_factory::brun(jana::JEventLoop *eventLoop, int runnumber
 jerror_t ExtVetoDigiHit_factory::evnt(JEventLoop *loop, int eventnumber)
 {
 
-	// Code to generate factory data goes here. Add it like:
-	//
-	// ExtVetoDigiHit *myExtVetoDigiHit = new ExtVetoDigiHit;
-	// myExtVetoDigiHit->x = x;
-	// myExtVetoDigiHit->y = y;
-	// ...
-	// _data.push_back(myExtVetoDigiHit);
-	//
-	// Note that the objects you create here will be deleted later
-	// by the system and the _data vector will be cleared automatically.
+	vector <const ExtVetoPMTHit *> m_data;
+	vector <const ExtVetoPMTHit *>::const_iterator m_it;
+
+	loop->Get(m_data);
+
+
 
 	return NOERROR;
 }
