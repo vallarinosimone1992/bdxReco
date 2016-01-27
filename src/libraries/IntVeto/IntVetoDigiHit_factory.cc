@@ -50,7 +50,7 @@ jerror_t IntVetoDigiHit_factory::evnt(JEventLoop *loop, int eventnumber)
 
 	TranslationTable::ChannelInfo m_channel;
 	TranslationTable::csc_t		  m_csc;
-	IntVetoDigiHit *m_VetoIntDigiHit=0;
+	IntVetoDigiHit *m_IntVetoDigiHit=0;
 
 	//1: Here, we get from the framework the objects we need to process
 	//1a: create vectors
@@ -75,14 +75,14 @@ jerror_t IntVetoDigiHit_factory::evnt(JEventLoop *loop, int eventnumber)
 		m_channel.int_veto.readout = 0;
  		m_map_it=m_map.find(m_channel.int_veto);
  		if (m_map_it == m_map.end()){ //not here. Create a new VetoIntDigiHit object, and associate the id of this SiPM hit with it
- 			m_VetoIntDigiHit=new IntVetoDigiHit;
- 			m_VetoIntDigiHit->m_channel=m_channel;
- 			m_VetoIntDigiHit->IntVetoSIPMHit_id.push_back((*it)->id);
- 			m_map.insert(std::make_pair(m_channel.int_veto,m_VetoIntDigiHit));
+ 			m_IntVetoDigiHit=new IntVetoDigiHit;
+ 			m_IntVetoDigiHit->m_channel=m_channel;
+ 			m_IntVetoDigiHit->IntVetoSIPMHit_id.push_back((*it)->id);
+ 			m_map.insert(std::make_pair(m_channel.int_veto,m_IntVetoDigiHit));
 		}
  		else{ //element already exists. Get the VetoIntDigiHit and add this hit as id.
- 			m_VetoIntDigiHit=m_map[m_channel.int_veto];
- 			m_VetoIntDigiHit->IntVetoSIPMHit_id.push_back((*it)->id);
+ 			m_IntVetoDigiHit=m_map[m_channel.int_veto];
+ 			m_IntVetoDigiHit->IntVetoSIPMHit_id.push_back((*it)->id);
  		}
 
 	}

@@ -34,7 +34,7 @@ public:
 		// AddString(items, "E", "%f", E);
 	}
 	//A.C. do not touch these
-	TranslationTable::ChannelInfo m_channel; //both crate-slot channel and detector-specific ID. Since this is a sensor-based object, the readout field will be !=0
+	TranslationTable::ChannelInfo m_channel; //both crate-slot channel and detector-specific ID. Since this is a detector-based object, the readout field will be ==0
 	vector <oid_t> IntVetoSIPMHit_id;
 
 };

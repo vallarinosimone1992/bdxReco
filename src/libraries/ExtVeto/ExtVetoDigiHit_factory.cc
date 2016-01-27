@@ -12,6 +12,9 @@ using namespace std;
 
 #include "ExtVetoDigiHit_factory.h"
 #include <ExtVeto/ExtVetoPMTHit.h>
+
+#include <TT/TranslationTable.h>
+
 using namespace jana;
 
 //------------------
@@ -27,7 +30,15 @@ jerror_t ExtVetoDigiHit_factory::init(void)
 //------------------
 jerror_t ExtVetoDigiHit_factory::brun(jana::JEventLoop *eventLoop, int runnumber)
 {
+	jout<<"ExtVetoDigiHit_factory::brun new run number: "<<runnumber<<endl;
+	m_tt=0;
+	eventLoop->GetSingle(m_tt);
+	if (m_tt==0){
+		jerr<<" unable to get the TranslationTable from this run!"<<endl;
+		return OBJECT_NOT_AVAILABLE;
+	}
 	return NOERROR;
+
 }
 
 //------------------
@@ -40,6 +51,22 @@ jerror_t ExtVetoDigiHit_factory::evnt(JEventLoop *loop, int eventnumber)
 	vector <const ExtVetoPMTHit *>::const_iterator m_it;
 
 	loop->Get(m_data);
+
+	/*Create here the digi hit from the PMT hit*/
+	ExtVetoDigiHit *m_ExtVetoDigiHit=0;
+
+	for (m_it=m_data.begin();m_it!=m_data.end();m_it++){
+		m_ExtVetoDigiHit=new ExtVetoDigiHit;
+
+		/*For now, very dummy!*/
+		m_ExtVetoDigiHit->m_channel=(*m_it)->m_channel;
+		m_ExtVetoDigiHit->m_channel.ext_veto.readout=0;  //since this is detector-based!
+		m_ExtVetoDigiHit->Q=(*m_it)->Q;
+		m_ExtVetoDigiHit->T=(*m_it)->T;
+		m_ExtVetoDigiHit->ExtVetoPMTHit_id=(*m_it)->id;
+
+		_data.push_back(m_ExtVetoDigiHit);
+	}
 
 
 

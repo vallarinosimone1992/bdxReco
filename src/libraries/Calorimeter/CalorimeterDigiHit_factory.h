@@ -1,20 +1,20 @@
 // $Id$
 //
-//    File: ExtVetoDigiHit_factory.h
-// Created: Wed Jan 20 18:22:52 CET 2016
+//    File: CalorimeterDigiHit_factory.h
+// Created: Wed Jan 27 16:39:57 CET 2016
 // Creator: celentan (on Linux apcx4 2.6.32-504.30.3.el6.x86_64 x86_64)
 //
 
-#ifndef _ExtVetoDigiHit_factory_
-#define _ExtVetoDigiHit_factory_
+#ifndef _CalorimeterDigiHit_factory_
+#define _CalorimeterDigiHit_factory_
 
 #include <JANA/JFactory.h>
-#include "ExtVetoDigiHit.h"
-class TranslationTable;
-class ExtVetoDigiHit_factory:public jana::JFactory<ExtVetoDigiHit>{
+#include "CalorimeterDigiHit.h"
+
+class CalorimeterDigiHit_factory:public jana::JFactory<CalorimeterDigiHit>{
 	public:
-		ExtVetoDigiHit_factory(){};
-		~ExtVetoDigiHit_factory(){};
+		CalorimeterDigiHit_factory(){};
+		~CalorimeterDigiHit_factory(){};
 
 
 	private:
@@ -23,9 +23,7 @@ class ExtVetoDigiHit_factory:public jana::JFactory<ExtVetoDigiHit>{
 		jerror_t evnt(jana::JEventLoop *eventLoop, int eventnumber);	///< Called every event.
 		jerror_t erun(void);						///< Called everytime run number changes, provided brun has been called.
 		jerror_t fini(void);						///< Called after last event of last event source has been processed.
-
-		const TranslationTable *m_tt;
 };
 
-#endif // _ExtVetoDigiHit_factory_
+#endif // _CalorimeterDigiHit_factory_
 

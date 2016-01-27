@@ -146,8 +146,8 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop, int eventnumber)
 	// since multiple threads may call this method at the same time.
 	// Here's an example:
 	//
-	vector<const ExtVetoPMTHit*> data;
-	vector<const ExtVetoPMTHit*>::const_iterator data_it;
+	vector<const ExtVetoDigiHit*> data;
+	vector<const ExtVetoDigiHit*>::const_iterator data_it;
 	loop->Get(data);
 
 
