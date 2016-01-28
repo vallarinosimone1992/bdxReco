@@ -1,7 +1,7 @@
 from utils import *
 from init_env import init_environment
 
-env = init_environment("qt5 gemc clas12 evio jana clhep root banks ccdb geant4")
+env = init_environment("qt5 gemc clas12 evio jana clhep root banks ccdb geant4 xercesc")
 
 debug = ARGUMENTS.get('debug', 0)
 if int(debug):

@@ -11,7 +11,7 @@
 //#include <stdint.h>
 //#include <sys/types.h>
 
-#if (defined(__APPLE__) && defined(__MACH__) && (__MAC_10_9))
+/*#if (defined(__APPLE__) && defined(__MACH__) && (__MAC_10_9))
 
 #ifndef uint8_t
 typedef unsigned __INT8_TYPE__ uint8_t;
@@ -37,12 +37,12 @@ typedef __INT16_TYPE__ int16_t;
 typedef long long int64_t;
 #endif
 
-#else 
+#else */
 
 #include <stdint.h>
 #include <string.h>
 
-#endif
+//#endif
 /*
 typedef struct CompositeADCRaw {
   int slot;
