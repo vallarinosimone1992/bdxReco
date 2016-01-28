@@ -19,13 +19,13 @@ using namespace std;
 //DAQ
 #include "fa250Mode1Hit.h"
 #include "fa250Mode7Hit.h"
+#include "triggerData.h"
 // CTOF
 #include <ctof/CTOFhit.h>
 
-
 // Constructor
 JEventSourceEvio::JEventSourceEvio(const char* source_name, goptions Opt):JEventSource(source_name),
-		chan(0),EDT(0),mother_tag(0),child_mode1_tag(0),child_mode7_tag(0)
+		chan(0),EDT(0),vme_mother_tag(0),child_mode1_tag(0),child_mode7_tag(0),eventHeader_tag(0)
 {
 	bdxOpt = Opt;
 
@@ -50,14 +50,18 @@ JEventSourceEvio::JEventSourceEvio(const char* source_name, goptions Opt):JEvent
 	gPARMS->SetDefaultParameter("DC:NWIRES",       dc_nwire);
 	 */
 
-	mother_tag=0x1;
+	vme_mother_tag=0x1;
 	child_mode1_tag=0xe101;
 	child_mode7_tag=0xe102;
+	child_trigger_tag=0xe118;
+	eventHeader_tag=0xC000;
 
-	gPARMS->SetDefaultParameter("DAQ:MOTHER_TAG",mother_tag);
+
+	gPARMS->SetDefaultParameter("DAQ:VME_MOTHER_TAG",vme_mother_tag);
 	gPARMS->SetDefaultParameter("DAQ:CHILD_MODE1_TAG",child_mode1_tag);
 	gPARMS->SetDefaultParameter("DAQ:CHILD_MODE7_TAG",child_mode7_tag);
-
+	gPARMS->SetDefaultParameter("DAQ:CHILD_TRIGGER_TAG",child_trigger_tag);
+	gPARMS->SetDefaultParameter("DAQ:EVENTHEADER_TAG",eventHeader_tag);
 
 	// open EVIO file - buffer is hardcoded at 3M... that right?
 	cout << hd_msg << " Opening input file " << source_name << "." << endl;
@@ -102,11 +106,23 @@ jerror_t JEventSourceEvio::GetEvent(JEvent &event)
 		//	Mevent *this_evt = new Mevent(EDT, hitTypes, &banksMap, 0);
 
 		event.SetJEventSource(this);
-		event.SetEventNumber(1);  ///TODO: to this better
-		event.SetRunNumber(-1);   ///TODO: to this better
 		event.SetRef(EDT);
 
 
+		//This part is fine for real data @ catania
+		evio::evioDOMNodeListP fullList     = EDT->getNodeList();
+		evio::evioDOMNodeList::const_iterator iter;
+		for(iter=fullList->begin(); iter!=fullList->end(); iter++) {
+					if((*iter)->tag==eventHeader_tag){
+						const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*iter);
+						int leafSize = leaf->getSize();
+						vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
+						event.SetEventNumber(pData->at(0));
+						break;
+					}
+		}
+
+		event.SetRunNumber(-1);   ///TODO: to this better
 
 		return NOERROR;
 	}
@@ -139,6 +155,7 @@ jerror_t JEventSourceEvio::GetObjects(JEvent &event, JFactory_base *factory)
 	//As suggested by David, do a check on the factory type to decide what to do
 	JFactory<fa250Mode1Hit> *fac_fa250Mode1hit = dynamic_cast<JFactory<fa250Mode1Hit>*>(factory);
 	JFactory<fa250Mode7Hit> *fac_fa250Mode7hit = dynamic_cast<JFactory<fa250Mode7Hit>*>(factory);
+	JFactory<triggerData> 	*fac_triggerData = dynamic_cast<JFactory<triggerData>*>(factory);
 
 	if(fac_fa250Mode1hit != NULL){
 		vector<fa250Mode1Hit*> data;
@@ -155,7 +172,7 @@ jerror_t JEventSourceEvio::GetObjects(JEvent &event, JFactory_base *factory)
 
 
 		for(iter=fullList->begin(); iter!=fullList->end(); iter++) {
-			if((*iter)->tag==mother_tag){
+			if((*iter)->tag==vme_mother_tag){
 
 				evio::evioDOMNodeList *leafList = (*iter)->getChildList();
 
@@ -181,7 +198,7 @@ jerror_t JEventSourceEvio::GetObjects(JEvent &event, JFactory_base *factory)
 									hit->channel=decdata[loop].channel;
 									hit->samples=decdata[loop].samples;
 
-							//		jout<<hit->crate<<" "<<hit->slot<<" "<<hit->channel<<" "<<hit->samples.size()<<endl;
+									//		jout<<hit->crate<<" "<<hit->slot<<" "<<hit->channel<<" "<<hit->samples.size()<<endl;
 									hit->trigger=decdata[loop].trigger;
 									hit->time=decdata[loop].time;
 									data.push_back(hit);
@@ -214,7 +231,7 @@ jerror_t JEventSourceEvio::GetObjects(JEvent &event, JFactory_base *factory)
 
 
 		for(iter=fullList->begin(); iter!=fullList->end(); iter++) {
-			if((*iter)->tag==mother_tag){
+			if((*iter)->tag==vme_mother_tag){
 
 				evio::evioDOMNodeList *leafList = (*iter)->getChildList();
 
@@ -261,9 +278,42 @@ jerror_t JEventSourceEvio::GetObjects(JEvent &event, JFactory_base *factory)
 		fac_fa250Mode7hit->CopyTo(data);
 		return NOERROR;
 	}
+	else if(fac_triggerData != NULL){
+		vector<triggerData*> data;
+		evioDOMTree* local_EDT=(evioDOMTree*)event.GetRef();
+
+		evio::evioDOMNodeListP fullList     = local_EDT->getNodeList();
+		evio::evioDOMNodeList::const_iterator iter;
+		evio::evioDOMNodeList::const_iterator branch;
 
 
 
+		for(iter=fullList->begin(); iter!=fullList->end(); iter++) {
+			if((*iter)->tag==vme_mother_tag){
+				evio::evioDOMNodeList *leafList = (*iter)->getChildList();
+
+				for(branch=leafList->begin();branch!=leafList->end(); branch++){
+					if( (*branch)->tag==child_trigger_tag){
+
+
+						const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*branch);
+						int leafSize = leaf->getSize();
+						vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
+						if (leafSize>0){
+							triggerData *this_triggerData=new triggerData();
+							for (int itrigWord=0;itrigWord<pData->size();itrigWord++){
+								this_triggerData->triggerWords.push_back(pData->at(itrigWord));
+							}
+							data.push_back(this_triggerData);
+						}
+
+					}
+				}
+			}
+		}
+		fac_triggerData->CopyTo(data);
+		return NOERROR;
+	}
 
 	/*Mevent* this_evt = (Mevent*)event.GetRef();
 

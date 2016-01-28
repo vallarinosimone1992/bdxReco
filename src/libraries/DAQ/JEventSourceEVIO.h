@@ -46,9 +46,12 @@ class JEventSourceEvio:public JEventSource
 	private:
 		evioFileChannel *chan;   // EVIO input channel
 		evioDOMTree *EDT;        // single-event evio-DOM-tree
-		int mother_tag;
+		int vme_mother_tag;    //tag of the bank containing banks with data from VME
 		int child_mode1_tag;
 		int child_mode7_tag;
+		int child_trigger_tag;
+
+		int eventHeader_tag;
 };
 
 #endif

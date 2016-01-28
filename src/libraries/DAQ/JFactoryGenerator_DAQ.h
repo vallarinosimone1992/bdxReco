@@ -13,7 +13,7 @@
 
 #include "fa250Mode1Hit_factory.h"
 #include "fa250Mode7Hit_factory.h"
-
+#include "triggerData_factory.h"
 
 class JFactoryGenerator_DAQ: public jana::JFactoryGenerator{
 	public:
@@ -25,6 +25,7 @@ class JFactoryGenerator_DAQ: public jana::JFactoryGenerator{
 		jerror_t GenerateFactories(jana::JEventLoop *loop){
 			loop->AddFactory(new fa250Mode1Hit_factory());
 			loop->AddFactory(new fa250Mode7Hit_factory());
+			loop->AddFactory(new triggerData_factory());
 			return NOERROR;
 		}
 

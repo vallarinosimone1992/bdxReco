@@ -16,6 +16,8 @@ using namespace std;
 
 #include <TT/TranslationTable.h>
 
+#include <DAQ/triggerData.h>
+
 #include <IntVeto/IntVetoDigiHit.h>
 #include <IntVeto/IntVetoSiPMHit.h>
 
@@ -149,6 +151,18 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop, int eventnumber)
 	vector<const ExtVetoDigiHit*> data;
 	vector<const ExtVetoDigiHit*>::const_iterator data_it;
 	loop->Get(data);
+
+	const triggerData* tData;
+	//has to be in a try-catch block, since if no trigger data is there (prestart - start - end events) trows it!
+	try{
+		loop->GetSingle(tData);
+	}
+	catch(unsigned long e){
+		jout<<"No trig bank here"<<endl;
+		return 	OBJECT_NOT_AVAILABLE;
+	}
+
+	jout<<eventnumber<<" : "<<tData->triggerWords[0]<<endl;
 
 
 	japp->RootWriteLock();
