@@ -13,7 +13,7 @@
 #include "IntVetoSiPMHit.h"
 
 class TranslationTable;
-
+class IntVetofa250Converter;
 class IntVetoSiPMHit_factory:public jana::JFactory<IntVetoSiPMHit>{
 	public:
 		IntVetoSiPMHit_factory():m_tt(0){};
@@ -28,6 +28,7 @@ class IntVetoSiPMHit_factory:public jana::JFactory<IntVetoSiPMHit>{
 		jerror_t fini(void);						///< Called after last event of last event source has been processed.
 
 		const TranslationTable *m_tt;
+		const IntVetofa250Converter *m_intVetofa250Converter;
 
 };
 

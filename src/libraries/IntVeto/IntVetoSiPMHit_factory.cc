@@ -16,7 +16,7 @@ using namespace std;
 #include <TT/TranslationTable.h>
 //objects we put in the framework
 #include <IntVeto/IntVetoSiPMHit.h>
-
+#include <IntVeto/IntVetofa250Converter.h>
 
 #include "IntVetoSiPMHit_factory.h"
 using namespace jana;
@@ -41,6 +41,14 @@ jerror_t IntVetoSiPMHit_factory::brun(jana::JEventLoop *eventLoop, int runnumber
 		jerr<<" unable to get the TranslationTable from this run!"<<endl;
 		return OBJECT_NOT_AVAILABLE;
 	}
+
+	m_intVetofa250Converter=0;
+	eventLoop->GetSingle(m_intVetofa250Converter);
+	if (m_intVetofa250Converter==0){
+		jerr<<" unable to get the extVetofa250Converter!"<<endl;
+		return OBJECT_NOT_AVAILABLE;
+	}
+
 	return NOERROR;
 }
 
@@ -51,7 +59,7 @@ jerror_t IntVetoSiPMHit_factory::evnt(JEventLoop *loop, int eventnumber)
 {
 	TranslationTable::ChannelInfo m_channel;
 	TranslationTable::csc_t		  m_csc;
-	IntVetoSiPMHit *m_VetoIntSiPMHit=0;
+	IntVetoSiPMHit *m_IntVetoSiPMHit=0;
 
 	//1: Here, we get from the framework the objects we need to process
 	//1a: create vectors
@@ -87,15 +95,10 @@ jerror_t IntVetoSiPMHit_factory::evnt(JEventLoop *loop, int eventnumber)
 		if (m_channel.det_sys==TranslationTable::INT_VETO){
 
 			//A.C. do not touch these
-			m_VetoIntSiPMHit=new IntVetoSiPMHit;
-			m_VetoIntSiPMHit->m_channel=m_channel;
-			m_VetoIntSiPMHit->fa250Hit_id=(*it_fa250Mode1Hit)->id;
-
-			//Routines to integrate charge and get time
-			m_VetoIntSiPMHit->Q=(*it_fa250Mode1Hit)->samples.at(0)+(*it_fa250Mode1Hit)->samples.at(1)+(*it_fa250Mode1Hit)->samples.at(2);
-			m_VetoIntSiPMHit->T=0;
-
-			_data.push_back(m_VetoIntSiPMHit);
+			m_IntVetoSiPMHit=new IntVetoSiPMHit;
+			m_IntVetoSiPMHit->m_channel=m_channel;
+			m_IntVetoSiPMHit=m_intVetofa250Converter->convertHit((fa250Hit*)*it_fa250Mode1Hit,m_channel);
+			_data.push_back(m_IntVetoSiPMHit);
 		}
 	}
 
@@ -111,15 +114,10 @@ jerror_t IntVetoSiPMHit_factory::evnt(JEventLoop *loop, int eventnumber)
 
 
 			//A.C. do not touch these
-			m_VetoIntSiPMHit=new IntVetoSiPMHit;
-			m_VetoIntSiPMHit->m_channel=m_channel;
-			m_VetoIntSiPMHit->fa250Hit_id==(*it_fa250Mode1Hit)->id;
-
-
-			//Routines to get charge and get time
-			m_VetoIntSiPMHit->Q=0;
-			m_VetoIntSiPMHit->T=0;
-			_data.push_back(m_VetoIntSiPMHit);
+			m_IntVetoSiPMHit=new IntVetoSiPMHit;
+			m_IntVetoSiPMHit->m_channel=m_channel;
+			m_IntVetoSiPMHit=m_intVetofa250Converter->convertHit((fa250Hit*)*it_fa250Mode7Hit,m_channel);
+			_data.push_back(m_IntVetoSiPMHit);
 		}
 	}
 

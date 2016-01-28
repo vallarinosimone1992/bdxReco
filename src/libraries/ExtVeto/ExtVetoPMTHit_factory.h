@@ -28,6 +28,7 @@ class ExtVetoPMTHit_factory:public jana::JFactory<ExtVetoPMTHit>{
 
 		const TranslationTable *m_tt;
 		const ExtVetofa250Converter *m_extVetofa250Converter;
+
 };
 
 #endif // _ExtVetoDigiHit_factory_

@@ -148,8 +148,8 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop, int eventnumber)
 	// since multiple threads may call this method at the same time.
 	// Here's an example:
 	//
-	vector<const ExtVetoDigiHit*> data;
-	vector<const ExtVetoDigiHit*>::const_iterator data_it;
+	vector<const IntVetoSiPMHit*> data;
+	vector<const IntVetoSiPMHit*>::const_iterator data_it;
 	loop->Get(data);
 
 	const triggerData* tData;
@@ -162,14 +162,17 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop, int eventnumber)
 		return 	OBJECT_NOT_AVAILABLE;
 	}
 
-	jout<<eventnumber<<" : "<<tData->triggerWords[0]<<endl;
+	//	jout<<eventnumber<<" : "<<tData->triggerWords[0]<<endl;
 
 
 	japp->RootWriteLock();
 	//  ... fill historgrams or trees ...
 	for (data_it=data.begin();data_it<data.end();data_it++){
-		component=(*data_it)->m_channel.ext_veto.component;
-		Q=(*data_it)->Q;
+		if ((*data_it)->m_channel.int_veto.readout==0) jout<<"CAZZOO"<<endl;
+		if ((*data_it)->m_channel.int_veto.component==0){
+			component=(*data_it)->m_channel.int_veto.readout;
+			Q=(*data_it)->Q;
+		}
 
 		t->Fill();
 	}
@@ -200,8 +203,8 @@ jerror_t JEventProcessor_test::erun(void)
 jerror_t JEventProcessor_test::fini(void)
 {
 	// Called before program exit after event processing is finished.
-//	TCanvas *c=new TCanvas("c","c");
-//	h->Draw();
+	//	TCanvas *c=new TCanvas("c","c");
+	//	h->Draw();
 	//	TApplication gui("gui",0,NULL);
 	//c->Print("out.ps");
 	//	gui.Run(1);

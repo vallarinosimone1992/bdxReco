@@ -25,9 +25,13 @@ IntVetoSiPMHit* IntVetofa250Converter::convertHit(const fa250Hit *hit,const Tran
 jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa250Mode1Hit *input) const{
 	int size=input->samples.size();
 	double Q=0;
-
+	double ped=0;
+	for (int ii=0;ii<=10;ii++){
+		ped+=input->samples.at(ii);
+	}
+	ped/=10;
 	for (int ii=0;ii<size;ii++){
-		Q+=input->samples.at(ii);
+		Q+=(input->samples.at(ii)-ped);
 	}
 	output->Q=Q;
 	output->T=0;
