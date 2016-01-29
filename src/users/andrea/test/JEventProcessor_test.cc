@@ -100,25 +100,31 @@ jerror_t JEventProcessor_test::brun(JEventLoop *loop, int runnumber)
 	/* To get access to the ROOT output, use exactly the following code */
 	if (m_isFirstCallToBrun){
 		string class_name,this_class_name;
+		string joutput_name;
 		BDXEventProcessor *m_BDXEventProcessor;
 		vector<JEventProcessor*> m_processors=app->GetProcessors();
 		vector<JEventProcessor*>::iterator m_processors_it;
 
 		m_isFirstCallToBrun=0;
 		class_name="BDXEventProcessor";
+		joutput_name="JROOTOutput";
 		//Now I need to determine which processor is the one holding the output. Discussing with David, he suggested just to check the class name, since
 		//a dynamic cast may not work with plugins
 		for (m_processors_it=m_processors.begin();m_processors_it!=m_processors.end();m_processors_it++){
 			if ((*m_processors_it)!=0){
-				this_class_name=(*m_processors_it)->className();
+				this_class_name=string((*m_processors_it)->className());
 				if (this_class_name==class_name){
 					m_BDXEventProcessor=(BDXEventProcessor*)(*m_processors_it);
-					if (m_ROOTOutput=dynamic_cast<JROOTOutput*>(m_BDXEventProcessor->getOutput())){
+					if (m_BDXEventProcessor->getOutput()==0){
+						jerr<<"BDXEventProcessor JOutput is null!"<<endl;
+						break;
+					}
+					if (string(m_BDXEventProcessor->getOutput()->className())==joutput_name){
+						m_ROOTOutput=(JROOTOutput*)(m_BDXEventProcessor->getOutput());
 						jout<<"Got JROOTOutput!"<<endl;
 					}
 					else{
-						if (m_BDXEventProcessor->getOutput()==0)	jerr<<"BDXEventProcessor JOutput is null!"<<endl;
-						else jerr<<"BDXEventProcessor JOutput is not null BUT can't dynamic_cast to JROOTOUtput"<<endl;
+						jerr<<"BDXEventProcessor JOutput is not null BUT class is: "<<m_BDXEventProcessor->getOutput()->className()<<endl;
 					}
 				}
 			}
