@@ -31,7 +31,7 @@ jerror_t ExtVetofa250Converter_factory::brun(jana::JEventLoop *eventLoop, int ru
 			m_extVetofa250Converter=new ExtVetofa250Converter();
 			_data.push_back(m_extVetofa250Converter);
 			SetFactoryFlag(PERSISTANT);
-		}
+	}
 	return NOERROR;
 }
 

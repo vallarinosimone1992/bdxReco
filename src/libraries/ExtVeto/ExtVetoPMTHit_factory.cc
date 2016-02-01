@@ -89,7 +89,7 @@ jerror_t ExtVetoPMTHit_factory::evnt(JEventLoop *loop, int eventnumber)
 		m_csc.channel=(*it_fa250Mode1Hit)->channel;
 		m_channel=m_tt->getChannelInfo(m_csc);
 		//jout<<m_csc.rocid<<" "<<m_csc.slot<<" "<<m_csc.channel<<" "<<endl;
-		if (m_channel.det_sys==TranslationTable::INT_VETO){
+		if (m_channel.det_sys==TranslationTable::EXT_VETO){
 			//A.C. do not touch these
 			m_ExtVetoPMTHit=m_extVetofa250Converter->convertHit((fa250Hit*)*it_fa250Mode1Hit,m_channel);
 			_data.push_back(m_ExtVetoPMTHit);
@@ -104,7 +104,7 @@ jerror_t ExtVetoPMTHit_factory::evnt(JEventLoop *loop, int eventnumber)
 		m_csc.slot=(*it_fa250Mode7Hit)->slot;
 		m_csc.channel=(*it_fa250Mode7Hit)->channel;
 		m_channel=m_tt->getChannelInfo(m_csc);
-		if (m_channel.det_sys==TranslationTable::INT_VETO){
+		if (m_channel.det_sys==TranslationTable::EXT_VETO){
 
 
 			//A.C. do not touch these

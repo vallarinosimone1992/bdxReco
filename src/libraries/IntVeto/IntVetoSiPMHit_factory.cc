@@ -93,7 +93,6 @@ jerror_t IntVetoSiPMHit_factory::evnt(JEventLoop *loop, int eventnumber)
 
 
 		if (m_channel.det_sys==TranslationTable::INT_VETO){
-
 			//A.C. do not touch these
 			m_IntVetoSiPMHit=new IntVetoSiPMHit;
 			m_IntVetoSiPMHit->m_channel=m_channel;
