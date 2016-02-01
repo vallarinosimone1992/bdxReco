@@ -11,6 +11,7 @@
 #include <JANA/JEventProcessor.h>
 
 class TH1D;
+class TH2D;
 class TTree;
 class JROOTOutput;
 
@@ -33,7 +34,7 @@ class JEventProcessor_test:public jana::JEventProcessor{
 		JROOTOutput *m_ROOTOutput;
 
 		double Q;
-		int component;
+		int component,eventN;
 
 
 };

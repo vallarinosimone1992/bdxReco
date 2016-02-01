@@ -53,8 +53,8 @@ void EvioFileReader::open(const char *filename)
 
 
         char buffer[256];
-        char * errorMessage = strerror_r( errno, buffer, 256 ); // get string message from errno
-        printf("Error: %i - %s \n",errno,errorMessage);
+        strerror_r( errno, buffer, 256 ); // get string message from errno
+        printf("Error: %i - %s \n",errno,buffer);
 
   }
   cout<<"Going to call evOpen now"<<endl;

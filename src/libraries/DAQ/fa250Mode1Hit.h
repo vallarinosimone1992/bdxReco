@@ -21,7 +21,7 @@ class fa250Mode1Hit:public fa250Hit{
 		// Add data members here. For example:
 		// int id;
 		// double E;
-		
+		static const double LSB = 0.4884;
 
 		vector <short> samples;
 

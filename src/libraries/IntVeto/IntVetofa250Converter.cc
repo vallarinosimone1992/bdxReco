@@ -26,11 +26,11 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 	int size=input->samples.size();
 	double Q=0;
 	double ped=0;
-	for (int ii=0;ii<=10;ii++){
+	for (int ii=0;ii<20;ii++){
 		ped+=input->samples.at(ii);
 	}
-	ped/=10;
-	for (int ii=0;ii<size;ii++){
+	ped/=20.;
+	for (int ii=20;ii<size;ii++){
 		Q+=(input->samples.at(ii)-ped);
 	}
 	output->Q=Q;

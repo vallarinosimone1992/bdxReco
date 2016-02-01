@@ -27,9 +27,8 @@ using namespace std;
 
 #include <system/JROOTOutput.h>
 
-#include "TApplication.h"
 #include "TH1D.h"
-#include "TCanvas.h"
+#include "TH2D.h"
 #include "TTree.h"
 
 // Routine used to create our JEventProcessor
@@ -77,11 +76,12 @@ jerror_t JEventProcessor_test::init(void)
 	// japp->RootUnLock();
 	//
 	jout<<"test::init is called"<<std::endl;
-	h=new TH1D("h","h1",400,-111110.5,11399.5);
+	h=new TH1D("h","h",500,-0.5,499.5);
 	t=new TTree("tout","tout");
 
 	t->Branch("component",&component);
 	t->Branch("Q",&Q);
+	t->Branch("eventN",&eventN);
 	app->RootWriteLock();
 
 
@@ -150,6 +150,7 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop, int eventnumber)
 	//
 	vector<const IntVetoSiPMHit*> data;
 	vector<const IntVetoSiPMHit*>::const_iterator data_it;
+	const fa250Mode1Hit *fa;
 	loop->Get(data);
 
 	const triggerData* tData;
@@ -158,23 +159,37 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop, int eventnumber)
 		loop->GetSingle(tData);
 	}
 	catch(unsigned long e){
-		jout<<"No trig bank here"<<endl;
+		jout<<"No trig bank this event"<<endl;
 		return 	OBJECT_NOT_AVAILABLE;
 	}
 
-	//	jout<<eventnumber<<" : "<<tData->triggerWords[0]<<endl;
-
+	int tWord=tData->triggerWords.at(0);
+	int isMPPC=0;
+	for (int ii=0;ii<4;ii++){
+		if ((((tWord)>>ii)&0x1)&&(ii==2)) isMPPC=1;
+	}
+	if (!isMPPC) return OBJECT_NOT_AVAILABLE;
 
 	japp->RootWriteLock();
 	//  ... fill historgrams or trees ...
 	for (data_it=data.begin();data_it<data.end();data_it++){
-		if ((*data_it)->m_channel.int_veto.readout==0) jout<<"CAZZOO"<<endl;
-		if ((*data_it)->m_channel.int_veto.component==0){
+
+		if (((*data_it)->m_channel.int_veto.component==0)&&(((*data_it)->m_channel.int_veto.readout==1))){
+
+			fa=loop->FindByID<fa250Mode1Hit>((*data_it)->fa250Hit_id);
+			h->Reset();
+			h->SetName(Form("h%i",eventnumber));
+			for (int ii=0;ii<fa->samples.size();ii++){
+				h->Fill(ii,fa->samples.at(ii)*fa250Mode1Hit::LSB);
+			}
+			h->Write();
+			eventN=eventnumber;
 			component=(*data_it)->m_channel.int_veto.readout;
 			Q=(*data_it)->Q;
+			t->Fill();
 		}
 
-		t->Fill();
+
 	}
 
 
@@ -202,12 +217,7 @@ jerror_t JEventProcessor_test::erun(void)
 //------------------
 jerror_t JEventProcessor_test::fini(void)
 {
-	// Called before program exit after event processing is finished.
-	//	TCanvas *c=new TCanvas("c","c");
-	//	h->Draw();
-	//	TApplication gui("gui",0,NULL);
-	//c->Print("out.ps");
-	//	gui.Run(1);
+
 	return NOERROR;
 }
 
