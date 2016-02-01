@@ -403,7 +403,7 @@ int goptions::setOptMap(int argc, char **argv)
 		
 		// For MAC OS X, we want to ignore the -psn_# type argument. This argument is added by
 		// the system when launching an application as an "app", and # contains the process id.
-		if( found == 0 && strncmp(argv[i],"-psn_", 4) !=0 && ignoreNotFound == 0)
+		if( (found == 0) && (strncmp(argv[i],"-psn_", 4)!=0) && (ignoreNotFound == 0))
 		{
 			cout << " The argument " << argv[i] << " is not known to this system / or file not found. Continuing anyway.\n\n";
 			// exit(2);
