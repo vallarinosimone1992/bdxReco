@@ -51,6 +51,7 @@ class JEventSourceEvio:public JEventSource
 		int child_mode7_tag;
 		int child_trigger_tag;
 		int eventHeader_tag;
+		int eventHeader_CODA_tag;
 		int prestart_tag;
 
 		int curRunNumber,curEventNumber;

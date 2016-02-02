@@ -84,7 +84,6 @@ jerror_t IntVetoDigiHit_factory::evnt(JEventLoop *loop, int eventnumber)
  			m_IntVetoDigiHit=m_map[m_channel.int_veto];
  			m_IntVetoDigiHit->IntVetoSIPMHit_id.push_back((*it)->id);
  		}
-
 	}
 
 	/*Now the map is full of all the hits in different active elements of active veto, i.e. with different identifiers, BUT readout, that maps the sipm hits.

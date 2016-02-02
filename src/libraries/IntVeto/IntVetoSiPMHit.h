@@ -13,6 +13,7 @@
 #include <DAQ/fa250ConvertedHit.h>
 #include <TT/TranslationTable.h>
 
+
 class IntVetoSiPMHit:public fa250ConvertedHit{
 	public:
 		JOBJECT_PUBLIC(IntVetoSiPMHit);

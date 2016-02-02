@@ -11,9 +11,13 @@
 #include <JANA/JFactory.h>
 
 #include "IntVetoSiPMHit.h"
+#include "IntVetoCalibration.h"
 
-class TranslationTable;
 class IntVetofa250Converter;
+
+
+
+
 class IntVetoSiPMHit_factory:public jana::JFactory<IntVetoSiPMHit>{
 	public:
 		IntVetoSiPMHit_factory():m_tt(0){};
@@ -29,6 +33,8 @@ class IntVetoSiPMHit_factory:public jana::JFactory<IntVetoSiPMHit>{
 
 		const TranslationTable *m_tt;
 		const IntVetofa250Converter *m_intVetofa250Converter;
+
+		IntVetoCalibration m_sipm_gain;
 
 };
 

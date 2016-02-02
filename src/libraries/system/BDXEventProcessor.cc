@@ -93,7 +93,7 @@ jerror_t BDXEventProcessor::evnt(JEventLoop *loop, int eventnumber)
 	//vector<const ctofHitR*> marcoC;
 	//loop->Get(marcoC);
 
-	jout<<"Event: "<<eventnumber<<std::endl;
+//	jout<<"Event: "<<eventnumber<<std::endl;
 
 
 	return NOERROR;

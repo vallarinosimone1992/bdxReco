@@ -181,7 +181,7 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop, int eventnumber)
 	for (data_it=data.begin();data_it<data.end();data_it++){
 
 		if (((*data_it)->m_channel.int_veto.component==0)&&(((*data_it)->m_channel.int_veto.readout==1))){
-
+			jout<<eventnumber<<" "<<((*data_it)->fa250Hit_id)<<endl;
 			fa=loop->FindByID<fa250Mode1Hit>((*data_it)->fa250Hit_id);
 			h->Reset();
 			h->SetName(Form("h%i",eventnumber));
