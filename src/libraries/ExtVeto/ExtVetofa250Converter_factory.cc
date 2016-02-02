@@ -24,7 +24,7 @@ jerror_t ExtVetofa250Converter_factory::init(void)
 //------------------
 // brun
 //------------------
-jerror_t ExtVetofa250Converter_factory::brun(jana::JEventLoop *eventLoop, int runnumber)
+jerror_t ExtVetofa250Converter_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber)
 {
 	if (m_isFirstCallToBrun){
 			m_isFirstCallToBrun=0;
@@ -38,7 +38,7 @@ jerror_t ExtVetofa250Converter_factory::brun(jana::JEventLoop *eventLoop, int ru
 //------------------
 // evnt
 //------------------
-jerror_t ExtVetofa250Converter_factory::evnt(JEventLoop *loop, int eventnumber)
+jerror_t ExtVetofa250Converter_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 
 	// Code to generate factory data goes here. Add it like:

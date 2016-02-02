@@ -28,7 +28,7 @@ jerror_t ExtVetoDigiHit_factory::init(void)
 //------------------
 // brun
 //------------------
-jerror_t ExtVetoDigiHit_factory::brun(jana::JEventLoop *eventLoop, int runnumber)
+jerror_t ExtVetoDigiHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber)
 {
 	jout<<"ExtVetoDigiHit_factory::brun new run number: "<<runnumber<<endl;
 	m_tt=0;
@@ -44,7 +44,7 @@ jerror_t ExtVetoDigiHit_factory::brun(jana::JEventLoop *eventLoop, int runnumber
 //------------------
 // evnt
 //------------------
-jerror_t ExtVetoDigiHit_factory::evnt(JEventLoop *loop, int eventnumber)
+jerror_t ExtVetoDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 
 	vector <const ExtVetoPMTHit *> m_data;

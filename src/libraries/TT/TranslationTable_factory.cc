@@ -24,7 +24,7 @@ jerror_t TranslationTable_factory::init(void)
 //------------------
 // brun
 //------------------
-jerror_t TranslationTable_factory::brun(jana::JEventLoop *eventLoop, int runnumber)
+jerror_t TranslationTable_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber)
 {
 	// Grab run-dependent translation table from CCDB
 	tt = new TranslationTable(eventLoop);
@@ -45,7 +45,7 @@ jerror_t TranslationTable_factory::brun(jana::JEventLoop *eventLoop, int runnumb
 //------------------
 // evnt
 //------------------
-jerror_t TranslationTable_factory::evnt(JEventLoop *loop, int eventnumber)
+jerror_t TranslationTable_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 
 	return NOERROR;

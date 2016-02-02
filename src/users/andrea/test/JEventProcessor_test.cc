@@ -93,7 +93,7 @@ jerror_t JEventProcessor_test::init(void)
 //------------------
 // brun
 //------------------
-jerror_t JEventProcessor_test::brun(JEventLoop *loop, int runnumber)
+jerror_t JEventProcessor_test::brun(JEventLoop *loop, int32_t runnumber)
 {
 
 	// This is called whenever the run number changes
@@ -145,7 +145,7 @@ jerror_t JEventProcessor_test::brun(JEventLoop *loop, int runnumber)
 //------------------
 // evnt
 //------------------
-jerror_t JEventProcessor_test::evnt(JEventLoop *loop, int eventnumber)
+jerror_t JEventProcessor_test::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 	// This is called for every event. Use of common resources like writing
 	// to a file or filling a histogram should be mutex protected. Using

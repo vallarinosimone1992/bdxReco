@@ -29,14 +29,14 @@ jerror_t ctofHitR_factory::init(void)
 }
 
 // brun
-jerror_t ctofHitR_factory::brun(jana::JEventLoop *eventLoop, int runnumber)
+jerror_t ctofHitR_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber)
 {
 
 	return NOERROR;
 }
 
 // evnt
-jerror_t ctofHitR_factory::evnt(JEventLoop *loop, int eventnumber)
+jerror_t ctofHitR_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 	
 	

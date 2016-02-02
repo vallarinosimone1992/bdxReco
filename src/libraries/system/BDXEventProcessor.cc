@@ -77,14 +77,14 @@ jerror_t BDXEventProcessor::init(void)
 }
 
 // brun
-jerror_t BDXEventProcessor::brun(JEventLoop *eventLoop, int runnumber)
+jerror_t BDXEventProcessor::brun(JEventLoop *eventLoop, int32_t runnumber)
 {
 	eventLoop->GetSingle(m_tt);
 	return NOERROR;
 }
 
 // evnt
-jerror_t BDXEventProcessor::evnt(JEventLoop *loop, int eventnumber)
+jerror_t BDXEventProcessor::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 	//
 	//	vector<const marcoCluster*> marcoC;

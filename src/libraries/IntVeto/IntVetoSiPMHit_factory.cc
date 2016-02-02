@@ -32,7 +32,7 @@ jerror_t IntVetoSiPMHit_factory::init(void)
 //------------------
 // brun
 //------------------
-jerror_t IntVetoSiPMHit_factory::brun(jana::JEventLoop *eventLoop, int runnumber)
+jerror_t IntVetoSiPMHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber)
 {
 	jout<<"VetoIntDigiHit_factory::brun new run number: "<<runnumber<<endl;
 	m_tt=0;
@@ -60,7 +60,7 @@ jerror_t IntVetoSiPMHit_factory::brun(jana::JEventLoop *eventLoop, int runnumber
 //------------------
 // evnt
 //------------------
-jerror_t IntVetoSiPMHit_factory::evnt(JEventLoop *loop, int eventnumber)
+jerror_t IntVetoSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 	TranslationTable::ChannelInfo m_channel;
 	TranslationTable::csc_t		  m_csc;

@@ -30,7 +30,7 @@ jerror_t marcoCluster_factory::init(void)
 //------------------
 // brun
 //------------------
-jerror_t marcoCluster_factory::brun(jana::JEventLoop *eventLoop, int runnumber)
+jerror_t marcoCluster_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber)
 {
 	return NOERROR;
 }
@@ -38,7 +38,7 @@ jerror_t marcoCluster_factory::brun(jana::JEventLoop *eventLoop, int runnumber)
 //------------------
 // evnt
 //------------------
-jerror_t marcoCluster_factory::evnt(JEventLoop *loop, int eventnumber)
+jerror_t marcoCluster_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 
 	
