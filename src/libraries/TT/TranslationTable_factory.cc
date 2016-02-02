@@ -45,7 +45,7 @@ jerror_t TranslationTable_factory::brun(jana::JEventLoop *eventLoop, int runnumb
 //------------------
 // evnt
 //------------------
-jerror_t TranslationTable_factory::evnt(JEventLoop *loop, int eventnumber)
+jerror_t TranslationTable_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 
 	return NOERROR;

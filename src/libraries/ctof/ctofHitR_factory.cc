@@ -36,7 +36,7 @@ jerror_t ctofHitR_factory::brun(jana::JEventLoop *eventLoop, int runnumber)
 }
 
 // evnt
-jerror_t ctofHitR_factory::evnt(JEventLoop *loop, int eventnumber)
+jerror_t ctofHitR_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 	
 	

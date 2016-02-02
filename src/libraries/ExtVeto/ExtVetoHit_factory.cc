@@ -32,7 +32,7 @@ jerror_t ExtVetoHit_factory::brun(jana::JEventLoop *eventLoop, int runnumber)
 //------------------
 // evnt
 //------------------
-jerror_t ExtVetoHit_factory::evnt(JEventLoop *loop, int eventnumber)
+jerror_t ExtVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 
 	// Code to generate factory data goes here. Add it like:

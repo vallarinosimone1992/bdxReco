@@ -32,7 +32,7 @@ jerror_t CalorimeterSiPMHit_factory::brun(jana::JEventLoop *eventLoop, int runnu
 //------------------
 // evnt
 //------------------
-jerror_t CalorimeterSiPMHit_factory::evnt(JEventLoop *loop, int eventnumber)
+jerror_t CalorimeterSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 
 	// Code to generate factory data goes here. Add it like:

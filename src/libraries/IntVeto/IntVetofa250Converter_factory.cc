@@ -39,7 +39,7 @@ jerror_t IntVetofa250Converter_factory::brun(jana::JEventLoop *eventLoop, int ru
 //------------------
 // evnt
 //------------------
-jerror_t IntVetofa250Converter_factory::evnt(JEventLoop *loop, int eventnumber)
+jerror_t IntVetofa250Converter_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 
 	// Code to generate factory data goes here. Add it like:

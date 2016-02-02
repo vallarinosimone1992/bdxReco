@@ -45,7 +45,7 @@ jerror_t IntVetoDigiHit_factory::brun(jana::JEventLoop *eventLoop, int runnumber
 //------------------
 // evnt
 //------------------
-jerror_t IntVetoDigiHit_factory::evnt(JEventLoop *loop, int eventnumber)
+jerror_t IntVetoDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 
 	TranslationTable::ChannelInfo m_channel;
