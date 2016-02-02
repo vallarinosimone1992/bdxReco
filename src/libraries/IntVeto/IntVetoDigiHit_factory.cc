@@ -94,6 +94,8 @@ jerror_t IntVetoDigiHit_factory::evnt(JEventLoop *loop, int eventnumber)
 	for (m_map_it=m_map.begin();m_map_it!=m_map.end();m_map_it++){
 		//do here further elaborations!
 
+
+
 		_data.push_back((m_map_it)->second); //publish it
 	}
 

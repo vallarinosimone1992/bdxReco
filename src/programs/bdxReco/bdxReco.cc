@@ -37,7 +37,10 @@ int main(int narg, char *argv[])
 	
 	JApplication app(narg, argv);
 
-	if(narg==1) app.Usage();
+	if(narg==1){
+		app.Usage();
+		return 0;
+	}
 
 	app.AddEventSourceGenerator(new JEventSourceEvioGenerator(bdxOpt));
 

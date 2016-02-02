@@ -74,7 +74,7 @@ jerror_t ExtVetoPMTHit_factory::evnt(JEventLoop *loop, int eventnumber)
 
 	/*2: Now we have the daq objects, still indexed as "crate-slot-channel"
 	 *	 Use the translation table to produce the digitized hit of the inner veto
-	 *	 Note that we can produce a single object type here, i.e. VetoIntDigiHit,
+	 *	 Note that we can produce a single object type here, i.e. ExtVetoPMTHit,
 	 *	 but we have 2 possible source, mode 1 and mode 7.
 	 *	 Therefore, we will use the TranslationTable ONLY to check if this crate-slot-channel
 	 *	 combination refers to a InnerVeto hit and, in case, to determine which one, i.e. which ID in the InnerVeto scheme.
@@ -105,8 +105,6 @@ jerror_t ExtVetoPMTHit_factory::evnt(JEventLoop *loop, int eventnumber)
 		m_csc.channel=(*it_fa250Mode7Hit)->channel;
 		m_channel=m_tt->getChannelInfo(m_csc);
 		if (m_channel.det_sys==TranslationTable::EXT_VETO){
-
-
 			//A.C. do not touch these
 			m_ExtVetoPMTHit=m_extVetofa250Converter->convertHit((fa250Hit*)*it_fa250Mode7Hit,m_channel);
 			_data.push_back(m_ExtVetoPMTHit);

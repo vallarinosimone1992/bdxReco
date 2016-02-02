@@ -25,7 +25,8 @@ using namespace std;
 
 // Constructor
 JEventSourceEvio::JEventSourceEvio(const char* source_name, goptions Opt):JEventSource(source_name),
-		chan(0),EDT(0),vme_mother_tag(0),child_mode1_tag(0),child_mode7_tag(0),eventHeader_tag(0)
+		chan(0),EDT(0),vme_mother_tag(0),child_mode1_tag(0),child_mode7_tag(0),eventHeader_tag(0),
+		curEventNumber(0),curRunNumber(0)
 {
 	bdxOpt = Opt;
 
@@ -55,6 +56,9 @@ JEventSourceEvio::JEventSourceEvio(const char* source_name, goptions Opt):JEvent
 	child_mode7_tag=0xe102;
 	child_trigger_tag=0xe118;
 	eventHeader_tag=0xC000;
+	prestart_tag=0x11;  //decimal 17
+
+	overwriteRunNumber=-1;
 
 
 	gPARMS->SetDefaultParameter("DAQ:VME_MOTHER_TAG",vme_mother_tag);
@@ -62,6 +66,8 @@ JEventSourceEvio::JEventSourceEvio(const char* source_name, goptions Opt):JEvent
 	gPARMS->SetDefaultParameter("DAQ:CHILD_MODE7_TAG",child_mode7_tag);
 	gPARMS->SetDefaultParameter("DAQ:CHILD_TRIGGER_TAG",child_trigger_tag);
 	gPARMS->SetDefaultParameter("DAQ:EVENTHEADER_TAG",eventHeader_tag);
+	gPARMS->SetDefaultParameter("DAQ:PRESTART_TAG",prestart_tag);
+	gPARMS->SetDefaultParameter("DAQ:RUN_NUMBER",overwriteRunNumber);
 
 	// open EVIO file - buffer is hardcoded at 3M... that right?
 	cout << hd_msg << " Opening input file " << source_name << "." << endl;
@@ -112,22 +118,32 @@ jerror_t JEventSourceEvio::GetEvent(JEvent &event)
 		//This part is fine for real data @ catania
 		evio::evioDOMNodeListP fullList     = EDT->getNodeList();
 		evio::evioDOMNodeList::const_iterator iter;
+
 		for(iter=fullList->begin(); iter!=fullList->end(); iter++) {
-					if((*iter)->tag==eventHeader_tag){
-						const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*iter);
-						int leafSize = leaf->getSize();
-						vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
-						event.SetEventNumber(pData->at(0));
-						break;
-					}
+			if(((*iter)->tag==prestart_tag)&&(overwriteRunNumber==-1)){
+				const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*iter);
+				int leafSize = leaf->getSize();
+				vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
+				curRunNumber=pData->at(1);
+				jout<<"New run number: "<<curRunNumber<<endl;
+				break;
+			}
+			if((*iter)->tag==eventHeader_tag){
+				const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*iter);
+				int leafSize = leaf->getSize();
+				vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
+				event.SetEventNumber(pData->at(0));
+				break;
+			}
 		}
-
-		event.SetRunNumber(-1);   ///TODO: to this better
-
+		if (overwriteRunNumber!=-1) event.SetRunNumber(overwriteRunNumber);
+		else event.SetRunNumber(curRunNumber);
 		return NOERROR;
 	}
-	else
+	else{
+		jout<<"Source done"<<endl;
 		return NO_MORE_EVENTS_IN_SOURCE;
+	}
 }
 
 // FreeEvent
