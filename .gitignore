@@ -6,6 +6,7 @@ bin
 *.os
 #Evio files - may be here for tests
 *.evio.*
+*.evio
 #Root files - may be here for tests
 *.root
 

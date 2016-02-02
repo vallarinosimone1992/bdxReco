@@ -1,13 +1,19 @@
 // $Id$
 //
-//    File: JEventProcessor_test.cc
-// Created: Mon Dec 28 15:48:21 CET 2015
+//    File: JEventProcessor_sipm_calib.cc
+// Created: Tue Feb  2 18:52:32 CET 2016
 // Creator: celentan (on Linux apcx4 2.6.32-504.30.3.el6.x86_64 x86_64)
 //
 
-#include <iostream>
-#include <iomanip>
-using namespace std;
+#include "JEventProcessor_sipm_calib.h"
+using namespace jana;
+
+
+// Routine used to create our JEventProcessor
+#include <JANA/JApplication.h>
+#include <JANA/JFactory.h>
+
+
 
 #include "JEventProcessor_test.h"
 #include "system/BDXEventProcessor.h"
@@ -31,41 +37,39 @@ using namespace std;
 #include "TH2D.h"
 #include "TTree.h"
 
-// Routine used to create our JEventProcessor
-#include <JANA/JApplication.h>
-#include <JANA/JFactory.h>
 
-using namespace jana;
 
 
 
 extern "C"{
 void InitPlugin(JApplication *app){
 	InitJANAPlugin(app);
-	app->AddProcessor(new JEventProcessor_test());
+	app->AddProcessor(new JEventProcessor_sipm_calib());
 }
 } // "C"
 
 
 //------------------
-// JEventProcessor_test (Constructor)
+// JEventProcessor_sipm_calib (Constructor)
 //------------------
-JEventProcessor_test::JEventProcessor_test():m_isFirstCallToBrun(1)
+JEventProcessor_sipm_calib::JEventProcessor_sipm_calib()
 {
+	m_isFirstCallToBrun=1;
 
 }
 
 //------------------
-// ~JEventProcessor_test (Destructor)
+// ~JEventProcessor_sipm_calib (Destructor)
 //------------------
-JEventProcessor_test::~JEventProcessor_test()
+JEventProcessor_sipm_calib::~JEventProcessor_sipm_calib()
 {
 
 }
+
 //------------------
 // init
 //------------------
-jerror_t JEventProcessor_test::init(void)
+jerror_t JEventProcessor_sipm_calib::init(void)
 {
 	// This is called once at program startup. If you are creating
 	// and filling historgrams in this plugin, you should lock the
@@ -75,29 +79,27 @@ jerror_t JEventProcessor_test::init(void)
 	//  ... fill historgrams or trees ...
 	// japp->RootUnLock();
 	//
-
-	app->RootWriteLock();
-
-	jout<<"test::init is called"<<std::endl;
-	h=new TH1D("h","h",500,-0.5,499.5);
+	japp->RootWriteLock();
 	t=new TTree("tout","tout");
 
-	t->Branch("component",&component);
+	t->Branch("sector",&m_sector);
+	t->Branch("layer",&m_layer);
+	t->Branch("component",&m_component);
+	t->Branch("readout",&m_readout);
 	t->Branch("Q",&Q);
-	t->Branch("eventN",&eventN);
+	t->Branch("eventN",&eventNumber);
+	japp->RootUnLock();
 
-	app->RootUnLock();
 	return NOERROR;
 }
 
 //------------------
 // brun
 //------------------
-jerror_t JEventProcessor_test::brun(JEventLoop *loop, int runnumber)
+jerror_t JEventProcessor_sipm_calib::brun(JEventLoop *eventLoop, int runnumber)
 {
-
 	// This is called whenever the run number changes
-	/* To get access to the ROOT output, use exactly the following code */
+
 	if (m_isFirstCallToBrun){
 		string class_name,this_class_name;
 		string joutput_name;
@@ -131,21 +133,19 @@ jerror_t JEventProcessor_test::brun(JEventLoop *loop, int runnumber)
 		}
 		/*For ALL objects you want to add to ROOT file, use the following:*/
 		if (m_ROOTOutput){
-			m_ROOTOutput->AddObject(h);
 			m_ROOTOutput->AddObject(t);
 		}
 
 	}
 
+
 	return NOERROR;
-
-
 }
 
 //------------------
 // evnt
 //------------------
-jerror_t JEventProcessor_test::evnt(JEventLoop *loop, int eventnumber)
+jerror_t JEventProcessor_sipm_calib::evnt(JEventLoop *loop, int eventnumber)
 {
 	// This is called for every event. Use of common resources like writing
 	// to a file or filling a histogram should be mutex protected. Using
@@ -154,63 +154,39 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop, int eventnumber)
 	// since multiple threads may call this method at the same time.
 	// Here's an example:
 	//
+	// vector<const MyDataClass*> mydataclasses;
+	// loop->Get(mydataclasses);
+	//
+	// japp->RootWriteLock();
+	//  ... fill historgrams or trees ...
+	// japp->RootUnLock();
 	vector<const IntVetoSiPMHit*> data;
 	vector<const IntVetoSiPMHit*>::const_iterator data_it;
-	const fa250Mode1Hit *fa;
 	loop->Get(data);
-
-	const triggerData* tData;
-	//has to be in a try-catch block, since if no trigger data is there (prestart - start - end events) trows it!
-	try{
-		loop->GetSingle(tData);
-	}
-	catch(unsigned long e){
-		jout<<"No trig bank this event"<<endl;
-		return 	OBJECT_NOT_AVAILABLE;
-	}
-
-	int tWord=tData->triggerWords.at(0);
-	int isMPPC=0;
-	for (int ii=0;ii<4;ii++){
-		if ((((tWord)>>ii)&0x1)&&(ii==2)) isMPPC=1;
-	}
-	if (!isMPPC) return OBJECT_NOT_AVAILABLE;
 
 	japp->RootWriteLock();
 	//  ... fill historgrams or trees ...
 	for (data_it=data.begin();data_it<data.end();data_it++){
+		m_sector=(*data_it)->m_channel.int_veto.sector;
+		m_layer=(*data_it)->m_channel.int_veto.layer;
+		m_component=(*data_it)->m_channel.int_veto.component;
+		m_readout=(*data_it)->m_channel.int_veto.readout;
 
-		if (((*data_it)->m_channel.int_veto.component==0)&&(((*data_it)->m_channel.int_veto.readout==1))){
-			jout<<eventnumber<<" "<<((*data_it)->fa250Hit_id)<<endl;
-			fa=loop->FindByID<fa250Mode1Hit>((*data_it)->fa250Hit_id);
-			h->Reset();
-			h->SetName(Form("h%i",eventnumber));
-			for (int ii=0;ii<fa->samples.size();ii++){
-				h->Fill(ii,fa->samples.at(ii)*fa250Mode1Hit::LSB);
-			}
-			h->Write();
-			eventN=eventnumber;
-			component=(*data_it)->m_channel.int_veto.readout;
-			Q=(*data_it)->Q;
-			t->Fill();
-		}
+		Q=(*data_it)->Q;
 
+		eventNumber=eventnumber;
+
+		t->Fill();
 
 	}
-
-
 	japp->RootUnLock();
-
-
-
-
 	return NOERROR;
 }
 
 //------------------
 // erun
 //------------------
-jerror_t JEventProcessor_test::erun(void)
+jerror_t JEventProcessor_sipm_calib::erun(void)
 {
 	// This is called whenever the run number changes, before it is
 	// changed to give you a chance to clean up before processing
@@ -221,9 +197,9 @@ jerror_t JEventProcessor_test::erun(void)
 //------------------
 // fini
 //------------------
-jerror_t JEventProcessor_test::fini(void)
+jerror_t JEventProcessor_sipm_calib::fini(void)
 {
-
+	// Called before program exit after event processing is finished.
 	return NOERROR;
 }
 

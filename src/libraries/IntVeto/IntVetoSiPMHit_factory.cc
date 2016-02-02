@@ -103,9 +103,9 @@ jerror_t IntVetoSiPMHit_factory::evnt(JEventLoop *loop, int eventnumber)
 			m_IntVetoSiPMHit->m_channel=m_channel;
 			m_IntVetoSiPMHit=m_intVetofa250Converter->convertHit((fa250Hit*)*it_fa250Mode1Hit,m_channel);
 
-			if (m_sipm_gain[m_channel.int_veto].size()>0){
-			jout<<(m_sipm_gain[m_channel.int_veto]).at(0)<<endl;
-			}
+		//	if (m_sipm_gain[m_channel.int_veto].size()>0){
+		//		jout<<(m_sipm_gain[m_channel.int_veto]).at(0)<<endl;
+		//	}
 			_data.push_back(m_IntVetoSiPMHit);
 		}
 	}
