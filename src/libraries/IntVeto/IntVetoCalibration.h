@@ -11,7 +11,8 @@
 #include <TT/TranslationTable.h>
 #include <vector>
 
-#include "jerror.h"
+#include <JANA/jerror.h>
+
 class IntVetoCalibration {
 public:
 	IntVetoCalibration();
