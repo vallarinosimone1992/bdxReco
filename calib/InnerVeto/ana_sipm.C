@@ -62,9 +62,8 @@ void ana_sipm(string fname){
   static const double XLOW = -0.5E3;
   static const double XUP = 2.5E3;
 
-  static const double FLOW = -0.1E3;
-  static const double FUP  = 1000;
-
+  double flow,fup;
+  double singlephe;
   string outname=fname.substr(0,fname.length()-5); //".root"
   outname+=".ana_sipm.root";
 
@@ -94,7 +93,7 @@ void ana_sipm(string fname){
     h_map_it=h_map.find(index);
     if (h_map_it==h_map.end()){
       h_map.insert(std::make_pair(index,new TH1D(Form("h_%i_%i_%i_%i",index.sector,index.layer,index.component,index.readout),Form("h_%i_%i_%i_%i",index.sector,index.layer,index.component,index.readout),NBINS,XLOW,XUP)));
-      f_map.insert(std::make_pair(index,new TF1(Form("f_%i_%i_%i_%i",index.sector,index.layer,index.component,index.readout),three_gaus,FLOW,FUP,8)));
+      f_map.insert(std::make_pair(index,new TF1(Form("f_%i_%i_%i_%i",index.sector,index.layer,index.component,index.readout),three_gaus,XLOW,XUP,8)));
 
     }
     h=h_map[index];
@@ -111,17 +110,25 @@ void ana_sipm(string fname){
     A=h->GetFunction("gaus")->GetParameter(0);
     ped=h->GetFunction("gaus")->GetParameter(1);
     sig=h->GetFunction("gaus")->GetParameter(2);
-
-    f->SetParameter(0,ped);
-    f->SetParameter(1,200);
-    f->SetParameter(2,A);
-    f->SetParameter(3,A/10);
-    f->SetParameter(4,A/20);
-    f->SetParameter(5,sig);
-    f->SetParameter(6,sig);
-    f->SetParameter(7,sig);
     
-    h->Fit(f->GetName(),"R","",FLOW,FUP);
+    
+    f->SetParameter(0,ped);
+   
+    f->SetParameter(2,A);
+    f->SetParameter(3,A/20);
+    f->SetParameter(4,A/40);
+    f->SetParameter(5,sig);
+    f->SetParameter(6,sig*1.2);
+    f->SetParameter(7,sig*1.3);
+    
+    flow=ped-3*sig;
+    
+    if ((h_map_it)->first.component<=2){singlephe=200; fup=500;}
+    else if  ((h_map_it)->first.component==3) {singlephe=500;fup=1200;}
+    else if  ((h_map_it)->first.component>=4) {singlephe=100;fup=250;}
+    
+    f->SetParameter(1,singlephe);
+    h->Fit(f->GetName(),"R","",flow,fup);
     h->Write();
   }
   file1->Write();
