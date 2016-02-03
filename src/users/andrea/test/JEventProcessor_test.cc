@@ -182,21 +182,20 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop,uint64_t eventnumber)
 	
 		const IntVetoSiPMHit *ivhit = *data_it;
 
-		if ((ivhit->m_channel.int_veto.component==0)&&((ivhit->m_channel.int_veto.readout==1))){
+		if ((ivhit->m_channel.int_veto.component==4)&&((ivhit->m_channel.int_veto.readout==1))){
 			jout<<eventnumber<<" "<<(ivhit->fa250Hit_id)<<endl;
 
 			// Get associated fa250Mode1CalibHit object
-			try{
-				ivhit->GetSingle(fa);
-			}catch(...){
-				continue; // no sense going on 
-			}
-			
+			fa = NULL;
+			ivhit->GetSingle(fa);
+			if(!fa) continue; // need fa250Mode1CalibHit to continue
+
 			h->Reset();
 			h->SetName(Form("h%lld",eventnumber));
 			for (int ii=0;ii<fa->samples.size();ii++){
 				h->Fill(ii,fa->samples.at(ii));
 			}
+
 			h->Write();
 			eventN=eventnumber;
 			component=ivhit->m_channel.int_veto.readout;
