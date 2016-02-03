@@ -10,3 +10,6 @@ bin
 #Root files - may be here for tests
 *.root
 
+#compiled python
+*.pyc
+

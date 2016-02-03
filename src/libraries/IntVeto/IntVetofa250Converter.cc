@@ -7,7 +7,6 @@
 IntVetoSiPMHit* IntVetofa250Converter::convertHit(const fa250Hit *hit,const TranslationTable::ChannelInfo &m_channel) const{
 	IntVetoSiPMHit *m_IntVetoSiPMHit=new IntVetoSiPMHit;
 	m_IntVetoSiPMHit->m_channel=m_channel;
-	m_IntVetoSiPMHit->fa250Hit_id=hit->id;
 
 	if (strcmp(hit->className(),"fa250Mode1CalibHit")==0){
 		this->convertMode1Hit(m_IntVetoSiPMHit,(const fa250Mode1CalibHit*)hit);

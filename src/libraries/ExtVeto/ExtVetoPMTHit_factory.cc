@@ -13,7 +13,7 @@ using namespace std;
 #include "ExtVetoPMTHit_factory.h"
 
 //objects we need from the framework
-#include <DAQ/fa250Mode1Hit.h>
+#include <DAQ/fa250Mode1CalibHit.h>
 #include <DAQ/fa250Mode7Hit.h>
 #include <TT/TranslationTable.h>
 
@@ -63,13 +63,13 @@ jerror_t ExtVetoPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	//1: Here, we get from the framework the objects we need to process
 	//1a: create vectors
-	vector <const fa250Mode1Hit*> m_fa250Mode1Hit;
+	vector <const fa250Mode1CalibHit*> m_fa250Mode1CalibHit;
 	vector <const fa250Mode7Hit*> m_fa250Mode7Hit;
-	vector <const fa250Mode1Hit*>::const_iterator it_fa250Mode1Hit;
+	vector <const fa250Mode1CalibHit*>::const_iterator it_fa250Mode1CalibHit;
 	vector <const fa250Mode7Hit*>::const_iterator it_fa250Mode7Hit;
 
 	//1b: retrieve objects
-	loop->Get(m_fa250Mode1Hit);
+	loop->Get(m_fa250Mode1CalibHit);
 	loop->Get(m_fa250Mode7Hit);
 
 	/*2: Now we have the daq objects, still indexed as "crate-slot-channel"
@@ -83,15 +83,16 @@ jerror_t ExtVetoPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	/*First, mode 1*/
 	/*Note that in this case we have to integrate the pulse - it is a mode 1 pulse! */
-	for (it_fa250Mode1Hit=m_fa250Mode1Hit.begin();it_fa250Mode1Hit!=m_fa250Mode1Hit.end();it_fa250Mode1Hit++){
-		m_csc.rocid=(*it_fa250Mode1Hit)->crate;
-		m_csc.slot=(*it_fa250Mode1Hit)->slot;
-		m_csc.channel=(*it_fa250Mode1Hit)->channel;
+	for (it_fa250Mode1CalibHit=m_fa250Mode1CalibHit.begin();it_fa250Mode1CalibHit!=m_fa250Mode1CalibHit.end();it_fa250Mode1CalibHit++){
+		m_csc.rocid=(*it_fa250Mode1CalibHit)->crate;
+		m_csc.slot=(*it_fa250Mode1CalibHit)->slot;
+		m_csc.channel=(*it_fa250Mode1CalibHit)->channel;
 		m_channel=m_tt->getChannelInfo(m_csc);
 		//jout<<m_csc.rocid<<" "<<m_csc.slot<<" "<<m_csc.channel<<" "<<endl;
 		if (m_channel.det_sys==TranslationTable::EXT_VETO){
 			//A.C. do not touch these
-			m_ExtVetoPMTHit=m_extVetofa250Converter->convertHit((fa250Hit*)*it_fa250Mode1Hit,m_channel);
+			m_ExtVetoPMTHit=m_extVetofa250Converter->convertHit((fa250Hit*)*it_fa250Mode1CalibHit,m_channel);
+			m_ExtVetoPMTHit->AddAssociatedObject(*it_fa250Mode1CalibHit);
 			_data.push_back(m_ExtVetoPMTHit);
 		}
 	}
@@ -107,6 +108,7 @@ jerror_t ExtVetoPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		if (m_channel.det_sys==TranslationTable::EXT_VETO){
 			//A.C. do not touch these
 			m_ExtVetoPMTHit=m_extVetofa250Converter->convertHit((fa250Hit*)*it_fa250Mode7Hit,m_channel);
+			m_ExtVetoPMTHit->AddAssociatedObject(*it_fa250Mode7Hit);
 			_data.push_back(m_ExtVetoPMTHit);
 		}
 	}

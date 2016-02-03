@@ -7,7 +7,6 @@
 ExtVetoPMTHit* ExtVetofa250Converter::convertHit(const fa250Hit *hit,const TranslationTable::ChannelInfo &m_channel) const{
 	ExtVetoPMTHit *m_ExtVetoPMTHit=new ExtVetoPMTHit;
 	m_ExtVetoPMTHit->m_channel=m_channel;
-	m_ExtVetoPMTHit->fa250Hit_id=hit->id;
 
 	if (strcmp(hit->className(),"fa250Mode1Hit")==0){
 		this->convertMode1Hit(m_ExtVetoPMTHit,(const fa250Mode1Hit*)hit);
