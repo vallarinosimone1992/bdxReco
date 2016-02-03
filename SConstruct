@@ -10,8 +10,9 @@ if int(debug):
 
 #A.C. probably do this better
 if (platform.system()=="Darwin"):
-   env.AppendUnique(LINKFLAGS='-flat_namespace')
-   env.AppendUnique(SHLINKFLAGS=['-undefined', 'suppress'])
+	print "We are on MAC"
+	env.AppendUnique(LINKFLAGS='-flat_namespace')
+	env.AppendUnique(SHLINKFLAGS=['-undefined', 'suppress'])
  
 env.Append(CPPPATH='#/src/external')
 env.Append(CPPPATH='#/src/libraries')

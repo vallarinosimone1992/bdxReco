@@ -135,7 +135,6 @@ jerror_t JEventProcessor_sipm_calib::brun(JEventLoop *eventLoop, int32_t runnumb
 		if (m_ROOTOutput){
 			m_ROOTOutput->AddObject(t);
 		}
-
 	}
 
 
@@ -147,22 +146,11 @@ jerror_t JEventProcessor_sipm_calib::brun(JEventLoop *eventLoop, int32_t runnumb
 //------------------
 jerror_t JEventProcessor_sipm_calib::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
-	// This is called for every event. Use of common resources like writing
-	// to a file or filling a histogram should be mutex protected. Using
-	// loop->Get(...) to get reconstructed objects (and thereby activating the
-	// reconstruction algorithm) should be done outside of any mutex lock
-	// since multiple threads may call this method at the same time.
-	// Here's an example:
-	//
-	// vector<const MyDataClass*> mydataclasses;
-	// loop->Get(mydataclasses);
-	//
-	// japp->RootWriteLock();
-	//  ... fill historgrams or trees ...
-	// japp->RootUnLock();
+
 	vector<const IntVetoSiPMHit*> data;
 	vector<const IntVetoSiPMHit*>::const_iterator data_it;
 	loop->Get(data);
+
 
 	japp->RootWriteLock();
 	//  ... fill historgrams or trees ...
