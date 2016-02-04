@@ -10,9 +10,10 @@
 
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
+#include <DAQ/fa250ConvertedHit.h>
 #include <TT/TranslationTable.h>
 
-#include <DAQ/fa250ConvertedHit.h>
+
 class ExtVetoPMTHit:public fa250ConvertedHit{
 public:
 	JOBJECT_PUBLIC(ExtVetoPMTHit);
@@ -28,8 +29,11 @@ public:
 		// AddString(items, "E", "%f", E);
 	}
 
-	TranslationTable::ChannelInfo m_channel; //both crate-slot channel and detector-specific ID. Since this is a sensor-based object, the readout field will be !=0
-	oid_t fa250Hit_id; //jana id for the fadc corresponding hit
+public: //yes, these are public to keep this simple.
+
+		//A.C. do not touch these
+		TranslationTable::ChannelInfo m_channel; //both crate-slot channel and detector-specific ID. Since this is a sensor-based object, the readout field will be !=0
+		oid_t fa250Hit_id; //jana id for the fadc corresponding hit
 
 	double Q,T;
 };

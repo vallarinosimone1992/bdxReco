@@ -1,6 +1,6 @@
 #include "ExtVetofa250Converter.h"
 
-#include <DAQ/fa250Mode1Hit.h>
+#include <DAQ/fa250Mode1CalibHit.h>
 #include <DAQ/fa250Mode7Hit.h>
 
 
@@ -9,8 +9,8 @@ ExtVetoPMTHit* ExtVetofa250Converter::convertHit(const fa250Hit *hit,const Trans
 	m_ExtVetoPMTHit->m_channel=m_channel;
 	m_ExtVetoPMTHit->fa250Hit_id=hit->id;
 
-	if (strcmp(hit->className(),"fa250Mode1Hit")==0){
-		this->convertMode1Hit(m_ExtVetoPMTHit,(const fa250Mode1Hit*)hit);
+	if (strcmp(hit->className(),"fa250Mode1CalibHit")==0){
+		this->convertMode1Hit(m_ExtVetoPMTHit,(const fa250Mode1CalibHit*)hit);
 	}
 	else if (strcmp(hit->className(),"fa250Mode7Hit")==0){
 		this->convertMode7Hit(m_ExtVetoPMTHit,(const fa250Mode7Hit*)hit);
@@ -22,7 +22,7 @@ ExtVetoPMTHit* ExtVetofa250Converter::convertHit(const fa250Hit *hit,const Trans
 	return m_ExtVetoPMTHit;
 }
 
-jerror_t ExtVetofa250Converter::convertMode1Hit(ExtVetoPMTHit* output,const fa250Mode1Hit *input) const{
+jerror_t ExtVetofa250Converter::convertMode1Hit(ExtVetoPMTHit* output,const fa250Mode1CalibHit *input) const{
 
 	int size=input->samples.size();
 	double Q=0;
