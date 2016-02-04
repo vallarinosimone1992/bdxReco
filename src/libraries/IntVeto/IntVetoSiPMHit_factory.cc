@@ -99,13 +99,7 @@ jerror_t IntVetoSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 		if (m_channel.det_sys==TranslationTable::INT_VETO){
 			//A.C. do not touch these
-			m_IntVetoSiPMHit=new IntVetoSiPMHit;
-			m_IntVetoSiPMHit->m_channel=m_channel;
 			m_IntVetoSiPMHit=m_intVetofa250Converter->convertHit((fa250Hit*)*it_fa250Mode1CalibHit,m_channel);
-			
-		//	if (m_sipm_gain[m_channel.int_veto].size()>0){
-		//		jout<<(m_sipm_gain[m_channel.int_veto]).at(0)<<endl;
-		//	}
 			m_IntVetoSiPMHit->AddAssociatedObject(*it_fa250Mode1CalibHit);
 			_data.push_back(m_IntVetoSiPMHit);
 		}
@@ -120,11 +114,7 @@ jerror_t IntVetoSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		m_csc.channel=(*it_fa250Mode7Hit)->channel;
 		m_channel=m_tt->getChannelInfo(m_csc);
 		if (m_channel.det_sys==TranslationTable::INT_VETO){
-
-
 			//A.C. do not touch these
-			m_IntVetoSiPMHit=new IntVetoSiPMHit;
-			m_IntVetoSiPMHit->m_channel=m_channel;
 			m_IntVetoSiPMHit=m_intVetofa250Converter->convertHit((fa250Hit*)*it_fa250Mode7Hit,m_channel);
 			m_IntVetoSiPMHit->AddAssociatedObject(*it_fa250Mode7Hit);
 			_data.push_back(m_IntVetoSiPMHit);

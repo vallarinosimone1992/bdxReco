@@ -174,16 +174,15 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop,uint64_t eventnumber)
 	for (int ii=0;ii<4;ii++){
 		if ((((tWord)>>ii)&0x1)&&(ii==2)) isMPPC=1;
 	}
-	if (!isMPPC) return OBJECT_NOT_AVAILABLE;
+	//if (!isMPPC) return OBJECT_NOT_AVAILABLE;
 
 	japp->RootWriteLock();
 	//  ... fill historgrams or trees ...
 	for (data_it=data.begin();data_it<data.end();data_it++){
 	
 		const IntVetoSiPMHit *ivhit = *data_it;
-
+		jout<<ivhit->m_channel.int_veto.readout<<endl;
 		if ((ivhit->m_channel.int_veto.component==4)&&((ivhit->m_channel.int_veto.readout==1))){
-			jout<<eventnumber<<" "<<(ivhit->fa250Hit_id)<<endl;
 
 			// Get associated fa250Mode1CalibHit object
 			fa = NULL;

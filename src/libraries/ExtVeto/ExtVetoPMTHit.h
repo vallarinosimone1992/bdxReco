@@ -29,12 +29,16 @@ public:
 		// AddString(items, "E", "%f", E);
 	}
 
+<<<<<<< HEAD
 public: //yes, these are public to keep this simple.
 
 		//A.C. do not touch these
 		TranslationTable::ChannelInfo m_channel; //both crate-slot channel and detector-specific ID. Since this is a sensor-based object, the readout field will be !=0
 		oid_t fa250Hit_id; //jana id for the fadc corresponding hit
 
+=======
+	TranslationTable::ChannelInfo m_channel; //both crate-slot channel and detector-specific ID. Since this is a sensor-based object, the readout field will be !=0
+>>>>>>> 0785fec869650665bd317d9ad9c57686fee96f77
 	double Q,T;
 };
 
