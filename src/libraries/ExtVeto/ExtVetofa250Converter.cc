@@ -9,11 +9,7 @@ ExtVetoPMTHit* ExtVetofa250Converter::convertHit(const fa250Hit *hit,const Trans
 	m_ExtVetoPMTHit->m_channel=m_channel;
 
 	if (strcmp(hit->className(),"fa250Mode1CalibHit")==0){
-<<<<<<< HEAD
 		this->convertMode1Hit(m_ExtVetoPMTHit,(const fa250Mode1CalibHit*)hit);
-=======
-		this->convertMode1Hit(m_ExtVetoPMTHit,(const fa250Mode1Hit*)hit);
->>>>>>> 0785fec869650665bd317d9ad9c57686fee96f77
 	}
 	else if (strcmp(hit->className(),"fa250Mode7Hit")==0){
 		this->convertMode7Hit(m_ExtVetoPMTHit,(const fa250Mode7Hit*)hit);
