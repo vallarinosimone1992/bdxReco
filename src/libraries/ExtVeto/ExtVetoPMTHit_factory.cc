@@ -10,8 +10,6 @@
 #include <iomanip>
 using namespace std;
 
-#include "ExtVetoPMTHit_factory.h"
-
 //objects we need from the framework
 #include <DAQ/fa250Mode1CalibHit.h>
 #include <DAQ/fa250Mode7Hit.h>
@@ -19,6 +17,8 @@ using namespace std;
 //objects we put in the framework
 #include <ExtVeto/ExtVetoPMTHit.h>
 #include <ExtVeto/ExtVetofa250Converter.h>
+
+#include "ExtVetoPMTHit_factory.h"
 using namespace jana;
 
 //------------------
@@ -34,7 +34,7 @@ jerror_t ExtVetoPMTHit_factory::init(void)
 //------------------
 jerror_t ExtVetoPMTHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber)
 {
-	jout<<"VetoIntDigiHit_factory::brun new run number: "<<runnumber<<endl;
+	jout<<"VetoExtDigiHit_factory::brun new run number: "<<runnumber<<endl;
 	m_tt=0;
 	eventLoop->GetSingle(m_tt);
 	if (m_tt==0){
@@ -80,24 +80,29 @@ jerror_t ExtVetoPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	 *	 combination refers to a InnerVeto hit and, in case, to determine which one, i.e. which ID in the InnerVeto scheme.
 	 *	 Then, we will proceed in two different ways.
 	 */
-
+	int mz=0;
+	int mz2=0;
 	/*First, mode 1*/
 	/*Note that in this case we have to integrate the pulse - it is a mode 1 pulse! */
 	for (it_fa250Mode1CalibHit=m_fa250Mode1CalibHit.begin();it_fa250Mode1CalibHit!=m_fa250Mode1CalibHit.end();it_fa250Mode1CalibHit++){
 		m_csc.rocid=(*it_fa250Mode1CalibHit)->crate;
 		m_csc.slot=(*it_fa250Mode1CalibHit)->slot;
 		m_csc.channel=(*it_fa250Mode1CalibHit)->channel;
-
 		m_channel=m_tt->getChannelInfo(m_csc);
+		mz++;
+		jout<<mz<<endl;
+        jout<<"M CHANNEL= "<<m_channel.det_sys<<endl;
 
 		if (m_channel.det_sys==TranslationTable::EXT_VETO){
+	        jout<<"M CHANNEL EXT VETO= "<<m_channel.det_sys<<endl;
 
 			//A.C. do not touch these
-
+			mz2++;
+					jout<<"MZ2 "<<mz2<<endl;
 						m_ExtVetoPMTHit=new ExtVetoPMTHit;
 						m_ExtVetoPMTHit->m_channel=m_channel;
 						m_ExtVetoPMTHit=m_extVetofa250Converter->convertHit((fa250Hit*)*it_fa250Mode1CalibHit,m_channel);
-
+				        jout<<"M CHANNEL EXT VETO 2 = "<<m_channel.det_sys<<endl;
 
 						m_ExtVetoPMTHit->AddAssociatedObject(*it_fa250Mode1CalibHit);
 						_data.push_back(m_ExtVetoPMTHit);
@@ -119,7 +124,6 @@ jerror_t ExtVetoPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		m_csc.channel=(*it_fa250Mode7Hit)->channel;
 
 		m_channel=m_tt->getChannelInfo(m_csc);
-
 		if (m_channel.det_sys==TranslationTable::EXT_VETO){
 			//A.C. do not touch these
 						m_ExtVetoPMTHit=new ExtVetoPMTHit;

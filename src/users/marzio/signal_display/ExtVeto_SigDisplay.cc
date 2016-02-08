@@ -9,7 +9,7 @@
 #include <iomanip>
 using namespace std;
 
-#include "JEventProcessor_test.h"
+#include "ExtVeto_SigDisplay.h"
 #include "system/BDXEventProcessor.h"
 
 #include <DAQ/fa250Mode1CalibHit.h>
@@ -18,12 +18,8 @@ using namespace std;
 
 #include <DAQ/triggerData.h>
 
-#include <IntVeto/IntVetoDigiHit.h>
-#include <IntVeto/IntVetoSiPMHit.h>
-
 #include <ExtVeto/ExtVetoPMTHit.h>
 #include <ExtVeto/ExtVetoDigiHit.h>
-
 
 #include <system/JROOTOutput.h>
 
@@ -42,30 +38,30 @@ using namespace jana;
 extern "C"{
 void InitPlugin(JApplication *app){
 	InitJANAPlugin(app);
-	app->AddProcessor(new JEventProcessor_test());
+	app->AddProcessor(new ExtVeto_SigDisplay());
 }
 } // "C"
 
 
 //------------------
-// JEventProcessor_test (Constructor)
+// ExtVeto_SigDisplay (Constructor)
 //------------------
-JEventProcessor_test::JEventProcessor_test():m_isFirstCallToBrun(1)
+ExtVeto_SigDisplay::ExtVeto_SigDisplay():m_isFirstCallToBrun(1)
 {
 
 }
 
 //------------------
-// ~JEventProcessor_test (Destructor)
+// ~ExtVeto_SigDisplay (Destructor)
 //------------------
-JEventProcessor_test::~JEventProcessor_test()
+ExtVeto_SigDisplay::~ExtVeto_SigDisplay()
 {
 
 }
 //------------------
 // init
 //------------------
-jerror_t JEventProcessor_test::init(void)
+jerror_t ExtVeto_SigDisplay::init(void)
 {
 	// This is called once at program startup. If you are creating
 	// and filling historgrams in this plugin, you should lock the
@@ -79,7 +75,7 @@ jerror_t JEventProcessor_test::init(void)
 	app->RootWriteLock();
 
 	jout<<"test::init is called"<<std::endl;
-	h=new TH1D("h","h",500,-0.5,499.5);
+	h=new TH1D("h","h",100,-0.5,99.5);
 	t=new TTree("tout","tout");
 
 	t->Branch("component",&component);
@@ -93,7 +89,7 @@ jerror_t JEventProcessor_test::init(void)
 //------------------
 // brun
 //------------------
-jerror_t JEventProcessor_test::brun(JEventLoop *loop, int32_t runnumber)
+jerror_t ExtVeto_SigDisplay::brun(JEventLoop *loop, int32_t runnumber)
 {
 
 	// This is called whenever the run number changes
@@ -145,7 +141,7 @@ jerror_t JEventProcessor_test::brun(JEventLoop *loop, int32_t runnumber)
 //------------------
 // evnt
 //------------------
-jerror_t JEventProcessor_test::evnt(JEventLoop *loop,uint64_t eventnumber)
+jerror_t ExtVeto_SigDisplay::evnt(JEventLoop *loop,uint64_t eventnumber)
 {
 	// This is called for every event. Use of common resources like writing
 	// to a file or filling a histogram should be mutex protected. Using
@@ -154,8 +150,8 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop,uint64_t eventnumber)
 	// since multiple threads may call this method at the same time.
 	// Here's an example:
 	//
-	vector<const IntVetoSiPMHit*> data;
-	vector<const IntVetoSiPMHit*>::const_iterator data_it;
+	vector<const ExtVetoPMTHit*> data;
+	vector<const ExtVetoPMTHit*>::const_iterator data_it;
 	const fa250Mode1CalibHit *fa;
 	loop->Get(data);
 
@@ -170,26 +166,35 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop,uint64_t eventnumber)
 	}
 
 	int tWord=tData->triggerWords.at(0);
+//	jout<<eventnumber<<" tWord= "<<tWord<<endl;
+
 	int isMPPC=0;
 	for (int ii=0;ii<4;ii++){
 		if ((((tWord)>>ii)&0x1)&&(ii==2)) isMPPC=1;
 	}
-	//if (!isMPPC) return OBJECT_NOT_AVAILABLE;
-//	jout<<"****************************************************************"<<endl;
-//	jout<<"Evt number="<< eventnumber<<" tWord= "<<tWord<<endl;
+//	if (!isMPPC) return OBJECT_NOT_AVAILABLE;
+
+	jout<<"****************************************************************"<<endl;
+	jout<<"Evt number="<< eventnumber<<" tWord= "<<tWord<<endl;
 	japp->RootWriteLock();
 	//  ... fill historgrams or trees ...
 	for (data_it=data.begin();data_it<data.end();data_it++){
-	
-		const IntVetoSiPMHit *ivhit = *data_it;
-		jout<<ivhit->m_channel.int_veto.readout<<endl;
-//		if ((ivhit->m_channel.int_veto.component==4)&&((ivhit->m_channel.int_veto.readout==1))){
-			jout<<"Component= "<<ivhit->m_channel.ext_veto.component<<" Readout= "<<ivhit->m_channel.ext_veto.readout<<" Size= "<<fa->samples.size()<<endl;
+
+		const ExtVetoPMTHit *evhit = *data_it;
+//		cout<<"ExtVeto_component= "<<evhit->m_channel.ext_veto.component<<endl;
+
+		if ((evhit->m_channel.ext_veto.readout==0)){
 
 			// Get associated fa250Mode1CalibHit object
 			fa = NULL;
-			ivhit->GetSingle(fa);
+			evhit->GetSingle(fa);
+
+//			jout<<"Sector= "<<evhit->m_channel.ext_veto.sector<<" Layer= "<<evhit->m_channel.ext_veto.layer<<endl;
+			jout<<"Component= "<<evhit->m_channel.ext_veto.component<<" Readout= "<<evhit->m_channel.ext_veto.readout<<" Size= "<<fa->samples.size()<<endl;
+
 			if(!fa) continue; // need fa250Mode1CalibHit to continue
+
+
 
 			h->Reset();
 			h->SetName(Form("h%lld",eventnumber));
@@ -197,12 +202,12 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop,uint64_t eventnumber)
 				h->Fill(ii,fa->samples.at(ii));
 			}
 
-//			h->Write();
+	//		h->Write();
 			eventN=eventnumber;
-			component=ivhit->m_channel.int_veto.readout;
+			component=evhit->m_channel.ext_veto.readout;
 			Q=(*data_it)->Q;
-//			t->Fill();
-//		}
+	//		t->Fill();
+		}
 
 
 	}
@@ -219,7 +224,7 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop,uint64_t eventnumber)
 //------------------
 // erun
 //------------------
-jerror_t JEventProcessor_test::erun(void)
+jerror_t ExtVeto_SigDisplay::erun(void)
 {
 	// This is called whenever the run number changes, before it is
 	// changed to give you a chance to clean up before processing
@@ -230,7 +235,7 @@ jerror_t JEventProcessor_test::erun(void)
 //------------------
 // fini
 //------------------
-jerror_t JEventProcessor_test::fini(void)
+jerror_t ExtVeto_SigDisplay::fini(void)
 {
 
 	return NOERROR;

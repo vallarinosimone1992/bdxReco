@@ -72,8 +72,10 @@ JEventSourceEvio::JEventSourceEvio(const char* source_name, goptions Opt):JEvent
 
 	// open EVIO file - buffer is hardcoded at 3M... that right?
 	cout << hd_msg << " Opening input file " << source_name << "." << endl;
+
 	try{
-		chan = new evioFileChannel(source_name, "r", 300000);
+//		chan = new evioFileChannel(source_name, "r", 300000);
+		chan = new evioFileChannel(source_name, "r", 10804);
 		chan->open();
 	}
 	catch(evioException *e){
