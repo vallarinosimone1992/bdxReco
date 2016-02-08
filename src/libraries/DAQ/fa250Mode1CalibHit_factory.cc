@@ -48,7 +48,7 @@ jerror_t fa250Mode1CalibHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 		
 		// Create new fa250Mode1CalibHit
 		fa250Mode1CalibHit *calibHit = new fa250Mode1CalibHit;
-		
+
 		// Copy the fa250Hit part (crate, slot, channel, ...)
 		// doing it this way allow one to modify fa250 later and
 		// not have to change this code.

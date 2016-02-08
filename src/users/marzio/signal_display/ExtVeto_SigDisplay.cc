@@ -19,7 +19,6 @@ using namespace std;
 #include <DAQ/triggerData.h>
 
 #include <ExtVeto/ExtVetoPMTHit.h>
-#include <ExtVeto/ExtVetoDigiHit.h>
 
 #include <system/JROOTOutput.h>
 
@@ -155,6 +154,7 @@ jerror_t ExtVeto_SigDisplay::evnt(JEventLoop *loop,uint64_t eventnumber)
 	const fa250Mode1CalibHit *fa;
 	loop->Get(data);
 
+
 	const triggerData* tData;
 	//has to be in a try-catch block, since if no trigger data is there (prestart - start - end events) trows it!
 	try{
@@ -183,7 +183,7 @@ jerror_t ExtVeto_SigDisplay::evnt(JEventLoop *loop,uint64_t eventnumber)
 		const ExtVetoPMTHit *evhit = *data_it;
 //		cout<<"ExtVeto_component= "<<evhit->m_channel.ext_veto.component<<endl;
 
-		if ((evhit->m_channel.ext_veto.readout==0)){
+//		if ((evhit->m_channel.ext_veto.readout==0)){
 
 			// Get associated fa250Mode1CalibHit object
 			fa = NULL;
@@ -207,7 +207,7 @@ jerror_t ExtVeto_SigDisplay::evnt(JEventLoop *loop,uint64_t eventnumber)
 			component=evhit->m_channel.ext_veto.readout;
 			Q=(*data_it)->Q;
 	//		t->Fill();
-		}
+//		}
 
 
 	}
