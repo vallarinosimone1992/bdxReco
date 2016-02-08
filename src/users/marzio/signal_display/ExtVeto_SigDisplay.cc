@@ -19,6 +19,8 @@ using namespace std;
 #include <DAQ/triggerData.h>
 
 #include <ExtVeto/ExtVetoPMTHit.h>
+#include <ExtVeto/ExtVetoDigiHit.h>
+
 
 #include <system/JROOTOutput.h>
 
@@ -151,7 +153,7 @@ jerror_t ExtVeto_SigDisplay::evnt(JEventLoop *loop,uint64_t eventnumber)
 	//
 	vector<const ExtVetoPMTHit*> data;
 	vector<const ExtVetoPMTHit*>::const_iterator data_it;
-	const fa250Mode1CalibHit *fa;
+//	const fa250Mode1CalibHit *fa;
 	loop->Get(data);
 
 
@@ -186,21 +188,22 @@ jerror_t ExtVeto_SigDisplay::evnt(JEventLoop *loop,uint64_t eventnumber)
 //		if ((evhit->m_channel.ext_veto.readout==0)){
 
 			// Get associated fa250Mode1CalibHit object
-			fa = NULL;
-			evhit->GetSingle(fa);
+//			fa = NULL;
+//			evhit->GetSingle(fa);
 
 //			jout<<"Sector= "<<evhit->m_channel.ext_veto.sector<<" Layer= "<<evhit->m_channel.ext_veto.layer<<endl;
-			jout<<"Component= "<<evhit->m_channel.ext_veto.component<<" Readout= "<<evhit->m_channel.ext_veto.readout<<" Size= "<<fa->samples.size()<<endl;
+//			jout<<"Component= "<<evhit->m_channel.ext_veto.component<<" Readout= "<<evhit->m_channel.ext_veto.readout<<" Size= "<<fa->samples.size()<<endl;
+			jout<<"Component= "<<evhit->m_channel.ext_veto.component<<" Readout= "<<evhit->m_channel.ext_veto.readout<<endl;
 
-			if(!fa) continue; // need fa250Mode1CalibHit to continue
+//			if(!fa) continue; // need fa250Mode1CalibHit to continue
 
 
 
-			h->Reset();
-			h->SetName(Form("h%lld",eventnumber));
-			for (int ii=0;ii<fa->samples.size();ii++){
-				h->Fill(ii,fa->samples.at(ii));
-			}
+//			h->Reset();
+//			h->SetName(Form("h%lld",eventnumber));
+//			for (int ii=0;ii<fa->samples.size();ii++){
+//				h->Fill(ii,fa->samples.at(ii));
+//			}
 
 	//		h->Write();
 			eventN=eventnumber;

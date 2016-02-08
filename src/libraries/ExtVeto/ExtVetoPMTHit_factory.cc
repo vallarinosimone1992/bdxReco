@@ -89,20 +89,13 @@ jerror_t ExtVetoPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		m_channel=m_tt->getChannelInfo(m_csc);
 
 		if (m_channel.det_sys==TranslationTable::EXT_VETO){
-
 			//A.C. do not touch these
-						m_ExtVetoPMTHit=new ExtVetoPMTHit;
-						m_ExtVetoPMTHit->m_channel=m_channel;
+//						m_ExtVetoPMTHit=new ExtVetoPMTHit;
+//						m_ExtVetoPMTHit->m_channel=m_channel;
 						m_ExtVetoPMTHit=m_extVetofa250Converter->convertHit((fa250Hit*)*it_fa250Mode1CalibHit,m_channel);
-
 						m_ExtVetoPMTHit->AddAssociatedObject(*it_fa250Mode1CalibHit);
 						_data.push_back(m_ExtVetoPMTHit);
 					}
-
-
-			m_ExtVetoPMTHit=m_extVetofa250Converter->convertHit((fa250Hit*)*it_fa250Mode1CalibHit,m_channel);
-			m_ExtVetoPMTHit->AddAssociatedObject(*it_fa250Mode1CalibHit);
-			_data.push_back(m_ExtVetoPMTHit);
 		}
 
 
