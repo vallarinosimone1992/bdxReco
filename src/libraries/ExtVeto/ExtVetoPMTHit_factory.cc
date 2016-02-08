@@ -94,7 +94,6 @@ jerror_t ExtVetoPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 						m_ExtVetoPMTHit=new ExtVetoPMTHit;
 						m_ExtVetoPMTHit->m_channel=m_channel;
 						m_ExtVetoPMTHit=m_extVetofa250Converter->convertHit((fa250Hit*)*it_fa250Mode1CalibHit,m_channel);
-				        jout<<"M CHANNEL EXT VETO 2 = "<<m_channel.det_sys<<endl;
 
 						m_ExtVetoPMTHit->AddAssociatedObject(*it_fa250Mode1CalibHit);
 						_data.push_back(m_ExtVetoPMTHit);

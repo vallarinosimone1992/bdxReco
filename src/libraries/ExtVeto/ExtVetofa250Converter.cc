@@ -1,6 +1,7 @@
 #include "ExtVetofa250Converter.h"
 
 #include <DAQ/fa250Mode1CalibHit.h>
+#include <DAQ/fa250Mode1Hit.h>
 #include <DAQ/fa250Mode7Hit.h>
 
 
