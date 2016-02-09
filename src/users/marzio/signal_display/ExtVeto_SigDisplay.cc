@@ -168,7 +168,7 @@ jerror_t ExtVeto_SigDisplay::evnt(JEventLoop *loop,uint64_t eventnumber)
 	}
 
 	int tWord=tData->triggerWords.at(0);
-//	jout<<eventnumber<<" tWord= "<<tWord<<endl;
+	jout<<eventnumber<<" tWord= "<<tWord<<endl;
 
 	int isMPPC=0;
 	for (int ii=0;ii<4;ii++){
