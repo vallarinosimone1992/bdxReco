@@ -24,6 +24,8 @@ using namespace std;
 #include <ExtVeto/ExtVetoPMTHit.h>
 #include <ExtVeto/ExtVetoDigiHit.h>
 
+#include <Calorimeter/CalorimeterSiPMHit.h>
+
 
 #include <system/JROOTOutput.h>
 
@@ -154,8 +156,8 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop,uint64_t eventnumber)
 	// since multiple threads may call this method at the same time.
 	// Here's an example:
 	//
-	vector<const IntVetoSiPMHit*> data;
-	vector<const IntVetoSiPMHit*>::const_iterator data_it;
+	vector<const CalorimeterSiPMHit*> data;
+	vector<const CalorimeterSiPMHit*>::const_iterator data_it;
 	const fa250Mode1CalibHit *fa;
 	loop->Get(data);
 
@@ -170,21 +172,24 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop,uint64_t eventnumber)
 	}
 
 	int tWord=tData->triggerWords.at(0);
+
 	int isMPPC=0;
 	for (int ii=0;ii<4;ii++){
 		if ((((tWord)>>ii)&0x1)&&(ii==2)) isMPPC=1;
 	}
 	//if (!isMPPC) return OBJECT_NOT_AVAILABLE;
 //	jout<<"****************************************************************"<<endl;
-//	jout<<"Evt number="<< eventnumber<<" tWord= "<<tWord<<endl;
+
+	if ((tWord!=1)&&(tWord!=2)&&(tWord!=4)&&(tWord!=8))
+	jout<<"Evt number="<< eventnumber<<" tWord= "<<tWord<<endl;
 	japp->RootWriteLock();
 	//  ... fill historgrams or trees ...
 	for (data_it=data.begin();data_it<data.end();data_it++){
 	
-		const IntVetoSiPMHit *ivhit = *data_it;
-		jout<<ivhit->m_channel.int_veto.readout<<endl;
-//		if ((ivhit->m_channel.int_veto.component==4)&&((ivhit->m_channel.int_veto.readout==1))){
-			jout<<"Component= "<<ivhit->m_channel.ext_veto.component<<" Readout= "<<ivhit->m_channel.ext_veto.readout<<" Size= "<<fa->samples.size()<<endl;
+		const CalorimeterSiPMHit *ivhit = *data_it;
+
+
+			//jout<<"Component= "<<ivhit->m_channel.ext_veto.component<<" Readout= "<<ivhit->m_channel.ext_veto.readout<<" Size= "<<fa->samples.size()<<endl;
 
 			// Get associated fa250Mode1CalibHit object
 			fa = NULL;
@@ -192,17 +197,17 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop,uint64_t eventnumber)
 			if(!fa) continue; // need fa250Mode1CalibHit to continue
 
 			h->Reset();
-			h->SetName(Form("h%lld",eventnumber));
+			h->SetName(Form("h%lld_%i",eventnumber,ivhit->m_channel.calorimeter.readout));
 			for (int ii=0;ii<fa->samples.size();ii++){
 				h->Fill(ii,fa->samples.at(ii));
 			}
 
-//			h->Write();
+			h->Write();
 			eventN=eventnumber;
 			component=ivhit->m_channel.int_veto.readout;
 			Q=(*data_it)->Q;
-//			t->Fill();
-//		}
+			t->Fill();
+
 
 
 	}

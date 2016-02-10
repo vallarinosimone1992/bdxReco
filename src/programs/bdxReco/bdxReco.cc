@@ -14,6 +14,7 @@ using namespace jana;
 #include <TT/JFactoryGenerator_TT.h>
 #include <IntVeto/JFactoryGenerator_IntVeto.h>
 #include <ExtVeto/JFactoryGenerator_ExtVeto.h>
+#include <Calorimeter/JFactoryGenerator_Calorimeter.h>
 
 // C++ headers
 #include <iostream>
@@ -30,9 +31,9 @@ using namespace std;
 
 int main(int narg, char *argv[])
 {
-	goptions bdxOpt;
-	bdxOpt.setGoptions();
-	bdxOpt.setOptMap(narg, argv);
+	//goptions bdxOpt;
+	//bdxOpt.setGoptions();
+	//bdxOpt.setOptMap(narg, argv);
  
 	
 	JApplication app(narg, argv);
@@ -42,14 +43,15 @@ int main(int narg, char *argv[])
 		return 0;
 	}
 
-	app.AddEventSourceGenerator(new JEventSourceEvioGenerator(bdxOpt));
+	app.AddEventSourceGenerator(new JEventSourceEvioGenerator());
 
 
 	app.AddFactoryGenerator(new JFactoryGenerator_DAQ());
 	app.AddFactoryGenerator(new JFactoryGenerator_TT());
 	app.AddFactoryGenerator(new JFactoryGenerator_ExtVeto());
 	app.AddFactoryGenerator(new JFactoryGenerator_IntVeto());
-	app.AddProcessor(new BDXEventProcessor(bdxOpt));
+	app.AddFactoryGenerator(new JFactoryGenerator_Calorimeter());
+	app.AddProcessor(new BDXEventProcessor());
 
 	app.Run();
 

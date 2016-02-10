@@ -1,27 +1,20 @@
 // $Id$
 //
-//    File: VetoIntDigiHit_factory.h
-// Created: Tue Jan 12 11:52:41 CET 2016
+//    File: Calorimeterfa250Converter_factory.h
+// Created: Mon Jan 25 17:02:27 CET 2016
 // Creator: celentan (on Linux apcx4 2.6.32-504.30.3.el6.x86_64 x86_64)
 //
 
-#ifndef _VetoIntSIPMHit_factory_
-#define _VetoIntSIPMHit_factory_
+#ifndef _Calorimeterfa250Converter_factory_
+#define _Calorimeterfa250Converter_factory_
 
 #include <JANA/JFactory.h>
+#include "Calorimeterfa250Converter.h"
 
-#include "IntVetoSiPMHit.h"
-#include "IntVetoCalibration.h"
-
-class IntVetofa250Converter;
-
-
-
-
-class IntVetoSiPMHit_factory:public jana::JFactory<IntVetoSiPMHit>{
+class Calorimeterfa250Converter_factory:public jana::JFactory<Calorimeterfa250Converter>{
 	public:
-		IntVetoSiPMHit_factory():m_tt(0){};
-		~IntVetoSiPMHit_factory(){};
+		Calorimeterfa250Converter_factory():m_isFirstCallToBrun(1),m_calorimeterfa250Converter(0){};
+		~Calorimeterfa250Converter_factory(){};
 
 
 	private:
@@ -31,14 +24,9 @@ class IntVetoSiPMHit_factory:public jana::JFactory<IntVetoSiPMHit>{
 		jerror_t erun(void);						///< Called everytime run number changes, provided brun has been called.
 		jerror_t fini(void);						///< Called after last event of last event source has been processed.
 
-		const TranslationTable *m_tt;
-		const IntVetofa250Converter *m_intVetofa250Converter;
-
-		IntVetoCalibration m_sipm_gain;
-
-		int VERBOSE;
-
+		int m_isFirstCallToBrun;
+		Calorimeterfa250Converter *m_calorimeterfa250Converter;
 };
 
-#endif // _VetoIntDigiHit_factory_
+#endif // _Calorimeterfa250Converter_factory_
 

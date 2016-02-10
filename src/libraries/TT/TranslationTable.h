@@ -45,7 +45,7 @@ public:
 		UNKNOWN_DETECTOR,
 		EXT_VETO,
 		INT_VETO,
-		CALO,
+		CALORIMETER,
 		OTHER,
 		NUM_DETECTOR_TYPES
 	};
@@ -54,7 +54,7 @@ public:
 		switch(type){
 		case EXT_VETO: return "ExtVeto";
 		case INT_VETO: return "IntVeto";
-		case CALO: return "CALO";
+		case CALORIMETER: return "Calorimeter";
 		case OTHER: return "OTHER";
 		case UNKNOWN_DETECTOR:
 		default:
@@ -130,6 +130,7 @@ public:
 		int sector;
 		int x,y;
 		int readout;
+		static const int nIDs(){return 4;};
 		inline bool isSameActive(const CALO_Index_t &rhs) const{
 			return (sector==rhs.sector) && (x==rhs.x) && (y==rhs.y);
 		}
@@ -173,7 +174,7 @@ public:
 		union{
 			EXT_VETO_Index_t ext_veto;
 			INT_VETO_Index_t int_veto;
-			CALO_Index_t calo;
+			CALO_Index_t calorimeter;
 			OTHER_Index_t other;
 		};
 	};

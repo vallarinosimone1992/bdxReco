@@ -11,6 +11,7 @@
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
 
+#include "TString.h"
 //#include <vector>
 class triggerData:public jana::JObject{
 	public:
@@ -21,8 +22,9 @@ class triggerData:public jana::JObject{
 		// This method is used primarily for pretty printing
 		// the second argument to AddString is printf style format
 		void toStrings(vector<pair<string,string> > &items)const{
-			// AddString(items, "id", "%4d", id);
-			// AddString(items, "E", "%f", E);
+			for (int iword=0;iword<triggerWords.size();iword++){
+			 AddString(items, Form("word_%i",iword), "%i", triggerWords.at(iword));
+			}
 		}
 		
 };

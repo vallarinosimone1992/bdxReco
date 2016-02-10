@@ -11,7 +11,7 @@ using namespace jana;
 class JEventSourceEvioGenerator:public JEventSourceGenerator
 {
 	public:
-		 JEventSourceEvioGenerator(goptions Opt){bdxOpt = Opt;}
+		 JEventSourceEvioGenerator(){}
 		~JEventSourceEvioGenerator(){}
 
 
@@ -24,8 +24,7 @@ class JEventSourceEvioGenerator:public JEventSourceGenerator
 		
 		JEventSource* MakeJEventSource(string source);
 		
-	private:
-		goptions bdxOpt;
+
 };
 
 #endif // _JEventSourceEvioGenerator_

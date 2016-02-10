@@ -17,7 +17,13 @@
 #include "IntVetofa250Converter_factory.h"
 class JFactoryGenerator_IntVeto: public jana::JFactoryGenerator{
 	public:
-		JFactoryGenerator_IntVeto(){}
+		JFactoryGenerator_IntVeto(){
+			VERBOSE=0;
+			gPARMS->SetDefaultParameter("INTVETO:VERBOSE", VERBOSE,
+						"Verbosity level for applying messages from INTVETO library."
+						" 0=no messages, 10=all messages.");
+
+		}
 		virtual ~JFactoryGenerator_IntVeto(){}
 		virtual const char* className(void){return static_className();}
 		static const char* static_className(void){return "JFactoryGenerator_VETO_INT";}
@@ -32,7 +38,12 @@ class JFactoryGenerator_IntVeto: public jana::JFactoryGenerator{
 
 		}
 
+	private:
+		int VERBOSE;
 };
+
+
+
 
 #endif // _JFactoryGenerator_VETO_INT_
 

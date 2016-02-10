@@ -4,6 +4,7 @@ lib
 bin
 *.o
 *.os
+*.so
 #Evio files - may be here for tests
 *.evio.*
 *.evio

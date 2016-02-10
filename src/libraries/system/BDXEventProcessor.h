@@ -6,8 +6,7 @@
 #include <JANA/JApplication.h>
 using namespace jana;
 
-// bdx headers
-#include "options.h"
+
 
 // bank headers
 //#include "gbank.h"
@@ -31,7 +30,7 @@ class JOutput;
 class BDXEventProcessor:public JEventProcessor
 {
 	public:
-		 BDXEventProcessor(goptions bdxOpt);
+		 BDXEventProcessor();
 		~BDXEventProcessor();
 		const char* className(void){return "BDXEventProcessor";}  /*A.C. DO NOT TOUCH THIS!*/
 

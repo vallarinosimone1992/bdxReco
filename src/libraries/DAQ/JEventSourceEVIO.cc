@@ -24,14 +24,12 @@ using namespace std;
 #include <ctof/CTOFhit.h>
 
 // Constructor
-JEventSourceEvio::JEventSourceEvio(const char* source_name, goptions Opt):JEventSource(source_name),
+JEventSourceEvio::JEventSourceEvio(const char* source_name):JEventSource(source_name),
 		chan(0),EDT(0),vme_mother_tag(0),child_mode1_tag(0),child_mode7_tag(0),eventHeader_tag(0),
 		curRunNumber(0),curEventNumber(0)
 {
-	bdxOpt = Opt;
 
-	string hd_msg = bdxOpt.optMap["LOG_MSG"].args + " Event: >> " ;
-	string lbank  = bdxOpt.optMap["BANK_LIST"].args;      // list of banks to be saved in the output
+
 
 	// Setting CLAS12 constants
 	// Hardcoded for now but will be from database later on
@@ -71,7 +69,7 @@ JEventSourceEvio::JEventSourceEvio(const char* source_name, goptions Opt):JEvent
 	gPARMS->SetDefaultParameter("DAQ:RUN_NUMBER",overwriteRunNumber);
 
 	// open EVIO file - buffer is hardcoded at 3M... that right?
-	cout << hd_msg << " Opening input file " << source_name << "." << endl;
+	jout << " Opening input file " << source_name << "." << endl;
 
 	try{
 //		chan = new evioFileChannel(source_name, "r", 300000);
@@ -104,7 +102,7 @@ jerror_t JEventSourceEvio::GetEvent(JEvent &event)
 	map<string, string> allSystems;
 	allSystems["ctof"] = "TEXT";
 
-	banksMap = read_banks(bdxOpt, allSystems);
+	//banksMap = read_banks(bdxOpt, allSystems);
 
 	if(chan->read())
 	{

@@ -10,6 +10,9 @@
 
 #include <JANA/JFactory.h>
 #include "CalorimeterSiPMHit.h"
+#include "CalorimeterCalibration.h"
+
+class Calorimeterfa250Converter;
 
 class CalorimeterSiPMHit_factory:public jana::JFactory<CalorimeterSiPMHit>{
 	public:
@@ -23,6 +26,13 @@ class CalorimeterSiPMHit_factory:public jana::JFactory<CalorimeterSiPMHit>{
 		jerror_t evnt(jana::JEventLoop *eventLoop, uint64_t eventnumber);	///< Called every event.
 		jerror_t erun(void);						///< Called everytime run number changes, provided brun has been called.
 		jerror_t fini(void);						///< Called after last event of last event source has been processed.
+
+		const TranslationTable *m_tt;
+		const Calorimeterfa250Converter *m_Calorimeterfa250Converter;
+
+		CalorimeterCalibration m_sipm_gain;
+
+		int VERBOSE;
 };
 
 #endif // _CalorimeterSiPMHit_factory_

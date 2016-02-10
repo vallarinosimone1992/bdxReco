@@ -30,7 +30,7 @@ using namespace evio;
 class JEventSourceEvio:public JEventSource
 {
 	public:
-		JEventSourceEvio(const char* source_name, goptions Opt);
+		JEventSourceEvio(const char* source_name);
 		virtual ~JEventSourceEvio();
 
 		virtual const char* className(void)      {return static_className();}
@@ -40,7 +40,7 @@ class JEventSourceEvio:public JEventSource
 		void FreeEvent(JEvent &event);
 		jerror_t GetObjects(JEvent &event, JFactory_base *factory);
 	
-		goptions bdxOpt;
+
 		map<string, gBank> banksMap;
 	
 	private:

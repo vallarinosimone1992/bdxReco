@@ -253,8 +253,8 @@ TranslationTable::Detector_t DetectorStr2DetID(string &type)
 		return TranslationTable::EXT_VETO;
 	} else if ( type == "int_veto" ) {
 		return TranslationTable::INT_VETO;
-	} else if ( type == "calo" ) {
-		return TranslationTable::CALO;
+	} else if (( type == "calo" )||(type == "calorimeter")) {
+		return TranslationTable::CALORIMETER;
 	} else if ( type == "other" ) {
 		return TranslationTable::OTHER;
 	} else {
@@ -389,11 +389,11 @@ void StartElement(void *userData, const char *xmlname, const char **atts)
 			ci.int_veto.component = component;
 			ci.int_veto.readout = readout;
 			break;
-		case TranslationTable::CALO:
-			ci.calo.sector = sector;
-			ci.calo.x = column;  //A.C. fine, x is a column and y is a row
-			ci.calo.y = row;
-			ci.calo.readout = readout;
+		case TranslationTable::CALORIMETER:
+			ci.calorimeter.sector = sector;
+			ci.calorimeter.x = column;  //A.C. fine, x is a column and y is a row
+			ci.calorimeter.y = row;
+			ci.calorimeter.readout = readout;
 			break;
 		case TranslationTable::OTHER:
 			ci.other.id = id;

@@ -1,6 +1,9 @@
 // C++ headers
 #include <cstdio>
 #include <iostream>
+#include <algorithm>
+#include <cctype>
+#include <string>
 using namespace std;
 
 // bdx headers
@@ -18,8 +21,8 @@ using namespace std;
 #include "JROOTOutput.h"
 
 // Constructor
-BDXEventProcessor::BDXEventProcessor(goptions bdxOpt):
-m_output(0),m_tt(0)
+BDXEventProcessor::BDXEventProcessor():
+		m_output(0),m_tt(0)
 {
 	/* Opens output file if specified
 	the string should be of the form
@@ -27,35 +30,8 @@ m_output(0),m_tt(0)
 	with type: TXT EVIO ROOT
 	and filename anything
 	 */
-	string type,name,fname;
-	optf  = bdxOpt.optMap["OUTPUT"].args;
 
-
-	outType.assign(optf, 0, optf.find(",")) ;
-	outFile.assign(optf,    optf.find(",") + 1, optf.size()) ;
-
-
-
-
-	if(optf!= "none")
-	{
-		jout<<"Out file type is: "<<outType<<endl;
-		if(outType == "root"){
-			fname=TrimSpaces(outFile);
-			m_output=new JROOTOutput(outFile);
-		}
-		else if (outType == "evio"){
-			jerr<<"evio not yet implemented"<<endl;
-		}
-		else if (outType == "txt"){
-			jerr<<"txt not yet implemented"<<endl;
-		}
-		else{
-			jerr<<"file type not recognized"<<endl;
-		}
-
-	}
-
+	optf="";
 	//string hd_msg = bdxOpt.optMap["LOG_MSG"].args + " Event: >> " ;
 
 
@@ -72,7 +48,44 @@ jerror_t BDXEventProcessor::init(void)
 {
 
 	jout<<"BDXEventProcessor::init is called"<<endl;
-	// Create histograms here
+
+
+
+
+
+	gPARMS->SetDefaultParameter("SYSTEM:OUTPUT",optf,
+						"Set OUTPUT file type and name, using the form \"TYPE,FILENAME\". Type can be ROOT, EVIO, TXT.\n"
+						"Example: -PSYSTEM:OUTPUT=\"ROOT,out.root\" ");
+
+	outType.assign(optf, 0, optf.find(",")) ;
+	outFile.assign(optf,    optf.find(",") + 1, optf.size()) ;
+
+
+	std::transform(outType.begin(),outType.end(), outType.begin(),::tolower);
+
+
+	if(optf!= "none")
+	{
+		jout<<"Out file type is: "<<outType<<endl;
+		if(outType == "root"){
+			m_output=new JROOTOutput(outFile);
+		}
+		else if (outType == "evio"){
+			jerr<<"evio not yet implemented"<<endl;
+		}
+		else if (outType == "txt"){
+			jerr<<"txt not yet implemented"<<endl;
+		}
+		else{
+			jerr<<"file type not recognized"<<endl;
+		}
+
+	}
+
+
+
+
+
 	return NOERROR;
 }
 
@@ -93,7 +106,7 @@ jerror_t BDXEventProcessor::evnt(JEventLoop *loop, uint64_t eventnumber)
 	//vector<const ctofHitR*> marcoC;
 	//loop->Get(marcoC);
 
-//	jout<<"Event: "<<eventnumber<<std::endl;
+	//	jout<<"Event: "<<eventnumber<<std::endl;
 
 
 	return NOERROR;

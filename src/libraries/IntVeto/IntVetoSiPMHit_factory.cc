@@ -27,6 +27,9 @@ using namespace jana;
 jerror_t IntVetoSiPMHit_factory::init(void)
 {
 	return NOERROR;
+
+	VERBOSE=0;
+
 }
 
 //------------------
@@ -34,7 +37,7 @@ jerror_t IntVetoSiPMHit_factory::init(void)
 //------------------
 jerror_t IntVetoSiPMHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber)
 {
-	jout<<"VetoIntDigiHit_factory::brun new run number: "<<runnumber<<endl;
+	jout<<"VetoIntSiPMHit_factory::brun new run number: "<<runnumber<<endl;
 	m_tt=0;
 	eventLoop->GetSingle(m_tt);
 	if (m_tt==0){
@@ -45,14 +48,24 @@ jerror_t IntVetoSiPMHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnu
 	m_intVetofa250Converter=0;
 	eventLoop->GetSingle(m_intVetofa250Converter);
 	if (m_intVetofa250Converter==0){
-		jerr<<" unable to get the extVetofa250Converter!"<<endl;
+		jerr<<" unable to get the intVetofa250Converter!"<<endl;
 		return OBJECT_NOT_AVAILABLE;
 	}
 
 	vector<vector < double> > m_rawcalib;
-	eventLoop->GetCalib("InnerVeto/sipm_gain", m_rawcalib);
+	eventLoop->GetCalib("/InnerVeto/sipm_gain", m_rawcalib);
 	m_sipm_gain.fillCalib(m_rawcalib);
-
+	gPARMS->GetParameter("INTVETO:VERBOSE",VERBOSE);
+	if (VERBOSE>3){
+		std::map  < TranslationTable::INT_VETO_Index_t, std::vector < double > > gainCalibMap;
+		std::map  < TranslationTable::INT_VETO_Index_t, std::vector < double > >::iterator gainCalibMap_it;
+		gainCalibMap=m_sipm_gain.getCalibMap();
+		jout<<"Got following sipm_gain for run number: "<<runnumber<<endl;
+		jout<<"Rows: "<<gainCalibMap.size()<<endl;
+		for (gainCalibMap_it=gainCalibMap.begin();gainCalibMap_it!=gainCalibMap.end();gainCalibMap_it++){
+			jout<<gainCalibMap_it->first.sector<<" "<<gainCalibMap_it->first.layer<<" "<<gainCalibMap_it->first.component<<" "<<gainCalibMap_it->first.readout<<" "<<gainCalibMap_it->second.at(0)<<endl;
+		}
+	}
 
 	return NOERROR;
 }
@@ -64,6 +77,7 @@ jerror_t IntVetoSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 	TranslationTable::ChannelInfo m_channel;
 	TranslationTable::csc_t		  m_csc;
+	vector<double> 				  m_q_calib;
 	IntVetoSiPMHit *m_IntVetoSiPMHit=0;
 
 	//1: Here, we get from the framework the objects we need to process
@@ -101,6 +115,13 @@ jerror_t IntVetoSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 			//A.C. do not touch these
 			m_IntVetoSiPMHit=m_intVetofa250Converter->convertHit((fa250Hit*)*it_fa250Mode1CalibHit,m_channel);
 			m_IntVetoSiPMHit->AddAssociatedObject(*it_fa250Mode1CalibHit);
+
+			/*Apply phe conversion if possible*/
+			m_sipm_gain.getCalib(m_channel.int_veto,m_q_calib);
+			if ((m_q_calib.size()==1)&&(m_q_calib.at(0)>0)){
+				m_IntVetoSiPMHit->Q/=m_q_calib.at(0);
+			}
+
 			_data.push_back(m_IntVetoSiPMHit);
 		}
 	}
@@ -117,6 +138,13 @@ jerror_t IntVetoSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 			//A.C. do not touch these
 			m_IntVetoSiPMHit=m_intVetofa250Converter->convertHit((fa250Hit*)*it_fa250Mode7Hit,m_channel);
 			m_IntVetoSiPMHit->AddAssociatedObject(*it_fa250Mode7Hit);
+
+			/*Apply phe conversion if possible*/
+			m_sipm_gain.getCalib(m_channel.int_veto,m_q_calib);
+			if ((m_q_calib.size()==1)&&(m_q_calib.at(0)>0)){
+				m_IntVetoSiPMHit->Q/=m_q_calib.at(0);
+			}
+
 			_data.push_back(m_IntVetoSiPMHit);
 		}
 	}

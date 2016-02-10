@@ -59,7 +59,7 @@ jerror_t IntVetoDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	//1b: retrieve IntVetoSiPMHit objects
 	loop->Get(m_IntVetoSiPMHit);
-	jout<<"GOT: "<<m_IntVetoSiPMHit.size()<<endl;
+
 
 	/*Do the matching
 	 *Proceed in this way:
@@ -77,25 +77,36 @@ jerror_t IntVetoDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
  		if (m_map_it == m_map.end()){ //not here. Create a new VetoIntDigiHit object, and associate the id of this SiPM hit with it
  			m_IntVetoDigiHit=new IntVetoDigiHit;
  			m_IntVetoDigiHit->m_channel=m_channel;
- 			m_IntVetoDigiHit->IntVetoSIPMHit_id.push_back((*it)->id);
+ 			m_IntVetoDigiHit->AddAssociatedObject((*it));
  			m_map.insert(std::make_pair(m_channel.int_veto,m_IntVetoDigiHit));
 		}
  		else{ //element already exists. Get the VetoIntDigiHit and add this hit as id.
  			m_IntVetoDigiHit=m_map[m_channel.int_veto];
- 			m_IntVetoDigiHit->IntVetoSIPMHit_id.push_back((*it)->id);
+ 			m_IntVetoDigiHit->AddAssociatedObject((*it));
  		}
 	}
 
 	/*Now the map is full of all the hits in different active elements of active veto, i.e. with different identifiers, BUT readout, that maps the sipm hits.
 	 * Each hit has a reference to the SiPM hits that made it
 	 */
-
+	vector <const IntVetoSiPMHit*> m_IntVetoSiPMHit_tmp;
+	IntVetoDigiHit* m_IntVetoDigiHit_tmp;
+	double Qmax=-99999;
 	for (m_map_it=m_map.begin();m_map_it!=m_map.end();m_map_it++){
 		//do here further elaborations!
-
-
-
-		_data.push_back((m_map_it)->second); //publish it
+		//Compute the charge as the sum of the charges
+		//Compute the hit-time as time of the sipm-hit with largest charge
+		m_IntVetoDigiHit_tmp=m_map_it->second;
+		m_IntVetoDigiHit_tmp->Get(m_IntVetoSiPMHit_tmp,"",0);  //0 means "associated only with this object
+		m_IntVetoDigiHit_tmp->Q=0;
+		for (int ihit=0;ihit<m_IntVetoSiPMHit_tmp.size();ihit++){
+			m_IntVetoDigiHit_tmp->Q+=m_IntVetoSiPMHit_tmp.at(ihit)->Q;     //this is supposed to be in phe
+			if (m_IntVetoSiPMHit_tmp.at(ihit)->Q > Qmax) {
+				Qmax=m_IntVetoSiPMHit_tmp.at(ihit)->Q;
+				m_IntVetoDigiHit_tmp->T=m_IntVetoSiPMHit_tmp.at(ihit)->T;
+			}
+		}
+		_data.push_back(m_IntVetoDigiHit_tmp); //publish it
 	}
 
 	return NOERROR;

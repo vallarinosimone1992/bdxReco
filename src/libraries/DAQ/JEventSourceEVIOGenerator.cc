@@ -23,7 +23,7 @@ double JEventSourceEvioGenerator::CheckOpenable(string source)
 // Make the file a JEventSource
 JEventSource* JEventSourceEvioGenerator::MakeJEventSource(string source)
 {
-	return new JEventSourceEvio(source.c_str(), bdxOpt);
+	return new JEventSourceEvio(source.c_str());
 }
 		
 
