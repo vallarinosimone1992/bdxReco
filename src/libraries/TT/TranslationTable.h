@@ -46,7 +46,7 @@ public:
 		EXT_VETO,
 		INT_VETO,
 		CALORIMETER,
-		OTHER,
+		PADDLES,
 		NUM_DETECTOR_TYPES
 	};
 
@@ -55,7 +55,7 @@ public:
 		case EXT_VETO: return "ExtVeto";
 		case INT_VETO: return "IntVeto";
 		case CALORIMETER: return "Calorimeter";
-		case OTHER: return "OTHER";
+		case PADDLES: return "PADDLES";
 		case UNKNOWN_DETECTOR:
 		default:
 			return "UNKNOWN";
@@ -150,15 +150,15 @@ public:
 		}
 	};
 
-	class OTHER_Index_t{
+	class PADDLES_Index_t{
 	public:
 		int sector;
-		int id;
+		int component;
 		int readout;
-		inline bool isSameActive(const OTHER_Index_t &rhs) const{
-			return  (sector==rhs.sector) && (id==rhs.id);
+		inline bool isSameActive(const PADDLES_Index_t &rhs) const{
+			return  (sector==rhs.sector) && (component==rhs.component);
 		}
-		inline bool operator==(const OTHER_Index_t &rhs) const {
+		inline bool operator==(const PADDLES_Index_t &rhs) const {
 			return  isSameActive(rhs)&&(readout==rhs.readout);
 		}
 
@@ -175,7 +175,7 @@ public:
 			EXT_VETO_Index_t ext_veto;
 			INT_VETO_Index_t int_veto;
 			CALO_Index_t calorimeter;
-			OTHER_Index_t other;
+			PADDLES_Index_t paddles;
 		};
 	};
 

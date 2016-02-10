@@ -255,8 +255,8 @@ TranslationTable::Detector_t DetectorStr2DetID(string &type)
 		return TranslationTable::INT_VETO;
 	} else if (( type == "calo" )||(type == "calorimeter")) {
 		return TranslationTable::CALORIMETER;
-	} else if ( type == "other" ) {
-		return TranslationTable::OTHER;
+	} else if ( type == "paddles" ) {
+		return TranslationTable::PADDLES;
 	} else {
 		return TranslationTable::UNKNOWN_DETECTOR;
 	}
@@ -395,8 +395,8 @@ void StartElement(void *userData, const char *xmlname, const char **atts)
 			ci.calorimeter.y = row;
 			ci.calorimeter.readout = readout;
 			break;
-		case TranslationTable::OTHER:
-			ci.other.id = id;
+		case TranslationTable::PADDLES:
+			ci.paddles.component = component;
 			break;
 		case TranslationTable::UNKNOWN_DETECTOR:
 		default:
