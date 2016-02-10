@@ -11,9 +11,7 @@
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
 
-#include <DAQ/fa250ConvertedHit.h>
-
-class ExtVetoHit:public fa250ConvertedHit{
+class ExtVetoHit:public jana::JObject{
 	public:
 		JOBJECT_PUBLIC(ExtVetoHit);
 		
