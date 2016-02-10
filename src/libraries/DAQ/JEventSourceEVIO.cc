@@ -2,7 +2,6 @@
 #include <JANA/JEvent.h>
 #include <JANA/JParameterManager.h>
 // bdx headers
-#include "options.h"
 #include <DAQ/JEventSourceEVIO.h>
 #include <DAQ/JEventSourceEVIOGenerator.h>
 

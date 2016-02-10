@@ -6,7 +6,6 @@
 using namespace jana;
 
 // bdx headers
-#include "system/options.h"
 
 class JEventSourceEvioGenerator:public JEventSourceGenerator
 {

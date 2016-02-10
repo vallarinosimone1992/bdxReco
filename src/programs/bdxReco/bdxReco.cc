@@ -5,7 +5,7 @@
 using namespace jana;
 
 // bdx headers
-#include <system/options.h>
+
 #include <DAQ/JEventSourceEVIOGenerator.h>
 #include <system/BDXEventProcessor.h>
 

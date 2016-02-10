@@ -12,7 +12,6 @@
 using namespace jana;
 
 // bdx headers
-#include "system/options.h"
 
 
 // EVIO headers
