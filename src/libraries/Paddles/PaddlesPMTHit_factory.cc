@@ -86,7 +86,7 @@ jerror_t PaddlesPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		m_csc.slot=(*it_fa250Mode1CalibHit)->slot;
 		m_csc.channel=(*it_fa250Mode1CalibHit)->channel;
 		m_channel=m_tt->getChannelInfo(m_csc);
-		jout<<m_csc.rocid<<m_csc.slot<<m_csc.channel<<endl;
+//		jout<<m_csc.rocid<<m_csc.slot<<m_csc.channel<<endl;
 		if (m_channel.det_sys==TranslationTable::PADDLES){
 					    m_PaddlesPMTHit=new PaddlesPMTHit;
 						m_PaddlesPMTHit->m_channel=m_channel;
