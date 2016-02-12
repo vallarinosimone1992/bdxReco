@@ -34,7 +34,19 @@ class Paddles_SigDisplay:public jana::JEventProcessor{
 		JROOTOutput *m_ROOTOutput;
 
 		static const int time_window=100;  // Samples
+		double Q_first;
+		double Q_after;
+		double Q_evtbefore;
 		double Q;
+
+		double T0;
+		double T1;
+		double T0_twc;
+		double T1_twc;
+
+		double ped_first;
+		double ped_after;
+
 		double amp[time_window];
 		int time[time_window];
 		int component,eventN,tword;

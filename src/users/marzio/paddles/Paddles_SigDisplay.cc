@@ -77,16 +77,28 @@ jerror_t Paddles_SigDisplay::init(void)
 
 //	jout<<"test::init is called"<<std::endl;
 //	h=new TH1D("h","h",100,-0.5,99.5);
-	t=new TTree("tout","tout");
+	t=new TTree("t","t");
 
 	t->Branch("component",&component);
 	t->Branch("Q",&Q);
 	t->Branch("eventN",&eventN);
 	t->Branch("tword",&tword);
 
+	t->Branch("Q_first",&Q_first);
+	t->Branch("Q_after",&Q_after);
+	t->Branch("Q_evtbefore",&Q_evtbefore);
+
+	t->Branch("ped_first",&ped_first);
+	t->Branch("ped_after",&ped_after);
+
+
 	t->Branch("amp",amp,"amp[100]/D");
 	t->Branch("time",time,"time[100]/I");
 
+	t->Branch("T0",&T0);
+	t->Branch("T1",&T1);
+	t->Branch("T0_twc",&T0_twc);
+	t->Branch("T1_twc",&T1_twc);
 
 
 
@@ -163,7 +175,8 @@ jerror_t Paddles_SigDisplay::evnt(JEventLoop *loop,uint64_t eventnumber)
 	const fa250Mode1CalibHit *fa;
 	loop->Get(data);
 
-	const double thr=120; // in mV
+	const double thr_0=90; // in mV
+	const double thr_1=104;
 
 	const triggerData* tData;
 	//has to be in a try-catch block, since if no trigger data is there (prestart - start - end events) trows it!
@@ -188,50 +201,114 @@ jerror_t Paddles_SigDisplay::evnt(JEventLoop *loop,uint64_t eventnumber)
 //	jout<<"Evt number="<< eventnumber<<" tWord= "<<tWord<<endl;
 	japp->RootWriteLock();
 	//  ... fill historgrams or trees ...
+	double ped_evtbefore=100;
+
 	for (data_it=data.begin();data_it<data.end();data_it++){
 
 		const PaddlesPMTHit *evhit = *data_it;
-//		jout<<evhit->m_channel.paddles.readout<<endl;
-
-//		if ((evhit->m_channel.ext_veto.component==0)){
 
 			// Get associated fa250Mode1CalibHit object
 			fa = NULL;
 			evhit->GetSingle(fa);
 
-//			jout<<"Sector= "<<evhit->m_channel.ext_veto.sector<<" Layer= "<<evhit->m_channel.ext_veto.layer<<endl;
-//			jout<<"Component= "<<evhit->m_channel.ext_veto.component<<" Readout= "<<evhit->m_channel.ext_veto.readout<<" Size= "<<fa->samples.size()<<endl;
-
 			if(!fa) continue; // need fa250Mode1CalibHit to continue
-
-//			h->Reset();
-//			h->SetName(Form("h%lld",eventnumber));
 
 			// **** Check if there is a signal
 			int write=0;
-			for (int ii=0;ii<fa->samples.size();ii++){
-				if (fa->samples.at(ii)>thr)write=1;
-			}
+//			for (int ii=0;ii<fa->samples.size();ii++){
+//				if (fa->samples.at(ii)>thr)write=1;
+//			}
 			// ****
-//			jout<<evhit->m_channel.paddles.readout<<endl;
 //			if (write==1){
-//			h->Write();
 				eventN=eventnumber;
 				tword=tWord;
 				component=evhit->m_channel.paddles.id;
 
 
+//				if(component==1){
 				Q=(*data_it)->Q;
+				Q_first=0;
+				Q_after=0;
+				Q_evtbefore=0;
+				double max=0;
+				if(eventN!=1)ped_evtbefore=ped_first;
+
+//				jout<<"*************************** "<<eventN<<endl;
+//				jout<<ped_first<<" "<<ped_after<<" "<<ped_evtbefore<<endl;
+
+				ped_first=0;
+				ped_after=0;
+
+				double thr_0_twc=0;
+				double thr_1_twc=0;
 
 				for (int ii=0;ii<fa->samples.size();ii++){
+
+					    if(ii<31)ped_first+=fa->samples.at(ii);
+					    if(ii>79)ped_after+=fa->samples.at(ii);
+
 						amp[ii]=fa->samples.at(ii);
 						time[ii]=ii*4;		// in nsec
+						 if(amp[ii] > max) max = amp[ii];
 						}
 
-			t->Fill();
-	//		}
-	}
+					ped_first=ped_first/30;
+					ped_after=ped_after/20;
 
+//					jout<<max<<endl;
+
+//					jout<<ped_first<<" "<<ped_after<<" "<<ped_evtbefore<<endl;
+
+					for (int ii=0;ii<fa->samples.size();ii++){
+										    Q_first+=(fa->samples.at(ii)-ped_first);
+										    Q_after+=(fa->samples.at(ii)-ped_after);
+										    Q_evtbefore+=(fa->samples.at(ii)-ped_evtbefore);
+											}
+
+//					jout<<"Q= "<<Q_first<<" "<<Q_after<<" "<<Q_evtbefore<<endl;
+
+					if(component==0){
+						thr_0_twc=ped_first+((10/100)*max);
+						jout<<thr_0_twc<<endl;
+						for (int ii=0;ii<fa->samples.size();ii++){
+										if (fa->samples.at(ii)>thr_0){
+										 double Tinf=(ii-1)*4;
+										 double Tsup=ii*4;
+										 T0=Tinf+((Tsup-Tinf)/2);
+										 break;
+										}
+									}
+						for (int ii=0;ii<fa->samples.size();ii++){
+																 if (fa->samples.at(ii)>thr_0_twc){
+																 double Tinf=(ii-1)*4;
+																 double Tsup=ii*4;
+																 T0_twc=Tinf+((Tsup-Tinf)/2);
+																 break;
+																}
+															}
+					}
+
+
+
+
+
+
+
+					if(component==1){
+											for (int ii=0;ii<fa->samples.size();ii++){
+															if (fa->samples.at(ii)>thr_1){
+															 double Tinf=(ii-1)*4;
+															 double Tsup=ii*4;
+															 T1=Tinf+((Tsup-Tinf)/2);
+															 break;
+															}
+														}
+
+										}
+
+			t->Fill();
+//			}
+	}
 
 	japp->RootUnLock();
 
