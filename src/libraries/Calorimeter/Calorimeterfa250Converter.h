@@ -17,7 +17,7 @@
 
 class fa250Mode1CalibHit;
 class fa250Mode7Hit;
-
+class CalorimeterCalibration;
 
 class Calorimeterfa250Converter:public fa250Converter<CalorimeterSiPMHit>{
 	public:
@@ -26,6 +26,9 @@ class Calorimeterfa250Converter:public fa250Converter<CalorimeterSiPMHit>{
 		virtual CalorimeterSiPMHit* convertHit(const fa250Hit *hit,const TranslationTable::ChannelInfo &m_channel) const;
 		jerror_t convertMode1Hit(CalorimeterSiPMHit* output,const fa250Mode1CalibHit *input) const;
 		jerror_t convertMode7Hit(CalorimeterSiPMHit* output,const fa250Mode7Hit *input) const;
+
+
+		CalorimeterCalibration *pedestal;
 };
 
 #endif // _Calorimeterfa250Converter_

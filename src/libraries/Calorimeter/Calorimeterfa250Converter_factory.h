@@ -13,7 +13,7 @@
 
 class Calorimeterfa250Converter_factory:public jana::JFactory<Calorimeterfa250Converter>{
 	public:
-		Calorimeterfa250Converter_factory():m_isFirstCallToBrun(1),m_calorimeterfa250Converter(0){};
+		Calorimeterfa250Converter_factory():m_calorimeterfa250Converter(0){};
 		~Calorimeterfa250Converter_factory(){};
 
 
@@ -24,7 +24,7 @@ class Calorimeterfa250Converter_factory:public jana::JFactory<Calorimeterfa250Co
 		jerror_t erun(void);						///< Called everytime run number changes, provided brun has been called.
 		jerror_t fini(void);						///< Called after last event of last event source has been processed.
 
-		int m_isFirstCallToBrun;
+		//int m_isFirstCallToBrun;
 		Calorimeterfa250Converter *m_calorimeterfa250Converter;
 };
 
