@@ -24,8 +24,8 @@ using namespace std;
 
 #include <system/JROOTOutput.h>
 
-#include "TH1D.h"
-#include "TH2D.h"
+//#include "TH1D.h"
+//#include "TH2D.h"
 #include "TTree.h"
 
 // Routine used to create our JEventProcessor
@@ -75,13 +75,20 @@ jerror_t Paddles_SigDisplay::init(void)
 
 	app->RootWriteLock();
 
-	jout<<"test::init is called"<<std::endl;
-	h=new TH1D("h","h",100,-0.5,99.5);
+//	jout<<"test::init is called"<<std::endl;
+//	h=new TH1D("h","h",100,-0.5,99.5);
 	t=new TTree("tout","tout");
 
 	t->Branch("component",&component);
 	t->Branch("Q",&Q);
 	t->Branch("eventN",&eventN);
+	t->Branch("tword",&tword);
+
+	t->Branch("amp",amp,"amp[100]/D");
+	t->Branch("time",time,"time[100]/I");
+
+
+
 
 	app->RootUnLock();
 	return NOERROR;
@@ -128,7 +135,7 @@ jerror_t Paddles_SigDisplay::brun(JEventLoop *loop, int32_t runnumber)
 		}
 		/*For ALL objects you want to add to ROOT file, use the following:*/
 		if (m_ROOTOutput){
-			m_ROOTOutput->AddObject(h);
+//			m_ROOTOutput->AddObject(h);
 			m_ROOTOutput->AddObject(t);
 		}
 
@@ -156,6 +163,7 @@ jerror_t Paddles_SigDisplay::evnt(JEventLoop *loop,uint64_t eventnumber)
 	const fa250Mode1CalibHit *fa;
 	loop->Get(data);
 
+	const double thr=120; // in mV
 
 	const triggerData* tData;
 	//has to be in a try-catch block, since if no trigger data is there (prestart - start - end events) trows it!
@@ -168,7 +176,7 @@ jerror_t Paddles_SigDisplay::evnt(JEventLoop *loop,uint64_t eventnumber)
 	}
 
 	int tWord=tData->triggerWords.at(0);
-	jout<<eventnumber<<" tWord= "<<tWord<<endl;
+//	jout<<eventnumber<<" tWord= "<<tWord<<endl;
 
 	int isMPPC=0;
 	for (int ii=0;ii<4;ii++){
@@ -176,13 +184,14 @@ jerror_t Paddles_SigDisplay::evnt(JEventLoop *loop,uint64_t eventnumber)
 	}
 //	if (!isMPPC) return OBJECT_NOT_AVAILABLE;
 
-	jout<<"****************************************************************"<<endl;
-	jout<<"Evt number="<< eventnumber<<" tWord= "<<tWord<<endl;
+//	jout<<"****************************************************************"<<endl;
+//	jout<<"Evt number="<< eventnumber<<" tWord= "<<tWord<<endl;
 	japp->RootWriteLock();
 	//  ... fill historgrams or trees ...
 	for (data_it=data.begin();data_it<data.end();data_it++){
 
 		const PaddlesPMTHit *evhit = *data_it;
+//		jout<<evhit->m_channel.paddles.readout<<endl;
 
 //		if ((evhit->m_channel.ext_veto.component==0)){
 
@@ -191,24 +200,36 @@ jerror_t Paddles_SigDisplay::evnt(JEventLoop *loop,uint64_t eventnumber)
 			evhit->GetSingle(fa);
 
 //			jout<<"Sector= "<<evhit->m_channel.ext_veto.sector<<" Layer= "<<evhit->m_channel.ext_veto.layer<<endl;
-			jout<<"Component= "<<evhit->m_channel.ext_veto.component<<" Readout= "<<evhit->m_channel.ext_veto.readout<<" Size= "<<fa->samples.size()<<endl;
+//			jout<<"Component= "<<evhit->m_channel.ext_veto.component<<" Readout= "<<evhit->m_channel.ext_veto.readout<<" Size= "<<fa->samples.size()<<endl;
 
 			if(!fa) continue; // need fa250Mode1CalibHit to continue
 
-			h->Reset();
-			h->SetName(Form("h%lld",eventnumber));
+//			h->Reset();
+//			h->SetName(Form("h%lld",eventnumber));
+
+			// **** Check if there is a signal
+			int write=0;
 			for (int ii=0;ii<fa->samples.size();ii++){
-				h->Fill(ii,fa->samples.at(ii));
+				if (fa->samples.at(ii)>thr)write=1;
 			}
+			// ****
+//			jout<<evhit->m_channel.paddles.readout<<endl;
+//			if (write==1){
+//			h->Write();
+				eventN=eventnumber;
+				tword=tWord;
+				component=evhit->m_channel.paddles.id;
 
-			h->Write();
-			eventN=eventnumber;
-			component=evhit->m_channel.ext_veto.readout;
-			Q=(*data_it)->Q;
+
+				Q=(*data_it)->Q;
+
+				for (int ii=0;ii<fa->samples.size();ii++){
+						amp[ii]=fa->samples.at(ii);
+						time[ii]=ii*4;		// in nsec
+						}
+
 			t->Fill();
-//		}
-
-
+	//		}
 	}
 
 

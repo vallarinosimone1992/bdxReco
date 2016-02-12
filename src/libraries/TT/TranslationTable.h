@@ -153,10 +153,11 @@ public:
 	class PADDLES_Index_t{
 	public:
 		int sector;
-		int component;
+		int layer;
+		int id;
 		int readout;
 		inline bool isSameActive(const PADDLES_Index_t &rhs) const{
-			return  (sector==rhs.sector) && (component==rhs.component);
+			return  (sector==rhs.sector) && (id==rhs.id);
 		}
 		inline bool operator==(const PADDLES_Index_t &rhs) const {
 			return  isSameActive(rhs)&&(readout==rhs.readout);
