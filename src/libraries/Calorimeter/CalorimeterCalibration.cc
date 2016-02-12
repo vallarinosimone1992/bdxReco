@@ -18,9 +18,9 @@ CalorimeterCalibration::~CalorimeterCalibration() {
 }
 
 /*From the calibration source (db - file) we get something like
-sector x y readout x x x x x
+sector x y readout w w w w w
 
-Where there can be any number of "x" (while the fact we have 4 identifiers is related to TT!
+Where there can be any number of "w" (while the fact we have 4 identifiers is related to TT!)
  */
 jerror_t CalorimeterCalibration::fillCalib(const vector<vector<double> > &calib_data){
 	TranslationTable::CALO_Index_t index;

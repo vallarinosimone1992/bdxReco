@@ -180,8 +180,7 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop,uint64_t eventnumber)
 	//if (!isMPPC) return OBJECT_NOT_AVAILABLE;
 //	jout<<"****************************************************************"<<endl;
 
-	if ((tWord!=1)&&(tWord!=2)&&(tWord!=4)&&(tWord!=8))
-	jout<<"Evt number="<< eventnumber<<" tWord= "<<tWord<<endl;
+
 	japp->RootWriteLock();
 	//  ... fill historgrams or trees ...
 	for (data_it=data.begin();data_it<data.end();data_it++){
@@ -197,7 +196,7 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop,uint64_t eventnumber)
 			if(!fa) continue; // need fa250Mode1CalibHit to continue
 
 			h->Reset();
-			h->SetName(Form("h%lld_%i",eventnumber,ivhit->m_channel.calorimeter.readout));
+			h->SetName(Form("h%lld_%i_%i",eventnumber,ivhit->m_channel.calorimeter.readout,tWord));
 			for (int ii=0;ii<fa->samples.size();ii++){
 				h->Fill(ii,fa->samples.at(ii));
 			}

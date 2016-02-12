@@ -11,6 +11,7 @@
 using namespace std;
 
 #include "Calorimeterfa250Converter_factory.h"
+#include "CalorimeterCalibration.h"
 using namespace jana;
 
 //------------------
@@ -26,13 +27,22 @@ jerror_t Calorimeterfa250Converter_factory::init(void)
 //------------------
 jerror_t Calorimeterfa250Converter_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber)
 {
-	if (m_isFirstCallToBrun){
-			m_isFirstCallToBrun=0;
-			m_calorimeterfa250Converter=new Calorimeterfa250Converter();
-			_data.push_back(m_calorimeterfa250Converter);
-			SetFactoryFlag(PERSISTANT);
-		}
-	return NOERROR;
+
+	m_calorimeterfa250Converter=new Calorimeterfa250Converter();
+
+	/*Probably not the best way to do so: the calorimeter converter needs to know about the pedestal,
+	 * so read cal. constants from DB, create a CalorimeterCalibration object that handles properly the indexing
+	 * do so every run, since cal. constants may change.
+	 * In erun, consequently, delete the converter
+	 */
+	m_calorimeterfa250Converter->pedestal=new CalorimeterCalibration();
+	vector<vector < double> > m_rawpedestal;
+	eventLoop->GetCalib("/Calorimeter/pedestal", m_rawpedestal);
+	m_calorimeterfa250Converter->pedestal->fillCalib(m_rawpedestal);
+
+	_data.push_back(m_calorimeterfa250Converter);
+	SetFactoryFlag(PERSISTANT);
+
 	return NOERROR;
 }
 
@@ -61,6 +71,8 @@ jerror_t Calorimeterfa250Converter_factory::evnt(JEventLoop *loop, uint64_t even
 //------------------
 jerror_t Calorimeterfa250Converter_factory::erun(void)
 {
+	if (m_calorimeterfa250Converter) delete m_calorimeterfa250Converter;
+	_data.clear();
 	return NOERROR;
 }
 
