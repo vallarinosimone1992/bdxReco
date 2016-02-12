@@ -81,12 +81,13 @@ jerror_t PaddlesPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	 */
 	/*First, mode 1*/
 	/*Note that in this case we have to integrate the pulse - it is a mode 1 pulse! */
+
 	for (it_fa250Mode1CalibHit=m_fa250Mode1CalibHit.begin();it_fa250Mode1CalibHit!=m_fa250Mode1CalibHit.end();it_fa250Mode1CalibHit++){
 		m_csc.rocid=(*it_fa250Mode1CalibHit)->crate;
 		m_csc.slot=(*it_fa250Mode1CalibHit)->slot;
 		m_csc.channel=(*it_fa250Mode1CalibHit)->channel;
 		m_channel=m_tt->getChannelInfo(m_csc);
-//		jout<<m_csc.rocid<<m_csc.slot<<m_csc.channel<<endl;
+
 		if (m_channel.det_sys==TranslationTable::PADDLES){
 					    m_PaddlesPMTHit=new PaddlesPMTHit;
 						m_PaddlesPMTHit->m_channel=m_channel;
@@ -104,8 +105,8 @@ jerror_t PaddlesPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		m_csc.rocid=(*it_fa250Mode7Hit)->crate;
 		m_csc.slot=(*it_fa250Mode7Hit)->slot;
 		m_csc.channel=(*it_fa250Mode7Hit)->channel;
-
 		m_channel=m_tt->getChannelInfo(m_csc);
+
 		if (m_channel.det_sys==TranslationTable::PADDLES){
 			//A.C. do not touch these
 						m_PaddlesPMTHit=new PaddlesPMTHit;

@@ -29,12 +29,16 @@ class Paddles_SigDisplay:public jana::JEventProcessor{
 		jerror_t fini(void);						///< Called after last event of last event source has been processed.
 
 		int m_isFirstCallToBrun;
-		TH1D *h;
+//		TH1D *h;
 		TTree *t;
 		JROOTOutput *m_ROOTOutput;
 
+		static const int time_window=100;  // Samples
 		double Q;
-		int component,eventN;
+		double amp[time_window];
+		int time[time_window];
+		int component,eventN,tword;
+
 
 
 };

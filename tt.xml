@@ -70,8 +70,8 @@
       <channel number="11" detector="EXT_VETO" sector="0" layer="0" component="11" readout="0"/>
     </slot>
     <slot number="9" type="fADC250">
-      <channel number="0" detector="PADDLES" sector="0" component="0" readout="0"/>
-      <channel number="1" detector="PADDLES" sector="0" component="1" readout="0"/>
+      <channel number="0" detector="PADDLES" sector="0" id="0" readout="0"/>
+      <channel number="1" detector="PADDLES" sector="0" id="1" readout="0"/>
     </slot>
   </crate>
 </bdx_translation_table>
