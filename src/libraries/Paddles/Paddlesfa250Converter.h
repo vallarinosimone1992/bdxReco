@@ -25,7 +25,7 @@ class Paddlesfa250Converter:public fa250Converter<PaddlesPMTHit>{
 		
 
 		virtual PaddlesPMTHit* convertHit(const fa250Hit *hit,const TranslationTable::ChannelInfo &m_channel) const;
-		jerror_t convertMode1Hit(PaddlesPMTHit* output,const fa250Mode1CalibHit *input) const;
+		jerror_t convertMode1Hit(PaddlesPMTHit* output,const fa250Mode1CalibHit *input, const TranslationTable::ChannelInfo &m_channel) const;
 		jerror_t convertMode7Hit(PaddlesPMTHit* output,const fa250Mode7Hit *input) const;
 
 		

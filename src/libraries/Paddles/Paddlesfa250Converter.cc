@@ -9,7 +9,7 @@ PaddlesPMTHit* Paddlesfa250Converter::convertHit(const fa250Hit *hit,const Trans
 	m_PaddlesPMTHit->m_channel=m_channel;
 
 	if (strcmp(hit->className(),"fa250Mode1CalibHit")==0){
-		this->convertMode1Hit(m_PaddlesPMTHit,(const fa250Mode1CalibHit*)hit);
+		this->convertMode1Hit(m_PaddlesPMTHit,(const fa250Mode1CalibHit*)hit,m_channel);
 	}
 	else if (strcmp(hit->className(),"fa250Mode7Hit")==0){
 		this->convertMode7Hit(m_PaddlesPMTHit,(const fa250Mode7Hit*)hit);
@@ -21,10 +21,28 @@ PaddlesPMTHit* Paddlesfa250Converter::convertHit(const fa250Hit *hit,const Trans
 	return m_PaddlesPMTHit;
 }
 
-jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa250Mode1CalibHit *input) const{
+jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa250Mode1CalibHit *input, const TranslationTable::ChannelInfo &m_channel) const{
+
+	double Thr=90; 	// mV for id=0
+//	double Ped=0;
+//	double Ped_prev=0;
+	double Q=0;
+	double T=0;
 
 	int size=input->samples.size();
-	double Q=0;
+
+//   *********** Timing ****************
+	for (int ii=0;ii<size;ii++){
+			if(input->samples.at(ii)>Thr) {
+				double Tinf=(ii-1)*4;
+				double Tsup=ii*4;
+			    T=Tinf+((Tsup-Tinf)/2);
+				break;
+				}
+	}
+//   ***********************************
+
+
 
 	for (int ii=0;ii<size;ii++){
 		Q+=input->samples.at(ii);

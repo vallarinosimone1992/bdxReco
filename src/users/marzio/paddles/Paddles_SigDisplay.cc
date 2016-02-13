@@ -87,6 +87,10 @@ jerror_t Paddles_SigDisplay::init(void)
 	t->Branch("Q_first",&Q_first);
 	t->Branch("Q_after",&Q_after);
 	t->Branch("Q_evtbefore",&Q_evtbefore);
+	t->Branch("Q0",&Q0);
+	t->Branch("Q1",&Q1);
+
+
 
 	t->Branch("ped_first",&ped_first);
 	t->Branch("ped_after",&ped_after);
@@ -189,13 +193,6 @@ jerror_t Paddles_SigDisplay::evnt(JEventLoop *loop,uint64_t eventnumber)
 	}
 
 	int tWord=tData->triggerWords.at(0);
-//	jout<<eventnumber<<" tWord= "<<tWord<<endl;
-
-	int isMPPC=0;
-	for (int ii=0;ii<4;ii++){
-		if ((((tWord)>>ii)&0x1)&&(ii==2)) isMPPC=1;
-	}
-//	if (!isMPPC) return OBJECT_NOT_AVAILABLE;
 
 //	jout<<"****************************************************************"<<endl;
 //	jout<<"Evt number="<< eventnumber<<" tWord= "<<tWord<<endl;
@@ -213,63 +210,70 @@ jerror_t Paddles_SigDisplay::evnt(JEventLoop *loop,uint64_t eventnumber)
 
 			if(!fa) continue; // need fa250Mode1CalibHit to continue
 
-			// **** Check if there is a signal
-			int write=0;
-//			for (int ii=0;ii<fa->samples.size();ii++){
-//				if (fa->samples.at(ii)>thr)write=1;
-//			}
-			// ****
-//			if (write==1){
 				eventN=eventnumber;
 				tword=tWord;
 				component=evhit->m_channel.paddles.id;
 
 
-//				if(component==1){
+				if(tword==2&&eventN==445){
+
 				Q=(*data_it)->Q;
 				Q_first=0;
 				Q_after=0;
 				Q_evtbefore=0;
+
+				T0=0;
+				T0_twc=0;
+				T1=0;
+				T1_twc=0;
+
+				Q0=0;
+				Q1=0;
+
 				double max=0;
 				if(eventN!=1)ped_evtbefore=ped_first;
 
 //				jout<<"*************************** "<<eventN<<endl;
 //				jout<<ped_first<<" "<<ped_after<<" "<<ped_evtbefore<<endl;
-
+//				jout<<"Component= "<<component<<endl;
 				ped_first=0;
 				ped_after=0;
 
 				double thr_0_twc=0;
-				double thr_1_twc=0;
 
 				for (int ii=0;ii<fa->samples.size();ii++){
 
-					    if(ii<31)ped_first+=fa->samples.at(ii);
-					    if(ii>79)ped_after+=fa->samples.at(ii);
-
+					    if(ii<30)ped_first+=fa->samples.at(ii);
+					    if(ii>80)ped_after+=fa->samples.at(ii);
 						amp[ii]=fa->samples.at(ii);
 						time[ii]=ii*4;		// in nsec
+//						jout<<ped_first<<endl;
 						 if(amp[ii] > max) max = amp[ii];
 						}
 
 					ped_first=ped_first/30;
 					ped_after=ped_after/20;
 
-//					jout<<max<<endl;
+//					jout<<"Max= "<<max<<endl;
 
-//					jout<<ped_first<<" "<<ped_after<<" "<<ped_evtbefore<<endl;
+//				jout<<"PED= "<<ped_first<<" "<<ped_after<<" "<<ped_evtbefore<<endl;
 
 					for (int ii=0;ii<fa->samples.size();ii++){
 										    Q_first+=(fa->samples.at(ii)-ped_first);
 										    Q_after+=(fa->samples.at(ii)-ped_after);
 										    Q_evtbefore+=(fa->samples.at(ii)-ped_evtbefore);
+//										    cout<<ii<<" "<<(fa->samples.at(ii)-ped_first)<<endl;
+
 											}
 
 //					jout<<"Q= "<<Q_first<<" "<<Q_after<<" "<<Q_evtbefore<<endl;
+//					jout<<"Q_first= "<<Q_first<<endl;
 
+					//					jout<<(0.1*(max-ped_first))<<endl;
 					if(component==0){
-						thr_0_twc=ped_first+((10/100)*max);
-						jout<<thr_0_twc<<endl;
+						Q0=Q_first;
+						thr_0_twc=ped_first+(0.1*(max-ped_first));
+//						jout<<thr_0_twc<<endl;
 						for (int ii=0;ii<fa->samples.size();ii++){
 										if (fa->samples.at(ii)>thr_0){
 										 double Tinf=(ii-1)*4;
@@ -289,12 +293,14 @@ jerror_t Paddles_SigDisplay::evnt(JEventLoop *loop,uint64_t eventnumber)
 					}
 
 
-
+//					jout<<"T0= "<<T0<<"T0_twc="<<T0_twc<<endl;
 
 
 
 
 					if(component==1){
+						Q1=Q_first;
+
 											for (int ii=0;ii<fa->samples.size();ii++){
 															if (fa->samples.at(ii)>thr_1){
 															 double Tinf=(ii-1)*4;
@@ -305,9 +311,13 @@ jerror_t Paddles_SigDisplay::evnt(JEventLoop *loop,uint64_t eventnumber)
 														}
 
 										}
+					if(T0==0)Q0=0;
+					if(T1==0)Q1=0;
+//					jout<<"T0= "<<T0<<" T1= "<<T1<<endl;
+//					jout<<"Q0= "<<Q0<<" Q1= "<<Q1<<endl;
 
 			t->Fill();
-//			}
+			}
 	}
 
 	japp->RootUnLock();
