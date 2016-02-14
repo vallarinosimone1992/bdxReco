@@ -38,7 +38,12 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 	double Ped=0;
 	double Q=0;
 	double T=0;
+	double max=0;
+
 	int T_index=-1;
+	int max_index=-1;
+	int inf_index=-1;
+	int sup_index=-1;
 
 	int size=input->samples.size();
 
@@ -62,7 +67,7 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 						}
 //   **************************************
 
-//   *********** Pedestall ****************
+//   *********** Pedestal ****************
 //	jout<<"Ped= "<<Ped<<" Ped_prev_id0="<<Ped_prev_id0<<" Ped_prev_id1="<<Ped_prev_id1<<std::endl;
 
 	if(T_index<Nsamples&&m_channel.paddles.id==0){Ped=Ped_prev_id0;}
@@ -78,10 +83,49 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 
 //   *********** Charge *******************
 		for (int ii=0;ii<size;ii++)Q+=(input->samples.at(ii)-Ped);
+
+		if(T>0&&Q<0) {			// to recover most of the (few) "strange" signals (small and very fast (2-3 bins))
+//		jout<<"Q_before= "<<Q<<std::endl;
+		for (int ii=0;ii<size;ii++){
+			if(input->samples.at(ii) > max) {
+				max = input->samples.at(ii);
+				max_index=ii;
+				inf_index=ii-3;			// integrate from 12 nsec before ...
+				sup_index=ii+3;			// .... to 12 nsec after the maximum
+				if (inf_index<0)inf_index=0;
+				if (sup_index>size)sup_index=size;
+			}
+		}
+//		jout<<"Max= "<<max<<" max_index= "<<max_index<<" inf_index= "<<inf_index<<" sup_index= "<<sup_index<<std::endl;
+		Q=0;		// reset Q for new calculation
+		for (int ii=inf_index;ii<sup_index+1;ii++)Q+=(input->samples.at(ii)-Ped);
+//		jout<<"Q_after= "<<Q<<std::endl;
+
+		}
 //		Q=(Q*4/50)*(10^(-12));		// from Wb to Coulomb
 //   **************************************
 
+/*    For debugging
+		if(Q<0&&T>0){
+//			jout<<"WANRING !!"<<std::endl;
+//				jout<<m_channel.paddles.id<<std::endl;
 
+			for (int ii=0;ii<size;ii++){
+						if(input->samples.at(ii)>Thr) {
+							double Tinf=(ii-1)*4;
+							double Tsup=ii*4;
+						    T=Tinf+((Tsup-Tinf)/2);
+							T_index=ii;
+//				jout<<"ID= "<<m_channel.paddles.id<<" Thr= "<<Thr<<" Amp= "<<input->samples.at(ii)<<" T= "<<T<<" T_index= "<<T_index<<" "<<std::endl;
+						    break;
+							}
+				}
+
+	jout<<"Ped= "<<Ped<<" Ped_prev_id0="<<Ped_prev_id0<<" Ped_prev_id1="<<Ped_prev_id1<<std::endl;
+	jout<<"Q= "<<Q<<std::endl;
+
+		}
+*/
 	output->Q=Q;
 	output->T=T;
 
