@@ -81,6 +81,7 @@ jerror_t Paddles_SigDisplay::init(void)
 
 	t->Branch("component",&component);
 	t->Branch("Q",&Q);
+	t->Branch("T",&T);
 	t->Branch("eventN",&eventN);
 	t->Branch("tword",&tword);
 
@@ -98,6 +99,7 @@ jerror_t Paddles_SigDisplay::init(void)
 
 	t->Branch("amp",amp,"amp[100]/D");
 	t->Branch("time",time,"time[100]/I");
+
 
 	t->Branch("T0",&T0);
 	t->Branch("T1",&T1);
@@ -215,9 +217,10 @@ jerror_t Paddles_SigDisplay::evnt(JEventLoop *loop,uint64_t eventnumber)
 				component=evhit->m_channel.paddles.id;
 
 
-				if(tword==2&&eventN==445){
+//				if(tword==2&&eventN==445){
 
 				Q=(*data_it)->Q;
+				T=(*data_it)->T;
 				Q_first=0;
 				Q_after=0;
 				Q_evtbefore=0;
@@ -317,7 +320,7 @@ jerror_t Paddles_SigDisplay::evnt(JEventLoop *loop,uint64_t eventnumber)
 //					jout<<"Q0= "<<Q0<<" Q1= "<<Q1<<endl;
 
 			t->Fill();
-			}
+//			}
 	}
 
 	japp->RootUnLock();

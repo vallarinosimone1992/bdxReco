@@ -38,6 +38,7 @@ class Paddles_SigDisplay:public jana::JEventProcessor{
 		double Q_after;
 		double Q_evtbefore;
 		double Q;
+		double T;
 
 		double Q0;
 		double Q1;
