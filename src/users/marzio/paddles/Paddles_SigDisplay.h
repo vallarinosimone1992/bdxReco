@@ -55,6 +55,8 @@ class Paddles_SigDisplay:public jana::JEventProcessor{
 		int time[time_window];
 		int component,eventN,tword;
 
+		double Npe;
+
 
 
 };

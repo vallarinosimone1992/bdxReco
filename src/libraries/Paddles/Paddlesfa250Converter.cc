@@ -29,21 +29,31 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 //	jout<<m_channel.paddles.id<<std::endl;
 
 	double Thr=0;
-	if(m_channel.paddles.id==0)Thr=90; 		// mV for id=0
-	if(m_channel.paddles.id==1)Thr=104; 	// mV for id=1
+	if(m_channel.paddles.id==0)Thr=90; 		// mV for id=0		94
+	if(m_channel.paddles.id==1)Thr=104; 	// mV for id=1		107
 
 	int Nsamples=30;
 	static double Ped_prev_id0=0;
 	static double Ped_prev_id1=0;
 	double Ped=0;
-	double Q=0;
-	double T=0;
+	double Q=0;				// nC
+	double T=0;				// nsec
 	double max=0;
 
 	int T_index=-1;
 	int max_index=-1;
 	int inf_index=-1;
 	int sup_index=-1;
+
+	double Qe=1.602*1E-19*1E9;				// in nCoulumb
+    double Ne_PMTout=0;
+    double Gain=0;
+    if(m_channel.paddles.id==0)Gain=4*1E6;
+    if(m_channel.paddles.id==1)Gain=2.2*1E6;
+//    double QE=0.25;
+//    double A_ratio=1;
+    double Npe=0;
+
 
 	int size=input->samples.size();
 
@@ -63,6 +73,7 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 						{
 							output->Q=0;
 							output->T=0;
+							output->Npe=0;
 							return NOERROR;
 						}
 //   **************************************
@@ -102,7 +113,10 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 //		jout<<"Q_after= "<<Q<<std::endl;
 
 		}
-//		Q=(Q*4/50)*(10^(-12));		// from Wb to Coulomb
+		Q=Q*0.001*4/50;			// from Wb to nCoulomb
+		Ne_PMTout=Q/Qe;
+		Npe=Ne_PMTout/Gain;
+
 //   **************************************
 
 /*    For debugging
@@ -126,8 +140,10 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 
 		}
 */
+
 	output->Q=Q;
 	output->T=T;
+	output->Npe=Npe;
 
 	return NOERROR;
 }

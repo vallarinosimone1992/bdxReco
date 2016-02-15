@@ -106,6 +106,9 @@ jerror_t Paddles_SigDisplay::init(void)
 	t->Branch("T0_twc",&T0_twc);
 	t->Branch("T1_twc",&T1_twc);
 
+	t->Branch("Npe",&Npe);
+
+
 
 
 	app->RootUnLock();
@@ -221,6 +224,8 @@ jerror_t Paddles_SigDisplay::evnt(JEventLoop *loop,uint64_t eventnumber)
 
 				Q=(*data_it)->Q;
 				T=(*data_it)->T;
+				Npe=(*data_it)->Npe;
+
 				Q_first=0;
 				Q_after=0;
 				Q_evtbefore=0;
