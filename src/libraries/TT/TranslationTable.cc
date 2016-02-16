@@ -397,7 +397,7 @@ void StartElement(void *userData, const char *xmlname, const char **atts)
 			break;
 		case TranslationTable::PADDLES:
 			ci.paddles.sector = sector;
-			ci.paddles.layer = layer;
+//			ci.paddles.layer = layer;
 			ci.paddles.id = id;
 			ci.paddles.readout = readout;
 			break;

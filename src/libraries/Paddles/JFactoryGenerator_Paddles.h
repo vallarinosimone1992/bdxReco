@@ -18,7 +18,12 @@
 
 class JFactoryGenerator_Paddles: public jana::JFactoryGenerator{
 	public:
-		JFactoryGenerator_Paddles(){}
+		JFactoryGenerator_Paddles(){
+			VERBOSE=0;
+						gPARMS->SetDefaultParameter("PADDLES:VERBOSE", VERBOSE,
+									"Verbosity level for applying messages from PADDLES library."
+									" 0=no messages, 10=all messages.");
+		}
 		virtual ~JFactoryGenerator_Paddles(){}
 		virtual const char* className(void){return static_className();}
 		static const char* static_className(void){return "JFactoryGenerator_Paddles";}
@@ -31,6 +36,9 @@ class JFactoryGenerator_Paddles: public jana::JFactoryGenerator{
 
 			return NOERROR;
 		}
+
+	private:
+		int VERBOSE;
 
 };
 

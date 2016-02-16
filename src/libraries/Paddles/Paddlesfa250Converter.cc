@@ -45,8 +45,8 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 	int inf_index=-1;
 	int sup_index=-1;
 
-	double Qe=1.602*1E-19*1E9;				// in nCoulumb
-    double Ne_PMTout=0;
+//	double Qe=1.602*1E-19*1E9;				// in nCoulumb
+//    double Ne_PMTout=0;
     double Gain=0;
     if(m_channel.paddles.id==0)Gain=4*1E6;
     if(m_channel.paddles.id==1)Gain=2.2*1E6;
@@ -113,9 +113,10 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 //		jout<<"Q_after= "<<Q<<std::endl;
 
 		}
-		Q=Q*0.001*4/50;			// from Wb to nCoulomb
-		Ne_PMTout=Q/Qe;
-		Npe=Ne_PMTout/Gain;
+//		Q=Q*0.001*4/50;			// from Wb to nCoulomb
+//		jout<<"Dentro fa250 Converter - Q= "<<Q<<std::endl;
+//		Ne_PMTout=Q/Qe;
+//		Npe=Ne_PMTout/Gain;
 
 //   **************************************
 
