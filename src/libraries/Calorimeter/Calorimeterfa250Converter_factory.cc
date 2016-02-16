@@ -29,6 +29,7 @@ jerror_t Calorimeterfa250Converter_factory::brun(jana::JEventLoop *eventLoop, in
 {
 
 	m_calorimeterfa250Converter=new Calorimeterfa250Converter();
+	m_calorimeterfa250Converter->NPED=10; //A.C. for now, hardcoded
 
 	/*Probably not the best way to do so: the calorimeter converter needs to know about the pedestal,
 	 * so read cal. constants from DB, create a CalorimeterCalibration object that handles properly the indexing

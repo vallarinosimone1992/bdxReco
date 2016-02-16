@@ -31,7 +31,11 @@ public:
 	//A.C. do not touch these
 	TranslationTable::ChannelInfo m_channel; //both crate-slot channel and detector-specific ID. Since this is a sensor-based object, the readout field will be !=0
 
-	double Q,T;
+	/*These 3 variables are: hit charge (in phe), hit time (in ns), hit amplitude (in mV)*/
+	double Q,T,A;
+
+	/*miniped is always calculated event-by-event, on the first NPEDS samples*/
+	/*ped can be by event OR by run, from dB*/
 	double ped,miniped;
 
 };

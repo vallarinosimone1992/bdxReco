@@ -29,6 +29,7 @@ class Calorimeterfa250Converter:public fa250Converter<CalorimeterSiPMHit>{
 
 
 		CalorimeterCalibration *pedestal;
+		int NPED;
 };
 
 #endif // _Calorimeterfa250Converter_
