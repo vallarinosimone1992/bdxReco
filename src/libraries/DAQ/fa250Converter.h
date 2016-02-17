@@ -19,10 +19,24 @@ template<class T> class fa250Converter:public jana::JObject{
 		JOBJECT_PUBLIC(fa250Converter);
 		
 
-		virtual T* convertHit(const fa250Hit *hit,const TranslationTable::ChannelInfo &m_channel) const=0; //also this one is purely virtual
+		virtual T* convertHit(const fa250Hit *hit,const TranslationTable::ChannelInfo &m_channel)const=0; //also this one is purely virtual
 		
+		/*Add here some "common" member functions*/
+		double sumSamples(vector<double> &samples) const;
 		
 };
+
+
+
+
+
+
+template<class T> double fa250Converter< T >::sumSamples(vector<double> &samples) const{
+	double ret=0;
+	for (int ii=0;ii<samples.size();ii++) ret+=samples[ii];
+	return ret;
+}
+
 
 #endif // _FadcConverter_
 

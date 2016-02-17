@@ -32,7 +32,7 @@ jerror_t IntVetofa250Converter_factory::brun(jana::JEventLoop *eventLoop, int32_
 			_data.push_back(m_intVetofa250Converter);
 			SetFactoryFlag(PERSISTANT);
 		}
-	return NOERROR;
+
 	return NOERROR;
 }
 

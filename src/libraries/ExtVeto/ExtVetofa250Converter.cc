@@ -5,7 +5,7 @@
 #include <DAQ/fa250Mode7Hit.h>
 
 
-ExtVetoPMTHit* ExtVetofa250Converter::convertHit(const fa250Hit *hit,const TranslationTable::ChannelInfo &m_channel) const{
+ExtVetoPMTHit* ExtVetofa250Converter::convertHit(const fa250Hit *hit,const TranslationTable::ChannelInfo &m_channel)const{
 	ExtVetoPMTHit *m_ExtVetoPMTHit=new ExtVetoPMTHit;
 	m_ExtVetoPMTHit->m_channel=m_channel;
 
@@ -22,7 +22,7 @@ ExtVetoPMTHit* ExtVetofa250Converter::convertHit(const fa250Hit *hit,const Trans
 	return m_ExtVetoPMTHit;
 }
 
-jerror_t ExtVetofa250Converter::convertMode1Hit(ExtVetoPMTHit* output,const fa250Mode1CalibHit *input) const{
+jerror_t ExtVetofa250Converter::convertMode1Hit(ExtVetoPMTHit* output,const fa250Mode1CalibHit *input)const{
 
 	int size=input->samples.size();
 	double Q=0;
@@ -36,7 +36,7 @@ jerror_t ExtVetofa250Converter::convertMode1Hit(ExtVetoPMTHit* output,const fa25
 	return NOERROR;
 }
 
-jerror_t ExtVetofa250Converter::convertMode7Hit(ExtVetoPMTHit* output,const fa250Mode7Hit *input) const{
+jerror_t ExtVetofa250Converter::convertMode7Hit(ExtVetoPMTHit* output,const fa250Mode7Hit *input)const{
 
 	output->Q=0;
 	output->T=0;

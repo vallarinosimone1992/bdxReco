@@ -26,6 +26,9 @@ class Calorimeterfa250Converter_factory:public jana::JFactory<Calorimeterfa250Co
 
 		//int m_isFirstCallToBrun;
 		Calorimeterfa250Converter *m_calorimeterfa250Converter;
+
+
+
 };
 
 #endif // _Calorimeterfa250Converter_factory_

@@ -9,9 +9,11 @@
 #define _JEventProcessor_test_
 
 #include <JANA/JEventProcessor.h>
+#include <Calorimeter/CalorimeterCalibration.h>
 
 class TH1D;
 class TH2D;
+class TF1;
 class TTree;
 class JROOTOutput;
 
@@ -28,14 +30,26 @@ class JEventProcessor_test:public jana::JEventProcessor{
 		jerror_t erun(void);						///< Called everytime run number changes, provided brun has been called.
 		jerror_t fini(void);						///< Called after last event of last event source has been processed.
 
+		double HH(double x);
+		double fun(double t,double t0);
+		double integrand(double *x,double *par);
+		double integrated(double t);
+
 		int m_isFirstCallToBrun;
-		TH1D *h;
+		TH1D *h,*h1;
 		TTree *t;
 		JROOTOutput *m_ROOTOutput;
 
 		double Q;
 		int component,eventN;
 
+		CalorimeterCalibration m_pedestal;
+
+		TH1D *hGlob;
+		TF1  *fGlob;
+
+		double tau;
+		double T0;
 
 };
 

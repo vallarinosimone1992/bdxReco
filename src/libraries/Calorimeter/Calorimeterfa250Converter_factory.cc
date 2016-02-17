@@ -29,7 +29,21 @@ jerror_t Calorimeterfa250Converter_factory::brun(jana::JEventLoop *eventLoop, in
 {
 
 	m_calorimeterfa250Converter=new Calorimeterfa250Converter();
+
 	m_calorimeterfa250Converter->NPED=10; //A.C. for now, hardcoded
+	m_calorimeterfa250Converter->SINGLE_SIGNAL_TOT=10; //A.C. for now, hardcoded. These two are higly hardcoded!
+
+	/*Terrible! Hardcoder!*/
+	m_calorimeterfa250Converter->m_fitIndex=new double[2000];
+	m_calorimeterfa250Converter->m_fitError=new double[2000];
+
+	for (int ii=0;ii<2000;ii++){
+		m_calorimeterfa250Converter->m_fitIndex[ii]=ii;
+		m_calorimeterfa250Converter->m_fitError[ii]=0.4884;
+	}
+
+
+
 
 	/*Probably not the best way to do so: the calorimeter converter needs to know about the pedestal,
 	 * so read cal. constants from DB, create a CalorimeterCalibration object that handles properly the indexing
@@ -40,6 +54,7 @@ jerror_t Calorimeterfa250Converter_factory::brun(jana::JEventLoop *eventLoop, in
 	vector<vector < double> > m_rawpedestal;
 	eventLoop->GetCalib("/Calorimeter/pedestal", m_rawpedestal);
 	m_calorimeterfa250Converter->pedestal->fillCalib(m_rawpedestal);
+
 
 	_data.push_back(m_calorimeterfa250Converter);
 	SetFactoryFlag(PERSISTANT);
@@ -86,7 +101,6 @@ jerror_t Calorimeterfa250Converter_factory::fini(void)
 		delete m_calorimeterfa250Converter;
 	}
 	_data.clear();
-	return NOERROR;
 	return NOERROR;
 }
 

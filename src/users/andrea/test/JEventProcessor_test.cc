@@ -32,7 +32,7 @@ using namespace std;
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TTree.h"
-
+#include "TF1.h"
 // Routine used to create our JEventProcessor
 #include <JANA/JApplication.h>
 #include <JANA/JFactory.h>
@@ -40,6 +40,34 @@ using namespace std;
 using namespace jana;
 
 
+
+double JEventProcessor_test::HH(double x){
+	if (x>0) return 1;
+	else return 0;
+}
+
+double JEventProcessor_test::fun(double t,double t0){
+	double ret;
+	if ((t-t0)<0) ret=0;
+	else{
+		ret=(t-t0)*(t-t0)*exp(-(t-t0)/tau);
+		ret/=(2*tau*tau*tau); //normalization
+	}
+	return ret;
+}
+
+double JEventProcessor_test::integrand(double *x,double *par){
+	double t=x[0];
+	double t0=par[0];
+	return fun(t,t0)*hGlob->GetBinContent(hGlob->FindBin(t));
+}
+
+double JEventProcessor_test::integrated(double t){
+	double ret;
+	fGlob->SetParameter(0,t);
+	ret = fGlob->Integral(t,t+5*tau);
+	return ret;
+}
 
 extern "C"{
 void InitPlugin(JApplication *app){
@@ -54,7 +82,10 @@ void InitPlugin(JApplication *app){
 //------------------
 JEventProcessor_test::JEventProcessor_test():m_isFirstCallToBrun(1)
 {
-
+tau=3.5;
+T0=500;
+fGlob=new TF1("fGlob",this,&JEventProcessor_test::integrand,-10*tau,T0+10*tau,1);
+fGlob->SetNpx(1000);
 }
 
 //------------------
@@ -82,6 +113,7 @@ jerror_t JEventProcessor_test::init(void)
 
 	jout<<"test::init is called"<<std::endl;
 	h=new TH1D("h","h",500,-0.5,499.5);
+	h1=new TH1D("h1","h1",1000,-0.5,499.5);
 	t=new TTree("tout","tout");
 
 	t->Branch("component",&component);
@@ -134,10 +166,18 @@ jerror_t JEventProcessor_test::brun(JEventLoop *loop, int32_t runnumber)
 		/*For ALL objects you want to add to ROOT file, use the following:*/
 		if (m_ROOTOutput){
 			m_ROOTOutput->AddObject(h);
+			m_ROOTOutput->AddObject(h1);
 			m_ROOTOutput->AddObject(t);
 		}
 
 	}
+
+
+
+
+
+
+
 
 	return NOERROR;
 
@@ -188,6 +228,7 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop,uint64_t eventnumber)
 		const CalorimeterSiPMHit *ivhit = *data_it;
 
 
+
 			//jout<<"Component= "<<ivhit->m_channel.ext_veto.component<<" Readout= "<<ivhit->m_channel.ext_veto.readout<<" Size= "<<fa->samples.size()<<endl;
 
 			// Get associated fa250Mode1CalibHit object
@@ -196,12 +237,28 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop,uint64_t eventnumber)
 			if(!fa) continue; // need fa250Mode1CalibHit to continue
 
 			h->Reset();
-			h->SetName(Form("h%lld_%i_%i",eventnumber,ivhit->m_channel.calorimeter.readout,tWord));
+			h->SetName(Form("h_%lld_%i_%i",eventnumber,ivhit->m_channel.calorimeter.readout,tWord));
+
+			h1->Reset();
+			h1->SetName(Form("h1_%lld_%i_%i",eventnumber,ivhit->m_channel.calorimeter.readout,tWord));
+
 			for (int ii=0;ii<fa->samples.size();ii++){
-				h->Fill(ii,fa->samples.at(ii));
+				h->Fill(ii,fa->samples.at(ii)-80);
+				if (ivhit->fit_function.fSinglePhe!=0){
+					h1->Fill(ii,ivhit->fit_function.fSinglePhe->Eval(ii));
+				}
 			}
 
+			hGlob=h;
+			double T;
+			/*for (int ii=0;ii<1000;ii++){
+				T=ii*500./1000.;
+				h1->Fill(T,integrated(T));
+			}*/
+
+
 			h->Write();
+			h1->Write();
 			eventN=eventnumber;
 			component=ivhit->m_channel.int_veto.readout;
 			Q=(*data_it)->Q;

@@ -11,6 +11,10 @@
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
 
+
+#include <vector>
+#include <algorithm>
+
 #include <Calorimeter/CalorimeterSiPMHit.h>
 #include <DAQ/fa250Converter.h>
 #include <TT/TranslationTable.h>
@@ -18,6 +22,7 @@
 class fa250Mode1CalibHit;
 class fa250Mode7Hit;
 class CalorimeterCalibration;
+class TMinuit;
 
 class Calorimeterfa250Converter:public fa250Converter<CalorimeterSiPMHit>{
 	public:
@@ -29,7 +34,20 @@ class Calorimeterfa250Converter:public fa250Converter<CalorimeterSiPMHit>{
 
 
 		CalorimeterCalibration *pedestal;
+		CalorimeterCalibration *thr;
+
 		int NPED;
+		int SINGLE_SIGNAL_TOT;
+
+		/*Functions for fit*/
+		double fSinglePhe(double *x,double *par);
+
+
+		double *m_fitIndex; //just a basic array with 2000 numbers from 0 to 1999
+		double *m_fitError; //just a basic array with 2000 numbers, all 0.4884 (LSB in mV)
+
+
+
 };
 
 #endif // _Calorimeterfa250Converter_

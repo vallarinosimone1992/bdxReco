@@ -22,6 +22,8 @@ using namespace std;
 #include "CalorimeterSiPMHit_factory.h"
 using namespace jana;
 
+
+
 //------------------
 // init
 //------------------
@@ -174,4 +176,6 @@ jerror_t CalorimeterSiPMHit_factory::fini(void)
 {
 	return NOERROR;
 }
+
+
 
