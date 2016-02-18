@@ -11,6 +11,8 @@
 using namespace std;
 
 #include <Paddles/Paddlesfa250Converter_factory.h>
+#include "PaddlesCalibration.h"
+
 using namespace jana;
 
 //------------------
@@ -29,9 +31,21 @@ jerror_t Paddlesfa250Converter_factory::brun(jana::JEventLoop *eventLoop, int32_
 	if (m_isFirstCallToBrun){
 			m_isFirstCallToBrun=0;
 			m_Paddlesfa250Converter=new Paddlesfa250Converter();
+
+				m_Paddlesfa250Converter->threshold=new PaddlesCalibration();
+				vector<vector < double> > m_rawthreshold;
+				eventLoop->GetCalib("/Paddles/Threshold", m_rawthreshold);
+				m_Paddlesfa250Converter->threshold->fillCalib(m_rawthreshold);
+
+
 			_data.push_back(m_Paddlesfa250Converter);
 			SetFactoryFlag(PERSISTANT);
 	}
+
+
+
+
+
 	return NOERROR;
 }
 

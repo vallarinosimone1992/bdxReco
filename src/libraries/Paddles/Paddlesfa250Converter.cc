@@ -1,7 +1,10 @@
 #include <DAQ/fa250Mode1CalibHit.h>
 #include <DAQ/fa250Mode1Hit.h>
 #include <DAQ/fa250Mode7Hit.h>
+
 #include <Paddles/Paddlesfa250Converter.h>
+#include "PaddlesCalibration.h"
+
 
 #include <math.h>
 
@@ -26,11 +29,12 @@ PaddlesPMTHit* Paddlesfa250Converter::convertHit(const fa250Hit *hit,const Trans
 jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa250Mode1CalibHit *input, const TranslationTable::ChannelInfo &m_channel) const{
 
 
-//	jout<<m_channel.paddles.id<<std::endl;
+	vector<double> m_Thr;
+	threshold->getCalib(output->m_channel.paddles,m_Thr);
 
-	double Thr=0;
-	if(m_channel.paddles.id==0)Thr=90; 		// mV for id=0		94
-	if(m_channel.paddles.id==1)Thr=104; 	// mV for id=1		107
+
+	double Thr=m_Thr.at(0);		//mV
+//	jout<<m_channel.paddles.id<<" "<<Thr<<std::endl;
 
 	int Nsamples=30;
 	static double Ped_prev_id0=0;
