@@ -10,7 +10,6 @@
 #include <iomanip>
 using namespace std;
 
-
 //objects we need from the framework
 #include <DAQ/fa250Mode1CalibHit.h>
 #include <DAQ/fa250Mode7Hit.h>
@@ -117,13 +116,13 @@ jerror_t CalorimeterSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 			if ((m_channel.det_sys==TranslationTable::CALORIMETER)&&(m_channel.calorimeter.readout<=2)){
 				//A.C. do not touch these
 				m_CalorimeterSiPMHit=m_Calorimeterfa250Converter->convertHit((fa250Hit*)*it_fa250Mode1CalibHit,m_channel);
-				m_CalorimeterSiPMHit->AddAssociatedObject(*it_fa250Mode1CalibHit);
+
 
 				/*Apply phe conversion if possible*/
-				m_sipm_gain.getCalib(m_channel.calorimeter,m_q_calib);
+		/*		m_sipm_gain.getCalib(m_channel.calorimeter,m_q_calib);
 				if ((m_q_calib.size()==1)&&(m_q_calib.at(0)>0)){
 					m_CalorimeterSiPMHit->Q/=m_q_calib.at(0);
-				}
+				}*/
 
 				_data.push_back(m_CalorimeterSiPMHit);
 			}
@@ -140,13 +139,13 @@ jerror_t CalorimeterSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 			if (m_channel.det_sys==TranslationTable::CALORIMETER){
 				//A.C. do not touch these
 				m_CalorimeterSiPMHit=m_Calorimeterfa250Converter->convertHit((fa250Hit*)*it_fa250Mode7Hit,m_channel);
-				m_CalorimeterSiPMHit->AddAssociatedObject(*it_fa250Mode7Hit);
+
 
 				/*Apply phe conversion if possible*/
-				m_sipm_gain.getCalib(m_channel.calorimeter,m_q_calib);
+		/*		m_sipm_gain.getCalib(m_channel.calorimeter,m_q_calib);
 				if ((m_q_calib.size()==1)&&(m_q_calib.at(0)>0)){
 					m_CalorimeterSiPMHit->Q/=m_q_calib.at(0);
-				}
+				}*/
 
 				_data.push_back(m_CalorimeterSiPMHit);
 			}

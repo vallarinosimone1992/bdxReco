@@ -17,7 +17,7 @@ using namespace jana;
 #include <Calorimeter/JFactoryGenerator_Calorimeter.h>
 #include <Paddles/JFactoryGenerator_Paddles.h>
 
-
+#include "TH1D.h"
 // C++ headers
 #include <iostream>
 using namespace std;
@@ -36,7 +36,7 @@ int main(int narg, char *argv[])
 	//goptions bdxOpt;
 	//bdxOpt.setGoptions();
 	//bdxOpt.setOptMap(narg, argv);
- 
+	TH1::AddDirectory(kFALSE);
 	
 	JApplication app(narg, argv);
 
