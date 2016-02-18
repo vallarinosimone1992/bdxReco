@@ -152,23 +152,17 @@ public:
 
 	class PADDLES_Index_t{
 	public:
-		int sector;
 		int id;
-		int readout;
-		static const int nIDs(){return 3;};
+		static const int nIDs(){return 1;};
 		inline bool isSameActive(const PADDLES_Index_t &rhs) const{
-			return  (sector==rhs.sector) && (id==rhs.id);
+			return  (id==rhs.id);
 		}
 		inline bool operator==(const PADDLES_Index_t &rhs) const {
-			return  isSameActive(rhs)&&(readout==rhs.readout);
+			return  isSameActive(rhs);
 		}
 		inline bool operator<(const PADDLES_Index_t &rhs) const {  //A.C. for the maps
-					if (sector>rhs.sector) return true;
-					if (sector<rhs.sector) return false;
 					if (id>rhs.id) return true;
 					if (id<rhs.id) return false;
-					if (readout>rhs.readout) return true;
-					if (readout<rhs.readout) return false;
 					return false;
 				}
 

@@ -65,7 +65,7 @@ jerror_t PaddlesPMTHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnum
 			jout<<"Got following PMT_gain for run number: "<<runnumber<<endl;
 			jout<<"Rows: "<<gainCalibMap.size()<<endl;
 			for (gainCalibMap_it=gainCalibMap.begin();gainCalibMap_it!=gainCalibMap.end();gainCalibMap_it++){
-				jout<<gainCalibMap_it->first.sector<<" "<<gainCalibMap_it->first.id<<" "<<gainCalibMap_it->first.readout<<" "<<gainCalibMap_it->second.at(0)<<endl;
+				jout<<gainCalibMap_it->first.id<<" "<<gainCalibMap_it->second.at(0)<<endl;
 			}
 		}
 
