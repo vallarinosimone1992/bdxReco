@@ -12,7 +12,7 @@ using namespace std;
 #include "JEventProcessor_test.h"
 #include "system/BDXEventProcessor.h"
 
-#include <DAQ/fa250Mode1CalibHit.h>
+#include <DAQ/fa250Mode1CalibPedSubHit.h>
 
 #include <TT/TranslationTable.h>
 
@@ -198,7 +198,7 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop,uint64_t eventnumber)
 	//
 	vector<const CalorimeterSiPMHit*> data;
 	vector<const CalorimeterSiPMHit*>::const_iterator data_it;
-	const fa250Mode1CalibHit *fa;
+	const fa250Mode1CalibPedSubHit *fa;
 	loop->Get(data);
 
 	const triggerData* tData;
@@ -243,22 +243,19 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop,uint64_t eventnumber)
 			h1->SetName(Form("h1_%lld_%i_%i",eventnumber,ivhit->m_channel.calorimeter.readout,tWord));
 
 			for (int ii=0;ii<fa->samples.size();ii++){
-				h->Fill(ii,fa->samples.at(ii)-80);
-				if (ivhit->fit_function.fSinglePhe!=0){
-					h1->Fill(ii,ivhit->fit_function.fSinglePhe->Eval(ii));
-				}
+				h->Fill(ii,fa->samples.at(ii));
 			}
 
-			hGlob=h;
-			double T;
-			/*for (int ii=0;ii<1000;ii++){
-				T=ii*500./1000.;
-				h1->Fill(T,integrated(T));
-			}*/
+
 
 
 			h->Write();
-			h1->Write();
+
+			if (ivhit->m_type==one_phe){
+								ivhit->m_fitFunction.fSinglePhe->SetName(Form("f_%lld_%i_%i",eventnumber,ivhit->m_channel.calorimeter.readout,tWord));
+								ivhit->m_fitFunction.fSinglePhe->Write();
+			}
+		//	h1->Write();
 			eventN=eventnumber;
 			component=ivhit->m_channel.int_veto.readout;
 			Q=(*data_it)->Q;
