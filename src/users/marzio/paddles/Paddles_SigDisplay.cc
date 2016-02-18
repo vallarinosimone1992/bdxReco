@@ -224,7 +224,6 @@ jerror_t Paddles_SigDisplay::evnt(JEventLoop *loop,uint64_t eventnumber)
 
 				Q=(*data_it)->Q;
 				T=(*data_it)->T;
-				Npe=(*data_it)->Npe;
 
 				Q_first=0;
 				Q_after=0;

@@ -36,8 +36,8 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 	static double Ped_prev_id0=0;
 	static double Ped_prev_id1=0;
 	double Ped=0;
-	double Q=0;				// nC
-	double T=0;				// nsec
+	double Q=0;					// nC
+	double T=0;					// nsec
 	double max=0;
 
 	double Tinf,Tsup,Amp1,Amp2;
@@ -48,16 +48,6 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 	int inf_index=-1;
 	int sup_index=-1;
 
-//	double Qe=1.602*1E-19*1E9;				// in nCoulumb
-//    double Ne_PMTout=0;
-    double Gain=0;
-    if(m_channel.paddles.id==0)Gain=4*1E6;
-    if(m_channel.paddles.id==1)Gain=2.2*1E6;
-//    double QE=0.25;
-//    double A_ratio=1;
-    double Npe=0;
-
-
 	int size=input->samples.size();
 
 //   *********** Timing *******************
@@ -67,7 +57,6 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 				Tsup=ii*4;
 				Amp1=input->samples.at(ii-1);
 				Amp2=input->samples.at(ii);
-//			    T=Tinf+((Tsup-Tinf)/2);
 				T_index=ii;
 //				jout<<"ID= "<<m_channel.paddles.id<<" Thr= "<<Thr<<" Amp= "<<input->samples.at(ii)<<" T= "<<T<<" T_index= "<<T_index<<" "<<std::endl;
 //				jout<<"Amp1= "<<Amp1<<" Amp2= "<<Amp2<<std::endl;
@@ -79,7 +68,6 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 						{
 							output->Q=0;
 							output->T=0;
-							output->Npe=0;
 							return NOERROR;
 						}
 
@@ -105,56 +93,28 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 //   *********** Charge *******************
 		for (int ii=0;ii<size;ii++)Q+=(input->samples.at(ii)-Ped);
 
-		if(T>0&&Q<0) {			// to recover most of the (few) "strange" signals (small and very fast (2-3 bins))
-//		jout<<"Q_before= "<<Q<<std::endl;
-		for (int ii=0;ii<size;ii++){
-			if(input->samples.at(ii) > max) {
-				max = input->samples.at(ii);
-				max_index=ii;
-				inf_index=ii-3;			// integrate from 12 nsec before ...
-				sup_index=ii+3;			// .... to 12 nsec after the maximum
-				if (inf_index<0)inf_index=0;
-				if (sup_index>size)sup_index=size;
-			}
-		}
-//		jout<<"Max= "<<max<<" max_index= "<<max_index<<" inf_index= "<<inf_index<<" sup_index= "<<sup_index<<std::endl;
-		Q=0;		// reset Q for new calculation
-		for (int ii=inf_index;ii<sup_index+1;ii++)Q+=(input->samples.at(ii)-Ped);
-//		jout<<"Q_after= "<<Q<<std::endl;
-
-		}
-//		Q=Q*0.001*4/50;			// from Wb to nCoulomb
-//		jout<<"Dentro fa250 Converter - Q= "<<Q<<std::endl;
-//		Ne_PMTout=Q/Qe;
-//		Npe=Ne_PMTout/Gain;
-
-//   **************************************
-
-/*    For debugging
-		if(Q<0&&T>0){
-//			jout<<"WANRING !!"<<std::endl;
-//				jout<<m_channel.paddles.id<<std::endl;
-
+		if(T>0&&Q<0) {					// to recover most of the (few) "strange" signals (small and very fast (2-3 bins))
+//			jout<<"Q_before= "<<Q<<std::endl;
 			for (int ii=0;ii<size;ii++){
-						if(input->samples.at(ii)>Thr) {
-							double Tinf=(ii-1)*4;
-							double Tsup=ii*4;
-						    T=Tinf+((Tsup-Tinf)/2);
-							T_index=ii;
-//				jout<<"ID= "<<m_channel.paddles.id<<" Thr= "<<Thr<<" Amp= "<<input->samples.at(ii)<<" T= "<<T<<" T_index= "<<T_index<<" "<<std::endl;
-						    break;
-							}
-				}
-
-	jout<<"Ped= "<<Ped<<" Ped_prev_id0="<<Ped_prev_id0<<" Ped_prev_id1="<<Ped_prev_id1<<std::endl;
-	jout<<"Q= "<<Q<<std::endl;
-
+				if(input->samples.at(ii) > max) {
+					max = input->samples.at(ii);
+					max_index=ii;
+					inf_index=ii-3;			// integrate from 12 nsec before ...
+					sup_index=ii+3;			// .... to 12 nsec after the maximum
+					if (inf_index<0)inf_index=0;
+					if (sup_index>size)sup_index=size;
+										}
+									}
+//				jout<<"Max= "<<max<<" max_index= "<<max_index<<" inf_index= "<<inf_index<<" sup_index= "<<sup_index<<std::endl;
+				Q=0;		// reset Q for new calculation
+				for (int ii=inf_index;ii<sup_index+1;ii++)Q+=(input->samples.at(ii)-Ped);
+//				jout<<"Q_after= "<<Q<<std::endl;
 		}
-*/
+
+		Q=Q*(0.001*4)/50 ;        // from Wb to nCoulomb , 4 [nsec], 50 [Ohm], Q [Volts]
 
 	output->Q=Q;
 	output->T=T;
-	output->Npe=Npe;
 
 	return NOERROR;
 }

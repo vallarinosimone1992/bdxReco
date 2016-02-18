@@ -114,22 +114,18 @@ jerror_t PaddlesPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		m_channel=m_tt->getChannelInfo(m_csc);
 
 		if (m_channel.det_sys==TranslationTable::PADDLES){
-//					    m_PaddlesPMTHit=new PaddlesPMTHit;
-//						m_PaddlesPMTHit->m_channel=m_channel;
 						m_PaddlesPMTHit=m_Paddlesfa250Converter->convertHit((fa250Hit*)*it_fa250Mode1CalibHit,m_channel);
 						m_PaddlesPMTHit->AddAssociatedObject(*it_fa250Mode1CalibHit);
 //						jout<<"Q= "<<m_PaddlesPMTHit->Q<<endl;
 
-						/*Apply phe conversion if possible*/
+						/*Apply phe conversion */
 															m_PMT_gain.getCalib(m_channel.paddles,m_q_calib);
 //															jout<<"**********"<<endl;
 //															jout<<m_q_calib.size()<<endl;
 //															jout<<m_q_calib.at(0)<<" "<<endl;
 															if ((m_q_calib.size()==1)&&(m_q_calib.at(0)>0)){
-																m_PaddlesPMTHit->Q/=0.001*4/50;			// from Wb to nCoulomb , 4 [nsec], 50 [Ohm], Q [Volts]
-																m_PaddlesPMTHit->Q/=(1.602*1E-19*1E9);	// number of electrons at the exit of the PMT
-																m_PaddlesPMTHit->Q/=m_q_calib.at(0);	// number of phe
-//																jout<<"Q= "<<m_PaddlesPMTHit->Q<<endl;
+																m_PaddlesPMTHit->Q/=((1.602*1E-19)*1E9);	// number of electrons at the exit of the PMT
+																m_PaddlesPMTHit->Q/=m_q_calib.at(0);		// number of phe
 															}
 
 						_data.push_back(m_PaddlesPMTHit);
@@ -149,17 +145,21 @@ jerror_t PaddlesPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 		if (m_channel.det_sys==TranslationTable::PADDLES){
 			//A.C. do not touch these
-						m_PaddlesPMTHit=new PaddlesPMTHit;
-						m_PaddlesPMTHit->m_channel=m_channel;
 						m_PaddlesPMTHit=m_Paddlesfa250Converter->convertHit((fa250Hit*)*it_fa250Mode7Hit,m_channel);
 						m_PaddlesPMTHit->AddAssociatedObject(*it_fa250Mode7Hit);
 
-						/*Apply phe conversion if possible*/
-												m_PMT_gain.getCalib(m_channel.paddles,m_q_calib);
-												jout<<m_q_calib.size()<<endl;
-												if ((m_q_calib.size()==1)&&(m_q_calib.at(0)>0)){
-														m_PaddlesPMTHit->Q/=m_q_calib.at(0);
-													}
+						/*Apply phe conversion */
+																					m_PMT_gain.getCalib(m_channel.paddles,m_q_calib);
+						//															jout<<"**********"<<endl;
+						//															jout<<m_q_calib.size()<<endl;
+						//															jout<<m_q_calib.at(0)<<" "<<endl;
+																					if ((m_q_calib.size()==1)&&(m_q_calib.at(0)>0)){
+																						m_PaddlesPMTHit->Q/=((1.602*1E-19)*1E9);	// number of electrons at the exit of the PMT
+																						m_PaddlesPMTHit->Q/=m_q_calib.at(0);		// number of phe
+						//																jout<<"Q= "<<m_PaddlesPMTHit->Q<<endl;
+																					}
+
+
 
 						_data.push_back(m_PaddlesPMTHit);
 
