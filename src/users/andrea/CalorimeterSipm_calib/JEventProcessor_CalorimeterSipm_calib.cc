@@ -171,7 +171,7 @@ jerror_t JEventProcessor_CalorimeterSipm_calib::evnt(JEventLoop *loop, uint64_t 
 	for (data_it=data.begin();data_it<data.end();data_it++){
 
 		h->Reset();
-		h->SetName(Form("h_%lld_%i_%i:%i:%i",eventnumber,(*data_it)->m_channel.calorimeter.readout,(*data_it)->m_type,(*data_it)->nSingles,(*data_it)->nSignals));
+		h->SetName(Form("h_%lld_%i_%i_%i_%i",eventnumber,(*data_it)->m_channel.calorimeter.readout,(*data_it)->m_type,(*data_it)->nSingles,(*data_it)->nSignals));
 
 			(*data_it)->GetSingle(m_waveform);
 			m_sector=(*data_it)->m_channel.int_veto.sector;
@@ -182,12 +182,13 @@ jerror_t JEventProcessor_CalorimeterSipm_calib::evnt(JEventLoop *loop, uint64_t 
 			m_singles=(*data_it)->nSingles;
 			m_signals=(*data_it)->nSignals;
 			Q=(*data_it)->Q;
-	//		for (int ii=0;ii<m_waveform->samples.size();ii++) h->Fill(ii,m_waveform->samples.at(ii));
+			for (int ii=0;ii<m_waveform->samples.size();ii++) h->Fill(ii,m_waveform->samples.at(ii));
 			h->Write();
-			if ((*data_it)->m_type==good_real_signal){
-			//	(*data_it)->m_fitFunction.fRiseGoodRealSignal->Write();
-			}
 
+			if ((*data_it)->m_type==good_real_signal){
+							(*data_it)->m_fitFunction.fRiseGoodRealSignal->SetName(Form("f_%lld_%i_%i_%i_%i",eventnumber,(*data_it)->m_channel.calorimeter.readout,(*data_it)->m_type,(*data_it)->nSingles,(*data_it)->nSignals));
+							(*data_it)->m_fitFunction.fRiseGoodRealSignal->Write();
+						}
 			t->Fill();
 
 	}

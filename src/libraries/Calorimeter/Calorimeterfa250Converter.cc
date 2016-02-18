@@ -8,16 +8,7 @@
 #include "TApplication.h"
 
 
-#include "Fit/BinData.h"
-#include "Fit/UnBinData.h"
-#include "HFitInterface.h"
-#include "Fit/Fitter.h"
-#include "TVirtualFitter.h"
-
-#include "Math/WrappedMultiTF1.h"
-#include "Math/WrappedParamFunction.h"
-#include "Math/WrappedTF1.h"
-
+#include "CalorimeterFitHelper.h"
 
 
 #include <DAQ/fa250Mode1CalibHit.h>
@@ -51,7 +42,13 @@ double fSinglePhe1Pole(double *x,double *par){
 	return ret;
 }
 
-
+double getMaximum(int N,double *x){
+	double max=x[0];
+	for (int ii=1;ii<N;ii++){
+		if (x[ii]>max) max=x[ii];
+	}
+	return max;
+}
 
 CalorimeterSiPMHit* Calorimeterfa250Converter::convertHit(const fa250Hit *hit,const TranslationTable::ChannelInfo &m_channel) const{
 	CalorimeterSiPMHit *m_CalorimeterSiPMHit=new CalorimeterSiPMHit;
@@ -74,10 +71,11 @@ CalorimeterSiPMHit* Calorimeterfa250Converter::convertHit(const fa250Hit *hit,co
 
 jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,const fa250Mode1CalibHit *input) const{
 	int size=input->samples.size();
-	int N;
-
+	int N,n;
 	double tau,max,I,xmin,xmax,r;
-	TH1D *hTmp;
+
+	CalorimeterFitHelper *m_fitter;
+
 
 	output->Q=0;
 	output->T=0;
@@ -148,6 +146,7 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 		output->m_type=noise;
 		output->T=0;
 		output->Q=this->sumSamples(	m_waveform->samples);
+		return NOERROR;
 	}
 
 	/*Compute ToT */
@@ -180,54 +179,41 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 		if (xmax>=size) xmax=(size-1);
 		N=int((xmax-xmin))+1;
 
-
-
-		hTmp=new TH1D(mName.c_str(),mName.c_str(),N,xmin-0.5,xmax+0.5);
-
-		for (int ii=(int)xmin;ii<=(int)xmax;ii++) hTmp->Fill(ii,m_waveform->samples.at(ii));
-
-		return NOERROR;
-		tau=3;
-		max=hTmp->GetMaximum();
-		//		double I=max*(2*tau*exp(-2));
-		I=max*(tau*exp(-1));
-
-
-
 		output->m_fitFunction.fSinglePhe=new TF1("fSinglePhe",fSinglePhe1Pole,xmin,xmax,4);
+		output->m_fitFunction.fSinglePhe->SetParName(0,"t0");
+		output->m_fitFunction.fSinglePhe->SetParName(1,"I");
+		output->m_fitFunction.fSinglePhe->SetParName(2,"tau");
+		output->m_fitFunction.fSinglePhe->SetParName(3,"ped");
 
+		m_fitter=new CalorimeterFitHelper();
+		//set the data
+		m_fitter->setN(N);
+		m_fitter->setX(new double[N]);
+		m_fitter->setY(new double[N]);
+		n=0;
+		for (int ii=(int)xmin;ii<=(int)xmax;ii++){
+			m_fitter->getX()[n]=ii;
+			m_fitter->getY()[n]=m_waveform->samples.at(ii);
+			n++;
+		}
 
-		/*Prepare the fit in thread-safe way*/
-		ROOT::Fit::BinData d;
-		ROOT::Fit::FillData(d,hTmp,output->m_fitFunction.fSinglePhe);
-		// create the function
-		ROOT::Math::WrappedMultiTF1 wf(*output->m_fitFunction.fSinglePhe);
-		// need to do that to avoid gradient calculation
-		ROOT::Math::IParamMultiFunction & f = wf;
-		ROOT::Fit::Fitter fitter;
-		if (VERBOSE<5) fitter.Config().MinimizerOptions().SetPrintLevel(0);
+		m_fitter->setF(output->m_fitFunction.fSinglePhe);
 
-		//output->m_fitFunction.fSinglePhe->SetParameters(m_crossingTimes.at(0).first,I,tau,0);
+		tau=3;
+		max=getMaximum(N,m_fitter->getY());
+		I=max*(tau*exp(-1));
+		output->m_fitFunction.fSinglePhe->SetParameters(m_crossingTimes.at(0).first,I,tau,0);
 
-		/*Configure parameters*/
-		double par[4]={m_crossingTimes.at(0).first,I,tau,0};
-		f.SetParameters(par);
-
-
-
+		m_fitter->setVerbosity(VERBOSE);
 		/*Do the fit*/
-		fitter.Fit(d, f);
-
-		/*Set parameters to f*/
-		output->m_fitFunction.fSinglePhe->SetParameters(fitter.Result().Parameter(0),fitter.Result().Parameter(1),fitter.Result().Parameter(2),fitter.Result().Parameter(3));
+		m_fitter->doFit();
 
 		output->Q=output->m_fitFunction.fSinglePhe->GetParameter(1);
 		output->T=(output->m_fitFunction.fSinglePhe->GetParameter(0));
 
-		delete hTmp;
+		delete m_fitter;
 	}
 	else if ((output->nSingles>=3)||(output->nSignals>=1)){
-
 		if ((output->nSingles==0)&&(output->nSignals==1)){
 			output->m_type=good_real_signal;
 			output->Q=this->sumSamples(	m_waveform->samples);
@@ -245,45 +231,38 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 
 			N=(xmax-xmin)+1;
 			/*Determine time with a fit*/
-
-			hTmp=new TH1D(mName.c_str(),mName.c_str(),N,xmin-0.5,xmax+0.5);
-			for (int ii=(int)xmin;ii<=int(xmax);ii++) hTmp->Fill(ii,m_waveform->samples.at(ii));
-
-
-
-
-			/*Prepare the fit in thread-safe way*/
 			output->m_fitFunction.fRiseGoodRealSignal=new TF1("fRiseGoodRealSignal",fSinglePhe2Pole,xmin,xmax,4);
-			ROOT::Fit::BinData d;
-			ROOT::Fit::FillData(d,hTmp,output->m_fitFunction.fRiseGoodRealSignal);
-			// create the function
-			ROOT::Math::WrappedMultiTF1 wf(*output->m_fitFunction.fRiseGoodRealSignal);
-			// need to do that to avoid gradient calculation
-			ROOT::Math::IParamMultiFunction & f = wf;
-			ROOT::Fit::Fitter fitter;
-			if (VERBOSE<5) fitter.Config().MinimizerOptions().SetPrintLevel(0);
+			output->m_fitFunction.fRiseGoodRealSignal->SetParName(0,"t0");
+			output->m_fitFunction.fRiseGoodRealSignal->SetParName(1,"I");
+			output->m_fitFunction.fRiseGoodRealSignal->SetParName(2,"tau");
+			output->m_fitFunction.fRiseGoodRealSignal->SetParName(3,"ped");
 
-			//output->m_fitFunction.fRiseGoodRealSignal->SetParameters();
 
-			/*Configure parameters*/
-			I=max*(tau*tau*exp(-2));
-			xmin=0;
+			m_fitter=new CalorimeterFitHelper();
+			//set the data
+			m_fitter->setN(N);
+			m_fitter->setX(new double[N]);
+			m_fitter->setY(new double[N]);
+			n=0;
+			for (int ii=(int)xmin;ii<=(int)xmax;ii++){
+				m_fitter->getX()[n]=ii;
+				m_fitter->getY()[n]=m_waveform->samples.at(ii);
+				n++;
+			}
+
+			m_fitter->setF(	output->m_fitFunction.fRiseGoodRealSignal);
+
 			tau=6;
-			double par[4]={m_crossingTimes.at(0).first,I,tau,0};
-			f.SetParameters(par);
+			max=getMaximum(N,m_fitter->getY());
+			I=max*(tau*tau*exp(-2));
+			output->m_fitFunction.fRiseGoodRealSignal->SetParameters(m_crossingTimes.at(0).first,I,tau,0);
 
-
+			m_fitter->setVerbosity(VERBOSE);
 			/*Do the fit*/
-			fitter.Fit(d, f);
-
-
-			/*Set parameters to f*/
-			output->m_fitFunction.fRiseGoodRealSignal->SetParameters(fitter.Result().Parameter(0),fitter.Result().Parameter(1),fitter.Result().Parameter(2),fitter.Result().Parameter(3));
-
-
+			m_fitter->doFit();
 			output->T=output->m_fitFunction.fRiseGoodRealSignal->GetParameter(0);
 
-			delete hTmp;
+			delete m_fitter;
 		}
 		else{
 			output->m_type=real_signal;

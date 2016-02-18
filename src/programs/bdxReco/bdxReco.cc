@@ -18,6 +18,7 @@ using namespace jana;
 #include <Paddles/JFactoryGenerator_Paddles.h>
 
 #include "TH1D.h"
+ #include "TMinuitMinimizer.h"
 // C++ headers
 #include <iostream>
 using namespace std;
@@ -37,6 +38,7 @@ int main(int narg, char *argv[])
 	//bdxOpt.setGoptions();
 	//bdxOpt.setOptMap(narg, argv);
 	TH1::AddDirectory(kFALSE);
+	TMinuitMinimizer::UseStaticMinuit(kFALSE);
 	
 	JApplication app(narg, argv);
 
