@@ -1,6 +1,6 @@
 // $Id$
 //
-//    File: ExtVetoDigiHit.h
+//    File: PAddlesDigiHit.h
 // Created: Wed Jan 20 18:22:52 CET 2016
 // Creator: celentan (on Linux apcx4 2.6.32-504.30.3.el6.x86_64 x86_64)
 //

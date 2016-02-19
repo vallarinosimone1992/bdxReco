@@ -31,7 +31,7 @@ jerror_t PaddlesHit_factory::init(void)
 jerror_t PaddlesHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber)
 {
 	vector<vector < double> > m_enecalib;
-	eventLoop->GetCalib("/Paddles/PMT_gain", m_enecalib);
+	eventLoop->GetCalib("/Paddles/Ene", m_enecalib);
 	m_ENE_gain.fillCalib(m_enecalib);
 	return NOERROR;
 }
@@ -56,7 +56,10 @@ jerror_t PaddlesHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	vector <const PaddlesDigiHit *> m_data;
 	vector <const PaddlesDigiHit *>::const_iterator m_it;
 
+
 	loop->Get(m_data);
+
+	vector<double> m_Ene;
 
 	/*Create here the Hit from the Digi hit*/
 	PaddlesHit *m_PaddlesHit=0;
@@ -66,9 +69,10 @@ jerror_t PaddlesHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 			/*For now, very dummy!*/
 			m_PaddlesHit->m_channel=(*m_it)->m_channel;
-			m_PaddlesHit->E=(*m_it)->Q;
+
+			m_ENE_gain.getCalib(m_PaddlesHit->m_channel.paddles,m_Ene);
+			m_PaddlesHit->E=((*m_it)->Q)*m_Ene.at(0);
 			m_PaddlesHit->T=(*m_it)->T;
-			m_PaddlesHit->PaddlesDigiHit_id=(*m_it)->id;
 
 			_data.push_back(m_PaddlesHit);
 		}
