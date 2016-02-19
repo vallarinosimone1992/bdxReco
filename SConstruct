@@ -16,6 +16,7 @@ if (platform.system()=="Darwin"):
  
 env.Append(CPPPATH='#/src/external')
 env.Append(CPPPATH='#/src/libraries')
+env.AppendUnique(LINKFLAGS=['-lMinuit2','-lMinuit'])
 
 libExt=SConscript('src/external/SConstruct',exports='env')
 lib=SConscript('src/libraries/SConstruct',exports='env')

@@ -33,7 +33,7 @@ jerror_t PaddlesCalibration::fillCalib(const vector<vector<double> > &calib_data
 		data.clear();
 		if (irow>0) prevNdata=nData;
 		nData=calib_data.at(irow).size()-TranslationTable::PADDLES_Index_t::nIDs();
-//		jout<<calib_data.at(irow).at(0)<<" "<<calib_data.at(irow).at(1)<<" "<<calib_data.at(irow).at(2)<<" "<<calib_data.at(irow).at(3)<<endl;
+//		jout<<calib_data.at(irow).at(0)<<" "<<calib_data.at(irow).at(1)<<endl;
 		if (nData<=0) {
 			jerr<<"Error in PaddlesCalibration::fillCalib. No data?"<<endl;
 			m_calib.clear();
@@ -44,11 +44,9 @@ jerror_t PaddlesCalibration::fillCalib(const vector<vector<double> > &calib_data
 			m_calib.clear();
 			return 	VALUE_OUT_OF_RANGE;
 		}
-		index.sector=calib_data.at(irow).at(0);
-		index.id=calib_data.at(irow).at(1);
-		index.readout=calib_data.at(irow).at(2);
+		index.id=calib_data.at(irow).at(0);
 		for (int idata=0;idata<nData;idata++){
-			data.push_back(calib_data.at(irow).at(3+idata));
+			data.push_back(calib_data.at(irow).at(1+idata));
 //			jout<<"PUSH BACK "<<calib_data.at(irow).at(3+idata)<<endl;
 		}
 		m_insert_check=m_calib.insert(std::make_pair(index,data));
@@ -65,7 +63,7 @@ jerror_t PaddlesCalibration::getCalib(const TranslationTable::PADDLES_Index_t &i
 	it=m_calib.find(index);
 
 	if (it==m_calib.end()){
-		jerr<<"PaddlesCalibration:getCalib element not found"<<endl;
+		jerr<<"PaddlesCalibration:getCalib element not found "<<"id= "<<index.id<<endl;
 		return RESOURCE_UNAVAILABLE;
 	}
 	else{

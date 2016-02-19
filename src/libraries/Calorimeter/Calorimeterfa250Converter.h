@@ -38,15 +38,14 @@ class Calorimeterfa250Converter:public fa250Converter<CalorimeterSiPMHit>{
 
 		int NPED;
 		int SINGLE_SIGNAL_TOT;
-
-		/*Functions for fit*/
-		double fSinglePhe(double *x,double *par);
+		int MIN_TOT;
+		int VERBOSE;
 
 
 		double *m_fitIndex; //just a basic array with 2000 numbers from 0 to 1999
 		double *m_fitError; //just a basic array with 2000 numbers, all 0.4884 (LSB in mV)
 
-
+		std::string mName; //just an unique string in this tread
 
 };
 

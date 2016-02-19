@@ -18,8 +18,9 @@ class TF1;
 typedef enum{
 	noise=0,
 	one_phe=1,
-	single_phes=1,
-	real_signal=2,
+	single_phes=2,
+	real_signal=3,
+	good_real_signal=4,
 	num_hit_type
 }hit_type;
 
@@ -47,12 +48,14 @@ public:
 	/*miniped is always calculated event-by-event, on the first NPEDS samples*/
 	/*ped can be by event OR by run, from dB*/
 	double ped,miniped;
-
 	union{
 		TF1 *fSinglePhe;
-	}fit_function;
+		TF1 *fRiseGoodRealSignal;
+	}m_fitFunction;
 
 	hit_type m_type;
+
+	int nSingles,nSignals;
 
 };
 

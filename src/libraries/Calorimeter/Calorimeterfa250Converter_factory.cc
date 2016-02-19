@@ -8,11 +8,20 @@
 
 #include <iostream>
 #include <iomanip>
+
+#include "TString.h"
 using namespace std;
 
 #include "Calorimeterfa250Converter_factory.h"
 #include "CalorimeterCalibration.h"
 using namespace jana;
+
+
+int PThreadIDUniqueInt(pthread_t tid){
+	int ret;
+	memcpy(&ret, &tid, std::min(sizeof(tid), sizeof(ret)));
+	return ret;
+}
 
 //------------------
 // init
@@ -27,13 +36,15 @@ jerror_t Calorimeterfa250Converter_factory::init(void)
 //------------------
 jerror_t Calorimeterfa250Converter_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber)
 {
-
+	int threadId= PThreadIDUniqueInt(eventLoop->GetPThreadID());
 	m_calorimeterfa250Converter=new Calorimeterfa250Converter();
+	m_calorimeterfa250Converter->mName=string(Form("h%i",threadId));
 
 	m_calorimeterfa250Converter->NPED=10; //A.C. for now, hardcoded
-	m_calorimeterfa250Converter->SINGLE_SIGNAL_TOT=10; //A.C. for now, hardcoded. These two are higly hardcoded!
+	m_calorimeterfa250Converter->SINGLE_SIGNAL_TOT=40; //A.C. for now, hardcoded. These two are higly hardcoded!
+	m_calorimeterfa250Converter->MIN_TOT=3; //A.C. for now, hardcoded. These two are higly hardcoded!
 
-	/*Terrible! Hardcoder!*/
+	/*Terrible! Hardcoded!*/
 	m_calorimeterfa250Converter->m_fitIndex=new double[2000];
 	m_calorimeterfa250Converter->m_fitError=new double[2000];
 
@@ -43,7 +54,7 @@ jerror_t Calorimeterfa250Converter_factory::brun(jana::JEventLoop *eventLoop, in
 	}
 
 
-
+	gPARMS->GetParameter("CALORIMETER:VERBOSE",	m_calorimeterfa250Converter->VERBOSE);
 
 	/*Probably not the best way to do so: the calorimeter converter needs to know about the pedestal,
 	 * so read cal. constants from DB, create a CalorimeterCalibration object that handles properly the indexing

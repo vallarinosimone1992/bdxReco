@@ -11,13 +11,16 @@
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
 
+#include <TT/TranslationTable.h>
+
+
 class PaddlesHit:public jana::JObject{
 	public:
 		JOBJECT_PUBLIC(PaddlesHit);
 		
 		// Add data members here. For example:
-		// int id;
-		// double E;
+		int ch;
+		double E,T;
 		
 		// This method is used primarily for pretty printing
 		// the second argument to AddString is printf style format
@@ -25,7 +28,9 @@ class PaddlesHit:public jana::JObject{
 			// AddString(items, "id", "%4d", id);
 			// AddString(items, "E", "%f", E);
 		}
-		
+		TranslationTable::ChannelInfo m_channel;
+		oid_t PaddlesDigiHit_id;
+
 };
 
 #endif // _PaddlesHit_

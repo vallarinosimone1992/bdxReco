@@ -60,7 +60,6 @@ jerror_t PaddlesDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 		/*For now, very dummy!*/
 		m_PaddlesDigiHit->m_channel=(*m_it)->m_channel;
-		m_PaddlesDigiHit->m_channel.ext_veto.readout=0;  //since this is detector-based!
 		m_PaddlesDigiHit->Q=(*m_it)->Q;
 		m_PaddlesDigiHit->T=(*m_it)->T;
 		m_PaddlesDigiHit->PaddlesPMTHit_id=(*m_it)->id;
