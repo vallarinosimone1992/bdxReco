@@ -80,6 +80,7 @@ public:
 		int layer;
 		int component;
 		int readout;
+		static const int nIDs(){return 4;};
 		inline bool isSameActive(const EXT_VETO_Index_t &rhs) const {
 			return (sector==rhs.sector) && (layer==rhs.layer) && (component==rhs.component);
 		}

@@ -10,6 +10,7 @@
 
 #include <JANA/JFactory.h>
 #include "ExtVetoPMTHit.h"
+#include "ExtVetoCalibration.h"
 
 class TranslationTable;
 class ExtVetofa250Converter;
@@ -28,6 +29,11 @@ class ExtVetoPMTHit_factory:public jana::JFactory<ExtVetoPMTHit>{
 
 		const TranslationTable *m_tt;
 		const ExtVetofa250Converter *m_extVetofa250Converter;
+		ExtVetoCalibration m_PMT_gain;
+
+		int VERBOSE;
+
+
 
 };
 

@@ -18,7 +18,17 @@
 
 class JFactoryGenerator_ExtVeto: public jana::JFactoryGenerator{
 	public:
-		JFactoryGenerator_ExtVeto(){}
+		JFactoryGenerator_ExtVeto(){
+
+			VERBOSE=0;
+					gPARMS->SetDefaultParameter("EXTVETO:VERBOSE", VERBOSE,
+								"Verbosity level for applying messages from INTVETO library."
+								" 0=no messages, 10=all messages.");
+
+
+
+
+		}
 		virtual ~JFactoryGenerator_ExtVeto(){}
 		virtual const char* className(void){return static_className();}
 		static const char* static_className(void){return "JFactoryGenerator_ExtVeto";}
@@ -31,6 +41,8 @@ class JFactoryGenerator_ExtVeto: public jana::JFactoryGenerator{
 
 			return NOERROR;
 		}
+	private:
+			int VERBOSE;
 
 };
 
