@@ -251,14 +251,11 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop,uint64_t eventnumber)
 
 			h->Write();
 
-			if (ivhit->m_type==one_phe){
-								ivhit->m_fitFunction.fSinglePhe->SetName(Form("f_%lld_%i_%i",eventnumber,ivhit->m_channel.calorimeter.readout,tWord));
-								ivhit->m_fitFunction.fSinglePhe->Write();
-			}
+
 		//	h1->Write();
 			eventN=eventnumber;
 			component=ivhit->m_channel.int_veto.readout;
-			Q=(*data_it)->Q;
+			Q=(*data_it)->Qphe;
 			t->Fill();
 
 

@@ -25,7 +25,8 @@ class CalorimeterDigiHit:public jana::JObject{
 			// AddString(items, "id", "%4d", id);
 			// AddString(items, "E", "%f", E);
 		}
-		
+		TranslationTable::CALO_Index_t m_channel; //both crate-slot channel and detector-specific ID. Since this is a detector-based object, the readout field will be ==0
+		double Q,T;
 };
 
 #endif // _CalorimeterDigiHit_

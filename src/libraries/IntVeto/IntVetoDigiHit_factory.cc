@@ -48,8 +48,7 @@ jerror_t IntVetoDigiHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnu
 jerror_t IntVetoDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 
-	TranslationTable::ChannelInfo m_channel;
-//	TranslationTable::csc_t		  m_csc;
+	TranslationTable::INT_VETO_Index_t m_channel;
 	IntVetoDigiHit *m_IntVetoDigiHit=0;
 
 	//1: Here, we get from the framework the objects we need to process
@@ -71,17 +70,17 @@ jerror_t IntVetoDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	 */
 	m_map.clear();
 	for (it=m_IntVetoSiPMHit.begin(); it != m_IntVetoSiPMHit.end() ; it++){
-		m_channel = (*it)->m_channel;
-		m_channel.int_veto.readout = 0;
- 		m_map_it=m_map.find(m_channel.int_veto);
+		m_channel = (*it)->m_channel.int_veto;
+		m_channel.readout = 0;
+ 		m_map_it=m_map.find(m_channel);
  		if (m_map_it == m_map.end()){ //not here. Create a new VetoIntDigiHit object, and associate the id of this SiPM hit with it
  			m_IntVetoDigiHit=new IntVetoDigiHit;
  			m_IntVetoDigiHit->m_channel=m_channel;
  			m_IntVetoDigiHit->AddAssociatedObject((*it));
- 			m_map.insert(std::make_pair(m_channel.int_veto,m_IntVetoDigiHit));
+ 			m_map.insert(std::make_pair(m_channel,m_IntVetoDigiHit));
 		}
  		else{ //element already exists. Get the VetoIntDigiHit and add this hit as id.
- 			m_IntVetoDigiHit=m_map[m_channel.int_veto];
+ 			m_IntVetoDigiHit=m_map[m_channel];
  			m_IntVetoDigiHit->AddAssociatedObject((*it));
  		}
 	}
@@ -100,9 +99,9 @@ jerror_t IntVetoDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		m_IntVetoDigiHit_tmp->Get(m_IntVetoSiPMHit_tmp,"",0);  //0 means "associated only with this object
 		m_IntVetoDigiHit_tmp->Q=0;
 		for (int ihit=0;ihit<m_IntVetoSiPMHit_tmp.size();ihit++){
-			m_IntVetoDigiHit_tmp->Q+=m_IntVetoSiPMHit_tmp.at(ihit)->Q;     //this is supposed to be in phe
-			if (m_IntVetoSiPMHit_tmp.at(ihit)->Q > Qmax) {
-				Qmax=m_IntVetoSiPMHit_tmp.at(ihit)->Q;
+			m_IntVetoDigiHit_tmp->Q+=m_IntVetoSiPMHit_tmp.at(ihit)->Qphe;     //this is supposed to be in phe
+			if (m_IntVetoSiPMHit_tmp.at(ihit)->Qphe > Qmax) {
+				Qmax=m_IntVetoSiPMHit_tmp.at(ihit)->Qphe;
 				m_IntVetoDigiHit_tmp->T=m_IntVetoSiPMHit_tmp.at(ihit)->T;
 			}
 		}

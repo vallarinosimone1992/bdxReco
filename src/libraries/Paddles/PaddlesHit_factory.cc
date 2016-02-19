@@ -70,7 +70,7 @@ jerror_t PaddlesHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 			/*For now, very dummy!*/
 			m_PaddlesHit->m_channel=(*m_it)->m_channel;
 
-			m_ENE_gain.getCalib(m_PaddlesHit->m_channel.paddles,m_Ene);
+			m_ENE_gain.getCalib(m_PaddlesHit->m_channel,m_Ene);
 			m_PaddlesHit->E=((*m_it)->Q)*m_Ene.at(0);
 			m_PaddlesHit->T=(*m_it)->T;
 

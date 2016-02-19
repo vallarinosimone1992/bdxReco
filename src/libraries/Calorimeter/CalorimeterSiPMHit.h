@@ -13,14 +13,12 @@
 #include <DAQ/fa250ConvertedHit.h>
 #include <TT/TranslationTable.h>
 
-class TF1;
-
 typedef enum{
 	noise=0,
 	one_phe=1,
-	single_phes=2,
-	real_signal=3,
-	good_real_signal=4,
+	good_one_phe=2,
+	many_phe=3,
+	signal=4,
 	num_hit_type
 }hit_type;
 
@@ -44,14 +42,10 @@ public:
 	//A.C. do not touch these
 	TranslationTable::ChannelInfo m_channel; //both crate-slot channel and detector-specific ID. Since this is a sensor-based object, the readout field will be !=0
 	/*These 3 variables are: hit charge (u.a.), hit time (in ns), hit amplitude (in mV)*/
-	double Q,T,A;
-	/*miniped is always calculated event-by-event, on the first NPEDS samples*/
-	/*ped can be by event OR by run, from dB*/
-	double ped,miniped;
-	union{
-		TF1 *fSinglePhe;
-		TF1 *fRiseGoodRealSignal;
-	}m_fitFunction;
+	double Qraw,Qphe,T,A;
+	double average;
+	double ped;
+
 
 	hit_type m_type;
 

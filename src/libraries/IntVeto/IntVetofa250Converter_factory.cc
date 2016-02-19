@@ -74,6 +74,5 @@ jerror_t IntVetofa250Converter_factory::fini(void)
 	}
 	_data.clear();
 	return NOERROR;
-	return NOERROR;
 }
 

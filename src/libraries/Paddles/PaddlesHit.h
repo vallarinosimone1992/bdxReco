@@ -28,7 +28,7 @@ class PaddlesHit:public jana::JObject{
 			// AddString(items, "id", "%4d", id);
 			// AddString(items, "E", "%f", E);
 		}
-		TranslationTable::ChannelInfo m_channel;
+		TranslationTable::PADDLES_Index_t m_channel;
 		oid_t PaddlesDigiHit_id;
 
 };

@@ -59,8 +59,8 @@ jerror_t ExtVetoDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		m_ExtVetoDigiHit=new ExtVetoDigiHit;
 
 		/*For now, very dummy!*/
-		m_ExtVetoDigiHit->m_channel=(*m_it)->m_channel;
-		m_ExtVetoDigiHit->m_channel.ext_veto.readout=0;  //since this is detector-based!
+		m_ExtVetoDigiHit->m_channel=(*m_it)->m_channel.ext_veto;
+		m_ExtVetoDigiHit->m_channel.readout=0;  //since this is detector-based!
 		m_ExtVetoDigiHit->Q=(*m_it)->Q;
 		m_ExtVetoDigiHit->T=(*m_it)->T;
 		m_ExtVetoDigiHit->ExtVetoPMTHit_id=(*m_it)->id;

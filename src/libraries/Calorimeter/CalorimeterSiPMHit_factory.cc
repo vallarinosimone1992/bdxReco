@@ -54,6 +54,7 @@ jerror_t CalorimeterSiPMHit_factory::brun(jana::JEventLoop *eventLoop, int32_t r
 		return OBJECT_NOT_AVAILABLE;
 	}
 
+
 	vector<vector < double> > m_rawcalib;
 	eventLoop->GetCalib("/Calorimeter/sipm_gain", m_rawcalib);
 	m_sipm_gain.fillCalib(m_rawcalib);
@@ -68,6 +69,8 @@ jerror_t CalorimeterSiPMHit_factory::brun(jana::JEventLoop *eventLoop, int32_t r
 			jout<<gainCalibMap_it->first.sector<<" "<<gainCalibMap_it->first.x<<" "<<gainCalibMap_it->first.y<<" "<<gainCalibMap_it->first.readout<<" "<<gainCalibMap_it->second.at(0)<<endl;
 		}
 	}
+
+
 	return NOERROR;
 }
 
@@ -77,83 +80,83 @@ jerror_t CalorimeterSiPMHit_factory::brun(jana::JEventLoop *eventLoop, int32_t r
 jerror_t CalorimeterSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 
-		TranslationTable::ChannelInfo m_channel;
-		TranslationTable::csc_t		  m_csc;
-		vector<double> 				  m_q_calib;
-		CalorimeterSiPMHit *m_CalorimeterSiPMHit=0;
+	TranslationTable::ChannelInfo m_channel;
+	TranslationTable::csc_t		  m_csc;
+	vector<double> 				  m_q_calib;
+	CalorimeterSiPMHit *m_CalorimeterSiPMHit=0;
 
-		//1: Here, we get from the framework the objects we need to process
-		//1a: create vectors
-		vector <const fa250Mode1CalibHit*> m_fa250Mode1CalibHit;
-		vector <const fa250Mode7Hit*> m_fa250Mode7Hit;
-		vector <const fa250Mode1CalibHit*>::const_iterator it_fa250Mode1CalibHit;
-		vector <const fa250Mode7Hit*>::const_iterator it_fa250Mode7Hit;
+	//1: Here, we get from the framework the objects we need to process
+	//1a: create vectors
+	vector <const fa250Mode1CalibHit*> m_fa250Mode1CalibHit;
+	vector <const fa250Mode7Hit*> m_fa250Mode7Hit;
+	vector <const fa250Mode1CalibHit*>::const_iterator it_fa250Mode1CalibHit;
+	vector <const fa250Mode7Hit*>::const_iterator it_fa250Mode7Hit;
 
-		//1b: retrieve objects
-		loop->Get(m_fa250Mode1CalibHit);
-		loop->Get(m_fa250Mode7Hit);
-
-
-		/*2: Now we have the daq objects, still indexed as "crate-slot-channel"
-		 *	 Use the translation table to produce the digitized hit of the inner veto
-		 *	 Note that we can produce a single object type here, i.e. VetoIntDigiHit,
-		 *	 but we have 2 possible source, mode 1 and mode 7.
-		 *	 Therefore, we will use the TranslationTable ONLY to check if this crate-slot-channel
-		 *	 combination refers to a InnerVeto hit and, in case, to determine which one, i.e. which ID in the InnerVeto scheme.
-		 *	 Then, we will proceed in two different ways.
-		 */
-
-		/*First, mode 1*/
-		/*Note that in this case we have to integrate the pulse - it is a mode 1 pulse! */
-		for (it_fa250Mode1CalibHit=m_fa250Mode1CalibHit.begin();it_fa250Mode1CalibHit!=m_fa250Mode1CalibHit.end();it_fa250Mode1CalibHit++){
-			m_csc.rocid=(*it_fa250Mode1CalibHit)->crate;
-			m_csc.slot=(*it_fa250Mode1CalibHit)->slot;
-			m_csc.channel=(*it_fa250Mode1CalibHit)->channel;
-
-			m_channel=m_tt->getChannelInfo(m_csc);
+	//1b: retrieve objects
+	loop->Get(m_fa250Mode1CalibHit);
+	loop->Get(m_fa250Mode7Hit);
 
 
-			if ((m_channel.det_sys==TranslationTable::CALORIMETER)&&(m_channel.calorimeter.readout<=2)){
-				//A.C. do not touch these
-				m_CalorimeterSiPMHit=m_Calorimeterfa250Converter->convertHit((fa250Hit*)*it_fa250Mode1CalibHit,m_channel);
+	/*2: Now we have the daq objects, still indexed as "crate-slot-channel"
+	 *	 Use the translation table to produce the digitized hit of the inner veto
+	 *	 Note that we can produce a single object type here, i.e. VetoIntDigiHit,
+	 *	 but we have 2 possible source, mode 1 and mode 7.
+	 *	 Therefore, we will use the TranslationTable ONLY to check if this crate-slot-channel
+	 *	 combination refers to a InnerVeto hit and, in case, to determine which one, i.e. which ID in the InnerVeto scheme.
+	 *	 Then, we will proceed in two different ways.
+	 */
+
+	/*First, mode 1*/
+	/*Note that in this case we have to integrate the pulse - it is a mode 1 pulse! */
+	for (it_fa250Mode1CalibHit=m_fa250Mode1CalibHit.begin();it_fa250Mode1CalibHit!=m_fa250Mode1CalibHit.end();it_fa250Mode1CalibHit++){
+		m_csc.rocid=(*it_fa250Mode1CalibHit)->crate;
+		m_csc.slot=(*it_fa250Mode1CalibHit)->slot;
+		m_csc.channel=(*it_fa250Mode1CalibHit)->channel;
+
+		m_channel=m_tt->getChannelInfo(m_csc);
 
 
-				/*Apply phe conversion if possible*/
-		/*		m_sipm_gain.getCalib(m_channel.calorimeter,m_q_calib);
-				if ((m_q_calib.size()==1)&&(m_q_calib.at(0)>0)){
-					m_CalorimeterSiPMHit->Q/=m_q_calib.at(0);
-				}*/
+		if ((m_channel.det_sys==TranslationTable::CALORIMETER)&&(m_channel.calorimeter.readout<=2)){
+			//A.C. do not touch these
+			//jout<<eventnumber<<endl;
+			m_CalorimeterSiPMHit=m_Calorimeterfa250Converter->convertHit((fa250Hit*)*it_fa250Mode1CalibHit,m_channel);
 
-				_data.push_back(m_CalorimeterSiPMHit);
+			/*Apply phe conversion if possible*/
+			m_sipm_gain.getCalib(m_channel.calorimeter,m_q_calib);
+			if ((m_q_calib.size()==1)&&(m_q_calib.at(0)>0)){
+				m_CalorimeterSiPMHit->Qphe=m_CalorimeterSiPMHit->Qraw/m_q_calib.at(0);
 			}
+
+
+			_data.push_back(m_CalorimeterSiPMHit);
 		}
+	}
 
 
-		/*Then, mode 7*/
-		/*Note that in this case we do not have to integrate the pulse - it is a mode 7 pulse! */
-		for (it_fa250Mode7Hit=m_fa250Mode7Hit.begin();it_fa250Mode7Hit!=m_fa250Mode7Hit.end();it_fa250Mode7Hit++){
-			m_csc.rocid=(*it_fa250Mode7Hit)->crate;
-			m_csc.slot=(*it_fa250Mode7Hit)->slot;
-			m_csc.channel=(*it_fa250Mode7Hit)->channel;
-			m_channel=m_tt->getChannelInfo(m_csc);
-			if (m_channel.det_sys==TranslationTable::CALORIMETER){
-				//A.C. do not touch these
-				m_CalorimeterSiPMHit=m_Calorimeterfa250Converter->convertHit((fa250Hit*)*it_fa250Mode7Hit,m_channel);
+	/*Then, mode 7*/
+	/*Note that in this case we do not have to integrate the pulse - it is a mode 7 pulse! */
+	for (it_fa250Mode7Hit=m_fa250Mode7Hit.begin();it_fa250Mode7Hit!=m_fa250Mode7Hit.end();it_fa250Mode7Hit++){
+		m_csc.rocid=(*it_fa250Mode7Hit)->crate;
+		m_csc.slot=(*it_fa250Mode7Hit)->slot;
+		m_csc.channel=(*it_fa250Mode7Hit)->channel;
+		m_channel=m_tt->getChannelInfo(m_csc);
+		if (m_channel.det_sys==TranslationTable::CALORIMETER){
+			//A.C. do not touch these
+			m_CalorimeterSiPMHit=m_Calorimeterfa250Converter->convertHit((fa250Hit*)*it_fa250Mode7Hit,m_channel);
 
-
-				/*Apply phe conversion if possible*/
-		/*		m_sipm_gain.getCalib(m_channel.calorimeter,m_q_calib);
-				if ((m_q_calib.size()==1)&&(m_q_calib.at(0)>0)){
-					m_CalorimeterSiPMHit->Q/=m_q_calib.at(0);
-				}*/
-
-				_data.push_back(m_CalorimeterSiPMHit);
+			/*Apply phe conversion if possible*/
+			m_sipm_gain.getCalib(m_channel.calorimeter,m_q_calib);
+			if ((m_q_calib.size()==1)&&(m_q_calib.at(0)>0)){
+				m_CalorimeterSiPMHit->Qphe=m_CalorimeterSiPMHit->Qraw/m_q_calib.at(0);
 			}
+
+			_data.push_back(m_CalorimeterSiPMHit);
 		}
+	}
 
 
 
-		return NOERROR;
+	return NOERROR;
 
 
 

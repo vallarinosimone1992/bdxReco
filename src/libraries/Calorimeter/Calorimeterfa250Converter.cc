@@ -8,7 +8,15 @@
 #include "TApplication.h"
 
 
-#include "CalorimeterFitHelper.h"
+
+
+#include "Math/WrappedTF1.h"
+#include "Math/WrappedMultiTF1.h"
+#include "Fit/BinData.h"
+#include "Fit/UnBinData.h"
+#include "HFitInterface.h"
+#include "Fit/Fitter.h"
+#include "Math/Minimizer.h"
 
 
 #include <DAQ/fa250Mode1CalibHit.h>
@@ -42,13 +50,7 @@ double fSinglePhe1Pole(double *x,double *par){
 	return ret;
 }
 
-double getMaximum(int N,double *x){
-	double max=x[0];
-	for (int ii=1;ii<N;ii++){
-		if (x[ii]>max) max=x[ii];
-	}
-	return max;
-}
+
 
 CalorimeterSiPMHit* Calorimeterfa250Converter::convertHit(const fa250Hit *hit,const TranslationTable::ChannelInfo &m_channel) const{
 	CalorimeterSiPMHit *m_CalorimeterSiPMHit=new CalorimeterSiPMHit;
@@ -71,13 +73,11 @@ CalorimeterSiPMHit* Calorimeterfa250Converter::convertHit(const fa250Hit *hit,co
 
 jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,const fa250Mode1CalibHit *input) const{
 	int size=input->samples.size();
-	int N,n;
-	double tau,max,I,xmin,xmax,r;
-
-	CalorimeterFitHelper *m_fitter;
+	int N,n,idx;
+	double min,max,xmin,xmax,prev_xmin,prev_xmax,rms,Tmax;
 
 
-	output->Q=0;
+	output->Qraw=0;
 	output->T=0;
 	output->A=0;
 	output->m_type=noise;
@@ -93,10 +93,14 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 	*a = *b;
 
 
+	std::pair<int,int> m_thisCrossingTime;
 
 	std::vector<std::pair<int,int> > m_crossingTimes;
 	std::vector<int> m_crossingTimesDelta;
-	std::pair<int,int> m_thisCrossingTime;
+
+	std::vector<int> m_singleCrossingIndexes;
+	std::vector<int> m_signalCrossingIndexes;
+
 
 	output->nSingles=0;
 	output->nSignals=0;
@@ -111,19 +115,26 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 		output->ped=0;  //A.C. for now ok, in the future need to revert-back to the non-db case!*/
 	}
 
-	//1: get the pedestal-corrected samples, by creating a faMode1CalibPedSubHit object.
+
+	output->average=0;
+	//1: set the pedestal-corrected samples, by creating a faMode1CalibPedSubHit object.
 	for (int ii=0;ii<size;ii++){
 		m_waveform->samples.push_back(input->samples.at(ii)-output->ped);
+		output->average+=input->samples.at(ii);
 	}
+	output->average/=input->samples.size();
 
 
 	///TODO!
-	int thr=5;
+	int thr;
+	if (output->m_channel.calorimeter.readout==1) thr=8;
+	if (output->m_channel.calorimeter.readout==2) thr=8;
 
 	//2: find thr crossings
 	m_thisCrossingTime.first=-1;
 	m_thisCrossingTime.second=-1;
 	if (m_waveform->samples[0]>thr) m_thisCrossingTime.first=0;
+
 	for (int ii=1;ii<size;ii++){
 		if ((	m_waveform->samples[ii]>thr)&&(	m_waveform->samples[ii-1]<thr)) m_thisCrossingTime.first=ii;
 		else if ((	m_waveform->samples[ii]<thr)&&(	m_waveform->samples[ii-1]>thr) && (m_thisCrossingTime.first!=-1)) {
@@ -135,19 +146,14 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 	}
 	//It may happen that the last sample is still over thr!
 	if (m_waveform->samples[size-1]>thr){
-		m_thisCrossingTime.second=size-1;
+		m_thisCrossingTime.second=size;
 		m_crossingTimes.push_back(m_thisCrossingTime);
 	}
 
 
 	//3: deltas
 	//3a: if no crossing times are found
-	if (m_crossingTimes.size()==0){
-		output->m_type=noise;
-		output->T=0;
-		output->Q=this->sumSamples(	m_waveform->samples);
-		return NOERROR;
-	}
+
 
 	/*Compute ToT */
 	for (int itime=0;itime<m_crossingTimes.size();itime++){
@@ -160,118 +166,117 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 			jerr<<"Calorimeterfa20Converter::convertMode1Hit error, negative ToT?"<<std::endl;
 		}
 		else if (m_crossingTimesDelta.at(itime)>SINGLE_SIGNAL_TOT){
-			output->nSignals++;
+			m_signalCrossingIndexes.push_back(itime);
 		}
-		else if(m_crossingTimesDelta.at(itime)>MIN_TOT){
-			output->nSingles++;
+		else if((m_crossingTimesDelta.at(itime)>MIN_TOT)||(m_crossingTimes.at(itime).second)==(size)||(m_crossingTimes.at(itime).first)==(0)){
+			m_singleCrossingIndexes.push_back(itime);
 		}
 	}
+
+	output->nSignals=m_signalCrossingIndexes.size();
+	output->nSingles=m_singleCrossingIndexes.size();
 
 	/*If there is one pulse only: this is a "single phe" signal*/
-	if ((output->nSignals==0)&&(output->nSingles==1)){
-		output->m_type=one_phe;
-
-		/*So fit it*/
-		xmin=m_crossingTimes.at(0).first-20;
-		xmax=m_crossingTimes.at(0).second+80;
-
-		if (xmin<0) xmin=0;
-		if (xmax>=size) xmax=(size-1);
-		N=int((xmax-xmin))+1;
-
-		output->m_fitFunction.fSinglePhe=new TF1("fSinglePhe",fSinglePhe1Pole,xmin,xmax,4);
-		output->m_fitFunction.fSinglePhe->SetParName(0,"t0");
-		output->m_fitFunction.fSinglePhe->SetParName(1,"I");
-		output->m_fitFunction.fSinglePhe->SetParName(2,"tau");
-		output->m_fitFunction.fSinglePhe->SetParName(3,"ped");
-
-		m_fitter=new CalorimeterFitHelper();
-		//set the data
-		m_fitter->setN(N);
-		m_fitter->setX(new double[N]);
-		m_fitter->setY(new double[N]);
-		n=0;
-		for (int ii=(int)xmin;ii<=(int)xmax;ii++){
-			m_fitter->getX()[n]=ii;
-			m_fitter->getY()[n]=m_waveform->samples.at(ii);
-			n++;
-		}
-
-		m_fitter->setF(output->m_fitFunction.fSinglePhe);
-
-		tau=3;
-		max=getMaximum(N,m_fitter->getY());
-		I=max*(tau*exp(-1));
-		output->m_fitFunction.fSinglePhe->SetParameters(m_crossingTimes.at(0).first,I,tau,0);
-
-		m_fitter->setVerbosity(VERBOSE);
-		/*Do the fit*/
-		m_fitter->doFit();
-
-		output->Q=output->m_fitFunction.fSinglePhe->GetParameter(1);
-		output->T=(output->m_fitFunction.fSinglePhe->GetParameter(0));
-
-		delete m_fitter;
+	if (((output->nSignals)==0)&&(output->nSingles)==0){
+		output->m_type=noise;
+		output->T=0;
+		output->Qraw=this->sumSamples(m_waveform->samples.size(),&(m_waveform->samples.at(0)));
+		output->A=0;
+		return NOERROR;
 	}
-	else if ((output->nSingles>=3)||(output->nSignals>=1)){
-		if ((output->nSingles==0)&&(output->nSignals==1)){
-			output->m_type=good_real_signal;
-			output->Q=this->sumSamples(	m_waveform->samples);
-
-
-			/*Find the first sample not bigger than the previous (after thr)*/
-			xmin=0;
-			for (int ii=m_crossingTimes.at(0).first;ii<(size-1);ii++){
-				if (m_waveform->samples.at(ii+1) < m_waveform->samples.at(ii)){
-					xmax=ii;
-					max=m_waveform->samples.at(ii);
-					break;
-				}
-			}
-
-			N=(xmax-xmin)+1;
-			/*Determine time with a fit*/
-			output->m_fitFunction.fRiseGoodRealSignal=new TF1("fRiseGoodRealSignal",fSinglePhe2Pole,xmin,xmax,4);
-			output->m_fitFunction.fRiseGoodRealSignal->SetParName(0,"t0");
-			output->m_fitFunction.fRiseGoodRealSignal->SetParName(1,"I");
-			output->m_fitFunction.fRiseGoodRealSignal->SetParName(2,"tau");
-			output->m_fitFunction.fRiseGoodRealSignal->SetParName(3,"ped");
-
-
-			m_fitter=new CalorimeterFitHelper();
-			//set the data
-			m_fitter->setN(N);
-			m_fitter->setX(new double[N]);
-			m_fitter->setY(new double[N]);
-			n=0;
-			for (int ii=(int)xmin;ii<=(int)xmax;ii++){
-				m_fitter->getX()[n]=ii;
-				m_fitter->getY()[n]=m_waveform->samples.at(ii);
-				n++;
-			}
-
-			m_fitter->setF(	output->m_fitFunction.fRiseGoodRealSignal);
-
-			tau=6;
-			max=getMaximum(N,m_fitter->getY());
-			I=max*(tau*tau*exp(-2));
-			output->m_fitFunction.fRiseGoodRealSignal->SetParameters(m_crossingTimes.at(0).first,I,tau,0);
-
-			m_fitter->setVerbosity(VERBOSE);
-			/*Do the fit*/
-			m_fitter->doFit();
-			output->T=output->m_fitFunction.fRiseGoodRealSignal->GetParameter(0);
-
-			delete m_fitter;
+	else if ((output->nSignals==0)&&(output->nSingles==1)){
+		idx=m_singleCrossingIndexes.at(0);
+		if ((m_crossingTimes.at(idx).first<=30)||(m_crossingTimes.at(idx).second>=(size-1-30))){
+			output->m_type=one_phe;
+			output->Qraw=this->sumSamples(m_waveform->samples.size(),&(m_waveform->samples.at(0)));
+			output->T=0;
+			return NOERROR;
 		}
 		else{
-			output->m_type=real_signal;
-			output->Q=this->sumSamples(	m_waveform->samples);
+
+
+			output->m_type=good_one_phe;
+			xmin=m_crossingTimes.at(idx).first-20;
+			xmax=m_crossingTimes.at(idx).second+80;
+
+			if (xmin<0) xmin=0;
+			if (xmax>=size) xmax=(size-1);
+			N=int((xmax-xmin))+1;
+
+			/*Refine the pedestal*/
+			output->ped=0;
+			output->average=0;
+			for (int ii=0;ii<20;ii++) output->ped+=input->samples.at(ii);
+			output->ped/=20;
+
+			m_waveform->samples.clear();
+			for (int ii=0;ii<size;ii++){
+				m_waveform->samples.push_back(input->samples.at(ii)-output->ped);
+				output->average+=input->samples.at(ii);
+			}
+			output->average/=input->samples.size();
+			output->A=this->getMaximum(m_crossingTimes.at(idx).first,m_crossingTimes.at(idx).second,&(m_waveform->samples.at(0)),output->T);
+			xmin=output->T-10;
+			xmax=output->T+20;
+
+			if ((xmin<=0)||(xmax>size)){
+				jerr<<xmin<<" "<<xmax<<" "<<output->T<<" "<<m_crossingTimes.at(idx).first<<" "<<m_crossingTimes.at(idx).second<<std::endl;
+			}
+			output->Qraw=this->sumSamples((int)xmin,(int)xmax,&(m_waveform->samples.at(0)));
+
+
+
+
 		}
 	}
+	else if (output->nSignals>=1){
+		output->m_type=signal;
+		output->Qraw=this->sumSamples(m_waveform->samples.size(),&(m_waveform->samples.at(0)));
+		output->A=this->getMaximum(m_waveform->samples.size(),&(m_waveform->samples.at(0)),output->T);
+
+		idx=m_signalCrossingIndexes.at(0);
+		xmin=m_crossingTimes.at(idx).first;  //this is the time of the sample OVER thr
+		xmax=m_crossingTimes.at(idx).first+1;
+		if (xmin==0) output->T=0;
+		else{
+			max=m_waveform->samples.at(xmin);
+			min=m_waveform->samples.at(xmin-1);
+		}
+		//y=min+(t-xmin)*(max-min)/(xmax-xmin) , xmin <= t <= xmax
+		//y=THR
+		//(THR-min)*(xmax-xmin)/(max-min)+xmin=t
+
+		output->T=(thr-min)*(xmax-xmin)/(max-min)+xmin;
+
+
+
+
+	}
 	else{
-		output->m_type=single_phes;
-		output->Q=this->sumSamples(	m_waveform->samples);
+		output->m_type=many_phe;
+		output->A=0;
+		output->Qraw=0;
+		prev_xmin=0;
+		for (int iphe=0;iphe<output->nSingles;iphe++){
+			idx=m_singleCrossingIndexes.at(iphe);
+			xmin=m_crossingTimes.at(idx).first;
+			xmax=m_crossingTimes.at(idx).second;
+			max=this->getMaximum((int)xmin,(int)xmax,&(m_waveform->samples.at(0)),Tmax);
+			if ((output->A) < max) output->A=max;
+
+			xmin=Tmax-10;
+			xmax=Tmax+20;
+
+			if (xmin<prev_xmin) xmin=prev_xmin;
+			if (xmax>size) xmax=(size-1);
+
+			output->Qraw+=this->sumSamples((int)xmin,(int)xmax,&(m_waveform->samples.at(0)));
+		}
+		idx=m_singleCrossingIndexes.at(0);
+		output->T=m_crossingTimes.at(idx).first;
+
+
+
 	}
 
 	return NOERROR;

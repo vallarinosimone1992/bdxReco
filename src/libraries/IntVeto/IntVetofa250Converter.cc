@@ -32,8 +32,8 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 	for (int ii=20;ii<size;ii++){
 		Q+=(input->samples.at(ii)-ped);
 	}
-	output->Q=Q;
-	output->T=0;
+	output->Qraw=Q;
+	output->T=0;   ///TODO
 
 	return NOERROR;
 }

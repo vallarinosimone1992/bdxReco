@@ -147,18 +147,18 @@ jerror_t JEventProcessor_intVeto_digi::evnt(JEventLoop *loop, uint64_t eventnumb
 	japp->RootWriteLock();
 
 	for (data_it=data.begin();data_it<data.end();data_it++){
-		m_sector=(*data_it)->m_channel.int_veto.sector;
-		m_layer=(*data_it)->m_channel.int_veto.layer;
-		m_component=(*data_it)->m_channel.int_veto.component;
-		m_readout=(*data_it)->m_channel.int_veto.readout;
+		m_sector=(*data_it)->m_channel.sector;
+		m_layer=(*data_it)->m_channel.layer;
+		m_component=(*data_it)->m_channel.component;
+		m_readout=(*data_it)->m_channel.readout;
 
 		Q=(*data_it)->Q;
 		(*data_it)->Get(associated_data,"",1);
 		if (m_component<=3){
-			Q1=associated_data.at(0)->Q;
-			Q2=associated_data.at(1)->Q;
-			Q3=associated_data.at(2)->Q;
-			Q4=associated_data.at(3)->Q;
+			Q1=associated_data.at(0)->Qphe;
+			Q2=associated_data.at(1)->Qphe;
+			Q3=associated_data.at(2)->Qphe;
+			Q4=associated_data.at(3)->Qphe;
 		}
 		t->Fill();
 	}

@@ -38,8 +38,7 @@ int main(int narg, char *argv[])
 	//bdxOpt.setGoptions();
 	//bdxOpt.setOptMap(narg, argv);
 	TH1::AddDirectory(kFALSE);
-	TMinuitMinimizer::UseStaticMinuit(kFALSE);
-	
+
 	JApplication app(narg, argv);
 
 	if(narg==1){

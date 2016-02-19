@@ -119,7 +119,7 @@ jerror_t IntVetoSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 			/*Apply phe conversion if possible*/
 			m_sipm_gain.getCalib(m_channel.int_veto,m_q_calib);
 			if ((m_q_calib.size()==1)&&(m_q_calib.at(0)>0)){
-				m_IntVetoSiPMHit->Q/=m_q_calib.at(0);
+				m_IntVetoSiPMHit->Qphe=	m_IntVetoSiPMHit->Qraw/m_q_calib.at(0);
 			}
 
 			_data.push_back(m_IntVetoSiPMHit);
@@ -142,7 +142,7 @@ jerror_t IntVetoSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 			/*Apply phe conversion if possible*/
 			m_sipm_gain.getCalib(m_channel.int_veto,m_q_calib);
 			if ((m_q_calib.size()==1)&&(m_q_calib.at(0)>0)){
-				m_IntVetoSiPMHit->Q/=m_q_calib.at(0);
+				m_IntVetoSiPMHit->Qphe=	m_IntVetoSiPMHit->Qraw/m_q_calib.at(0);
 			}
 
 			_data.push_back(m_IntVetoSiPMHit);
