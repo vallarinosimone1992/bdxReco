@@ -32,11 +32,17 @@ jerror_t Paddlesfa250Converter_factory::brun(jana::JEventLoop *eventLoop, int32_
 			m_isFirstCallToBrun=0;
 			m_Paddlesfa250Converter=new Paddlesfa250Converter();
 
+				/***** Reading Thresholds from CCDB *******/
 				m_Paddlesfa250Converter->threshold=new PaddlesCalibration();
 				vector<vector < double> > m_rawthreshold;
 				eventLoop->GetCalib("/Paddles/Threshold", m_rawthreshold);
 				m_Paddlesfa250Converter->threshold->fillCalib(m_rawthreshold);
 
+				/***** Reading Pedestals from CCDB *******/
+				m_Paddlesfa250Converter->pedestal_init=new PaddlesCalibration();
+				vector<vector < double> > m_rawpedestal_init;
+				eventLoop->GetCalib("/Paddles/Pedestal", m_rawpedestal_init);
+				m_Paddlesfa250Converter->pedestal_init->fillCalib(m_rawpedestal_init);
 
 			_data.push_back(m_Paddlesfa250Converter);
 			SetFactoryFlag(PERSISTANT);

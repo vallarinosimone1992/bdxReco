@@ -31,14 +31,15 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 
 	vector<double> m_Thr;
 	threshold->getCalib(output->m_channel.paddles,m_Thr);
-
-
 	double Thr=m_Thr.at(0);		//mV
-//	jout<<m_channel.paddles.id<<" "<<Thr<<std::endl;
+
+	vector<double> m_pedestal_init;
+	pedestal_init->getCalib(output->m_channel.paddles,m_pedestal_init);
 
 	int Nsamples=30;
-	static double Ped_prev_id0=0;
-	static double Ped_prev_id1=0;
+	static double Ped_prev_id0=m_pedestal_init.at(0);
+	static double Ped_prev_id1=m_pedestal_init.at(1);
+
 	double Ped=0;
 	double Q=0;					// nC
 	double T=0;					// nsec
@@ -53,6 +54,10 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 	int sup_index=-1;
 
 	int size=input->samples.size();
+
+//	jout<<"****************"<<std::endl;
+//	jout<<m_channel.paddles.id<<" "<<Thr<<" "<<Ped_prev_id0<<" "<<Ped_prev_id1<<std::endl;
+
 
 //   *********** Timing *******************
 	for (int ii=0;ii<size;ii++){
@@ -78,9 +83,9 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 			T=(((Tsup-Tinf)/(Amp2-Amp1))*(Thr-Amp1))+Tinf;		// linear extrapolation
 //			jout<<"T_interp= "<<T<<std::endl;
 
-//   **************************************
+	/***************************************/
 
-//   *********** Pedestal ****************
+    /*********** Pedestal ****************/
 //	jout<<"Ped= "<<Ped<<" Ped_prev_id0="<<Ped_prev_id0<<" Ped_prev_id1="<<Ped_prev_id1<<std::endl;
 
 	if(T_index<Nsamples&&m_channel.paddles.id==0){Ped=Ped_prev_id0;}
