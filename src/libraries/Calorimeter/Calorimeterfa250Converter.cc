@@ -230,7 +230,7 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 		}
 	}
 	else if (output->nSignals>=1){
-		output->m_type=signal;
+		output->m_type=real_signal;
 		output->Qraw=this->sumSamples(m_waveform->samples.size(),&(m_waveform->samples.at(0)));
 		output->A=this->getMaximum(m_waveform->samples.size(),&(m_waveform->samples.at(0)),output->T);
 

@@ -18,7 +18,7 @@ typedef enum{
 	one_phe=1,
 	good_one_phe=2,
 	many_phe=3,
-	signal=4,
+	real_signal=4,
 	num_hit_type
 }hit_type;
 
