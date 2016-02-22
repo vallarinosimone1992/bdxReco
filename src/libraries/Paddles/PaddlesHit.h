@@ -19,8 +19,8 @@ class PaddlesHit:public jana::JObject{
 		JOBJECT_PUBLIC(PaddlesHit);
 		
 		// Add data members here. For example:
-		int ch;
 		double E,T;
+		double x,y,z;
 		
 		// This method is used primarily for pretty printing
 		// the second argument to AddString is printf style format
