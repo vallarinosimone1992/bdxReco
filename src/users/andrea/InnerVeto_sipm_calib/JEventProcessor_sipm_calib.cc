@@ -1,12 +1,13 @@
 // $Id$
 //
-//    File: JEventProcessor_intVeto_digi.cc
-// Created: Tue Feb  9 16:51:03 CET 2016
+//    File: JEventProcessor_sipm_calib.cc
+// Created: Tue Feb  2 18:52:32 CET 2016
 // Creator: celentan (on Linux apcx4 2.6.32-504.30.3.el6.x86_64 x86_64)
 //
 
-#include "JEventProcessor_intVeto_digi.h"
+#include "JEventProcessor_sipm_calib.h"
 using namespace jana;
+
 
 // Routine used to create our JEventProcessor
 #include <JANA/JApplication.h>
@@ -43,23 +44,24 @@ using namespace jana;
 extern "C"{
 void InitPlugin(JApplication *app){
 	InitJANAPlugin(app);
-	app->AddProcessor(new JEventProcessor_intVeto_digi());
+	app->AddProcessor(new JEventProcessor_sipm_calib());
 }
 } // "C"
 
 
 //------------------
-// JEventProcessor_intVeto_digi (Constructor)
+// JEventProcessor_sipm_calib (Constructor)
 //------------------
-JEventProcessor_intVeto_digi::JEventProcessor_intVeto_digi()
+JEventProcessor_sipm_calib::JEventProcessor_sipm_calib()
 {
+	m_isFirstCallToBrun=1;
 
 }
 
 //------------------
-// ~JEventProcessor_intVeto_digi (Destructor)
+// ~JEventProcessor_sipm_calib (Destructor)
 //------------------
-JEventProcessor_intVeto_digi::~JEventProcessor_intVeto_digi()
+JEventProcessor_sipm_calib::~JEventProcessor_sipm_calib()
 {
 
 }
@@ -67,25 +69,26 @@ JEventProcessor_intVeto_digi::~JEventProcessor_intVeto_digi()
 //------------------
 // init
 //------------------
-jerror_t JEventProcessor_intVeto_digi::init(void)
+jerror_t JEventProcessor_sipm_calib::init(void)
 {
-
+	// This is called once at program startup. If you are creating
+	// and filling historgrams in this plugin, you should lock the
+	// ROOT mutex like this:
 	//
-		japp->RootWriteLock();
-		t=new TTree("tout","tout");
+	// japp->RootWriteLock();
+	//  ... fill historgrams or trees ...
+	// japp->RootUnLock();
+	//
+	japp->RootWriteLock();
+	t=new TTree("tout","tout");
 
-		t->Branch("sector",&m_sector);
-		t->Branch("layer",&m_layer);
-		t->Branch("component",&m_component);
-		t->Branch("readout",&m_readout);
-		t->Branch("Q",&Q);
-		t->Branch("Q1",&Q1);
-		t->Branch("Q2",&Q2);
-		t->Branch("Q3",&Q3);
-		t->Branch("Q4",&Q4);
-
-		japp->RootUnLock();
-
+	t->Branch("sector",&m_sector);
+	t->Branch("layer",&m_layer);
+	t->Branch("component",&m_component);
+	t->Branch("readout",&m_readout);
+	t->Branch("Q",&Q);
+	t->Branch("eventN",&eventNumber);
+	japp->RootUnLock();
 
 	return NOERROR;
 }
@@ -93,8 +96,9 @@ jerror_t JEventProcessor_intVeto_digi::init(void)
 //------------------
 // brun
 //------------------
-jerror_t JEventProcessor_intVeto_digi::brun(JEventLoop *eventLoop, int32_t runnumber)
+jerror_t JEventProcessor_sipm_calib::brun(JEventLoop *eventLoop, int32_t runnumber)
 {
+	// This is called whenever the run number changes
 
 	if (m_isFirstCallToBrun){
 		string class_name,this_class_name;
@@ -132,47 +136,45 @@ jerror_t JEventProcessor_intVeto_digi::brun(JEventLoop *eventLoop, int32_t runnu
 			m_ROOTOutput->AddObject(t);
 		}
 	}
+
+
 	return NOERROR;
 }
 
 //------------------
 // evnt
 //------------------
-jerror_t JEventProcessor_intVeto_digi::evnt(JEventLoop *loop, uint64_t eventnumber)
+jerror_t JEventProcessor_sipm_calib::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
-	vector<const IntVetoDigiHit*> data;
-	vector<const IntVetoSiPMHit*> associated_data;
-	vector<const IntVetoDigiHit*>::const_iterator data_it;
+
+	vector<const IntVetoSiPMHit*> data;
+	vector<const IntVetoSiPMHit*>::const_iterator data_it;
 	loop->Get(data);
+
+
 	japp->RootWriteLock();
-
+	//  ... fill historgrams or trees ...
 	for (data_it=data.begin();data_it<data.end();data_it++){
-		m_sector=(*data_it)->m_channel.sector;
-		m_layer=(*data_it)->m_channel.layer;
-		m_component=(*data_it)->m_channel.component;
-		m_readout=(*data_it)->m_channel.readout;
+		m_sector=(*data_it)->m_channel.int_veto.sector;
+		m_layer=(*data_it)->m_channel.int_veto.layer;
+		m_component=(*data_it)->m_channel.int_veto.component;
+		m_readout=(*data_it)->m_channel.int_veto.readout;
 
-		Q=(*data_it)->Q;
-		(*data_it)->Get(associated_data,"",1);
-		if (m_component<=3){
-			Q1=associated_data.at(0)->Qphe;
-			Q2=associated_data.at(1)->Qphe;
-			Q3=associated_data.at(2)->Qphe;
-			Q4=associated_data.at(3)->Qphe;
-		}
+		Q=(*data_it)->Qphe;
+
+		eventNumber=eventnumber;
+
 		t->Fill();
+
 	}
-
-
 	japp->RootUnLock();
-
 	return NOERROR;
 }
 
 //------------------
 // erun
 //------------------
-jerror_t JEventProcessor_intVeto_digi::erun(void)
+jerror_t JEventProcessor_sipm_calib::erun(void)
 {
 	// This is called whenever the run number changes, before it is
 	// changed to give you a chance to clean up before processing
@@ -183,7 +185,7 @@ jerror_t JEventProcessor_intVeto_digi::erun(void)
 //------------------
 // fini
 //------------------
-jerror_t JEventProcessor_intVeto_digi::fini(void)
+jerror_t JEventProcessor_sipm_calib::fini(void)
 {
 	// Called before program exit after event processing is finished.
 	return NOERROR;

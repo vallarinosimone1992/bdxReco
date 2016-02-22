@@ -31,7 +31,6 @@ class CalorimeterSiPMHit_factory:public jana::JFactory<CalorimeterSiPMHit>{
 		const Calorimeterfa250Converter *m_Calorimeterfa250Converter;
 
 		CalorimeterCalibration m_sipm_gain;
-
 		int VERBOSE;
 };
 

@@ -154,16 +154,19 @@ public:
 	class PADDLES_Index_t{
 	public:
 		int id;
-		static const int nIDs(){return 1;};
+		int readout;
+		static const int nIDs(){return 2;};
 		inline bool isSameActive(const PADDLES_Index_t &rhs) const{
 			return  (id==rhs.id);
 		}
 		inline bool operator==(const PADDLES_Index_t &rhs) const {
-			return  isSameActive(rhs);
+			return  (isSameActive(rhs)&&(readout==rhs.readout));
 		}
 		inline bool operator<(const PADDLES_Index_t &rhs) const {  //A.C. for the maps
 					if (id>rhs.id) return true;
 					if (id<rhs.id) return false;
+					if (readout>rhs.readout) return true;
+					if (readout<rhs.readout) return false;
 					return false;
 				}
 

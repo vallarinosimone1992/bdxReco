@@ -174,7 +174,7 @@ jerror_t Paddles_ene::evnt(JEventLoop *loop,uint64_t eventnumber)
 
 				eventN=eventnumber;
 				tword=tWord;
-				id=evhit->m_channel.paddles.id;
+				id=evhit->m_channel.id;
 
 //				if(tword==2&&eventN==445){
 //				jout<<(*data_it)->E<<endl;

@@ -80,6 +80,7 @@ jerror_t JEventProcessor_CalorimeterSipm_calib::init(void)
 	h=new TH1D("h","h",500,-0.5,499.5);
 	t=new TTree("tout","tout");
 
+	t->Branch("evnt",&eventNumber);
 	t->Branch("sector",&m_sector);
 	t->Branch("layer",&m_layer);
 	t->Branch("component",&m_component);
@@ -89,8 +90,9 @@ jerror_t JEventProcessor_CalorimeterSipm_calib::init(void)
 	t->Branch("nsignals",&m_signals);
 
 	t->Branch("Q",&Q);
-
-
+	t->Branch("T",&T);
+	t->Branch("A",&A);
+	t->Branch("average",&average);
 	japp->RootUnLock();
 
 	return NOERROR;
@@ -166,30 +168,32 @@ jerror_t JEventProcessor_CalorimeterSipm_calib::evnt(JEventLoop *loop, uint64_t 
 
 	japp->RootWriteLock();
 
-
+	eventNumber=eventnumber;
 
 	for (data_it=data.begin();data_it<data.end();data_it++){
 
 		h->Reset();
 		h->SetName(Form("h_%lld_%i_%i_%i_%i",eventnumber,(*data_it)->m_channel.calorimeter.readout,(*data_it)->m_type,(*data_it)->nSingles,(*data_it)->nSignals));
 
-			(*data_it)->GetSingle(m_waveform);
-			m_sector=(*data_it)->m_channel.int_veto.sector;
-			m_layer=(*data_it)->m_channel.int_veto.layer;
-			m_component=(*data_it)->m_channel.int_veto.component;
-			m_readout=(*data_it)->m_channel.int_veto.readout;
-			m_type=(*data_it)->m_type;
-			m_singles=(*data_it)->nSingles;
-			m_signals=(*data_it)->nSignals;
-			Q=(*data_it)->Q;
-			for (int ii=0;ii<m_waveform->samples.size();ii++) h->Fill(ii,m_waveform->samples.at(ii));
-			h->Write();
+		(*data_it)->GetSingle(m_waveform);
+		m_sector=(*data_it)->m_channel.int_veto.sector;
+		m_layer=(*data_it)->m_channel.int_veto.layer;
+		m_component=(*data_it)->m_channel.int_veto.component;
+		m_readout=(*data_it)->m_channel.int_veto.readout;
+		m_type=(*data_it)->m_type;
+		m_singles=(*data_it)->nSingles;
+		m_signals=(*data_it)->nSignals;
+		Q=(*data_it)->Qphe;
+		A=(*data_it)->A;
+		T=(*data_it)->T;
+		average=(*data_it)->average;
 
-			if ((*data_it)->m_type==good_real_signal){
-							(*data_it)->m_fitFunction.fRiseGoodRealSignal->SetName(Form("f_%lld_%i_%i_%i_%i",eventnumber,(*data_it)->m_channel.calorimeter.readout,(*data_it)->m_type,(*data_it)->nSingles,(*data_it)->nSignals));
-							(*data_it)->m_fitFunction.fRiseGoodRealSignal->Write();
-						}
-			t->Fill();
+		//	for (int ii=0;ii<m_waveform->samples.size();ii++) h->Fill(ii,m_waveform->samples.at(ii));
+		//	h->Write();
+
+
+
+		t->Fill();
 
 	}
 
