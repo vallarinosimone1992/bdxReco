@@ -10,7 +10,7 @@
 
 #include <JANA/JFactory.h>
 #include <Paddles/PaddlesHit.h>
-#include "PaddlesCalibration.h"
+#include <system/CalibrationHandler.h>
 
 class PaddlesHit_factory:public jana::JFactory<PaddlesHit>{
 	public:
@@ -27,7 +27,7 @@ class PaddlesHit_factory:public jana::JFactory<PaddlesHit>{
 
 		const TranslationTable *m_tt;
 
-		PaddlesCalibration m_ENE_gain;
+		CalibrationHandler<TranslationTable::PADDLES_Index_t> m_ENE_gain;
 
 };
 

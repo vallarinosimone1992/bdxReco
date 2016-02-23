@@ -1,8 +1,8 @@
 #include "IntVetofa250Converter.h"
 
 #include <DAQ/fa250Mode1CalibHit.h>
+#include <DAQ/fa250Mode1CalibPedSubHit.h>
 #include <DAQ/fa250Mode7Hit.h>
-
 
 IntVetoSiPMHit* IntVetofa250Converter::convertHit(const fa250Hit *hit,const TranslationTable::ChannelInfo &m_channel) const{
 	IntVetoSiPMHit *m_IntVetoSiPMHit=new IntVetoSiPMHit;
@@ -23,22 +23,36 @@ IntVetoSiPMHit* IntVetofa250Converter::convertHit(const fa250Hit *hit,const Tran
 
 jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa250Mode1CalibHit *input) const{
 	int size=input->samples.size();
-	double Q=0;
-	double ped=0;
+
+	fa250Mode1CalibPedSubHit *m_waveform=new fa250Mode1CalibPedSubHit;
+	output->AddAssociatedObject(m_waveform);
+	/*A trick to copy crate-slot-channel*/
+	fa250Hit *a = m_waveform;
+	const fa250Hit *b = input;
+	*a = *b;
+
+	output->ped=0;
 	for (int ii=0;ii<20;ii++){
-		ped+=input->samples.at(ii);
+		output->ped+=input->samples.at(ii);
 	}
-	ped/=20.;
-	for (int ii=20;ii<size;ii++){
-		Q+=(input->samples.at(ii)-ped);
+	output->ped/=20.;
+
+	output->average=0;
+	//1: set the pedestal-corrected samples, by creating a faMode1CalibPedSubHit object.
+	for (int ii=0;ii<size;ii++){
+		m_waveform->samples.push_back(input->samples.at(ii)-output->ped);
+		output->average+=input->samples.at(ii);
 	}
-	output->Qraw=Q;
-	output->T=0;   ///TODO
+	output->average/=input->samples.size();
+
+
+
 
 	return NOERROR;
 }
 
 jerror_t IntVetofa250Converter::convertMode7Hit(IntVetoSiPMHit* output,const fa250Mode7Hit *input) const{
+	output->AddAssociatedObject(input);
 
 
 	return NOERROR;

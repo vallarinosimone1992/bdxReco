@@ -19,7 +19,8 @@ using namespace jana;
 #include "system/BDXEventProcessor.h"
 
 #include <DAQ/fa250Mode1Hit.h>
-
+#include <DAQ/fa250Mode1CalibHit.h>
+#include <DAQ/fa250Mode1CalibPedSubHit.h>
 #include <TT/TranslationTable.h>
 
 #include <DAQ/triggerData.h>
@@ -151,6 +152,8 @@ jerror_t JEventProcessor_sipm_calib::evnt(JEventLoop *loop, uint64_t eventnumber
 	vector<const IntVetoSiPMHit*>::const_iterator data_it;
 	loop->Get(data);
 
+	const fa250Mode1CalibPedSubHit *m_waveform;
+
 
 	japp->RootWriteLock();
 	//  ... fill historgrams or trees ...
@@ -159,6 +162,9 @@ jerror_t JEventProcessor_sipm_calib::evnt(JEventLoop *loop, uint64_t eventnumber
 		m_layer=(*data_it)->m_channel.int_veto.layer;
 		m_component=(*data_it)->m_channel.int_veto.component;
 		m_readout=(*data_it)->m_channel.int_veto.readout;
+
+		(*data_it)->GetSingle(m_waveform);
+
 
 		Q=(*data_it)->Qphe;
 

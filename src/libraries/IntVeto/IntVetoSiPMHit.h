@@ -35,7 +35,8 @@ class IntVetoSiPMHit:public fa250ConvertedHit{
 		TranslationTable::ChannelInfo m_channel; //both crate-slot channel and detector-specific ID. Since this is a sensor-based object, the readout field will be !=0
 
 		double Qraw,Qphe,T;
-
+		double average;
+		double ped;
 
 
 };

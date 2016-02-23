@@ -18,7 +18,7 @@
 #include <Calorimeter/CalorimeterSiPMHit.h>
 #include <DAQ/fa250Converter.h>
 #include <TT/TranslationTable.h>
-
+#include <system/CalibrationHandler.h>
 class fa250Mode1CalibHit;
 class fa250Mode7Hit;
 class CalorimeterCalibration;
@@ -33,8 +33,8 @@ class Calorimeterfa250Converter:public fa250Converter<CalorimeterSiPMHit>{
 		jerror_t convertMode7Hit(CalorimeterSiPMHit* output,const fa250Mode7Hit *input) const;
 
 
-		CalorimeterCalibration *pedestal;
-		CalorimeterCalibration *thr;
+		CalibrationHandler<TranslationTable::CALO_Index_t> *pedestal;
+		CalibrationHandler<TranslationTable::CALO_Index_t> *thr;
 
 		int NPED;
 		int SINGLE_SIGNAL_TOT;

@@ -11,6 +11,7 @@
 #include <JANA/JEventProcessor.h>
 #include <TT/TranslationTable.h>
 class TTree;
+class TH1D;
 class JROOTOutput;
 class JEventProcessor_sipm_calib:public jana::JEventProcessor{
 	public:
@@ -26,7 +27,7 @@ class JEventProcessor_sipm_calib:public jana::JEventProcessor{
 		jerror_t fini(void);						///< Called after last event of last event source has been processed.
 
 		TTree *t;
-
+		TH1D *h;
 		int eventNumber;
 		int m_isFirstCallToBrun;
 

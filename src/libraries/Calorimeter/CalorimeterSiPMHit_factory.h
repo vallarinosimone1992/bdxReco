@@ -10,8 +10,8 @@
 
 #include <JANA/JFactory.h>
 #include "CalorimeterSiPMHit.h"
-#include "CalorimeterCalibration.h"
-
+#include <system/CalibrationHandler.h>
+#include <TT/TranslationTable.h>
 class Calorimeterfa250Converter;
 
 class CalorimeterSiPMHit_factory:public jana::JFactory<CalorimeterSiPMHit>{
@@ -30,7 +30,7 @@ class CalorimeterSiPMHit_factory:public jana::JFactory<CalorimeterSiPMHit>{
 		const TranslationTable *m_tt;
 		const Calorimeterfa250Converter *m_Calorimeterfa250Converter;
 
-		CalorimeterCalibration m_sipm_gain;
+		CalibrationHandler<TranslationTable::CALO_Index_t> m_sipm_gain;
 		int VERBOSE;
 };
 

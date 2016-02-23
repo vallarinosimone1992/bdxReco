@@ -16,7 +16,7 @@
 #include <Paddles/PaddlesPMTHit.h>
 #include <DAQ/fa250Converter.h>
 #include <TT/TranslationTable.h>
-
+#include <system/CalibrationHandler.h>
 class fa250Mode1CalibHit;
 class fa250Mode7Hit;
 class PaddlesCalibration;
@@ -31,7 +31,7 @@ class Paddlesfa250Converter:public fa250Converter<PaddlesPMTHit>{
 		jerror_t convertMode1Hit(PaddlesPMTHit* output,const fa250Mode1CalibHit *input, const TranslationTable::ChannelInfo &m_channel) const;
 		jerror_t convertMode7Hit(PaddlesPMTHit* output,const fa250Mode7Hit *input) const;
 
-		PaddlesCalibration *threshold,*pedestal_init;
+		CalibrationHandler<TranslationTable::PADDLES_Index_t> *threshold,*pedestal_init;
 
 };
 

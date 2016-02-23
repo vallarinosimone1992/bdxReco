@@ -10,7 +10,6 @@
 
 #include <JANA/JFactory.h>
 #include "CalorimeterDigiHit.h"
-#include "CalorimeterCalibration.h"
 
 class CalorimeterDigiHit_factory:public jana::JFactory<CalorimeterDigiHit>{
 public:

@@ -13,7 +13,6 @@
 using namespace std;
 
 #include "Calorimeterfa250Converter_factory.h"
-#include "CalorimeterCalibration.h"
 using namespace jana;
 
 
@@ -61,7 +60,7 @@ jerror_t Calorimeterfa250Converter_factory::brun(jana::JEventLoop *eventLoop, in
 	 * do so every run, since cal. constants may change.
 	 * In erun, consequently, delete the converter
 	 */
-	m_calorimeterfa250Converter->pedestal=new CalorimeterCalibration();
+	m_calorimeterfa250Converter->pedestal=new CalibrationHandler<TranslationTable::CALO_Index_t>;
 	vector<vector < double> > m_rawpedestal;
 	eventLoop->GetCalib("/Calorimeter/pedestal", m_rawpedestal);
 	m_calorimeterfa250Converter->pedestal->fillCalib(m_rawpedestal);

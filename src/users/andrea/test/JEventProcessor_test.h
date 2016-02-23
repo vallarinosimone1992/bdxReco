@@ -9,7 +9,7 @@
 #define _JEventProcessor_test_
 
 #include <JANA/JEventProcessor.h>
-#include <Calorimeter/CalorimeterCalibration.h>
+#include <system/CalibrationHandler.h>
 
 class TH1D;
 class TH2D;
@@ -43,7 +43,7 @@ class JEventProcessor_test:public jana::JEventProcessor{
 		double Q;
 		int component,eventN;
 
-		CalorimeterCalibration m_pedestal;
+		CalibrationHandler<TranslationTable::CALO_Index_t> m_pedestal;
 
 		TH1D *hGlob;
 		TF1  *fGlob;
