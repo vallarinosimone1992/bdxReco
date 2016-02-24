@@ -26,12 +26,15 @@ jerror_t IntVetofa250Converter_factory::init(void)
 //------------------
 jerror_t IntVetofa250Converter_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber)
 {
-	if (m_isFirstCallToBrun){
-			m_isFirstCallToBrun=0;
-			m_intVetofa250Converter=new IntVetofa250Converter();
-			_data.push_back(m_intVetofa250Converter);
-			SetFactoryFlag(PERSISTANT);
-		}
+
+	m_intVetofa250Converter=new IntVetofa250Converter();
+
+	gPARMS->GetParameter("INTVETO:VERBOSE",m_intVetofa250Converter->verbose());
+
+
+
+	_data.push_back(m_intVetofa250Converter);
+	SetFactoryFlag(PERSISTANT);
 
 	return NOERROR;
 }
@@ -61,6 +64,10 @@ jerror_t IntVetofa250Converter_factory::evnt(JEventLoop *loop, uint64_t eventnum
 //------------------
 jerror_t IntVetofa250Converter_factory::erun(void)
 {
+	if (m_intVetofa250Converter){
+		delete m_intVetofa250Converter;
+	}
+	_data.clear();
 	return NOERROR;
 }
 

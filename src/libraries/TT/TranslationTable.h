@@ -39,6 +39,19 @@ public:
 			return (rocid == rhs.rocid) && (slot == rhs.slot)
 					&& (channel == rhs.channel);
 		}
+
+		//...................................
+		// Less than operator for csc_t data types. This is used by
+		// the map<csc_t, XX> to order the entires by key
+		bool operator<(const TranslationTable::csc_t &b) const{
+			if (rocid < b.rocid) return true;
+			if (rocid > b.rocid) return false;
+			if (slot < b.slot) return true;
+			if (slot > b.slot) return false;
+			if (channel < b.channel) return true;
+			if (channel > b.channel) return false;
+			return false;
+		}
 	};
 
 	enum Detector_t {

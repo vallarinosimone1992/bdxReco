@@ -20,10 +20,10 @@
 
 
 #include <DAQ/fa250Mode1CalibHit.h>
-#include <DAQ/fa250Mode1CalibPedSubHit.h>
 #include <DAQ/fa250Mode7Hit.h>
 
 #include <JANA/JParameterManager.h>
+#include <DAQ/fa250Mode1CalibHit.h>
 
 double fSinglePhe2Pole(double *x,double *par){
 	double ret=0;
@@ -82,10 +82,10 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 	output->A=0;
 	output->m_type=noise;
 	/*This part is to read pedestal from dB*/
-	vector<double> pedV;
+	double pedV;
 
 
-	fa250Mode1CalibPedSubHit *m_waveform=new fa250Mode1CalibPedSubHit;
+	fa250Mode1CalibHit *m_waveform=new fa250Mode1CalibHit;
 	output->AddAssociatedObject(m_waveform);
 	/*A trick to copy crate-slot-channel*/
 	fa250Hit *a = m_waveform;
@@ -106,16 +106,8 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 	output->nSignals=0;
 
 
-	pedestal->getCalib(output->m_channel.calorimeter,pedV);
-	if (pedV.size()==1){
-		output->ped=pedV.at(0);
-	}
-	else{
-		jerr<<"Calorimeterfa250Converter::convertMode1Hit error on pedestal db entries. Got: "<<pedV.size()<<std::endl;
-		output->ped=0;  //A.C. for now ok, in the future need to revert-back to the non-db case!*/
-	}
-
-
+	pedestal->getCalibSingle(output->m_channel.calorimeter,pedV);
+	output->ped=pedV;
 	output->average=0;
 	//1: set the pedestal-corrected samples, by creating a faMode1CalibPedSubHit object.
 	for (int ii=0;ii<size;ii++){
@@ -125,7 +117,7 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 	output->average/=input->samples.size();
 
 
-	///TODO!
+	///TODO NOT HARDCODED!
 	int thr;
 	if (output->m_channel.calorimeter.readout==1) thr=8;
 	if (output->m_channel.calorimeter.readout==2) thr=8;
@@ -273,7 +265,19 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 			output->Qraw+=this->sumSamples((int)xmin,(int)xmax,&(m_waveform->samples.at(0)));
 		}
 		idx=m_singleCrossingIndexes.at(0);
-		output->T=m_crossingTimes.at(idx).first;
+		xmin=m_crossingTimes.at(idx).first;  //this is the time of the sample OVER thr
+		xmax=m_crossingTimes.at(idx).first+1;
+		if (xmin==0) output->T=0;
+		else{
+			max=m_waveform->samples.at(xmin);
+			min=m_waveform->samples.at(xmin-1);
+		}
+		//y=min+(t-xmin)*(max-min)/(xmax-xmin) , xmin <= t <= xmax
+		//y=THR
+		//(THR-min)*(xmax-xmin)/(max-min)+xmin=t
+
+		output->T=(thr-min)*(xmax-xmin)/(max-min)+xmin;
+
 
 
 

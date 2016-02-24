@@ -20,7 +20,7 @@ using namespace jana;
 
 #include <DAQ/fa250Mode1Hit.h>
 #include <DAQ/fa250Mode1CalibHit.h>
-#include <DAQ/fa250Mode1CalibPedSubHit.h>
+#include <DAQ/fa250Mode1PedSubHit.h>
 #include <TT/TranslationTable.h>
 
 #include <DAQ/triggerData.h>
@@ -56,7 +56,7 @@ void InitPlugin(JApplication *app){
 JEventProcessor_sipm_calib::JEventProcessor_sipm_calib()
 {
 	m_isFirstCallToBrun=1;
-
+	h=new TH1D("h","h",100,-0.5,99.5);
 }
 
 //------------------
@@ -152,7 +152,7 @@ jerror_t JEventProcessor_sipm_calib::evnt(JEventLoop *loop, uint64_t eventnumber
 	vector<const IntVetoSiPMHit*>::const_iterator data_it;
 	loop->Get(data);
 
-	const fa250Mode1CalibPedSubHit *m_waveform;
+	const fa250Mode1CalibHit *m_waveform;
 
 
 	japp->RootWriteLock();
@@ -164,6 +164,14 @@ jerror_t JEventProcessor_sipm_calib::evnt(JEventLoop *loop, uint64_t eventnumber
 		m_readout=(*data_it)->m_channel.int_veto.readout;
 
 		(*data_it)->GetSingle(m_waveform);
+		h->Reset();
+		h->SetName(Form("h_%lld_%i_%i",eventnumber,(*data_it)->m_channel.int_veto.component,(*data_it)->m_channel.int_veto.readout));
+
+		for (int ii=0;ii<m_waveform->samples.size();ii++){
+			h->Fill(ii,m_waveform->samples.at(ii));
+		}
+		h->Write();
+
 
 
 		Q=(*data_it)->Qphe;

@@ -22,9 +22,9 @@ class fa250Mode1CalibHit:public fa250Hit{
 		// This method is used primarily for pretty printing
 		// the second argument to AddString is printf style format
 		void toStrings(vector<pair<string,string> > &items)const{
-			 AddString(items, "crate", "%4d", crate);
-			 AddString(items, "slot", "%4d", slot);
-			 AddString(items, "channel", "%4d", channel);
+			 AddString(items, "crate", "%4d",  m_channel.rocid);
+			 AddString(items, "slot", "%4d", m_channel.slot);
+			 AddString(items, "channel", "%4d", m_channel.channel);
 			 AddString(items, "nsamples", "%4d", samples.size());
 		}
 		

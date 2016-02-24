@@ -37,23 +37,16 @@ jerror_t Calorimeterfa250Converter_factory::brun(jana::JEventLoop *eventLoop, in
 {
 	int threadId= PThreadIDUniqueInt(eventLoop->GetPThreadID());
 	m_calorimeterfa250Converter=new Calorimeterfa250Converter();
-	m_calorimeterfa250Converter->mName=string(Form("h%i",threadId));
+	m_calorimeterfa250Converter->name()=string(Form("h%i",threadId));
 
 	m_calorimeterfa250Converter->NPED=10; //A.C. for now, hardcoded
+
 	m_calorimeterfa250Converter->SINGLE_SIGNAL_TOT=40; //A.C. for now, hardcoded. These two are higly hardcoded!
 	m_calorimeterfa250Converter->MIN_TOT=3; //A.C. for now, hardcoded. These two are higly hardcoded!
 
-	/*Terrible! Hardcoded!*/
-	m_calorimeterfa250Converter->m_fitIndex=new double[2000];
-	m_calorimeterfa250Converter->m_fitError=new double[2000];
-
-	for (int ii=0;ii<2000;ii++){
-		m_calorimeterfa250Converter->m_fitIndex[ii]=ii;
-		m_calorimeterfa250Converter->m_fitError[ii]=0.4884;
-	}
 
 
-	gPARMS->GetParameter("CALORIMETER:VERBOSE",	m_calorimeterfa250Converter->VERBOSE);
+	gPARMS->GetParameter("CALORIMETER:VERBOSE",	m_calorimeterfa250Converter->verbose());
 
 	/*Probably not the best way to do so: the calorimeter converter needs to know about the pedestal,
 	 * so read cal. constants from DB, create a CalorimeterCalibration object that handles properly the indexing

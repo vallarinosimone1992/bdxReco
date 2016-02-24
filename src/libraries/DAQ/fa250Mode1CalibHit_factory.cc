@@ -10,7 +10,7 @@
 #include <iomanip>
 using namespace std;
 
-#include "fa250Mode1Hit.h"
+#include "fa250Mode1PedSubHit.h"
 #include "fa250Mode1CalibHit_factory.h"
 using namespace jana;
 
@@ -39,12 +39,11 @@ jerror_t fa250Mode1CalibHit_factory::brun(jana::JEventLoop *eventLoop, int32_t r
 //------------------
 jerror_t fa250Mode1CalibHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
-	vector<const fa250Mode1Hit*> hits;
+	vector<const fa250Mode1PedSubHit*> hits;
 	loop->Get(hits);
-
 	for(uint32_t i=0; i<hits.size(); i++){
 		
-		const fa250Mode1Hit *hit = hits[i];
+		const fa250Mode1PedSubHit *hit = hits[i];
 		
 		// Create new fa250Mode1CalibHit
 		fa250Mode1CalibHit *calibHit = new fa250Mode1CalibHit;
@@ -55,7 +54,7 @@ jerror_t fa250Mode1CalibHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 		fa250Hit *a = calibHit;
 		const fa250Hit *b = hit;
 		*a = *b;
-		
+
 		// Copy all samples, applying calibration constant as we go
 		for(uint32_t j=0; j<hit->samples.size(); j++){
 			double sample = LSB*(double)hit->samples[j];

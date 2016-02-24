@@ -12,7 +12,7 @@ using namespace std;
 #include "JEventProcessor_test.h"
 #include "system/BDXEventProcessor.h"
 
-#include <DAQ/fa250Mode1CalibPedSubHit.h>
+#include <DAQ/fa250Mode1CalibHit.h>
 
 #include <TT/TranslationTable.h>
 
@@ -198,7 +198,7 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop,uint64_t eventnumber)
 	//
 	vector<const CalorimeterSiPMHit*> data;
 	vector<const CalorimeterSiPMHit*>::const_iterator data_it;
-	const fa250Mode1CalibPedSubHit *fa;
+	const fa250Mode1CalibHit *fa;
 	loop->Get(data);
 
 	const triggerData* tData;

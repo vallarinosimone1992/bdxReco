@@ -12,10 +12,10 @@
 #include <JANA/JFactoryGenerator.h>
 
 #include "fa250Mode1Hit.h"
-#include "fa250Mode1CalibPedSubHit.h"
 #include "fa250Mode7Hit.h"
 #include "triggerData.h"
 #include "fa250Mode1CalibHit_factory.h"
+#include "fa250Mode1PedSubHit_factory.h"
 
 class JFactoryGenerator_DAQ: public jana::JFactoryGenerator{
 	public:
@@ -28,8 +28,9 @@ class JFactoryGenerator_DAQ: public jana::JFactoryGenerator{
 			loop->AddFactory(new JFactory<fa250Mode1Hit>()    );
 			loop->AddFactory(new JFactory<fa250Mode7Hit>()    );
 			loop->AddFactory(new JFactory<triggerData  >()    );
+			loop->AddFactory(new fa250Mode1PedSubHit_factory());
 			loop->AddFactory(new fa250Mode1CalibHit_factory() );
-			loop->AddFactory(new JFactory<fa250Mode1CalibPedSubHit>);
+
 			return NOERROR;
 		}
 

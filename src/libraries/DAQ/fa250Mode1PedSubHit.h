@@ -5,26 +5,26 @@
 // Creator: davidl (on Darwin harriet.jlab.org 13.4.0 i386)
 //
 
-#ifndef _fa250Mode1CalibPedSubHit_
-#define _fa250Mode1CalibPedSubHit_
+#ifndef _fa250Mode1PedSubHit_
+#define _fa250Mode1PedSubHit_
 
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
 
-#include "fa250Mode1CalibHit.h"
+#include "fa250Mode1Hit.h"
 
-class fa250Mode1CalibPedSubHit:public fa250Mode1CalibHit{
+class fa250Mode1PedSubHit:public fa250Mode1Hit{
 	public:
-		JOBJECT_PUBLIC(fa250Mode1CalibPedSubHit);
+		JOBJECT_PUBLIC(fa250Mode1PedSubHit);
 		
 		vector <double> samples; // calibrated - ped. subtracted samples
 		
 		// This method is used primarily for pretty printing
 		// the second argument to AddString is printf style format
 		void toStrings(vector<pair<string,string> > &items)const{
-			 AddString(items, "crate", "%4d", crate);
-			 AddString(items, "slot", "%4d", slot);
-			 AddString(items, "channel", "%4d", channel);
+			 AddString(items, "crate", "%4d", m_channel.rocid);
+			 AddString(items, "slot", "%4d", m_channel.slot);
+			 AddString(items, "channel", "%4d", m_channel.channel);
 			 AddString(items, "nsamples", "%4d", samples.size());
 		}
 		

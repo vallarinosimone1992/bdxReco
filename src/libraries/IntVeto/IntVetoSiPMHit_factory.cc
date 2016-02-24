@@ -104,11 +104,8 @@ jerror_t IntVetoSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	/*First, mode 1*/
 	/*Note that in this case we have to integrate the pulse - it is a mode 1 pulse! */
 	for (it_fa250Mode1CalibHit=m_fa250Mode1CalibHit.begin();it_fa250Mode1CalibHit!=m_fa250Mode1CalibHit.end();it_fa250Mode1CalibHit++){
-		m_csc.rocid=(*it_fa250Mode1CalibHit)->crate;
-		m_csc.slot=(*it_fa250Mode1CalibHit)->slot;
-		m_csc.channel=(*it_fa250Mode1CalibHit)->channel;
 
-		m_channel=m_tt->getChannelInfo(m_csc);
+		m_channel=m_tt->getChannelInfo((*it_fa250Mode1CalibHit)->m_channel);
 
 
 		if (m_channel.det_sys==TranslationTable::INT_VETO){
@@ -130,10 +127,7 @@ jerror_t IntVetoSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	/*Then, mode 7*/
 	/*Note that in this case we do not have to integrate the pulse - it is a mode 7 pulse! */
 	for (it_fa250Mode7Hit=m_fa250Mode7Hit.begin();it_fa250Mode7Hit!=m_fa250Mode7Hit.end();it_fa250Mode7Hit++){
-		m_csc.rocid=(*it_fa250Mode7Hit)->crate;
-		m_csc.slot=(*it_fa250Mode7Hit)->slot;
-		m_csc.channel=(*it_fa250Mode7Hit)->channel;
-		m_channel=m_tt->getChannelInfo(m_csc);
+		m_channel=m_tt->getChannelInfo((*it_fa250Mode7Hit)->m_channel);
 		if (m_channel.det_sys==TranslationTable::INT_VETO){
 			//A.C. do not touch these
 			m_IntVetoSiPMHit=m_intVetofa250Converter->convertHit((fa250Hit*)*it_fa250Mode7Hit,m_channel);

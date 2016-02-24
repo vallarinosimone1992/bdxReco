@@ -10,13 +10,13 @@
 
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
-
+#include <TT/TranslationTable.h>
 class fa250Hit : public jana::JObject{
 public:
 
 	virtual ~fa250Hit()=0; //A.C. purely virtual!
 
-	int crate,slot,channel;
+	TranslationTable::csc_t m_channel;
 	int time,trigger;
 
 };

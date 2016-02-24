@@ -18,7 +18,9 @@ using namespace jana;
 #include "system/BDXEventProcessor.h"
 
 #include <DAQ/fa250Mode1Hit.h>
-#include <DAQ/fa250Mode1CalibPedSubHit.h>
+#include <DAQ/fa250Mode1PedSubHit.h>
+#include <DAQ/fa250Mode1CalibHit.h>
+
 #include <DAQ/triggerData.h>
 
 #include <TT/TranslationTable.h>
@@ -164,7 +166,7 @@ jerror_t JEventProcessor_CalorimeterSipm_calib::evnt(JEventLoop *loop, uint64_t 
 	// japp->RootUnLock();
 	vector<const CalorimeterSiPMHit*> data;
 	vector<const CalorimeterSiPMHit*>::const_iterator data_it;
-	const fa250Mode1CalibPedSubHit *m_waveform;
+	const fa250Mode1CalibHit *m_waveform;
 	loop->Get(data);
 
 	japp->RootWriteLock();

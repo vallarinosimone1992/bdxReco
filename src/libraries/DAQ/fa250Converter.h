@@ -32,6 +32,12 @@ template<class T> class fa250Converter:public jana::JObject{
 
 		double getRMS(int N,double *x) const;
 		double getRMS(int first,int last,double *x) const;
+		int& verbose(){return VERBOSE;}
+		string& name(){return mName;}
+
+	protected:
+		int VERBOSE;
+		std::string mName; //just an unique string in this tread
 
 };
 
