@@ -20,18 +20,22 @@ using namespace std;
 class DAQCalibrationHandler{
 public:
 	jerror_t fillCalib(const std::vector<std::vector<double> > &calib_data);
-	jerror_t getCalib(const TranslationTable::csc_t &index,vector<double> &data) const;
-	jerror_t getCalibSingle(const TranslationTable::csc_t &index,double &data) const;
+	vector<double> getCalib(const TranslationTable::csc_t &index);
+	vector < double > operator[](const TranslationTable::csc_t &index);
+
+	double getCalibSingle(const TranslationTable::csc_t &index);
 
 
 
 	std::map  <TranslationTable::csc_t, std::vector < double > > getCalibMap() const{return m_calib;}
-	std::vector < double > operator[](const TranslationTable::csc_t &index) const;
+
 
 	//	virtual ~CalibrationHandler();
 private:
 
 	std::map <TranslationTable::csc_t, std::vector < double > > m_calib;
+	std::vector < std::vector<double > >  m_actualCalib;
+	std::vector < TranslationTable::csc_t >   m_actualCalibIndex;
 	std::pair<std::map <TranslationTable::csc_t, std::vector < double > >::iterator,bool> m_insert_check;
 
 

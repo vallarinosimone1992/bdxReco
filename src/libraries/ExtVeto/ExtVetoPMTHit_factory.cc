@@ -50,21 +50,21 @@ jerror_t ExtVetoPMTHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnum
 	}
 
 	vector<vector < double> > m_rawcalib;
-		eventLoop->GetCalib("/ExtVeto/PMT_gain", m_rawcalib);
-		m_PMT_gain.fillCalib(m_rawcalib);
-		gPARMS->GetParameter("EXTVETO:VERBOSE",VERBOSE);
+	eventLoop->GetCalib("/ExtVeto/PMT_gain", m_rawcalib);
+	m_PMT_gain.fillCalib(m_rawcalib);
+	gPARMS->GetParameter("EXTVETO:VERBOSE",VERBOSE);
 
-		if (VERBOSE>3){
-			std::map  < TranslationTable::EXT_VETO_Index_t, std::vector < double > > gainCalibMap;
-			std::map  < TranslationTable::EXT_VETO_Index_t, std::vector < double > >::iterator gainCalibMap_it;
-			gainCalibMap=m_PMT_gain.getCalibMap();
-			jout<<"Got following PMT_gain for run number: "<<runnumber<<endl;
-			jout<<"Rows: "<<gainCalibMap.size()<<endl;
-			for (gainCalibMap_it=gainCalibMap.begin();gainCalibMap_it!=gainCalibMap.end();gainCalibMap_it++){
-				jout<<gainCalibMap_it->first.sector<<" "<<gainCalibMap_it->first.layer<<" "<<gainCalibMap_it->first.component<<" "<<gainCalibMap_it->first.readout<<" "<<gainCalibMap_it->second.at(0)<<endl;
+	if (VERBOSE>3){
+		std::map  < TranslationTable::EXT_VETO_Index_t, std::vector < double > > gainCalibMap;
+		std::map  < TranslationTable::EXT_VETO_Index_t, std::vector < double > >::iterator gainCalibMap_it;
+		gainCalibMap=m_PMT_gain.getCalibMap();
+		jout<<"Got following PMT_gain for run number: "<<runnumber<<endl;
+		jout<<"Rows: "<<gainCalibMap.size()<<endl;
+		for (gainCalibMap_it=gainCalibMap.begin();gainCalibMap_it!=gainCalibMap.end();gainCalibMap_it++){
+			jout<<gainCalibMap_it->first.sector<<" "<<gainCalibMap_it->first.layer<<" "<<gainCalibMap_it->first.component<<" "<<gainCalibMap_it->first.readout<<" "<<gainCalibMap_it->second.at(0)<<endl;
 
-			}
 		}
+	}
 
 
 
@@ -79,7 +79,7 @@ jerror_t ExtVetoPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 	TranslationTable::ChannelInfo m_channel;
 	TranslationTable::csc_t		  m_csc;
-	vector<double> 				  m_q_calib;
+	double		 				  m_q_calib;
 	ExtVetoPMTHit *m_ExtVetoPMTHit=0;
 
 	//1: Here, we get from the framework the objects we need to process
@@ -108,22 +108,22 @@ jerror_t ExtVetoPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 		if (m_channel.det_sys==TranslationTable::EXT_VETO){
 			//A.C. do not touch these
-						m_ExtVetoPMTHit=new ExtVetoPMTHit;
-						m_ExtVetoPMTHit->m_channel=m_channel;
-						m_ExtVetoPMTHit=m_extVetofa250Converter->convertHit((fa250Hit*)*it_fa250Mode1CalibHit,m_channel);
-						m_ExtVetoPMTHit->AddAssociatedObject(*it_fa250Mode1CalibHit);
+			m_ExtVetoPMTHit=new ExtVetoPMTHit;
+			m_ExtVetoPMTHit->m_channel=m_channel;
+			m_ExtVetoPMTHit=m_extVetofa250Converter->convertHit((fa250Hit*)*it_fa250Mode1CalibHit,m_channel);
+			m_ExtVetoPMTHit->AddAssociatedObject(*it_fa250Mode1CalibHit);
 
-						/*Apply phe conversion */
-									m_PMT_gain.getCalib(m_channel.ext_veto,m_q_calib);
-									if ((m_q_calib.size()==1)&&(m_q_calib.at(0)>0)){
-									   m_ExtVetoPMTHit->Q/=((1.602*1E-19)*1E9);	// number of electrons at the exit of the PMT
-									   m_ExtVetoPMTHit->Q/=m_q_calib.at(0);		// number of phe
-															}
+			/*Apply phe conversion */
+			m_q_calib=m_PMT_gain.getCalibSingle(m_channel.ext_veto);
+			if (m_q_calib>0){
+				m_ExtVetoPMTHit->Q/=((1.602*1E-19)*1E9);	// number of electrons at the exit of the PMT
+				m_ExtVetoPMTHit->Q/=m_q_calib;		// number of phe
+			}
 
 
-						_data.push_back(m_ExtVetoPMTHit);
-					}
+			_data.push_back(m_ExtVetoPMTHit);
 		}
+	}
 
 
 
@@ -135,20 +135,20 @@ jerror_t ExtVetoPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		m_channel=m_tt->getChannelInfo((*it_fa250Mode7Hit)->m_channel);
 		if (m_channel.det_sys==TranslationTable::EXT_VETO){
 			//A.C. do not touch these
-						m_ExtVetoPMTHit=new ExtVetoPMTHit;
-						m_ExtVetoPMTHit->m_channel=m_channel;
-						m_ExtVetoPMTHit=m_extVetofa250Converter->convertHit((fa250Hit*)*it_fa250Mode7Hit,m_channel);
-						m_ExtVetoPMTHit->AddAssociatedObject(*it_fa250Mode7Hit);
-						/*Apply phe conversion */
-									m_PMT_gain.getCalib(m_channel.ext_veto,m_q_calib);
-									if ((m_q_calib.size()==1)&&(m_q_calib.at(0)>0)){
-									   m_ExtVetoPMTHit->Q/=((1.602*1E-19)*1E9);	// number of electrons at the exit of the PMT
-									   m_ExtVetoPMTHit->Q/=m_q_calib.at(0);		// number of phe
-															}
+			m_ExtVetoPMTHit=new ExtVetoPMTHit;
+			m_ExtVetoPMTHit->m_channel=m_channel;
+			m_ExtVetoPMTHit=m_extVetofa250Converter->convertHit((fa250Hit*)*it_fa250Mode7Hit,m_channel);
+			m_ExtVetoPMTHit->AddAssociatedObject(*it_fa250Mode7Hit);
+			/*Apply phe conversion */
+			m_q_calib=m_PMT_gain.getCalibSingle(m_channel.ext_veto);
+			if (m_q_calib>0){
+				m_ExtVetoPMTHit->Q/=((1.602*1E-19)*1E9);	// number of electrons at the exit of the PMT
+				m_ExtVetoPMTHit->Q/=m_q_calib;		// number of phe
+			}
 
 
 
-						_data.push_back(m_ExtVetoPMTHit);
+			_data.push_back(m_ExtVetoPMTHit);
 		}
 	}
 

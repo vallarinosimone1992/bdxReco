@@ -103,6 +103,7 @@ void    EvioCompositeDecoder::decode(vector<uint32_t> *vec, int dataSize){
 			nchannels++;
 		}
 	}
+	delete data;
 }
 
 void    EvioCompositeDecoder::decodePulse(vector<uint32_t> *vec, int dataSize){
@@ -191,6 +192,7 @@ void    EvioCompositeDecoder::decodePulse(vector<uint32_t> *vec, int dataSize){
 			nchannels++;
 		}
 	}
+	delete data;
 }
 
 

@@ -55,19 +55,19 @@ jerror_t PaddlesPMTHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnum
 	}
 
 	vector<vector < double> > m_rawcalib;
-		eventLoop->GetCalib("/Paddles/PMT_gain", m_rawcalib);
-		m_PMT_gain.fillCalib(m_rawcalib);
-		gPARMS->GetParameter("PADDLES:VERBOSE",VERBOSE);
-		if (VERBOSE>3){
-			std::map  < TranslationTable::PADDLES_Index_t, std::vector < double > > gainCalibMap;
-			std::map  < TranslationTable::PADDLES_Index_t, std::vector < double > >::iterator gainCalibMap_it;
-			gainCalibMap=m_PMT_gain.getCalibMap();
-			jout<<"Got following PMT_gain for run number: "<<runnumber<<endl;
-			jout<<"Rows: "<<gainCalibMap.size()<<endl;
-			for (gainCalibMap_it=gainCalibMap.begin();gainCalibMap_it!=gainCalibMap.end();gainCalibMap_it++){
-				jout<<gainCalibMap_it->first.id<<" "<<gainCalibMap_it->second.at(0)<<endl;
-			}
+	eventLoop->GetCalib("/Paddles/PMT_gain", m_rawcalib);
+	m_PMT_gain.fillCalib(m_rawcalib);
+	gPARMS->GetParameter("PADDLES:VERBOSE",VERBOSE);
+	if (VERBOSE>3){
+		std::map  < TranslationTable::PADDLES_Index_t, std::vector < double > > gainCalibMap;
+		std::map  < TranslationTable::PADDLES_Index_t, std::vector < double > >::iterator gainCalibMap_it;
+		gainCalibMap=m_PMT_gain.getCalibMap();
+		jout<<"Got following PMT_gain for run number: "<<runnumber<<endl;
+		jout<<"Rows: "<<gainCalibMap.size()<<endl;
+		for (gainCalibMap_it=gainCalibMap.begin();gainCalibMap_it!=gainCalibMap.end();gainCalibMap_it++){
+			jout<<gainCalibMap_it->first.id<<" "<<gainCalibMap_it->second.at(0)<<endl;
 		}
+	}
 
 	return NOERROR;
 }
@@ -78,8 +78,8 @@ jerror_t PaddlesPMTHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnum
 jerror_t PaddlesPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 	TranslationTable::ChannelInfo m_channel;
-//	TranslationTable::csc_t		  m_csc;
-	vector<double> 				  m_q_calib;
+	//	TranslationTable::csc_t		  m_csc;
+	double		 				  m_q_calib;
 
 	PaddlesPMTHit *m_PaddlesPMTHit=0;
 
@@ -111,24 +111,24 @@ jerror_t PaddlesPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		m_channel=m_tt->getChannelInfo((*it_fa250Mode1CalibHit)->m_channel);
 
 		if (m_channel.det_sys==TranslationTable::PADDLES){
-						m_PaddlesPMTHit=m_Paddlesfa250Converter->convertHit((fa250Hit*)*it_fa250Mode1CalibHit,m_channel);
-						m_PaddlesPMTHit->AddAssociatedObject(*it_fa250Mode1CalibHit);
-//						jout<<"Q= "<<m_PaddlesPMTHit->Q<<endl;
+			m_PaddlesPMTHit=m_Paddlesfa250Converter->convertHit((fa250Hit*)*it_fa250Mode1CalibHit,m_channel);
+			m_PaddlesPMTHit->AddAssociatedObject(*it_fa250Mode1CalibHit);
+			//						jout<<"Q= "<<m_PaddlesPMTHit->Q<<endl;
 
-						/*Apply phe conversion */
-															m_PMT_gain.getCalib(m_channel.paddles,m_q_calib);
-//															jout<<"**********"<<endl;
-//															jout<<m_q_calib.size()<<endl;
-//															jout<<m_q_calib.at(0)<<" "<<endl;
-															if ((m_q_calib.size()==1)&&(m_q_calib.at(0)>0)){
-																m_PaddlesPMTHit->Q/=((1.602*1E-19)*1E9);	// number of electrons at the exit of the PMT
-																m_PaddlesPMTHit->Q/=m_q_calib.at(0);		// number of phe
-															}
+			/*Apply phe conversion */
+			m_q_calib=m_PMT_gain.getCalibSingle(m_channel.paddles);
+			//															jout<<"**********"<<endl;
+			//															jout<<m_q_calib.size()<<endl;
+			//															jout<<m_q_calib.at(0)<<" "<<endl;
+			if (m_q_calib>0){
+				m_PaddlesPMTHit->Q/=((1.602*1E-19)*1E9);	// number of electrons at the exit of the PMT
+				m_PaddlesPMTHit->Q/=m_q_calib;		// number of phe
+			}
 
-						_data.push_back(m_PaddlesPMTHit);
+			_data.push_back(m_PaddlesPMTHit);
 
-					}
 		}
+	}
 
 
 
@@ -140,23 +140,23 @@ jerror_t PaddlesPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 		if (m_channel.det_sys==TranslationTable::PADDLES){
 			//A.C. do not touch these
-						m_PaddlesPMTHit=m_Paddlesfa250Converter->convertHit((fa250Hit*)*it_fa250Mode7Hit,m_channel);
-						m_PaddlesPMTHit->AddAssociatedObject(*it_fa250Mode7Hit);
+			m_PaddlesPMTHit=m_Paddlesfa250Converter->convertHit((fa250Hit*)*it_fa250Mode7Hit,m_channel);
+			m_PaddlesPMTHit->AddAssociatedObject(*it_fa250Mode7Hit);
 
-						/*Apply phe conversion */
-																					m_PMT_gain.getCalib(m_channel.paddles,m_q_calib);
-						//															jout<<"**********"<<endl;
-						//															jout<<m_q_calib.size()<<endl;
-						//															jout<<m_q_calib.at(0)<<" "<<endl;
-																					if ((m_q_calib.size()==1)&&(m_q_calib.at(0)>0)){
-																						m_PaddlesPMTHit->Q/=((1.602*1E-19)*1E9);	// number of electrons at the exit of the PMT
-																						m_PaddlesPMTHit->Q/=m_q_calib.at(0);		// number of phe
-						//																jout<<"Q= "<<m_PaddlesPMTHit->Q<<endl;
-																					}
+			/*Apply phe conversion */
+			m_q_calib=m_PMT_gain.getCalibSingle(m_channel.paddles);
+			//															jout<<"**********"<<endl;
+			//															jout<<m_q_calib.size()<<endl;
+			//															jout<<m_q_calib.at(0)<<" "<<endl;
+			if (m_q_calib>0){
+				m_PaddlesPMTHit->Q/=((1.602*1E-19)*1E9);	// number of electrons at the exit of the PMT
+				m_PaddlesPMTHit->Q/=m_q_calib;		// number of phe
+				//																jout<<"Q= "<<m_PaddlesPMTHit->Q<<endl;
+			}
 
 
 
-						_data.push_back(m_PaddlesPMTHit);
+			_data.push_back(m_PaddlesPMTHit);
 
 		}
 	}

@@ -93,6 +93,7 @@ JEventSourceEvio::~JEventSourceEvio()
 // GetEvent
 jerror_t JEventSourceEvio::GetEvent(JEvent &event)
 {
+
 	event.SetRef(NULL);
 
 	vector<string> hitTypes;
@@ -105,7 +106,6 @@ jerror_t JEventSourceEvio::GetEvent(JEvent &event)
 
 	if(chan->read())
 	{
-
 		EDT=new evioDOMTree(chan);
 
 		//	Mevent *this_evt = new Mevent(EDT, hitTypes, &banksMap, 0);
@@ -155,6 +155,7 @@ jerror_t JEventSourceEvio::GetEvent(JEvent &event)
 // FreeEvent
 void JEventSourceEvio::FreeEvent(JEvent &event)
 {
+	delete (evioDOMTree*)event.GetRef();
 	//	delete (Mevent*)event.GetRef();
 }
 
@@ -180,6 +181,7 @@ jerror_t JEventSourceEvio::GetObjects(JEvent &event, JFactory_base *factory)
 	JFactory<triggerData> 	*fac_triggerData = dynamic_cast<JFactory<triggerData>*>(factory);
 
 	if(fac_fa250Mode1hit != NULL){
+
 		vector<fa250Mode1Hit*> data;
 		evioDOMTree* local_EDT=(evioDOMTree*)event.GetRef();
 		//	jout<<local_EDT->toString()<<endl;
@@ -218,8 +220,9 @@ jerror_t JEventSourceEvio::GetObjects(JEvent &event, JFactory_base *factory)
 									hit->m_channel.rocid=0;  ///TODO better
 									hit->m_channel.slot=decdata[loop].slot;
 									hit->m_channel.channel=decdata[loop].channel;
-									hit->samples=decdata[loop].samples;
-
+									for (int isample=0;isample<decdata[loop].samples.size();isample++){
+										hit->samples.push_back(decdata[loop].samples.at(isample));
+									}
 									//		jout<<hit->crate<<" "<<hit->slot<<" "<<hit->channel<<" "<<hit->samples.size()<<endl;
 									hit->trigger=decdata[loop].trigger;
 									hit->time=decdata[loop].time;
@@ -370,6 +373,8 @@ jerror_t JEventSourceEvio::GetObjects(JEvent &event, JFactory_base *factory)
 	// Just return. The _data vector should already be reset to have zero objects
 	return OBJECT_NOT_AVAILABLE;
 }
+
+
 
 
 

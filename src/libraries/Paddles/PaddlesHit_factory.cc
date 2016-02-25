@@ -58,8 +58,7 @@ jerror_t PaddlesHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 
 	loop->Get(m_data);
-
-	vector<double> m_Ene;
+	double m_Ene;
 
 	/*Create here the Hit from the Digi hit*/
 	PaddlesHit *m_PaddlesHit=0;
@@ -70,8 +69,8 @@ jerror_t PaddlesHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 			/*For now, very dummy!*/
 			m_PaddlesHit->m_channel=(*m_it)->m_channel;
 
-			m_ENE_gain.getCalib(m_PaddlesHit->m_channel,m_Ene);
-			m_PaddlesHit->E=((*m_it)->Q)*m_Ene.at(0);
+			m_Ene=m_ENE_gain.getCalibSingle(m_PaddlesHit->m_channel);
+			m_PaddlesHit->E=((*m_it)->Q)*m_Ene;
 			m_PaddlesHit->T=(*m_it)->T;
 
 

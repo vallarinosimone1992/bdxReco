@@ -13,6 +13,7 @@ using namespace std;
 #include "system/BDXEventProcessor.h"
 
 #include <DAQ/fa250Mode1CalibHit.h>
+#include <DAQ/fa250Mode1CalibPedSubHit.h>
 
 #include <TT/TranslationTable.h>
 
@@ -196,9 +197,9 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop,uint64_t eventnumber)
 	// since multiple threads may call this method at the same time.
 	// Here's an example:
 	//
-	vector<const CalorimeterSiPMHit*> data;
-	vector<const CalorimeterSiPMHit*>::const_iterator data_it;
-	const fa250Mode1CalibHit *fa;
+	vector<const fa250Mode1Hit*> data;
+	//vector<const CalorimeterSiPMHit*>::const_iterator data_it;
+	//const fa250Mode1CalibHit *fa;
 	loop->Get(data);
 
 	const triggerData* tData;
@@ -223,7 +224,7 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop,uint64_t eventnumber)
 
 	japp->RootWriteLock();
 	//  ... fill historgrams or trees ...
-	for (data_it=data.begin();data_it<data.end();data_it++){
+	/*for (data_it=data.begin();data_it<data.end();data_it++){
 	
 		const CalorimeterSiPMHit *ivhit = *data_it;
 
@@ -265,7 +266,7 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop,uint64_t eventnumber)
 
 	japp->RootUnLock();
 
-
+*/
 
 
 	return NOERROR;

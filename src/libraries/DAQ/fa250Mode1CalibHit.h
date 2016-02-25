@@ -12,12 +12,12 @@
 #include <JANA/JFactory.h>
 
 #include "fa250Hit.h"
-
-class fa250Mode1CalibHit:public fa250Hit{
+#include "fa250Mode1Hit.h"
+class fa250Mode1CalibHit:public fa250Mode1Hit{
 	public:
 		JOBJECT_PUBLIC(fa250Mode1CalibHit);
 		
-		vector <double> samples; // calibrated samples
+
 		
 		// This method is used primarily for pretty printing
 		// the second argument to AddString is printf style format

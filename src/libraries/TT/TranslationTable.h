@@ -283,9 +283,10 @@ public:
 		inline bool isSameActive(const PADDLES_Index_t &rhs) const {
 			return (id == rhs.id);
 		}
-//		inline bool operator==(const PADDLES_Index_t &rhs) const {
-//			return (isSameActive(rhs) && (readout == rhs.readout));
-//		}
+		inline bool operator==(const PADDLES_Index_t &rhs) const {
+		//	return (isSameActive(rhs) && (readout == rhs.readout));
+			return (id == rhs.id);
+		}
 		inline bool operator<(const PADDLES_Index_t &rhs) const { //A.C. for the maps
 			if (id > rhs.id)
 				return true;
