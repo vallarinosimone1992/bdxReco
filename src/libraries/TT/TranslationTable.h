@@ -262,39 +262,39 @@ public:
 	class PADDLES_Index_t {
 	public:
 		int id;
-		int readout;
+//		int readout;
 		int& ID(int n) {
 			switch (n) {
 			case 0:
 				return id;
 				break;
-			case 1:
-				return readout;
-				break;
+//			case 1:
+//				return readout;
+//				break;
 			default:
 				jerr << "Wrong id" << std::endl;
 				break;
 			}
 		}
 		static const int nIDs() {
-			return 2;
+			return 1;
 		}
 		;
 		inline bool isSameActive(const PADDLES_Index_t &rhs) const {
 			return (id == rhs.id);
 		}
-		inline bool operator==(const PADDLES_Index_t &rhs) const {
-			return (isSameActive(rhs) && (readout == rhs.readout));
-		}
+//		inline bool operator==(const PADDLES_Index_t &rhs) const {
+//			return (isSameActive(rhs) && (readout == rhs.readout));
+//		}
 		inline bool operator<(const PADDLES_Index_t &rhs) const { //A.C. for the maps
 			if (id > rhs.id)
 				return true;
 			if (id < rhs.id)
 				return false;
-			if (readout > rhs.readout)
-				return true;
-			if (readout < rhs.readout)
-				return false;
+//			if (readout > rhs.readout)
+//				return true;
+//			if (readout < rhs.readout)
+//				return false;
 			return false;
 		}
 
