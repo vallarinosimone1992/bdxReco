@@ -78,7 +78,7 @@ jerror_t PaddlesPMTHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnum
 jerror_t PaddlesPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 	TranslationTable::ChannelInfo m_channel;
-	TranslationTable::csc_t		  m_csc;
+//	TranslationTable::csc_t		  m_csc;
 	vector<double> 				  m_q_calib;
 
 	PaddlesPMTHit *m_PaddlesPMTHit=0;

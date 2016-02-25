@@ -60,7 +60,7 @@ jerror_t PaddlesDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 		/*For now, very dummy!*/
 		m_PaddlesDigiHit->m_channel=(*m_it)->m_channel.paddles;
-		m_PaddlesDigiHit->m_channel.readout=0; //This is a physical object
+//		m_PaddlesDigiHit->m_channel.readout=0; //This is a physical object
 		m_PaddlesDigiHit->Q=(*m_it)->Q;
 		m_PaddlesDigiHit->T=(*m_it)->T;
 		m_PaddlesDigiHit->PaddlesPMTHit_id=(*m_it)->id;
