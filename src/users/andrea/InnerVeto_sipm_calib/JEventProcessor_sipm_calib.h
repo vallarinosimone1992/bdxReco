@@ -31,8 +31,8 @@ class JEventProcessor_sipm_calib:public jana::JEventProcessor{
 		int eventNumber;
 		int m_isFirstCallToBrun;
 
-		int m_sector,m_layer,m_component,m_readout;
-		double Q;
+		int m_sector,m_layer,m_component,m_readout,m_type;
+		double Qphe,Qraw,T,A;
 
 
 		JROOTOutput *m_ROOTOutput;

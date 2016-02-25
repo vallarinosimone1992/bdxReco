@@ -20,7 +20,7 @@ using namespace jana;
 
 #include <DAQ/fa250Mode1Hit.h>
 #include <DAQ/fa250Mode1CalibHit.h>
-#include <DAQ/fa250Mode1PedSubHit.h>
+#include "../../../libraries/DAQ/fa250Mode1CalibPedSubHit.h"
 #include <TT/TranslationTable.h>
 
 #include <DAQ/triggerData.h>
@@ -87,7 +87,11 @@ jerror_t JEventProcessor_sipm_calib::init(void)
 	t->Branch("layer",&m_layer);
 	t->Branch("component",&m_component);
 	t->Branch("readout",&m_readout);
-	t->Branch("Q",&Q);
+	t->Branch("type",&m_type);
+	t->Branch("Qphe",&Qphe);
+	t->Branch("Qraw",&Qraw);
+	t->Branch("T",&T);
+	t->Branch("A",&A);
 	t->Branch("eventN",&eventNumber);
 	japp->RootUnLock();
 
@@ -164,17 +168,20 @@ jerror_t JEventProcessor_sipm_calib::evnt(JEventLoop *loop, uint64_t eventnumber
 		m_readout=(*data_it)->m_channel.int_veto.readout;
 
 		(*data_it)->GetSingle(m_waveform);
-		h->Reset();
+	/*	h->Reset();
 		h->SetName(Form("h_%lld_%i_%i",eventnumber,(*data_it)->m_channel.int_veto.component,(*data_it)->m_channel.int_veto.readout));
 
 		for (int ii=0;ii<m_waveform->samples.size();ii++){
 			h->Fill(ii,m_waveform->samples.at(ii));
 		}
 		h->Write();
+*/
+		m_type=(*data_it)->m_type;
+		T=(*data_it)->T;
+		A=(*data_it)->A;
+		Qphe=(*data_it)->Qphe;
+		Qraw=(*data_it)->Qraw;
 
-
-
-		Q=(*data_it)->Qphe;
 
 		eventNumber=eventnumber;
 

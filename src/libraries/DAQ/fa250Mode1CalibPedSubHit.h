@@ -5,17 +5,17 @@
 // Creator: davidl (on Darwin harriet.jlab.org 13.4.0 i386)
 //
 
-#ifndef _fa250Mode1PedSubHit_
-#define _fa250Mode1PedSubHit_
+#ifndef _fa250Mode1CalibPedSubHit_
+#define _fa250Mode1CalibPedSubHit_
 
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
 
 #include "fa250Mode1Hit.h"
 
-class fa250Mode1PedSubHit:public fa250Mode1Hit{
+class fa250Mode1CalibPedSubHit:public fa250Mode1Hit{
 	public:
-		JOBJECT_PUBLIC(fa250Mode1PedSubHit);
+		JOBJECT_PUBLIC(fa250Mode1CalibPedSubHit);
 		
 		vector <double> samples; // calibrated - ped. subtracted samples
 		
@@ -28,6 +28,7 @@ class fa250Mode1PedSubHit:public fa250Mode1Hit{
 			 AddString(items, "nsamples", "%4d", samples.size());
 		}
 		
+
 };
 
 #endif // _fa250Mode1CalibHit_

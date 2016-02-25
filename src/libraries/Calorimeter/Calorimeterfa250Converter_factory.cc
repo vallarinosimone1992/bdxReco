@@ -48,15 +48,8 @@ jerror_t Calorimeterfa250Converter_factory::brun(jana::JEventLoop *eventLoop, in
 
 	gPARMS->GetParameter("CALORIMETER:VERBOSE",	m_calorimeterfa250Converter->verbose());
 
-	/*Probably not the best way to do so: the calorimeter converter needs to know about the pedestal,
-	 * so read cal. constants from DB, create a CalorimeterCalibration object that handles properly the indexing
-	 * do so every run, since cal. constants may change.
-	 * In erun, consequently, delete the converter
-	 */
-	m_calorimeterfa250Converter->pedestal=new CalibrationHandler<TranslationTable::CALO_Index_t>;
-	vector<vector < double> > m_rawpedestal;
-	eventLoop->GetCalib("/Calorimeter/pedestal", m_rawpedestal);
-	m_calorimeterfa250Converter->pedestal->fillCalib(m_rawpedestal);
+
+
 
 
 	_data.push_back(m_calorimeterfa250Converter);
@@ -71,16 +64,7 @@ jerror_t Calorimeterfa250Converter_factory::brun(jana::JEventLoop *eventLoop, in
 jerror_t Calorimeterfa250Converter_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 
-	// Code to generate factory data goes here. Add it like:
-	//
-	// Calorimeterfa250Converter *myCalorimeterfa250Converter = new Calorimeterfa250Converter;
-	// myCalorimeterfa250Converter->x = x;
-	// myCalorimeterfa250Converter->y = y;
-	// ...
-	// _data.push_back(myCalorimeterfa250Converter);
-	//
-	// Note that the objects you create here will be deleted later
-	// by the system and the _data vector will be cleared automatically.
+
 
 	return NOERROR;
 }

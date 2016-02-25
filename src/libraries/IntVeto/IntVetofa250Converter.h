@@ -16,7 +16,7 @@
 #include <TT/TranslationTable.h>
 #include <system/CalibrationHandler.h>
 
-class fa250Mode1CalibHit;
+class fa250Mode1CalibPedSubHit;
 class fa250Mode7Hit;
 
 
@@ -25,15 +25,14 @@ public:
 	JOBJECT_PUBLIC(IntVetofa250Converter);// Add data members here. For example:
 
 	virtual IntVetoSiPMHit* convertHit(const fa250Hit *hit,const TranslationTable::ChannelInfo &m_channel) const;
-	jerror_t convertMode1Hit(IntVetoSiPMHit* output,const fa250Mode1CalibHit *input) const;
+	jerror_t convertMode1Hit(IntVetoSiPMHit* output,const fa250Mode1CalibPedSubHit *input) const;
 	jerror_t convertMode7Hit(IntVetoSiPMHit* output,const fa250Mode7Hit *input) const;
 
 
 	CalibrationHandler<TranslationTable::INT_VETO_Index_t> *thr;
 
-	int NPED;
-		int SINGLE_SIGNAL_TOT;
-		int MIN_TOT;
+
+	int MIN_TOT;
 };
 
 #endif // _IntVetofa250Converter_

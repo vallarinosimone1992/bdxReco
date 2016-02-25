@@ -142,6 +142,8 @@ jerror_t JEventSourceEvio::GetEvent(JEvent &event)
 		}
 		if (overwriteRunNumber!=-1) event.SetRunNumber(overwriteRunNumber);
 		else event.SetRunNumber(curRunNumber);
+
+
 		return NOERROR;
 	}
 	else{

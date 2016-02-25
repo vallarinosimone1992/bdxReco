@@ -13,20 +13,22 @@
 #include <DAQ/fa250ConvertedHit.h>
 #include <TT/TranslationTable.h>
 
-typedef enum{
-	noise=0,
-	one_phe=1,
-	good_one_phe=2,
-	many_phe=3,
-	real_signal=4,
-	num_hit_type
-}hit_type;
 
 
 
 class CalorimeterSiPMHit:public fa250ConvertedHit{
 public:
 	JOBJECT_PUBLIC(CalorimeterSiPMHit);
+
+	typedef enum{
+			noise=0,
+			one_phe=1,
+			good_one_phe=2,
+			many_phe=3,
+			real_signal=4,
+			num_hit_type
+		}hit_type;
+
 
 	// Add data members here. For example:
 	// int id;
@@ -46,10 +48,11 @@ public:
 	double average;
 	double ped;
 
-
 	hit_type m_type;
 
 	int nSingles,nSignals;
+
+
 
 };
 

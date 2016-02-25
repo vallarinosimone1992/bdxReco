@@ -31,6 +31,7 @@ jerror_t IntVetofa250Converter_factory::brun(jana::JEventLoop *eventLoop, int32_
 
 	gPARMS->GetParameter("INTVETO:VERBOSE",m_intVetofa250Converter->verbose());
 
+	m_intVetofa250Converter->MIN_TOT=3;
 
 
 	_data.push_back(m_intVetofa250Converter);

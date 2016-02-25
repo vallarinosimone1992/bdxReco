@@ -10,12 +10,12 @@
 
 #include <JANA/JFactory.h>
 #include <system/DAQCalibrationHandler.h>
-#include "fa250Mode1PedSubHit.h"
+#include "fa250Mode1CalibPedSubHit.h"
 
-class fa250Mode1PedSubHit_factory:public jana::JFactory<fa250Mode1PedSubHit>{
+class fa250Mode1CalibPedSubHit_factory:public jana::JFactory<fa250Mode1CalibPedSubHit>{
 	public:
-		fa250Mode1PedSubHit_factory(){};
-		~fa250Mode1PedSubHit_factory(){};
+		fa250Mode1CalibPedSubHit_factory():m_pedestals(0){};
+		~fa250Mode1CalibPedSubHit_factory(){};
 
 
 	private:
@@ -26,6 +26,7 @@ class fa250Mode1PedSubHit_factory:public jana::JFactory<fa250Mode1PedSubHit>{
 		jerror_t fini(void);						///< Called after last event of last event source has been processed.
 
 		DAQCalibrationHandler *m_pedestals;
+		double LSB;
 };
 
 #endif // _fa250Mode1PedSubHit_factory_

@@ -24,11 +24,11 @@ template<class T> class fa250Converter:public jana::JObject{
 		virtual T* convertHit(const fa250Hit *hit,const TranslationTable::ChannelInfo &m_channel)const=0; //also this one is purely virtual
 		
 		/*Add here some "common" member functions*/
-		double sumSamples(int N,double *samples) const;
-		double sumSamples(int first,int last,double *samples) const;
+		double sumSamples(int N,const double *samples) const;
+		double sumSamples(int first,int last,const double *samples) const;
 
-		double getMaximum(int N,double *x,double &Tmax) const;
-		double getMaximum(int first,int last,double *x,double &Tmax) const;
+		double getMaximum(int N,const double *x,double &Tmax) const;
+		double getMaximum(int first,int last,const double *x,double &Tmax) const;
 
 		double getRMS(int N,double *x) const;
 		double getRMS(int first,int last,double *x) const;
@@ -44,16 +44,16 @@ template<class T> class fa250Converter:public jana::JObject{
 
 
 
-template<class T> double fa250Converter< T >::sumSamples(int first,int last,double *samples) const{
+template<class T> double fa250Converter< T >::sumSamples(int first,int last,const double *samples) const{
 	double ret=0;
 	for (int ii=first;ii<=last;ii++) ret+=samples[ii];
 	return ret;
 }
 
-template<class T> double fa250Converter< T >::sumSamples(int N,double *samples) const{
+template<class T> double fa250Converter< T >::sumSamples(int N,const double *samples) const{
 	return this->sumSamples(0,N-1,samples);
 }
-template<class T> double fa250Converter< T >::getMaximum(int first,int last,double *x,double &Tmax) const{
+template<class T> double fa250Converter< T >::getMaximum(int first,int last,const double *x,double &Tmax) const{
 		double max=x[first];
 		Tmax=first;
 		for (int ii=first;ii<=last;ii++){
@@ -66,7 +66,7 @@ template<class T> double fa250Converter< T >::getMaximum(int first,int last,doub
 }
 
 
-template<class T> double fa250Converter< T >::getMaximum(int N,double *x,double &Tmax) const{
+template<class T> double fa250Converter< T >::getMaximum(int N,const double *x,double &Tmax) const{
 	return this->getMaximum(0,N-1,x,Tmax);
 }
 

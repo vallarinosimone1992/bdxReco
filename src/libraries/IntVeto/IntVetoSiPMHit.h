@@ -15,30 +15,37 @@
 
 
 class IntVetoSiPMHit:public fa250ConvertedHit{
-	public:
-		JOBJECT_PUBLIC(IntVetoSiPMHit);
-		
-		// Add data members here. For example:
-		// int id;
-		// double E;
-		
-		// This method is used primarily for pretty printing
-		// the second argument to AddString is printf style format
-		void toStrings(vector<pair<string,string> > &items)const{
-			// AddString(items, "id", "%4d", id);
-			// AddString(items, "E", "%f", E);
-		}
-		
-	public: //yes, these are public to keep this simple.
+public:
+	JOBJECT_PUBLIC(IntVetoSiPMHit);
 
-		//A.C. do not touch these
-		TranslationTable::ChannelInfo m_channel; //both crate-slot channel and detector-specific ID. Since this is a sensor-based object, the readout field will be !=0
+	// Add data members here. For example:
+	// int id;
+	// double E;
 
-		double Qraw,Qphe,T,A;
-		double average;
-		double ped;
+	// This method is used primarily for pretty printing
+	// the second argument to AddString is printf style format
+	void toStrings(vector<pair<string,string> > &items)const{
+		// AddString(items, "id", "%4d", id);
+		// AddString(items, "E", "%f", E);
+	}
+
+	typedef enum{
+		noise=0,
+		real_signal=1, //not much more to distinguish!
+		num_hit_type
+	}hit_type;
 
 
+
+	//A.C. do not touch these
+	TranslationTable::ChannelInfo m_channel; //both crate-slot channel and detector-specific ID. Since this is a sensor-based object, the readout field will be !=0
+
+	double Qraw,Qphe,T,A;
+	double average;
+	double ped;
+
+	int nSingles;
+	hit_type m_type;
 };
 
 #endif // _VetoIntDigiHit_

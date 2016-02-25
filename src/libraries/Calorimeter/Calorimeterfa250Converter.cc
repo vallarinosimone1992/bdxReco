@@ -19,7 +19,7 @@
 #include "Math/Minimizer.h"
 
 
-#include <DAQ/fa250Mode1CalibHit.h>
+#include <DAQ/fa250Mode1CalibPedSubHit.h>
 #include <DAQ/fa250Mode7Hit.h>
 
 #include <JANA/JParameterManager.h>
@@ -58,8 +58,8 @@ CalorimeterSiPMHit* Calorimeterfa250Converter::convertHit(const fa250Hit *hit,co
 
 
 
-	if (strcmp(hit->className(),"fa250Mode1CalibHit")==0){
-		this->convertMode1Hit(m_CalorimeterSiPMHit,(const fa250Mode1CalibHit*)hit);
+	if (strcmp(hit->className(),"fa250Mode1CalibPedSubHit")==0){
+		this->convertMode1Hit(m_CalorimeterSiPMHit,(const fa250Mode1CalibPedSubHit*)hit);
 	}
 	else if (strcmp(hit->className(),"fa250Mode7Hit")==0){
 		this->convertMode7Hit(m_CalorimeterSiPMHit,(const fa250Mode7Hit*)hit);
@@ -71,7 +71,7 @@ CalorimeterSiPMHit* Calorimeterfa250Converter::convertHit(const fa250Hit *hit,co
 	return m_CalorimeterSiPMHit;
 }
 
-jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,const fa250Mode1CalibHit *input) const{
+jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,const fa250Mode1CalibPedSubHit *input) const{
 	int size=input->samples.size();
 	int N,n,idx;
 	double min,max,xmin,xmax,prev_xmin,prev_xmax,rms,Tmax;
@@ -80,17 +80,13 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 	output->Qraw=0;
 	output->T=0;
 	output->A=0;
-	output->m_type=noise;
+	output->m_type=CalorimeterSiPMHit::noise;
 	/*This part is to read pedestal from dB*/
 	double pedV;
 
 
-	fa250Mode1CalibHit *m_waveform=new fa250Mode1CalibHit;
-	output->AddAssociatedObject(m_waveform);
-	/*A trick to copy crate-slot-channel*/
-	fa250Hit *a = m_waveform;
-	const fa250Hit *b = input;
-	*a = *b;
+	output->AddAssociatedObject(input);
+
 
 
 	std::pair<int,int> m_thisCrossingTime;
@@ -105,13 +101,9 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 	output->nSingles=0;
 	output->nSignals=0;
 
-
-	pedestal->getCalibSingle(output->m_channel.calorimeter,pedV);
-	output->ped=pedV;
 	output->average=0;
-	//1: set the pedestal-corrected samples, by creating a faMode1CalibPedSubHit object.
+	//1: compute the average
 	for (int ii=0;ii<size;ii++){
-		m_waveform->samples.push_back(input->samples.at(ii)-output->ped);
 		output->average+=input->samples.at(ii);
 	}
 	output->average/=input->samples.size();
@@ -125,11 +117,11 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 	//2: find thr crossings
 	m_thisCrossingTime.first=-1;
 	m_thisCrossingTime.second=-1;
-	if (m_waveform->samples[0]>thr) m_thisCrossingTime.first=0;
+	if (input->samples[0]>thr) m_thisCrossingTime.first=0;
 
 	for (int ii=1;ii<size;ii++){
-		if ((	m_waveform->samples[ii]>thr)&&(	m_waveform->samples[ii-1]<thr)) m_thisCrossingTime.first=ii;
-		else if ((	m_waveform->samples[ii]<thr)&&(	m_waveform->samples[ii-1]>thr) && (m_thisCrossingTime.first!=-1)) {
+		if ((	input->samples[ii]>thr)&&(	input->samples[ii-1]<thr)) m_thisCrossingTime.first=ii;
+		else if ((	input->samples[ii]<thr)&&(	input->samples[ii-1]>thr) && (m_thisCrossingTime.first!=-1)) {
 			m_thisCrossingTime.second=ii;
 			m_crossingTimes.push_back(m_thisCrossingTime);
 			m_thisCrossingTime.first=-1;
@@ -137,7 +129,7 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 		}
 	}
 	//It may happen that the last sample is still over thr!
-	if (m_waveform->samples[size-1]>thr){
+	if (input->samples[size-1]>thr){
 		m_thisCrossingTime.second=size;
 		m_crossingTimes.push_back(m_thisCrossingTime);
 	}
@@ -168,26 +160,26 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 	output->nSignals=m_signalCrossingIndexes.size();
 	output->nSingles=m_singleCrossingIndexes.size();
 
-	/*If there is one pulse only: this is a "single phe" signal*/
+
 	if (((output->nSignals)==0)&&(output->nSingles)==0){
-		output->m_type=noise;
+		output->m_type=CalorimeterSiPMHit::noise;
 		output->T=0;
-		output->Qraw=this->sumSamples(m_waveform->samples.size(),&(m_waveform->samples.at(0)));
+		output->Qraw=this->sumSamples(input->samples.size(),&(input->samples.at(0)));
 		output->A=0;
 		return NOERROR;
 	}
 	else if ((output->nSignals==0)&&(output->nSingles==1)){
 		idx=m_singleCrossingIndexes.at(0);
 		if ((m_crossingTimes.at(idx).first<=30)||(m_crossingTimes.at(idx).second>=(size-1-30))){
-			output->m_type=one_phe;
-			output->Qraw=this->sumSamples(m_waveform->samples.size(),&(m_waveform->samples.at(0)));
+			output->m_type=CalorimeterSiPMHit::one_phe;
+			output->Qraw=this->sumSamples(input->samples.size(),&(input->samples.at(0)));
 			output->T=0;
 			return NOERROR;
 		}
 		else{
 
 
-			output->m_type=good_one_phe;
+			output->m_type=CalorimeterSiPMHit::good_one_phe;
 			xmin=m_crossingTimes.at(idx).first-20;
 			xmax=m_crossingTimes.at(idx).second+80;
 
@@ -201,20 +193,21 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 			for (int ii=0;ii<20;ii++) output->ped+=input->samples.at(ii);
 			output->ped/=20;
 
-			m_waveform->samples.clear();
+			vector<double> new_samples;
+
 			for (int ii=0;ii<size;ii++){
-				m_waveform->samples.push_back(input->samples.at(ii)-output->ped);
-				output->average+=input->samples.at(ii);
+				new_samples.push_back(input->samples.at(ii)-output->ped);
+				output->average+=new_samples.at(ii);
 			}
 			output->average/=input->samples.size();
-			output->A=this->getMaximum(m_crossingTimes.at(idx).first,m_crossingTimes.at(idx).second,&(m_waveform->samples.at(0)),output->T);
+			output->A=this->getMaximum(m_crossingTimes.at(idx).first,m_crossingTimes.at(idx).second,&(input->samples.at(0)),output->T);
 			xmin=output->T-10;
 			xmax=output->T+20;
 
 			if ((xmin<=0)||(xmax>size)){
 				jerr<<xmin<<" "<<xmax<<" "<<output->T<<" "<<m_crossingTimes.at(idx).first<<" "<<m_crossingTimes.at(idx).second<<std::endl;
 			}
-			output->Qraw=this->sumSamples((int)xmin,(int)xmax,&(m_waveform->samples.at(0)));
+			output->Qraw=this->sumSamples((int)xmin,(int)xmax,&(input->samples.at(0)));
 
 
 
@@ -222,17 +215,17 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 		}
 	}
 	else if (output->nSignals>=1){
-		output->m_type=real_signal;
-		output->Qraw=this->sumSamples(m_waveform->samples.size(),&(m_waveform->samples.at(0)));
-		output->A=this->getMaximum(m_waveform->samples.size(),&(m_waveform->samples.at(0)),output->T);
+		output->m_type=CalorimeterSiPMHit::real_signal;
+		output->Qraw=this->sumSamples(input->samples.size(),&(input->samples.at(0)));
+		output->A=this->getMaximum(input->samples.size(),&(input->samples.at(0)),output->T);
 
 		idx=m_signalCrossingIndexes.at(0);
 		xmin=m_crossingTimes.at(idx).first;  //this is the time of the sample OVER thr
 		xmax=m_crossingTimes.at(idx).first+1;
 		if (xmin==0) output->T=0;
 		else{
-			max=m_waveform->samples.at(xmin);
-			min=m_waveform->samples.at(xmin-1);
+			max=input->samples.at(xmin);
+			min=input->samples.at(xmin-1);
 		}
 		//y=min+(t-xmin)*(max-min)/(xmax-xmin) , xmin <= t <= xmax
 		//y=THR
@@ -245,7 +238,7 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 
 	}
 	else{
-		output->m_type=many_phe;
+		output->m_type=CalorimeterSiPMHit::many_phe;
 		output->A=0;
 		output->Qraw=0;
 		prev_xmin=0;
@@ -253,7 +246,7 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 			idx=m_singleCrossingIndexes.at(iphe);
 			xmin=m_crossingTimes.at(idx).first;
 			xmax=m_crossingTimes.at(idx).second;
-			max=this->getMaximum((int)xmin,(int)xmax,&(m_waveform->samples.at(0)),Tmax);
+			max=this->getMaximum((int)xmin,(int)xmax,&(input->samples.at(0)),Tmax);
 			if ((output->A) < max) output->A=max;
 
 			xmin=Tmax-10;
@@ -262,15 +255,15 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 			if (xmin<prev_xmin) xmin=prev_xmin;
 			if (xmax>size) xmax=(size-1);
 
-			output->Qraw+=this->sumSamples((int)xmin,(int)xmax,&(m_waveform->samples.at(0)));
+			output->Qraw+=this->sumSamples((int)xmin,(int)xmax,&(input->samples.at(0)));
 		}
 		idx=m_singleCrossingIndexes.at(0);
 		xmin=m_crossingTimes.at(idx).first;  //this is the time of the sample OVER thr
 		xmax=m_crossingTimes.at(idx).first+1;
 		if (xmin==0) output->T=0;
 		else{
-			max=m_waveform->samples.at(xmin);
-			min=m_waveform->samples.at(xmin-1);
+			max=input->samples.at(xmin);
+			min=input->samples.at(xmin-1);
 		}
 		//y=min+(t-xmin)*(max-min)/(xmax-xmin) , xmin <= t <= xmax
 		//y=THR

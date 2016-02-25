@@ -10,7 +10,7 @@
 #include <iomanip>
 using namespace std;
 
-#include "fa250Mode1PedSubHit.h"
+#include "fa250Mode1Hit.h"
 #include "fa250Mode1CalibHit_factory.h"
 using namespace jana;
 
@@ -39,11 +39,11 @@ jerror_t fa250Mode1CalibHit_factory::brun(jana::JEventLoop *eventLoop, int32_t r
 //------------------
 jerror_t fa250Mode1CalibHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
-	vector<const fa250Mode1PedSubHit*> hits;
+	vector<const fa250Mode1Hit*> hits;
 	loop->Get(hits);
 	for(uint32_t i=0; i<hits.size(); i++){
 		
-		const fa250Mode1PedSubHit *hit = hits[i];
+		const fa250Mode1Hit *hit = hits[i];
 		
 		// Create new fa250Mode1CalibHit
 		fa250Mode1CalibHit *calibHit = new fa250Mode1CalibHit;
