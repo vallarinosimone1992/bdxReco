@@ -56,7 +56,7 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 	int size=input->samples.size();
 
 //	jout<<"****************"<<std::endl;
-//	jout<<m_channel.paddles.id<<" "<<Thr<<" "<<Ped_prev_id0<<" "<<Ped_prev_id1<<std::endl;
+//	jout<<"Channel= "<<m_channel.paddles.id<<" Thr= "<<Thr<<" "<<" Ped_prev_id0= "<<Ped_prev_id0<<" Ped_prev_id1= "<<Ped_prev_id1<<std::endl;
 
 
 //   *********** Timing *******************
