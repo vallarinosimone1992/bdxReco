@@ -48,8 +48,8 @@ jerror_t fa250Mode1CalibPedSubHit_factory::brun(jana::JEventLoop *eventLoop, int
 jerror_t fa250Mode1CalibPedSubHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 	vector<const fa250Mode1Hit*> hits;
-	double pedestal;
-	double sample;
+	double pedestal=0;
+	double sample=0;
 	TranslationTable::csc_t index;
 	loop->Get(hits);
 
@@ -72,7 +72,7 @@ jerror_t fa250Mode1CalibPedSubHit_factory::evnt(JEventLoop *loop, uint64_t event
 		// Copy all samples, applying PedSubration constant as we go
 		for(uint32_t j=0; j<hit->samples.size(); j++){
 			sample = (double)hit->samples[j];
-			m_pedestals->getCalibSingle(hit->m_channel,pedestal);
+			pedestal=m_pedestals->getCalibSingle(hit->m_channel);
 			sample = sample - pedestal;
 			sample *= LSB ;
 			CalibPedSubHit->samples.push_back(sample);

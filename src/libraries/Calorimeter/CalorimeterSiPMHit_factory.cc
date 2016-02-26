@@ -82,7 +82,7 @@ jerror_t CalorimeterSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 
 	TranslationTable::ChannelInfo m_channel;
 	TranslationTable::csc_t		  m_csc;
-	vector<double> 				  m_q_calib;
+	double 				  m_q_calib;
 	CalorimeterSiPMHit *m_CalorimeterSiPMHit=0;
 
 	//1: Here, we get from the framework the objects we need to process
@@ -120,9 +120,9 @@ jerror_t CalorimeterSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 			m_CalorimeterSiPMHit=m_Calorimeterfa250Converter->convertHit((fa250Hit*)*it_fa250Mode1CalibHit,m_channel);
 
 			/*Apply phe conversion if possible*/
-			m_sipm_gain.getCalib(m_channel.calorimeter,m_q_calib);
-			if ((m_q_calib.size()==1)&&(m_q_calib.at(0)>0)){
-				m_CalorimeterSiPMHit->Qphe=m_CalorimeterSiPMHit->Qraw/m_q_calib.at(0);
+			m_q_calib=m_sipm_gain.getCalibSingle(m_channel.calorimeter);
+			if (m_q_calib>0){
+				m_CalorimeterSiPMHit->Qphe=m_CalorimeterSiPMHit->Qraw/m_q_calib;
 			}
 
 
@@ -140,9 +140,9 @@ jerror_t CalorimeterSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 			m_CalorimeterSiPMHit=m_Calorimeterfa250Converter->convertHit((fa250Hit*)*it_fa250Mode7Hit,m_channel);
 
 			/*Apply phe conversion if possible*/
-			m_sipm_gain.getCalib(m_channel.calorimeter,m_q_calib);
-			if ((m_q_calib.size()==1)&&(m_q_calib.at(0)>0)){
-				m_CalorimeterSiPMHit->Qphe=m_CalorimeterSiPMHit->Qraw/m_q_calib.at(0);
+			m_q_calib=m_sipm_gain.getCalibSingle(m_channel.calorimeter);
+			if (m_q_calib>0){
+				m_CalorimeterSiPMHit->Qphe=m_CalorimeterSiPMHit->Qraw/m_q_calib;
 			}
 
 			_data.push_back(m_CalorimeterSiPMHit);

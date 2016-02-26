@@ -24,7 +24,7 @@ class fa250Mode1Hit:public fa250Hit{
 		
 
 
-		vector <short> samples;
+		vector <double> samples;
 
 		// This method is used primarily for pretty printing
 		// the second argument to AddString is printf style format

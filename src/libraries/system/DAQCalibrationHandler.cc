@@ -39,44 +39,57 @@ jerror_t DAQCalibrationHandler::fillCalib(const std::vector<std::vector<double> 
 	return NOERROR;
 }
 
-std::vector <double> DAQCalibrationHandler::operator[](const TranslationTable::csc_t &index) const{
-	vector < double > data;
-	jerror_t ret;
-	ret=this->getCalib(index,data);
-	return data;
+std::vector <double> DAQCalibrationHandler::operator[](const TranslationTable::csc_t &index){
+	return this->getCalib(index);
 }
 
-jerror_t DAQCalibrationHandler::getCalib(const TranslationTable::csc_t &index,vector<double> &data)const{
-	std::map<TranslationTable::csc_t , vector < double > >::const_iterator it;
-	it=m_calib.find(index);
+vector<double> DAQCalibrationHandler::getCalib(const TranslationTable::csc_t &index){
+	vector<double> ret(0);
+	int pos;
+	std::vector < TranslationTable::csc_t >::iterator vit;
+	std::map<TranslationTable::csc_t , vector < double > >::iterator it;
 
-	if (it==m_calib.end()){
-		jerr<<"DAQCalibrationHandler:getCalib element not found"<<endl;
-		return RESOURCE_UNAVAILABLE;
+
+
+	vit = find(m_actualCalibIndex.begin(),m_actualCalibIndex.end(),index);
+
+
+	if (vit!=m_actualCalibIndex.end()){
+		pos=vit - m_actualCalibIndex.begin();
+		return m_actualCalib[pos];
 	}
 	else{
-		data=it->second;
-		return NOERROR;
-	}
-}
-
-jerror_t DAQCalibrationHandler::getCalibSingle(const TranslationTable::csc_t &index,double &data)const{
-	std::map<TranslationTable::csc_t, vector < double > >::const_iterator it;
-	it=m_calib.find(index);
-
-	if (it==m_calib.end()){
-		jerr<<"DAQCalibrationHandler:getCalibSingle element not found"<<endl;
-		return RESOURCE_UNAVAILABLE;
-	}
-	else{
-		if (it->second.size()!=1){
-			jerr<<"DAQCalibrationHandler::getCalibSingle >1 cal constants: "<<it->second.size()<<endl;
-			return RESOURCE_UNAVAILABLE;
+		it=m_calib.find(index);
+		if (it==m_calib.end()){
+			jerr<<"DAQCalibrationHandler:getCalib element not found"<<endl;
+			return ret;
 		}
 		else{
-			data=it->second.at(0);
-			return NOERROR;
+
+			m_actualCalibIndex.push_back(index);
+			m_actualCalib.push_back(it->second);
+			return it->second;
 		}
+	}
+
+
+
+
+
+
+}
+
+double DAQCalibrationHandler::getCalibSingle(const TranslationTable::csc_t &index){
+
+	vector<double> this_data;
+	//getCalib(index);
+	return 0;
+	if (this_data.size()==1){
+		return this_data[0];
+	}
+	else{
+		jerr<<"DAQCalibrationHandler::getCalibSingle error: more than 1 entry"<<std::endl;
+		return VALUE_OUT_OF_RANGE;
 	}
 }
 

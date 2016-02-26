@@ -20,18 +20,24 @@ using namespace std;
 template <class T> class CalibrationHandler{  //T is supposed to be an index in the TT library
 public:
 	jerror_t fillCalib(const std::vector<std::vector<double> > &calib_data);
-	jerror_t getCalib(const T &index,vector<double> &data) const;
-	jerror_t getCalibSingle(const T &index,double &data) const;
+	vector<double> getCalib(const T &index);
+	std::vector < double > operator[](const T &index);
+
+	double getCalibSingle(const T &index);
 
 
 
 	std::map  <T, std::vector < double > > getCalibMap() const{return m_calib;}
-	std::vector < double > operator[](const T &index) const;
+	std::map  <T, std::vector < double > > getActualCalibMap() const{return m_actualCalib;}
+
+
 
 	//	virtual ~CalibrationHandler();
 private:
 
 	std::map <T, std::vector < double > > m_calib;
+	std::vector < std::vector < double > > m_actualCalib;
+	std::vector < T > m_actualCalibIndex;
 	std::pair<typename std::map <T, std::vector < double > >::iterator,bool> m_insert_check;
 
 
@@ -74,44 +80,51 @@ template <class T> jerror_t CalibrationHandler<T>::fillCalib(const std::vector<s
 	return NOERROR;
 }
 
-template <class T> std::vector <double> CalibrationHandler<T>::operator[](const T &index) const{
-	vector < double > data;
-	jerror_t ret;
-	ret=this->getCalib(index,data);
-	return data;
+template <class T> std::vector <double> CalibrationHandler<T>::operator[](const T &index){
+	return this->getCalib(index);
 }
 
-template <class T> jerror_t CalibrationHandler<T>::getCalib(const T &index,vector<double> &data)const{
-	typename std::map< T, vector < double > >::const_iterator it;
-	it=m_calib.find(index);
+template <class T> vector<double> CalibrationHandler<T>::getCalib(const T &index){
 
-	if (it==m_calib.end()){
-		jerr<<"CalorimeterCalibration:getCalib element not found"<<endl;
-		return RESOURCE_UNAVAILABLE;
+	vector<double> ret(0);
+	int pos;
+	typename std::vector < T >::iterator vit;
+	typename std::map<T , vector < double > >::iterator it;
+
+
+
+	vit = find(m_actualCalibIndex.begin(),m_actualCalibIndex.end(),index);
+
+
+	if (vit!=m_actualCalibIndex.end()){
+		pos=vit - m_actualCalibIndex.begin();
+		return m_actualCalib[pos];
 	}
 	else{
-		data=it->second;
-		return NOERROR;
-	}
-}
-
-template <class T> jerror_t CalibrationHandler<T>::getCalibSingle(const T &index,double &data)const{
-	typename std::map<T, vector < double > >::const_iterator it;
-	it=m_calib.find(index);
-
-	if (it==m_calib.end()){
-		jerr<<"CalibrationHandler:getCalibSingle element not found"<<endl;
-		return RESOURCE_UNAVAILABLE;
-	}
-	else{
-		if (it->second.size()!=1){
-			jerr<<"CalibrationHandler::getCalibSingle >1 cal constants: "<<it->second.size()<<endl;
-			return RESOURCE_UNAVAILABLE;
+		it=m_calib.find(index);
+		if (it==m_calib.end()){
+			jerr<<"DAQCalibrationHandler:getCalib element not found"<<endl;
+			return ret;
 		}
 		else{
-			data=it->second.at(0);
-			return NOERROR;
+
+			m_actualCalibIndex.push_back(index);
+			m_actualCalib.push_back(it->second);
+			return it->second;
 		}
+	}
+
+}
+
+template <class T> double CalibrationHandler<T>::getCalibSingle(const T &index){
+	vector<double> this_data;
+	this_data=getCalib(index);
+	if (this_data.size()==1){
+		return this_data.at(0);
+	}
+	else{
+		jerr<<"CalibrationHandler::getCalibSingle error: more than 1 entry"<<std::endl;
+		return 0;
 	}
 }
 

@@ -29,12 +29,11 @@ PaddlesPMTHit* Paddlesfa250Converter::convertHit(const fa250Hit *hit,const Trans
 jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa250Mode1CalibHit *input, const TranslationTable::ChannelInfo &m_channel) const{
 
 
-	vector<double> m_Thr;
-	threshold->getCalib(output->m_channel.paddles,m_Thr);
-	double Thr=m_Thr.at(0);		//mV
+	double Thr;
+	Thr=threshold->getCalibSingle(output->m_channel.paddles);
 
 	vector<double> m_pedestal_init;
-	pedestal_init->getCalib(output->m_channel.paddles,m_pedestal_init);
+	m_pedestal_init=pedestal_init->getCalib(output->m_channel.paddles);
 
 	int Nsamples=30;
 	static double Ped_prev_id0=m_pedestal_init.at(0);
