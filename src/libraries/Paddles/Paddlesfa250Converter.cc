@@ -119,7 +119,7 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 //				jout<<"Q_after= "<<Q<<std::endl;
 		}
 
-		Q=Q*(0.001*4)/50 ;        // from Wb to nCoulomb , 4 [nsec], 50 [Ohm], Q [Volts]
+		Q=2*Q*(0.001*4)/50 ;        // from Wb to nCoulomb , 4 [nsec], 50 [Ohm], Q [Volts], 2 splitter
 
 	output->Q=Q;
 	output->T=T;

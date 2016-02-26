@@ -262,15 +262,12 @@ public:
 	class PADDLES_Index_t {
 	public:
 		int id;
-//		int readout;
 		int& ID(int n) {
 			switch (n) {
 			case 0:
 				return id;
 				break;
-//			case 1:
-//				return readout;
-//				break;
+
 			default:
 				jerr << "Wrong id" << std::endl;
 				break;
@@ -284,7 +281,6 @@ public:
 			return (id == rhs.id);
 		}
 		inline bool operator==(const PADDLES_Index_t &rhs) const {
-		//	return (isSameActive(rhs) && (readout == rhs.readout));
 			return (id == rhs.id);
 		}
 		inline bool operator<(const PADDLES_Index_t &rhs) const { //A.C. for the maps
@@ -292,10 +288,7 @@ public:
 				return true;
 			if (id < rhs.id)
 				return false;
-//			if (readout > rhs.readout)
-//				return true;
-//			if (readout < rhs.readout)
-//				return false;
+
 			return false;
 		}
 
