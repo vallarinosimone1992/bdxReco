@@ -62,6 +62,12 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 
 //   *********** Timing *******************
 	for (int ii=0;ii<size;ii++){
+
+		if(input->samples.at(ii)>Thr&&ii==0){
+			T_index=ii;
+			T=0;
+			break;
+		}
 			if(input->samples.at(ii)>Thr&&ii>0) {
 				Tinf=(ii-1)*4;
 				Tsup=ii*4;
@@ -73,7 +79,6 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 			    break;
 				}
 	}
-
 			if (T_index<0)	// no signal
 						{
 							output->Q=0;
@@ -81,7 +86,7 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 							return NOERROR;
 						}
 
-			T=(((Tsup-Tinf)/(Amp2-Amp1))*(Thr-Amp1))+Tinf;		// linear extrapolation
+			if(T_index>0)T=(((Tsup-Tinf)/(Amp2-Amp1))*(Thr-Amp1))+Tinf;		// linear interpolation
 	//		jout<<"T_interp= "<<T<<std::endl;
 
 	/***************************************/
