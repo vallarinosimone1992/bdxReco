@@ -3,9 +3,6 @@
 #include <DAQ/fa250Mode7Hit.h>
 
 #include <Paddles/Paddlesfa250Converter.h>
-#include <system/CalibrationHandler.h>
-
-
 #include <math.h>
 
 
@@ -33,11 +30,10 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 
 //	vector<double> m_pedestal_init;
 //	m_pedestal_init=pedestal_init->getCalib(output->m_channel.paddles);
-
-	int Nsamples=30;
 //	static double Ped_prev_id0=m_pedestal_init.at(0);
 //	static double Ped_prev_id1=m_pedestal_init.at(1);
 
+	int Nsamples=30;
 	static double Ped_prev_id0=m_rawpedestal.at(144).at(3);
 	static double Ped_prev_id1=m_rawpedestal.at(145).at(3);
 
