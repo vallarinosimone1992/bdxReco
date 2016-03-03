@@ -34,8 +34,8 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 //	static double Ped_prev_id1=m_pedestal_init.at(1);
 
 	int Nsamples=30;
-	static double Ped_prev_id0=m_rawpedestal.at(144).at(3);
-	static double Ped_prev_id1=m_rawpedestal.at(145).at(3);
+	static double Ped_prev_id0=(m_rawpedestal.at(144).at(3))*0.4884;
+	static double Ped_prev_id1=(m_rawpedestal.at(145).at(3))*0.4884;
 
 	double Ped=0;
 	double Q=0;					// nC

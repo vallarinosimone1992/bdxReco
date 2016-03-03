@@ -15,6 +15,8 @@ using namespace std;
 #include <DAQ/triggerData.h>
 
 #include <Paddles/PaddlesHit.h>
+#include <ExtVeto/ExtVetoPMTHit.h>
+
 
 #include <system/JROOTOutput.h>
 #include "TTree.h"
@@ -67,10 +69,15 @@ jerror_t Paddles_basic_track::init(void)
 	t=new TTree("t","t");
 
 	t->Branch("id",&id);
+	t->Branch("component",&component);
 	t->Branch("E_up",&E_up);
 	t->Branch("E_down",&E_down);
 	t->Branch("T_up",&T_up);
 	t->Branch("T_down",&T_down);
+	t->Branch("E6",&E6);
+	t->Branch("E9",&E9);
+	t->Branch("T6",&T6);
+	t->Branch("T9",&T9);
 	t->Branch("eventN",&eventN);
 	t->Branch("tword",&tword);
 	t->Branch("mult",&mult);
@@ -147,6 +154,7 @@ jerror_t Paddles_basic_track::evnt(JEventLoop *loop,uint64_t eventnumber)
 
 	loop->Get(data);
 
+
 	const triggerData* tData;
 	try{
 		loop->GetSingle(tData);
@@ -197,9 +205,60 @@ jerror_t Paddles_basic_track::evnt(JEventLoop *loop,uint64_t eventnumber)
 	E_up=E[1];
 	T_down=T[0];
 	T_up=T[1];
+//	cout<<"E_down= "<<E_down<<"E_up= "<<E_up<<endl;
+
 
 //			jout<<"Nevent= "<<eventN<<" id= "<<id<<" E_down= "<<E_down<<" E_up= "<<E_up<<" T_down= "<<T_down<<" T_up="<<T_up<<endl;
 //			jout<<"********************"<<endl;
+
+	vector<const ExtVetoPMTHit*> data_extveto;
+	vector<const ExtVetoPMTHit*>::const_iterator data_extveto_it;
+	loop->Get(data_extveto);
+
+
+		E6=0;
+		E9=0;
+		T6=0;
+		T9=0;
+
+		for(int i=0;i<2;i++){
+			E[i]=0;
+			T[i]=0;
+		}
+//		jout<<"AAAAAAAAAAAAA"<<endl;
+
+		for (data_extveto_it=data_extveto.begin();data_extveto_it<data_extveto.end();data_extveto_it++){
+			const ExtVetoPMTHit *evhit = *data_extveto_it;
+
+//			jout<<"ExtVeto channel= "<<evhit->m_channel.ext_veto.component<<endl;
+
+					component=evhit->m_channel.ext_veto.component;
+
+					if(evhit->m_channel.ext_veto.component==6){
+//						jout<<"Sono dentro component 6"<<endl;
+
+						E[0]=(*data_extveto_it)->Q;
+						T[0]=(*data_extveto_it)->T;
+					}
+					if(evhit->m_channel.ext_veto.component==9){
+										E[1]=(*data_extveto_it)->Q;
+										T[1]=(*data_extveto_it)->T;
+									}
+	//			jout<<"Nevent= "<<eventN<<" id= "<<id<<" E_down= "<<E[0]<<" E_up= "<<E[1]<<" T_down= "<<T[0]<<" T_up="<<T[1]<<endl;
+
+		}
+		E6=E[0];
+		E9=E[1];
+		T6=T[0];
+		T9=T[1];
+
+//		cout<<"E6= "<<E6<<"E9= "<<E9<<endl;
+
+
+	//			jout<<"Nevent= "<<eventN<<" id= "<<id<<" E_down= "<<E_down<<" E_up= "<<E_up<<" T_down= "<<T_down<<" T_up="<<T_up<<endl;
+	//			jout<<"********************"<<endl;
+
+
 
 			t->Fill();
 
