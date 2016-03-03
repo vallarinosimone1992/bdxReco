@@ -29,9 +29,9 @@ public:
 	jerror_t convertMode7Hit(IntVetoSiPMHit* output,const fa250Mode7Hit *input) const;
 
 
-	CalibrationHandler<TranslationTable::INT_VETO_Index_t> *thr;
+	CalibrationHandler<TranslationTable::INT_VETO_Index_t> *m_thrCalib;
 
-
+	static const int NPED = 20;
 	int MIN_TOT;
 };
 

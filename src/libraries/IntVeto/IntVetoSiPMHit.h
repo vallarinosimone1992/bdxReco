@@ -42,7 +42,6 @@ public:
 
 	double Qraw,Qphe,T,A;
 	double average;
-	double ped;
 
 	int nSingles;
 	hit_type m_type;

@@ -28,6 +28,11 @@ jerror_t IntVetofa250Converter_factory::brun(jana::JEventLoop *eventLoop, int32_
 {
 
 	m_intVetofa250Converter=new IntVetofa250Converter();
+	m_intVetofa250Converter->m_thrCalib=new CalibrationHandler<TranslationTable::INT_VETO_Index_t>;
+
+	vector< vector < double > > m_rawThr;
+	eventLoop->GetCalib("/InnerVeto/sipm_ampl",m_rawThr);
+	m_intVetofa250Converter->m_thrCalib->fillCalib(m_rawThr);
 
 	gPARMS->GetParameter("INTVETO:VERBOSE",m_intVetofa250Converter->verbose());
 

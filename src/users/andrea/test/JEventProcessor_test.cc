@@ -197,9 +197,9 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop,uint64_t eventnumber)
 	// since multiple threads may call this method at the same time.
 	// Here's an example:
 	//
-	vector<const fa250Mode1Hit*> data;
-	//vector<const CalorimeterSiPMHit*>::const_iterator data_it;
-	//const fa250Mode1CalibHit *fa;
+	vector<const IntVetoSiPMHit*> data;
+	vector<const IntVetoSiPMHit*>::const_iterator data_it;
+	const fa250Mode1CalibPedSubHit *fa;
 	loop->Get(data);
 
 	const triggerData* tData;
@@ -224,9 +224,9 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop,uint64_t eventnumber)
 
 	japp->RootWriteLock();
 	//  ... fill historgrams or trees ...
-	/*for (data_it=data.begin();data_it<data.end();data_it++){
+	for (data_it=data.begin();data_it<data.end();data_it++){
 	
-		const CalorimeterSiPMHit *ivhit = *data_it;
+		const IntVetoSiPMHit *ivhit = *data_it;
 
 
 
@@ -238,10 +238,9 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop,uint64_t eventnumber)
 			if(!fa) continue; // need fa250Mode1CalibHit to continue
 
 			h->Reset();
-			h->SetName(Form("h_%lld_%i_%i",eventnumber,ivhit->m_channel.calorimeter.readout,tWord));
+			h->SetName(Form("h_%lld_%i_%i",eventnumber,ivhit->m_channel.int_veto.component,ivhit->m_channel.int_veto.readout));
 
-			h1->Reset();
-			h1->SetName(Form("h1_%lld_%i_%i",eventnumber,ivhit->m_channel.calorimeter.readout,tWord));
+
 
 			for (int ii=0;ii<fa->samples.size();ii++){
 				h->Fill(ii,fa->samples.at(ii));
@@ -266,7 +265,7 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop,uint64_t eventnumber)
 
 	japp->RootUnLock();
 
-*/
+
 
 
 	return NOERROR;

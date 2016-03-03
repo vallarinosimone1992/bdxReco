@@ -70,12 +70,13 @@ jerror_t fa250Mode1CalibPedSubHit_factory::evnt(JEventLoop *loop, uint64_t event
 		*a = *b;
 
 		// Copy all samples, applying PedSubration constant as we go
+		pedestal=m_pedestals->getCalibSingle(hit->m_channel);
 		for(uint32_t j=0; j<hit->samples.size(); j++){
 			sample = (double)hit->samples[j];
-			pedestal=m_pedestals->getCalibSingle(hit->m_channel);
 			sample = sample - pedestal;
 			sample *= LSB ;
 			CalibPedSubHit->samples.push_back(sample);
+
 		}
 
 		// Add original as associated object 

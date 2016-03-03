@@ -210,7 +210,7 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 			output->Qraw=this->sumSamples((int)xmin,(int)xmax,&(input->samples.at(0)));
 
 
-
+			output->T*=4; //in NS!!!
 
 		}
 	}
@@ -233,7 +233,7 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 
 		output->T=(thr-min)*(xmax-xmin)/(max-min)+xmin;
 
-
+		output->T*=4; //in NS!!!
 
 
 	}
@@ -271,7 +271,7 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 
 		output->T=(thr-min)*(xmax-xmin)/(max-min)+xmin;
 
-
+		output->T*=4; //in NS!!!
 
 
 	}

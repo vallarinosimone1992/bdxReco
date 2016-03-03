@@ -79,11 +79,12 @@ jerror_t JEventProcessor_intVeto_digi::init(void)
 		t->Branch("component",&m_component);
 		t->Branch("readout",&m_readout);
 		t->Branch("Q",&Q);
+		t->Branch("T",&T);
 		t->Branch("Q1",&Q1);
 		t->Branch("Q2",&Q2);
 		t->Branch("Q3",&Q3);
 		t->Branch("Q4",&Q4);
-
+		t->Branch("eventN",&eventNumber);
 		japp->RootUnLock();
 
 
@@ -152,7 +153,9 @@ jerror_t JEventProcessor_intVeto_digi::evnt(JEventLoop *loop, uint64_t eventnumb
 		m_component=(*data_it)->m_channel.component;
 		m_readout=(*data_it)->m_channel.readout;
 
+		T=(*data_it)->T;
 		Q=(*data_it)->Q;
+		eventNumber=eventnumber;
 		(*data_it)->Get(associated_data,"",1);
 		if (m_component<=3){
 			Q1=associated_data.at(0)->Qphe;
