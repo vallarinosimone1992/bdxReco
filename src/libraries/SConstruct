@@ -1,7 +1,7 @@
 Import('env')
 
 # Loop over libraries, building each
-libs=['IntVeto','ExtVeto','Calorimeter','Paddles','ctof','TT','system','DAQ','MC']
+libs=['IntVeto','ExtVeto','Calorimeter','Paddles','TT','system','DAQ','MC']
 
 for lib in libs:
     src =Glob(lib+'/*.cc')
