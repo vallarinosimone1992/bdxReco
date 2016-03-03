@@ -92,7 +92,7 @@ jerror_t ExtVetoPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	//1b: retrieve objects
 	loop->Get(m_fa250Mode1CalibHit);
 	loop->Get(m_fa250Mode7Hit);
-
+//	jout << "sono qui" <<std::endl;
 	/*2: Now we have the daq objects, still indexed as "crate-slot-channel"
 	 *	 Use the translation table to produce the digitized hit of the inner veto
 	 *	 Note that we can produce a single object type here, i.e. ExtVetoPMTHit,
