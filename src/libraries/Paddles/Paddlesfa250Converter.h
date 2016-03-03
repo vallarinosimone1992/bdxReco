@@ -17,7 +17,7 @@
 #include <DAQ/fa250Converter.h>
 #include <TT/TranslationTable.h>
 #include <system/CalibrationHandler.h>
-#include <system/DAQCalibrationHandler.h>
+#include <DAQ/DAQCalibrationHandler.h>
 
 
 class fa250Mode1CalibHit;

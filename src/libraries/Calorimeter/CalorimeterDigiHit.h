@@ -10,12 +10,12 @@
 
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
-
+#include <TT/TranslationTable.h>
 
 
 class CalorimeterDigiHit:public jana::JObject{
 public:
-	typedef struct CalorimeterSiPMDigiHit{
+	struct CalorimeterSiPMDigiHit{
 		int readout;
 		double Q;
 		double T;

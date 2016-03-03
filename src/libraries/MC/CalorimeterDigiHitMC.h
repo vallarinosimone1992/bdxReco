@@ -10,7 +10,7 @@
 
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
-#include "outputFactory.h"
+
 
 /*This class is basically a place-holder for the data coming from EVIO file,
  * for the calorimeter digitized banks
@@ -30,7 +30,7 @@ class CalorimeterDigiHitMC:public jana::JObject{
 		}
 		int x,y,sector;
 		int adcl,adrc,tdcl,tdcr;
-		int adcb,adcb,tdcb,tdcf;
+		int adcb,adcf,tdcb,tdcf;
 };
 
 #endif // _genParticle_
