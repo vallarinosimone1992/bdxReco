@@ -154,11 +154,9 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory)
 	}
 	else if (dataClassName == "CalorimeterDigiHitMC"){
 
-		vector<string> hitTypes;
-		hitTypes.push_back("crs");
 
-		Mevent *this_evt = new Mevent(*EDT, hitTypes, &banksMap, 0);
-		delete this_evt;
+
+
 		return NOERROR;
 	}
 
