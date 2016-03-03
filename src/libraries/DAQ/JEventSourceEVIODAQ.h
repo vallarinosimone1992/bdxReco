@@ -1,5 +1,5 @@
-#ifndef _JEVENT_SOURCEEVIO_H_
-#define _JEVENT_SOURCEEVIO_H_
+#ifndef _JEVENT_SOURCEEVIODAQ_H_
+#define _JEVENT_SOURCEEVIODAQ_H_
 
 // #include <vector>
 // #include <string>
@@ -9,6 +9,7 @@
 // JANA headers
 #include <JANA/JEventSource.h>
 #include <JANA/jerror.h>
+
 using namespace jana;
 
 // bdx headers
@@ -26,14 +27,14 @@ using namespace evio;
 #include "banks.h"
 
 
-class JEventSourceEvio:public JEventSource
+class JEventSourceEvioDAQ:public JEventSource
 {
 	public:
-		JEventSourceEvio(const char* source_name);
-		virtual ~JEventSourceEvio();
+		JEventSourceEvioDAQ(const char* source_name);
+		virtual ~JEventSourceEvioDAQ();
 
 		virtual const char* className(void)      {return static_className();}
-		static const char* static_className(void){return "JEventSourceEvio";}
+		static const char* static_className(void){return "JEventSourceEvioDAQ";}
 
 		jerror_t GetEvent(JEvent &event);
 		void FreeEvent(JEvent &event);

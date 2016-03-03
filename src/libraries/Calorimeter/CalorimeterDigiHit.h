@@ -11,22 +11,30 @@
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
 
+
+
 class CalorimeterDigiHit:public jana::JObject{
-	public:
-		JOBJECT_PUBLIC(CalorimeterDigiHit);
-		
-		// Add data members here. For example:
-		// int id;
-		// double E;
-		
-		// This method is used primarily for pretty printing
-		// the second argument to AddString is printf style format
-		void toStrings(vector<pair<string,string> > &items)const{
-			// AddString(items, "id", "%4d", id);
-			// AddString(items, "E", "%f", E);
-		}
-		TranslationTable::CALO_Index_t m_channel; //both crate-slot channel and detector-specific ID. Since this is a detector-based object, the readout field will be ==0
-		double Q,T;
+public:
+	typedef struct CalorimeterSiPMDigiHit{
+		int readout;
+		double Q;
+		double T;
+	};
+	JOBJECT_PUBLIC(CalorimeterDigiHit);
+
+	// Add data members here. For example:
+	// int id;
+	// double E;
+
+	// This method is used primarily for pretty printing
+	// the second argument to AddString is printf style format
+	void toStrings(vector<pair<string,string> > &items)const{
+		// AddString(items, "id", "%4d", id);
+		// AddString(items, "E", "%f", E);
+	}
+	TranslationTable::CALO_Index_t m_channel; //Detector-specific ID. Since this is a detector-based object, the readout field will be ==0
+	vector <CalorimeterSiPMDigiHit> m_data; //keep in this way to be MC-compatible!
+
 };
 
 #endif // _CalorimeterDigiHit_

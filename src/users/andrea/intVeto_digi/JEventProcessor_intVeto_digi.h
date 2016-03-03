@@ -33,7 +33,7 @@ private:
 	int m_isFirstCallToBrun;
 
 	int m_sector,m_layer,m_component,m_readout;
-	double Q,Q1,Q2,Q3,Q4;
+	double Q,Q1,Q2,Q3,Q4,T;
 
 
 	JROOTOutput *m_ROOTOutput;

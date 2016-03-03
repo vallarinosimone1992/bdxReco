@@ -1,21 +1,21 @@
 // $Id$
 //
-//    File: ctofHit_factory.h
-// Created: Thu Dec 17 14:09:30 EST 2015
-// Creator: ungaro (on Darwin MauriMP.local 14.5.0 i386)
+//    File: CalorimeterDigiHit_factory_MC.h
+// Created: Tue Mar  1 17:38:32 CET 2016
+// Creator: celentan (on Linux localhost.localdomain 2.6.32-573.12.1.el6.x86_64 x86_64)
 //
 
-#ifndef _ctofHitR_factory_
-#define _ctofHitR_factory_
+#ifndef _CalorimeterDigiHit_factory_MC_
+#define _CalorimeterDigiHit_factory_MC_
 
 #include <JANA/JFactory.h>
-#include "ctofHitR.h"
+#include "CalorimeterDigiHit.h"
 
-class ctofHitR_factory:public jana::JFactory<ctofHitR>{
+class CalorimeterDigiHit_factory_MC:public jana::JFactory<CalorimeterDigiHit>{
 	public:
-		ctofHitR_factory(){};
-		~ctofHitR_factory(){};
-
+		CalorimeterDigiHit_factory_MC(){};
+		~CalorimeterDigiHit_factory_MC(){};
+		const char* Tag(void){return "MC";}
 
 	private:
 		jerror_t init(void);						///< Called once at program start.
@@ -25,5 +25,5 @@ class ctofHitR_factory:public jana::JFactory<ctofHitR>{
 		jerror_t fini(void);						///< Called after last event of last event source has been processed.
 };
 
-#endif
+#endif // _CalorimeterDigiHit_factory_MC_
 

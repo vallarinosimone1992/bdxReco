@@ -9,7 +9,7 @@
 #define _fa250Mode1PedSubHit_factory_
 
 #include <JANA/JFactory.h>
-#include <system/DAQCalibrationHandler.h>
+#include <DAQ/DAQCalibrationHandler.h>
 #include "fa250Mode1CalibPedSubHit.h"
 
 class fa250Mode1CalibPedSubHit_factory:public jana::JFactory<fa250Mode1CalibPedSubHit>{

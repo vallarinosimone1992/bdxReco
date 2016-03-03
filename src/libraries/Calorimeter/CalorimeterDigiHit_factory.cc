@@ -91,18 +91,16 @@ jerror_t CalorimeterDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 	CalorimeterDigiHit* m_CalorimeterDigiHit_tmp;
 	double Qmax=-99999;
 	for (m_map_it=m_map.begin();m_map_it!=m_map.end();m_map_it++){
-		//do here further elaborations!
-		//Compute the charge as the sum of the charges
-		//Compute the hit-time as time of the sipm-hit with largest charge
+		//create here the hit!
 		m_CalorimeterDigiHit_tmp=m_map_it->second;
 		m_CalorimeterDigiHit_tmp->Get(m_CalorimeterSiPMHit_tmp,"",0);  //0 means "associated only with this object"
-		m_CalorimeterDigiHit_tmp->Q=0;
 		for (int ihit=0;ihit<m_CalorimeterSiPMHit_tmp.size();ihit++){
-			m_CalorimeterDigiHit_tmp->Q+=m_CalorimeterSiPMHit_tmp.at(ihit)->Qphe;     //this is supposed to be in phe
-			if (m_CalorimeterSiPMHit_tmp.at(ihit)->Qphe > Qmax) {
-				Qmax=m_CalorimeterSiPMHit_tmp.at(ihit)->Qphe;
-				m_CalorimeterDigiHit_tmp->T=m_CalorimeterSiPMHit_tmp.at(ihit)->T;
-			}
+
+			CalorimeterDigiHit::CalorimeterSiPMDigiHit hit;
+			hit.Q=m_CalorimeterSiPMHit_tmp.at(ihit)->Qphe;
+			hit.T=m_CalorimeterSiPMHit_tmp.at(ihit)->T;
+			hit.readout=m_CalorimeterSiPMHit_tmp.at(ihit)->m_channel.int_veto.readout;
+			m_CalorimeterDigiHit_tmp->m_data.push_back(hit);
 		}
 		_data.push_back(m_CalorimeterDigiHit_tmp); //publish it
 	}

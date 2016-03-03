@@ -115,6 +115,8 @@ jerror_t IntVetoSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 			/*Apply phe conversion if possible*/
 			m_q_calib=m_sipm_gain.getCalibSingle(m_channel.int_veto);
+
+
 			if ((m_q_calib>0)){
 				m_IntVetoSiPMHit->Qphe=	m_IntVetoSiPMHit->Qraw/m_q_calib;
 			}

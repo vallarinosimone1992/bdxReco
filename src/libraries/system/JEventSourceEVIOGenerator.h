@@ -9,8 +9,10 @@ using namespace jana;
 
 class JEventSourceEvioGenerator:public JEventSourceGenerator
 {
+private:
+	int isMC;
 	public:
-		 JEventSourceEvioGenerator(){}
+		 JEventSourceEvioGenerator();
 		~JEventSourceEvioGenerator(){}
 
 

@@ -50,7 +50,6 @@ vector<double> DAQCalibrationHandler::getCalib(const TranslationTable::csc_t &in
 	std::map<TranslationTable::csc_t , vector < double > >::iterator it;
 
 
-
 	vit = find(m_actualCalibIndex.begin(),m_actualCalibIndex.end(),index);
 
 
@@ -81,14 +80,15 @@ vector<double> DAQCalibrationHandler::getCalib(const TranslationTable::csc_t &in
 
 double DAQCalibrationHandler::getCalibSingle(const TranslationTable::csc_t &index){
 
+
 	vector<double> this_data;
-	//getCalib(index);
-	return 0;
+	this_data=getCalib(index);
 	if (this_data.size()==1){
+//		jout<<index.slot<<" "<<index.channel<<" "<<this_data[0]<<endl;
 		return this_data[0];
 	}
 	else{
-		jerr<<"DAQCalibrationHandler::getCalibSingle error: more than 1 entry"<<std::endl;
+		jerr<<"DAQCalibrationHandler::getCalibSingle error: more than 1 entry, there are:"<<this_data.size()<<std::endl;
 		return VALUE_OUT_OF_RANGE;
 	}
 }

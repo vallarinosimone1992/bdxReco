@@ -1,13 +1,9 @@
 // JANA headers
 #include <JANA/JEvent.h>
 #include <JANA/JParameterManager.h>
+#include <system/JEventSourceEVIOGenerator.h>
+#include "JEventSourceEVIODAQ.h"
 // bdx headers
-#include <DAQ/JEventSourceEVIO.h>
-#include <DAQ/JEventSourceEVIOGenerator.h>
-
-
-
-// CLHEP headers
 #include "CLHEP/Units/PhysicalConstants.h"
 using namespace CLHEP;
 
@@ -16,14 +12,13 @@ using namespace CLHEP;
 using namespace std;
 
 //DAQ
-#include "fa250Mode1Hit.h"
-#include "fa250Mode7Hit.h"
-#include "triggerData.h"
-// CTOF
-#include <ctof/CTOFhit.h>
+#include <DAQ/fa250Mode1Hit.h>
+#include <DAQ/fa250Mode7Hit.h>
+#include <DAQ/triggerData.h>
+
 
 // Constructor
-JEventSourceEvio::JEventSourceEvio(const char* source_name):JEventSource(source_name),
+JEventSourceEvioDAQ::JEventSourceEvioDAQ(const char* source_name):JEventSource(source_name),
 		chan(0),EDT(0),vme_mother_tag(0),child_mode1_tag(0),child_mode7_tag(0),eventHeader_tag(0),
 		curRunNumber(0),curEventNumber(0)
 {
@@ -83,7 +78,7 @@ JEventSourceEvio::JEventSourceEvio(const char* source_name):JEventSource(source_
 
 
 // Destructor
-JEventSourceEvio::~JEventSourceEvio()
+JEventSourceEvioDAQ::~JEventSourceEvioDAQ()
 {
 	cout << " Closing input file " << source_name << "." << endl;
 	chan->close();
@@ -91,7 +86,7 @@ JEventSourceEvio::~JEventSourceEvio()
 }
 
 // GetEvent
-jerror_t JEventSourceEvio::GetEvent(JEvent &event)
+jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event)
 {
 
 	event.SetRef(NULL);
@@ -153,14 +148,14 @@ jerror_t JEventSourceEvio::GetEvent(JEvent &event)
 }
 
 // FreeEvent
-void JEventSourceEvio::FreeEvent(JEvent &event)
+void JEventSourceEvioDAQ::FreeEvent(JEvent &event)
 {
 	delete (evioDOMTree*)event.GetRef();
 	//	delete (Mevent*)event.GetRef();
 }
 
 // GetObjects
-jerror_t JEventSourceEvio::GetObjects(JEvent &event, JFactory_base *factory)
+jerror_t JEventSourceEvioDAQ::GetObjects(JEvent &event, JFactory_base *factory)
 {
 	/// This gets called through the virtual method of the
 	/// JEventSource base class. It creates the objects of the type
