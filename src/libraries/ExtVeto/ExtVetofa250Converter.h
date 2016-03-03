@@ -15,7 +15,8 @@
 #include <ExtVeto/ExtVetoPMTHit.h>
 #include <DAQ/fa250Converter.h>
 #include <TT/TranslationTable.h>
-
+#include <system/CalibrationHandler.h>
+#include <DAQ/DAQCalibrationHandler.h>
 class fa250Mode1CalibHit;
 class fa250Mode7Hit;
 
@@ -28,7 +29,9 @@ class ExtVetofa250Converter:public fa250Converter<ExtVetoPMTHit>{
 		jerror_t convertMode1Hit(ExtVetoPMTHit* output,const fa250Mode1CalibHit *input) const;
 		jerror_t convertMode7Hit(ExtVetoPMTHit* output,const fa250Mode7Hit *input) const;
 
-		
+		CalibrationHandler<TranslationTable::EXT_VETO_Index_t> *threshold;
+		DAQCalibrationHandler *m_pedestals;
+	//	vector<vector < double> > m_rawpedestal;
 };
 
 #endif // _ExtVetofa250Converter_
