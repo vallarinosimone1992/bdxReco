@@ -11,6 +11,7 @@
 #include <JANA/JFactory.h>
 #include "Paddlesfa250Converter.h"
 
+
 class Paddlesfa250Converter_factory:public jana::JFactory<Paddlesfa250Converter>{
 	public:
 		Paddlesfa250Converter_factory():m_isFirstCallToBrun(1),m_Paddlesfa250Converter(0){};
@@ -26,6 +27,7 @@ class Paddlesfa250Converter_factory:public jana::JFactory<Paddlesfa250Converter>
 
 		int m_isFirstCallToBrun;
 		Paddlesfa250Converter *m_Paddlesfa250Converter;
+
 };
 
 #endif // _Paddlesfa250Converter_factory_

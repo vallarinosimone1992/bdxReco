@@ -12,7 +12,6 @@ using namespace std;
 
 #include <Paddles/Paddlesfa250Converter_factory.h>
 #include <system/CalibrationHandler.h>
-
 using namespace jana;
 
 //------------------
@@ -38,12 +37,25 @@ jerror_t Paddlesfa250Converter_factory::brun(jana::JEventLoop *eventLoop, int32_
 				eventLoop->GetCalib("/Paddles/Threshold", m_rawthreshold);
 				m_Paddlesfa250Converter->threshold->fillCalib(m_rawthreshold);
 
-				/***** Reading Pedestals from CCDB *******/
-				m_Paddlesfa250Converter->pedestal_init=new CalibrationHandler<TranslationTable::PADDLES_Index_t>;
-				vector<vector < double> > m_rawpedestal_init;
-				eventLoop->GetCalib("/Paddles/Pedestal", m_rawpedestal_init);
-				m_Paddlesfa250Converter->pedestal_init->fillCalib(m_rawpedestal_init);
 
+//				/***** Reading Pedestals from CCDB *******/
+//				m_Paddlesfa250Converter->pedestal_init=new CalibrationHandler<TranslationTable::PADDLES_Index_t>;
+//				vector<vector < double> > m_rawpedestal_init;
+//				eventLoop->GetCalib("/Paddles/Pedestal", m_rawpedestal_init);
+//				m_Paddlesfa250Converter->pedestal_init->fillCalib(m_rawpedestal_init);
+
+				/***** Reading Pedestals from CCDB - DAQ database *******/
+				m_Paddlesfa250Converter->m_pedestals=new DAQCalibrationHandler();
+				eventLoop->GetCalib("/DAQ/pedestals",m_Paddlesfa250Converter->m_rawpedestal);
+				m_Paddlesfa250Converter->m_pedestals->fillCalib(m_Paddlesfa250Converter->m_rawpedestal);
+
+/*
+				for (int u = 0; u < m_Paddlesfa250Converter->m_rawpedestal.size(); u++) {
+					for (int  v = 0; v < m_Paddlesfa250Converter->m_rawpedestal[u].size(); v++) {
+						cout << u<< " "<<v<<" "<<m_Paddlesfa250Converter->m_rawpedestal[u][v] << " "<<cout << endl;
+					}
+				}
+*/
 			_data.push_back(m_Paddlesfa250Converter);
 			SetFactoryFlag(PERSISTANT);
 	}

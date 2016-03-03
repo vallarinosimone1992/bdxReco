@@ -3,9 +3,6 @@
 #include <DAQ/fa250Mode7Hit.h>
 
 #include <Paddles/Paddlesfa250Converter.h>
-#include <system/CalibrationHandler.h>
-
-
 #include <math.h>
 
 
@@ -28,16 +25,17 @@ PaddlesPMTHit* Paddlesfa250Converter::convertHit(const fa250Hit *hit,const Trans
 
 jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa250Mode1CalibHit *input, const TranslationTable::ChannelInfo &m_channel) const{
 
-
 	double Thr;
 	Thr=threshold->getCalibSingle(output->m_channel.paddles);
 
-	vector<double> m_pedestal_init;
-	m_pedestal_init=pedestal_init->getCalib(output->m_channel.paddles);
+//	vector<double> m_pedestal_init;
+//	m_pedestal_init=pedestal_init->getCalib(output->m_channel.paddles);
+//	static double Ped_prev_id0=m_pedestal_init.at(0);
+//	static double Ped_prev_id1=m_pedestal_init.at(1);
 
 	int Nsamples=30;
-	static double Ped_prev_id0=m_pedestal_init.at(0);
-	static double Ped_prev_id1=m_pedestal_init.at(1);
+	static double Ped_prev_id0=m_rawpedestal.at(144).at(3);
+	static double Ped_prev_id1=m_rawpedestal.at(145).at(3);
 
 	double Ped=0;
 	double Q=0;					// nC
@@ -60,6 +58,12 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 
 //   *********** Timing *******************
 	for (int ii=0;ii<size;ii++){
+
+		if(input->samples.at(ii)>Thr&&ii==0){
+			T_index=ii;
+			T=0;
+			break;
+		}
 			if(input->samples.at(ii)>Thr&&ii>0) {
 				Tinf=(ii-1)*4;
 				Tsup=ii*4;
@@ -71,7 +75,6 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 			    break;
 				}
 	}
-
 			if (T_index<0)	// no signal
 						{
 							output->Q=0;
@@ -79,8 +82,8 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 							return NOERROR;
 						}
 
-			T=(((Tsup-Tinf)/(Amp2-Amp1))*(Thr-Amp1))+Tinf;		// linear extrapolation
-//			jout<<"T_interp= "<<T<<std::endl;
+			if(T_index>0)T=(((Tsup-Tinf)/(Amp2-Amp1))*(Thr-Amp1))+Tinf;		// linear interpolation
+	//		jout<<"T_interp= "<<T<<std::endl;
 
 	/***************************************/
 
@@ -110,13 +113,13 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 					inf_index=ii-3;			// integrate from 12 nsec before ...
 					sup_index=ii+3;			// .... to 12 nsec after the maximum
 					if (inf_index<0)inf_index=0;
-					if (sup_index>size)sup_index=size;
+					if (sup_index>size-1)sup_index=size-1;
 										}
 									}
-//				jout<<"Max= "<<max<<" max_index= "<<max_index<<" inf_index= "<<inf_index<<" sup_index= "<<sup_index<<std::endl;
+	//			jout<<"Max= "<<max<<" max_index= "<<max_index<<" inf_index= "<<inf_index<<" sup_index= "<<sup_index<<std::endl;
 				Q=0;		// reset Q for new calculation
 				for (int ii=inf_index;ii<sup_index+1;ii++)Q+=(input->samples.at(ii)-Ped);
-//				jout<<"Q_after= "<<Q<<std::endl;
+ //    			jout<<"Q_after= "<<Q<<std::endl;
 		}
 
 		Q=2*Q*(0.001*4)/50 ;        // from Wb to nCoulomb , 4 [nsec], 50 [Ohm], Q [Volts], 2 splitter

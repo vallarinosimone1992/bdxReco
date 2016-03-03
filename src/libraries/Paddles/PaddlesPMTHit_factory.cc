@@ -78,12 +78,10 @@ jerror_t PaddlesPMTHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnum
 jerror_t PaddlesPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 	TranslationTable::ChannelInfo m_channel;
-	//	TranslationTable::csc_t		  m_csc;
+//	TranslationTable::csc_t		  m_csc;
 	double		 				  m_q_calib;
 
 	PaddlesPMTHit *m_PaddlesPMTHit=0;
-
-
 
 	//1: Here, we get from the framework the objects we need to process
 	//1a: create vectors
@@ -109,6 +107,7 @@ jerror_t PaddlesPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	for (it_fa250Mode1CalibHit=m_fa250Mode1CalibHit.begin();it_fa250Mode1CalibHit!=m_fa250Mode1CalibHit.end();it_fa250Mode1CalibHit++){
 		m_channel=m_tt->getChannelInfo((*it_fa250Mode1CalibHit)->m_channel);
+
 
 		if (m_channel.det_sys==TranslationTable::PADDLES){
 			m_PaddlesPMTHit=m_Paddlesfa250Converter->convertHit((fa250Hit*)*it_fa250Mode1CalibHit,m_channel);
