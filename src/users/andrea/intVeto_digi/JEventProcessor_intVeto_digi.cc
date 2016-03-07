@@ -153,8 +153,8 @@ jerror_t JEventProcessor_intVeto_digi::evnt(JEventLoop *loop, uint64_t eventnumb
 		m_component=(*data_it)->m_channel.component;
 		m_readout=(*data_it)->m_channel.readout;
 
-		T=(*data_it)->T;
-		Q=(*data_it)->Q;
+	//	T=(*data_it)->T;
+	//	Q=(*data_it)->Q;
 		eventNumber=eventnumber;
 		(*data_it)->Get(associated_data,"",1);
 		if (m_component<=3){

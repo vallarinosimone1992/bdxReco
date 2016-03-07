@@ -14,7 +14,8 @@ using namespace std;
 
 //MC
 #include "GenParticle.h"
-
+#include "CalorimeterMCHit.h"
+#include "IntVetoMCHit.h"
 //GEMC stuff to read simulation
 #include <MC/options.h>
 #include <gbank.h>
@@ -78,22 +79,19 @@ jerror_t JEventSourceEvioMC::GetEvent(JEvent &event)
 	if(chan->read())
 	{
 		EDT=new evioDOMTree(chan);
-
-		Mevent *this_evt = new Mevent(*EDT, hitTypes, &banksMap, 0);
-
-		reference *the_reference=new reference;
+		evt = new Mevent(*EDT, hitTypes, &banksMap, 0);
+		MCEVIOreference *the_reference=new MCEVIOreference;
 		the_reference->EDT=EDT;
-		the_reference->event=this_evt;
+		the_reference->event=evt;
 		event.SetJEventSource(this);
 		event.SetRef(the_reference);
 
-		event.SetEventNumber(this_evt->headerBank["evn"]);
+		event.SetEventNumber(evt->headerBank["evn"]);
 		//read here the run number from MC
-		curRunNumber=this_evt->headerBank["runNo"];
+		curRunNumber=evt->headerBank["runNo"];
 		if (overwriteRunNumber!=-1) event.SetRunNumber(overwriteRunNumber);
 		else event.SetRunNumber(curRunNumber);
 
-		delete this_evt;
 
 		return NOERROR;
 	}
@@ -106,8 +104,13 @@ jerror_t JEventSourceEvioMC::GetEvent(JEvent &event)
 // FreeEvent
 void JEventSourceEvioMC::FreeEvent(JEvent &event)
 {
-	delete (evioDOMTree*)event.GetRef();
-	//	delete (Mevent*)event.GetRef();
+	MCEVIOreference *ref=(MCEVIOreference *)event.GetRef();
+	if (ref!=0){
+		if (ref->event) delete ref->event;
+		if (ref->EDT) delete ref->EDT;
+		delete ref;
+	}
+
 }
 
 // GetObjects
@@ -126,7 +129,7 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory)
 	// Get name of data class we're trying to extract
 	string dataClassName = factory->GetDataClassName();
 
-	reference   *the_reference = (reference*)event.GetRef();
+	MCEVIOreference   *the_reference = (MCEVIOreference*)event.GetRef();
 	evioDOMTree *this_edt = the_reference->EDT;
 	Mevent 		*this_event = the_reference->event;
 
@@ -152,15 +155,116 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory)
 		}
 
 	}
-	else if (dataClassName == "CalorimeterDigiHitMC"){
+	else if (dataClassName == "CalorimeterMCHit"){
+		// getting EVIO bank
+		vector<hitOutput> bankDgt = this_event->dgtBanks["crs"];
+		vector<hitOutput> bankRaw = this_event->rawBanks["crs"];
+
+		/*	map<string,double> dgt;
+		map<string,double>::iterator dgt_it;
+		if (bankDgt.size()==0) return NOERROR;
+		if (bankRaw.size()==0) return NOERROR;
+		for(unsigned int ih=0; ih<bankDgt.size(); ih++){
+
+			dgt=bankDgt[ih].getDgtz();
+			jout<<"has "<<dgt.size()<<endl;
+			for (dgt_it=dgt.begin();dgt_it!=dgt.end();dgt_it++){
+				jout<<"Dgt :"<<ih<<" "<<dgt_it->first<<" "<<dgt_it->second<<endl;
+			}
+		}
+		for(unsigned int ih=0; ih<bankRaw.size(); ih++){
+			dgt=bankRaw[ih].getRaws();
+			jout<<"has "<<dgt.size()<<endl;
+			for (dgt_it=dgt.begin();dgt_it!=dgt.end();dgt_it++){
+				jout<<"Raw :"<<ih<<" "<<dgt_it->first<<" "<<dgt_it->second<<endl;
+			}
+		}
+		 */
+
+		if (bankDgt.size()!=bankRaw.size()){
+			jerr<<"Calorimeter MC banks raw and dgtz different size"<<endl;
+			return VALUE_OUT_OF_RANGE;
+		}
+		vector<CalorimeterMCHit*> caloMChits;
+		for(unsigned int ih=0; ih<bankDgt.size(); ih++)
+		{
+
+			CalorimeterMCHit *hit = new CalorimeterMCHit;
+
+			hit->sector=bankDgt[ih].getIntDgtVar("sector");
+			hit->x=bankDgt[ih].getIntDgtVar("x");
+			hit->y=bankDgt[ih].getIntDgtVar("y");
+
+			/*raw banks*/
+			hit->totEdep=bankRaw[ih].getIntRawVar("totEdep");
+
+			/*dgtz banks*/
+			hit->adcl=bankDgt[ih].getIntDgtVar("adcl");
+			hit->adcr=bankDgt[ih].getIntDgtVar("adcr");
+			hit->tdcl=bankDgt[ih].getIntDgtVar("tdcl");
+			hit->tdcr=bankDgt[ih].getIntDgtVar("tdcr");
+			hit->adcb=bankDgt[ih].getIntDgtVar("adcb");
+			hit->adcf=bankDgt[ih].getIntDgtVar("adcf");
+			hit->tdcb=bankDgt[ih].getIntDgtVar("tdcb");
+			hit->tdcf=bankDgt[ih].getIntDgtVar("tdcf");
 
 
+			//check hitN for now
+			if (bankDgt[ih].getIntDgtVar("hitn")!=bankDgt[ih].getIntRawVar("hitn")){
+				jerr<<"CalorimeterMCHit read from evio: something wrong with hitn "<<endl;
+			}
 
+			caloMChits.push_back(hit);
+		}
 
+		// publish the hit
+		JFactory<CalorimeterMCHit> *fac = dynamic_cast<JFactory<CalorimeterMCHit>*>(factory);
+		fac->CopyTo(caloMChits);
 		return NOERROR;
 	}
 
+	else if (dataClassName == "IntVetoMCHit"){
+		// getting EVIO bank
+		vector<hitOutput> bankDgt = this_event->dgtBanks["veto"];
+		vector<hitOutput> bankRaw = this_event->rawBanks["veto"];
 
+		if (bankDgt.size()!=bankRaw.size()){
+			jerr<<"Veto MC banks raw and dgtz different size"<<endl;
+			jerr<<"At this level the check is only on the veto overall"<<endl;
+			return VALUE_OUT_OF_RANGE;
+		}
+		vector<IntVetoMCHit*> intVetoMChits;
+		for(unsigned int ih=0; ih<bankDgt.size(); ih++)
+		{
+			if (bankDgt[ih].getIntDgtVar("veto")!=1) continue;  //since Marco used the same bank for all the vetos.. blah~!!
+
+
+			IntVetoMCHit *hit = new IntVetoMCHit;
+
+			hit->sector=bankDgt[ih].getIntDgtVar("sector");
+			hit->channel=bankDgt[ih].getIntDgtVar("channel");
+
+			/*raw banks*/
+			hit->totEdep=bankRaw[ih].getIntRawVar("totEdep");
+
+			/*dgtz banks*/
+			hit->adc1=bankDgt[ih].getIntDgtVar("adc1");
+			hit->adc2=bankDgt[ih].getIntDgtVar("adc2");
+			hit->adc3=bankDgt[ih].getIntDgtVar("adc3");
+			hit->adc4=bankDgt[ih].getIntDgtVar("adc4");
+			hit->tdc1=bankDgt[ih].getIntDgtVar("tdc1");
+			hit->tdc2=bankDgt[ih].getIntDgtVar("tdc2");
+			hit->tdc3=bankDgt[ih].getIntDgtVar("tdc3");
+			hit->tdc4=bankDgt[ih].getIntDgtVar("tdc4");
+
+			intVetoMChits.push_back(hit);
+		}
+		// publish the hit
+		JFactory<IntVetoMCHit> *fac = dynamic_cast<JFactory<IntVetoMCHit>*>(factory);
+		fac->CopyTo(intVetoMChits);
+		return NOERROR;
+
+	}
 
 
 	// Just return. The _data vector should already be reset to have zero objects

@@ -13,7 +13,8 @@
 #include <JANA/JFactory.h>
 
 #include "GenParticle.h"
-#include "CalorimeterDigiHitMC.h"
+#include "CalorimeterMCHit.h"
+#include "IntVetoMCHit.h"
 
 class JFactoryGenerator_MC: public jana::JFactoryGenerator{
 	public:
@@ -25,8 +26,8 @@ class JFactoryGenerator_MC: public jana::JFactoryGenerator{
 		jerror_t GenerateFactories(jana::JEventLoop *loop){
 			loop->AddFactory(new JFactory<GenParticle> ());
 			//calo
-			loop->AddFactory(new JFactory<CalorimeterDigiHitMC> ());
-
+			loop->AddFactory(new JFactory<CalorimeterMCHit> ());
+			loop->AddFactory(new JFactory<IntVetoMCHit> ());
 			return NOERROR;
 		}
 

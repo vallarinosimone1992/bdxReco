@@ -21,6 +21,14 @@
 
 class IntVetoDigiHit:public jana::JObject{
 public:
+	struct IntVetoSiPMDigiHit{
+			int readout;
+			double Q;
+			double T;
+		};
+
+
+
 	JOBJECT_PUBLIC(IntVetoDigiHit);
 
 	// Add data members here. For example:
@@ -35,8 +43,8 @@ public:
 	}
 	//A.C. do not touch these
 	TranslationTable::INT_VETO_Index_t m_channel; //both crate-slot channel and detector-specific ID. Since this is a detector-based object, the readout field will be ==0
+	vector <IntVetoSiPMDigiHit> m_data; //keep in this way to be MC-compatible!
 
-	double Q,T;
 
 
 };

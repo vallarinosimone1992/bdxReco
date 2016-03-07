@@ -13,6 +13,7 @@
 
 #include "CalorimeterSiPMHit_factory.h"
 #include "CalorimeterDigiHit_factory.h"
+#include "CalorimeterDigiHit_factory_MC.h"
 #include "CalorimeterHit_factory.h"
 #include "Calorimeterfa250Converter_factory.h"
 
@@ -33,6 +34,7 @@ class JFactoryGenerator_Calorimeter: public jana::JFactoryGenerator{
 			loop->AddFactory(new CalorimeterSiPMHit_factory());
 			loop->AddFactory(new Calorimeterfa250Converter_factory());
 			loop->AddFactory(new CalorimeterDigiHit_factory());
+			loop->AddFactory(new CalorimeterDigiHit_factory_MC());
 			loop->AddFactory(new CalorimeterHit_factory());
 
 			return NOERROR;

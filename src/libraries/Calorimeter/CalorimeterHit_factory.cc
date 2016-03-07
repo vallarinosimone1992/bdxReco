@@ -69,7 +69,7 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		if ((*it)->m_data.size()>2){
 			jerr<<"CalormeterHit_factory::evnt error, a CalorimeterDigiHit has more than 2 entries in the data vector??"<<endl;
 		}
-		for (digi_it=(*it)->m_data.begin();digi_it!=(*it)->m_data.end();it++){
+		for (digi_it=(*it)->m_data.begin();digi_it!=(*it)->m_data.end();digi_it++){
 			if ((*digi_it).readout==1){
 				m_CalorimeterHit->Q1=(*digi_it).Q;
 				m_CalorimeterHit->T1=(*digi_it).T;

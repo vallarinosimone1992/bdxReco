@@ -42,7 +42,7 @@ class JEventSourceEvioMC:public JEventSource
 
 		map<string, gBank> banksMap;
 
-		typedef struct reference{
+		typedef struct MCEVIOreference{
 			evioDOMTree *EDT;
 			Mevent		*event;
 		};
@@ -50,7 +50,7 @@ class JEventSourceEvioMC:public JEventSource
 	private:
 		evioFileChannel *chan;   // EVIO input channel
 		evioDOMTree *EDT;        // single-event evio-DOM-tree
-		Mevent		*event;
+		Mevent		*evt;
 
 		int curRunNumber,curEventNumber;
 		int overwriteRunNumber;

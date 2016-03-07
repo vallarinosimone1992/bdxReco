@@ -89,7 +89,6 @@ jerror_t CalorimeterDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 	 */
 	vector <const CalorimeterSiPMHit*> m_CalorimeterSiPMHit_tmp;
 	CalorimeterDigiHit* m_CalorimeterDigiHit_tmp;
-	double Qmax=-99999;
 	for (m_map_it=m_map.begin();m_map_it!=m_map.end();m_map_it++){
 		//create here the hit!
 		m_CalorimeterDigiHit_tmp=m_map_it->second;
