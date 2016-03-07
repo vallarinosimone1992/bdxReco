@@ -10,6 +10,8 @@
 
 #include <JANA/JFactory.h>
 #include "CalorimeterHit.h"
+class TranslationTable;
+
 
 class CalorimeterHit_factory:public jana::JFactory<CalorimeterHit>{
 	public:
@@ -23,6 +25,9 @@ class CalorimeterHit_factory:public jana::JFactory<CalorimeterHit>{
 		jerror_t evnt(jana::JEventLoop *eventLoop, uint64_t eventnumber);	///< Called every event.
 		jerror_t erun(void);						///< Called everytime run number changes, provided brun has been called.
 		jerror_t fini(void);						///< Called after last event of last event source has been processed.
+
+
+		const TranslationTable *m_tt;
 };
 
 #endif // _CalorimeterHit_factory_

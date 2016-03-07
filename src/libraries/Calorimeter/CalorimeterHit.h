@@ -10,6 +10,8 @@
 
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
+#include <TT/TranslationTable.h>
+
 
 class CalorimeterHit:public jana::JObject{
 	public:
@@ -25,7 +27,11 @@ class CalorimeterHit:public jana::JObject{
 			// AddString(items, "id", "%4d", id);
 			// AddString(items, "E", "%f", E);
 		}
-		
+		double E1,E2,E;
+		double T1,T2,T;
+		double Q1,Q2,Q;   //I assume here at max 2 detectors per crystal..
+
+		TranslationTable::CALO_Index_t m_channel; //Detector-specific ID. Since this is a detector-based object, the readout field will be ==0
 };
 
 #endif // _CalorimeterHit_

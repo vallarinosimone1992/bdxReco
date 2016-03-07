@@ -10,6 +10,7 @@
 
 #include <JANA/JFactory.h>
 #include "CalorimeterDigiHit.h"
+class TranslationTable;
 
 class CalorimeterDigiHit_factory:public jana::JFactory<CalorimeterDigiHit>{
 public:
