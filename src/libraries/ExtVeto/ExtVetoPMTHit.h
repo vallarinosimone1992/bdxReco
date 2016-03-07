@@ -36,6 +36,7 @@ public: //yes, these are public to keep this simple.
 		oid_t fa250Hit_id; //jana id for the fadc corresponding hit
 
 	double Q,T;
+	//double pedestal;
 };
 
 #endif //

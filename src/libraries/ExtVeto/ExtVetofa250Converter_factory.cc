@@ -46,7 +46,10 @@ jerror_t ExtVetofa250Converter_factory::brun(jana::JEventLoop *eventLoop, int32_
 		vector<vector < double> > m_rawpedestal;
 		eventLoop->GetCalib("/DAQ/pedestals", m_rawpedestal);
 		m_extVetofa250Converter->m_pedestals->fillCalib(m_rawpedestal);
-/*
+
+
+
+		/*
 		for (int u = 0; u<m_rawpedestal.size(); u++) {
 							for (int  v = 0; v < m_rawpedestal[u].size(); v++) {
 								cout << u<< " "<<v<<" "<<m_rawpedestal[u][v] << endl;

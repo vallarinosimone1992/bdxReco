@@ -80,7 +80,7 @@ jerror_t ExtVeto_ChargeDisplay::init(void)
 	t->Branch("component",&component);
     t->Branch("Q",&Q);
  //   t->Branch("phe",&phe);
- //   t->Branch("pedestal",&pedestal);
+    t->Branch("pedestal",&pedestal);
 	t->Branch("T",&T);
 	t->Branch("eventN",&eventN);
 	t->Branch("Tw",&Tw);
@@ -209,7 +209,7 @@ jerror_t ExtVeto_ChargeDisplay::evnt(JEventLoop *loop,uint64_t eventnumber)
 			eventN=eventnumber;
 			component=evhit->m_channel.ext_veto.component;
 	   	    Q=(*data_it)->Q;
-		//	pedestal=(*data_it)->pedestal;
+	//		pedestal=(*data_it)->pedestal;
 			Tw=tData->triggerWords.at(0);
 			T = (*data_it)->T;
 
