@@ -26,6 +26,7 @@ using namespace jana;
 //------------------
 jerror_t CalorimeterHit_factory::init(void)
 {
+	gPARMS->GetParameter("MC", isMC);
 	return NOERROR;
 }
 
@@ -58,7 +59,14 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	double Q,T;
 
 	//1b: retrieve CalorimeterSiPMHit objects
-	loop->Get(m_CalorimeterDigiHit);
+
+	/*This is very important!! Select - or not - the MC case*/
+	if (isMC){
+		loop->Get(m_CalorimeterDigiHit,"MC");
+	}
+	else{
+		loop->Get(m_CalorimeterDigiHit);
+	}
 
 	for (it=m_CalorimeterDigiHit.begin();it!=m_CalorimeterDigiHit.end();it++){
 		m_CalorimeterHit=new CalorimeterHit();

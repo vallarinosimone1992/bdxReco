@@ -1,24 +1,23 @@
 // $Id$
 //
-//    File: ExtVetoHit_factory.h
-// Created: Wed Jan 13 21:06:44 CET 2016
-// Creator: celentan (on Linux localhost.localdomain 2.6.32-504.30.3.el6.x86_64 x86_64)
+//    File: ExtVetoDigiHit_factory_MC.h
+// Created: Tue Mar  8 12:19:00 CET 2016
+// Creator: celentan (on Linux apcx4 2.6.32-504.30.3.el6.x86_64 x86_64)
 //
 
-#ifndef _ExtVetoHit_factory_
-#define _ExtVetoHit_factory_
+#ifndef _ExtVetoDigiHit_factory_MC_
+#define _ExtVetoDigiHit_factory_MC_
 
 #include <JANA/JFactory.h>
-#include "ExtVetoHit.h"
+#include "ExtVetoDigiHit.h"
 
-class ExtVetoHit_factory:public jana::JFactory<ExtVetoHit>{
+class ExtVetoDigiHit_factory_MC:public jana::JFactory<ExtVetoDigiHit>{
 	public:
-		ExtVetoHit_factory(){isMC=0;};
-		~ExtVetoHit_factory(){};
-
+		ExtVetoDigiHit_factory_MC(){};
+		~ExtVetoDigiHit_factory_MC(){};
+		const char* Tag(void){return "MC";}
 
 	private:
-		int isMC;
 		jerror_t init(void);						///< Called once at program start.
 		jerror_t brun(jana::JEventLoop *eventLoop, int32_t runnumber);	///< Called everytime a new run number is detected.
 		jerror_t evnt(jana::JEventLoop *eventLoop, uint64_t eventnumber);	///< Called every event.
@@ -26,5 +25,5 @@ class ExtVetoHit_factory:public jana::JFactory<ExtVetoHit>{
 		jerror_t fini(void);						///< Called after last event of last event source has been processed.
 };
 
-#endif // _ExtVetoHit_factory_
+#endif // _ExtVetoDigiHit_factory_MC_
 

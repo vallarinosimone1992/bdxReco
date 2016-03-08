@@ -15,7 +15,7 @@ class TranslationTable;
 
 class CalorimeterHit_factory:public jana::JFactory<CalorimeterHit>{
 	public:
-		CalorimeterHit_factory(){};
+		CalorimeterHit_factory(){isMC=0;};
 		~CalorimeterHit_factory(){};
 
 
@@ -26,7 +26,7 @@ class CalorimeterHit_factory:public jana::JFactory<CalorimeterHit>{
 		jerror_t erun(void);						///< Called everytime run number changes, provided brun has been called.
 		jerror_t fini(void);						///< Called after last event of last event source has been processed.
 
-
+		int isMC;
 		const TranslationTable *m_tt;
 };
 

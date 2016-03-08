@@ -22,6 +22,7 @@ using namespace jana;
 //------------------
 jerror_t PaddlesHit_factory::init(void)
 {
+	gPARMS->GetParameter("MC",isMC);
 	return NOERROR;
 }
 
@@ -56,8 +57,12 @@ jerror_t PaddlesHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	vector <const PaddlesDigiHit *> m_data;
 	vector <const PaddlesDigiHit *>::const_iterator m_it;
 
-
-	loop->Get(m_data);
+	if (isMC){
+		loop->Get(m_data,"MC");
+	}
+	else{
+		loop->Get(m_data);
+	}
 	double m_Ene;
 
 	/*Create here the Hit from the Digi hit*/

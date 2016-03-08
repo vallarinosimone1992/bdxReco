@@ -14,7 +14,7 @@
 
 class PaddlesHit_factory:public jana::JFactory<PaddlesHit>{
 	public:
-		PaddlesHit_factory(){};
+		PaddlesHit_factory(){isMC=0;};
 		~PaddlesHit_factory(){};
 
 
@@ -26,7 +26,7 @@ class PaddlesHit_factory:public jana::JFactory<PaddlesHit>{
 		jerror_t fini(void);						///< Called after last event of last event source has been processed.
 
 		const TranslationTable *m_tt;
-
+		int isMC;
 		CalibrationHandler<TranslationTable::PADDLES_Index_t> m_ENE_gain;
 
 };

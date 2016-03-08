@@ -10,6 +10,9 @@
 #include <iomanip>
 using namespace std;
 
+#include "ExtVetoDigiHit.h"
+#include "ExtVetoHit.h"
+
 #include "ExtVetoHit_factory.h"
 using namespace jana;
 
@@ -26,6 +29,7 @@ jerror_t ExtVetoHit_factory::init(void)
 //------------------
 jerror_t ExtVetoHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber)
 {
+	gPARMS->GetParameter("MC",isMC);
 	return NOERROR;
 }
 
@@ -45,6 +49,38 @@ jerror_t ExtVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	//
 	// Note that the objects you create here will be deleted later
 	// by the system and the _data vector will be cleared automatically.
+
+
+	//1: Here, we get from the framework the objects we need to process
+	//1a: create vectors
+	vector <const ExtVetoDigiHit*> m_ExtVetoDigiHit;
+	vector <const ExtVetoDigiHit*>::const_iterator it;
+
+	ExtVetoHit *m_ExtVetoHit=0;
+
+	int readout;
+	double Q,T;
+
+	//1b: retrieve ExtVetoDigiHit objects
+
+	/*This is very important!! Select - or not - the MC case*/
+	if (isMC){
+		loop->Get(m_ExtVetoDigiHit,"MC");
+	}
+	else{
+		loop->Get(m_ExtVetoDigiHit);
+	}
+
+	for (it=m_ExtVetoDigiHit.begin();it!=m_ExtVetoDigiHit.end();it++){
+		m_ExtVetoHit=new ExtVetoHit();
+		m_ExtVetoHit->m_channel = (*it)->m_channel;
+
+		//Do whatever you need here
+
+		_data.push_back(m_ExtVetoHit);
+	}
+
+
 
 	return NOERROR;
 }

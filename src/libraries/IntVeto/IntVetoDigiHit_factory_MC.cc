@@ -73,37 +73,112 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 		m_IntVetoDigiHit->m_channel.layer=0;
 		m_IntVetoDigiHit->m_channel.readout=0;  //this is an active-volume object
 
+		/*Here comes the annoying routine that, given the geometry Marco used in the MC, in particular the indexing scheme,
+		 * returns it to the scheme I am using in the reconstruction. This was chacked by Andrea and Luca*/
+
 		switch (m_IntVetoMCHit->channel){
 		case(1): //top
-				break;
-		case(2): //bottom
-				break;
-		case(3): //upstream
-				break;
-		case(4): //downstream
-				break;
-		case(5): //right
-				break;
-		case(6): //left
-				break;
-		default:
-			break;
-		}
-
-
-
-
-
-/*
-		digi_hit.readout=1;  ///TODO: ask Marco
+		m_IntVetoDigiHit->m_channel.component=0;
+		//Now add the 4 sipm hits
+		digi_hit.readout=1;
 		digi_hit.Q=m_IntVetoMCHit->adc1;
 		digi_hit.T=m_IntVetoMCHit->tdc1;
 		m_IntVetoDigiHit->m_data.push_back(digi_hit);
-*/
+		digi_hit.readout=2;
+		digi_hit.Q=m_IntVetoMCHit->adc2;
+		digi_hit.T=m_IntVetoMCHit->tdc2;
+		m_IntVetoDigiHit->m_data.push_back(digi_hit);
+		digi_hit.readout=3;
+		digi_hit.Q=m_IntVetoMCHit->adc3;
+		digi_hit.T=m_IntVetoMCHit->tdc3;
+		m_IntVetoDigiHit->m_data.push_back(digi_hit);
+		digi_hit.readout=4;
+		digi_hit.Q=m_IntVetoMCHit->adc4;
+		digi_hit.T=m_IntVetoMCHit->tdc4;
+		m_IntVetoDigiHit->m_data.push_back(digi_hit);
+		break;
+
+		case(2): //bottom     ///TODO: this has to be checked
+		m_IntVetoDigiHit->m_channel.component=3;
+		digi_hit.readout=1;
+		digi_hit.Q=m_IntVetoMCHit->adc1;
+		digi_hit.T=m_IntVetoMCHit->tdc1;
+		m_IntVetoDigiHit->m_data.push_back(digi_hit);
+		digi_hit.readout=2;
+		digi_hit.Q=m_IntVetoMCHit->adc2;
+		digi_hit.T=m_IntVetoMCHit->tdc2;
+		m_IntVetoDigiHit->m_data.push_back(digi_hit);
+		digi_hit.readout=3;
+		digi_hit.Q=m_IntVetoMCHit->adc3;
+		digi_hit.T=m_IntVetoMCHit->tdc3;
+		m_IntVetoDigiHit->m_data.push_back(digi_hit);
+		digi_hit.readout=4;
+		digi_hit.Q=m_IntVetoMCHit->adc4;
+		digi_hit.T=m_IntVetoMCHit->tdc4;
+		m_IntVetoDigiHit->m_data.push_back(digi_hit);
+		break;
 
 
+		case(3): //upstream
+		m_IntVetoDigiHit->m_channel.component=4;
+		digi_hit.readout=1;
+		digi_hit.Q=m_IntVetoMCHit->adc1;
+		digi_hit.T=m_IntVetoMCHit->tdc1;
+		m_IntVetoDigiHit->m_data.push_back(digi_hit);
+		break;
 
 
+		case(4): //downstream
+		m_IntVetoDigiHit->m_channel.component=5;
+		digi_hit.readout=1;
+		digi_hit.Q=m_IntVetoMCHit->adc1;
+		digi_hit.T=m_IntVetoMCHit->tdc1;
+		m_IntVetoDigiHit->m_data.push_back(digi_hit);
+		break;
+
+		case(5): //right
+		m_IntVetoDigiHit->m_channel.component=2;
+		digi_hit.readout=1;
+		digi_hit.Q=m_IntVetoMCHit->adc1;
+		digi_hit.T=m_IntVetoMCHit->tdc1;
+		m_IntVetoDigiHit->m_data.push_back(digi_hit);
+		digi_hit.readout=2;
+		digi_hit.Q=m_IntVetoMCHit->adc2;
+		digi_hit.T=m_IntVetoMCHit->tdc2;
+		m_IntVetoDigiHit->m_data.push_back(digi_hit);
+		digi_hit.readout=3;
+		digi_hit.Q=m_IntVetoMCHit->adc3;
+		digi_hit.T=m_IntVetoMCHit->tdc3;
+		m_IntVetoDigiHit->m_data.push_back(digi_hit);
+		digi_hit.readout=4;
+		digi_hit.Q=m_IntVetoMCHit->adc4;
+		digi_hit.T=m_IntVetoMCHit->tdc4;
+		m_IntVetoDigiHit->m_data.push_back(digi_hit);
+		break;
+
+		case(6): //left
+		m_IntVetoDigiHit->m_channel.component=1;
+		digi_hit.readout=1;
+		digi_hit.Q=m_IntVetoMCHit->adc1;
+		digi_hit.T=m_IntVetoMCHit->tdc1;
+		m_IntVetoDigiHit->m_data.push_back(digi_hit);
+		digi_hit.readout=2;
+		digi_hit.Q=m_IntVetoMCHit->adc2;
+		digi_hit.T=m_IntVetoMCHit->tdc2;
+		m_IntVetoDigiHit->m_data.push_back(digi_hit);
+		digi_hit.readout=3;
+		digi_hit.Q=m_IntVetoMCHit->adc3;
+		digi_hit.T=m_IntVetoMCHit->tdc3;
+		m_IntVetoDigiHit->m_data.push_back(digi_hit);
+		digi_hit.readout=4;
+		digi_hit.Q=m_IntVetoMCHit->adc4;
+		digi_hit.T=m_IntVetoMCHit->tdc4;
+		m_IntVetoDigiHit->m_data.push_back(digi_hit);
+		break;
+
+		default:
+			break;
+		}
 		_data.push_back(m_IntVetoDigiHit);
 	}
 

@@ -16,6 +16,8 @@ using namespace std;
 #include "GenParticle.h"
 #include "CalorimeterMCHit.h"
 #include "IntVetoMCHit.h"
+#include "ExtVetoMCHit.h"
+#include "PaddlesMCHit.h"
 //GEMC stuff to read simulation
 #include <MC/options.h>
 #include <gbank.h>
@@ -195,8 +197,6 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory)
 			hit->x=bankDgt[ih].getIntDgtVar("x");
 			hit->y=bankDgt[ih].getIntDgtVar("y");
 
-			/*raw banks*/
-			hit->totEdep=bankRaw[ih].getIntRawVar("totEdep");
 
 			/*dgtz banks*/
 			hit->adcl=bankDgt[ih].getIntDgtVar("adcl");
@@ -209,10 +209,15 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory)
 			hit->tdcf=bankDgt[ih].getIntDgtVar("tdcf");
 
 
-			//check hitN for now
-			if (bankDgt[ih].getIntDgtVar("hitn")!=bankDgt[ih].getIntRawVar("hitn")){
-				jerr<<"CalorimeterMCHit read from evio: something wrong with hitn "<<endl;
+			/*raw banks*/
+			for(unsigned int ir=0; ir<bankRaw.size(); ir++)
+			{
+				if (bankRaw[ir].getIntRawVar("hitn")==bankDgt[ih].getIntDgtVar("hitn")){
+					hit->totEdep=bankRaw[ir].getIntRawVar("totEdep");
+					break;
+				}
 			}
+
 
 			caloMChits.push_back(hit);
 		}
@@ -244,8 +249,6 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory)
 			hit->sector=bankDgt[ih].getIntDgtVar("sector");
 			hit->channel=bankDgt[ih].getIntDgtVar("channel");
 
-			/*raw banks*/
-			hit->totEdep=bankRaw[ih].getIntRawVar("totEdep");
 
 			/*dgtz banks*/
 			hit->adc1=bankDgt[ih].getIntDgtVar("adc1");
@@ -257,6 +260,15 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory)
 			hit->tdc3=bankDgt[ih].getIntDgtVar("tdc3");
 			hit->tdc4=bankDgt[ih].getIntDgtVar("tdc4");
 
+			/*raw banks*/
+			for(unsigned int ir=0; ir<bankRaw.size(); ir++)
+			{
+				if (bankRaw[ir].getIntRawVar("hitn")==bankDgt[ih].getIntDgtVar("hitn")){
+					hit->totEdep=bankRaw[ir].getIntRawVar("totEdep");
+					break;
+				}
+			}
+
 			intVetoMChits.push_back(hit);
 		}
 		// publish the hit
@@ -265,6 +277,95 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory)
 		return NOERROR;
 
 	}
+
+
+	else if (dataClassName == "ExtVetoMCHit"){
+			// getting EVIO bank
+			vector<hitOutput> bankDgt = this_event->dgtBanks["veto"];
+			vector<hitOutput> bankRaw = this_event->rawBanks["veto"];
+
+			if (bankDgt.size()!=bankRaw.size()){
+				jerr<<"Veto MC banks raw and dgtz different size"<<endl;
+				jerr<<"At this level the check is only on the veto overall"<<endl;
+				return VALUE_OUT_OF_RANGE;
+			}
+			vector<ExtVetoMCHit*> extVetoMChits;
+			for(unsigned int ih=0; ih<bankDgt.size(); ih++)
+			{
+				if (bankDgt[ih].getIntDgtVar("veto")!=2) continue;  //since Marco used the same bank for all the vetos.. blah~!!
+
+
+				ExtVetoMCHit *hit = new ExtVetoMCHit;
+
+				hit->sector=bankDgt[ih].getIntDgtVar("sector");
+				hit->channel=bankDgt[ih].getIntDgtVar("channel");
+
+
+				/*dgtz banks*/
+				hit->adc=bankDgt[ih].getIntDgtVar("adc1");
+				hit->tdc=bankDgt[ih].getIntDgtVar("tdc1");
+
+				/*raw banks*/
+				for(unsigned int ir=0; ir<bankRaw.size(); ir++)
+				{
+					if (bankRaw[ir].getIntRawVar("hitn")==bankDgt[ih].getIntDgtVar("hitn")){
+						hit->totEdep=bankRaw[ir].getIntRawVar("totEdep");
+						break;
+					}
+				}
+
+				extVetoMChits.push_back(hit);
+			}
+			// publish the hit
+			JFactory<ExtVetoMCHit> *fac = dynamic_cast<JFactory<ExtVetoMCHit>*>(factory);
+			fac->CopyTo(extVetoMChits);
+			return NOERROR;
+
+		}
+
+	else if (dataClassName == "PaddlesMCHit"){
+				// getting EVIO bank
+				vector<hitOutput> bankDgt = this_event->dgtBanks["veto"];
+				vector<hitOutput> bankRaw = this_event->rawBanks["veto"];
+
+				if (bankDgt.size()!=bankRaw.size()){
+					jerr<<"Veto MC banks raw and dgtz different size"<<endl;
+					jerr<<"At this level the check is only on the veto overall"<<endl;
+					return VALUE_OUT_OF_RANGE;
+				}
+				vector<PaddlesMCHit*> paddlesMChits;
+				for(unsigned int ih=0; ih<bankDgt.size(); ih++)
+				{
+					if (bankDgt[ih].getIntDgtVar("veto")!=3) continue;  //since Marco used the same bank for all the vetos.. blah~!!
+
+
+					PaddlesMCHit *hit = new PaddlesMCHit;
+
+					hit->sector=bankDgt[ih].getIntDgtVar("sector");
+					hit->channel=bankDgt[ih].getIntDgtVar("channel");
+
+
+					/*dgtz banks*/
+					hit->adc=bankDgt[ih].getIntDgtVar("adc1");
+					hit->tdc=bankDgt[ih].getIntDgtVar("tdc1");
+
+					/*raw banks*/
+					for(unsigned int ir=0; ir<bankRaw.size(); ir++)
+					{
+						if (bankRaw[ir].getIntRawVar("hitn")==bankDgt[ih].getIntDgtVar("hitn")){
+							hit->totEdep=bankRaw[ir].getIntRawVar("totEdep");
+							break;
+						}
+					}
+
+					paddlesMChits.push_back(hit);
+				}
+				// publish the hit
+				JFactory<PaddlesMCHit> *fac = dynamic_cast<JFactory<PaddlesMCHit>*>(factory);
+				fac->CopyTo(paddlesMChits);
+				return NOERROR;
+
+			}
 
 
 	// Just return. The _data vector should already be reset to have zero objects
