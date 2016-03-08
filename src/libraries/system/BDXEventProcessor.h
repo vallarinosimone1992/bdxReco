@@ -48,6 +48,7 @@ class BDXEventProcessor:public JEventProcessor
 
 		JOutput		*m_output;
 		const TranslationTable *m_tt;
+		int isMC;
 	//		TFile *outf;
 
 

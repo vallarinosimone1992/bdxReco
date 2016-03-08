@@ -22,7 +22,7 @@ using namespace std;
 
 // Constructor
 BDXEventProcessor::BDXEventProcessor():
-		m_output(0),m_tt(0)
+		m_output(0),m_tt(0),isMC(0)
 {
 	/* Opens output file if specified
 	the string should be of the form
@@ -84,7 +84,7 @@ jerror_t BDXEventProcessor::init(void)
 
 
 
-
+	gPARMS->GetParameter("MC", isMC);
 
 	return NOERROR;
 }
@@ -92,21 +92,15 @@ jerror_t BDXEventProcessor::init(void)
 // brun
 jerror_t BDXEventProcessor::brun(JEventLoop *eventLoop, int32_t runnumber)
 {
-	eventLoop->GetSingle(m_tt);
+	if (isMC==0) {
+		eventLoop->GetSingle(m_tt);
+	}
 	return NOERROR;
 }
 
 // evnt
 jerror_t BDXEventProcessor::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
-	//
-	//	vector<const marcoCluster*> marcoC;
-	//	loop->Get(marcoC);
-
-	//vector<const ctofHitR*> marcoC;
-	//loop->Get(marcoC);
-
-	//	jout<<"Event: "<<eventnumber<<std::endl;
 
 
 	return NOERROR;

@@ -47,29 +47,15 @@ TranslationTable::TranslationTable(JEventLoop *loop){
 	XML_FILENAME = "tt.xml";
 	VERBOSE = 0;
 	SYSTEMS_TO_PARSE = "";
-	gPARMS->SetDefaultParameter("TT:NO_CCDB", NO_CCDB,
-			"Don't try getting translation table from CCDB and just look"
-			" for file. Only useful if you want to force reading tt.xml."
-			" This is automatically set if you specify a different"
-			" filename via the TT:XML_FILENAME parameter.");
-	JParameter *p = gPARMS->SetDefaultParameter("TT:XML_FILENAME", XML_FILENAME,
-			"Fallback filename of translation table XML file."
-			" If set to non-default, CCDB will not be checked.");
-	if (p->GetDefault() != p->GetValue())
+	gPARMS->GetParameter("TT:NO_CCDB", NO_CCDB);
+	JParameter *p = gPARMS->GetParameter("TT:XML_FILENAME", XML_FILENAME);
+	if (p->GetDefault() != p->GetValue()){
 		NO_CCDB = true;
-	gPARMS->SetDefaultParameter("TT:VERBOSE", VERBOSE,
-			"Verbosity level for Applying Translation Table."
-			" 0=no messages, 10=all messages.");
+	}
+	gPARMS->GetParameter("TT:VERBOSE");
+	gPARMS->GetParameter("TT:ROCID_MAP_FILENAME", ROCID_MAP_FILENAME);
 
-	ROCID_MAP_FILENAME = "rocid.map";
-	gPARMS->SetDefaultParameter("TT:ROCID_MAP_FILENAME", ROCID_MAP_FILENAME,
-			"Optional rocid to rocid conversion map for use with files"
-			" generated with the non-standard rocid's");
-
-	gPARMS->SetDefaultParameter("TT:SYSTEMS_TO_PARSE", SYSTEMS_TO_PARSE,
-			"Comma separated list of systems to parse EVIO data for. "
-			"Default is empty string which means to parse all. System "
-			"names should be what is returned by DTranslationTable::DetectorName() .");
+	gPARMS->GetParameter("TT:SYSTEMS_TO_PARSE", SYSTEMS_TO_PARSE);
 
 	// Initialize dedicated JStreamLog used for debugging messages
 	ttout.SetTag("--- TT ---: ");
