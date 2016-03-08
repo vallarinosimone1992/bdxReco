@@ -204,7 +204,7 @@ jerror_t Paddles_basic_track::evnt(JEventLoop *loop,uint64_t eventnumber)
 //			jout<<"Nevent= "<<eventN<<" id= "<<id<<" E_down= "<<E[0]<<" E_up= "<<E[1]<<" T_down= "<<T[0]<<" T_up="<<T[1]<<endl;
 
 				evhit->Get(faV);
-
+				cout<<faV.size()<<endl;
 				if (faV.size()!=1){
 				    jout<<"Not only 1 fa250Mode1CalibHit associated with this object"<<endl;
 				}
