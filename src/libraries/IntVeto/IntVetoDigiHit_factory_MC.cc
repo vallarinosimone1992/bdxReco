@@ -98,23 +98,23 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 		m_IntVetoDigiHit->m_data.push_back(digi_hit);
 		break;
 
-		case(2): //bottom     ///TODO: this has to be checked
+		case(2): //bottom     ///The inversion 2 <-> 4 is correct!
 		m_IntVetoDigiHit->m_channel.component=3;
 		digi_hit.readout=1;
 		digi_hit.Q=m_IntVetoMCHit->adc1;
 		digi_hit.T=m_IntVetoMCHit->tdc1;
 		m_IntVetoDigiHit->m_data.push_back(digi_hit);
 		digi_hit.readout=2;
-		digi_hit.Q=m_IntVetoMCHit->adc2;
-		digi_hit.T=m_IntVetoMCHit->tdc2;
+		digi_hit.Q=m_IntVetoMCHit->adc4;
+		digi_hit.T=m_IntVetoMCHit->tdc4;
 		m_IntVetoDigiHit->m_data.push_back(digi_hit);
 		digi_hit.readout=3;
 		digi_hit.Q=m_IntVetoMCHit->adc3;
 		digi_hit.T=m_IntVetoMCHit->tdc3;
 		m_IntVetoDigiHit->m_data.push_back(digi_hit);
 		digi_hit.readout=4;
-		digi_hit.Q=m_IntVetoMCHit->adc4;
-		digi_hit.T=m_IntVetoMCHit->tdc4;
+		digi_hit.Q=m_IntVetoMCHit->adc2;
+		digi_hit.T=m_IntVetoMCHit->tdc2;
 		m_IntVetoDigiHit->m_data.push_back(digi_hit);
 		break;
 

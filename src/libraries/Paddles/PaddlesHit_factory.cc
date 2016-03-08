@@ -78,7 +78,7 @@ jerror_t PaddlesHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 			m_PaddlesHit->E=((*m_it)->Q)*m_Ene;
 			m_PaddlesHit->T=(*m_it)->T;
 
-
+			m_PaddlesHit->AddAssociatedObject(*m_it);
 			_data.push_back(m_PaddlesHit);
 		}
 
