@@ -84,6 +84,10 @@ jerror_t Paddles_basic_track::init(void)
 	t->Branch("tword",&tword);
 	t->Branch("mult",&mult);
 
+	t->Branch("amp",amp,"amp[100]/D");
+	t->Branch("time",time,"time[100]/I");
+
+
 	app->RootUnLock();
 	return NOERROR;
 }
@@ -158,7 +162,6 @@ jerror_t Paddles_basic_track::evnt(JEventLoop *loop,uint64_t eventnumber)
 
 	loop->Get(data);
 
-
 	const triggerData* tData;
 	try{
 		loop->GetSingle(tData);
@@ -169,6 +172,8 @@ jerror_t Paddles_basic_track::evnt(JEventLoop *loop,uint64_t eventnumber)
 	}
 
 	int tWord=tData->triggerWords.at(0);
+
+
 
 	japp->RootWriteLock();
 
@@ -188,6 +193,13 @@ jerror_t Paddles_basic_track::evnt(JEventLoop *loop,uint64_t eventnumber)
 	for (data_it=data.begin();data_it<data.end();data_it++){
 
 		const PaddlesHit *evhit = *data_it;
+//		evhit->Get(faV);
+//		const fa250Mode1CalibHit *fa=faV[0];
+//						for (int ii=0;ii<fa->samples.size();ii++){
+//												amp[ii]=0;
+//												time[ii]=0;		// in nsec
+//												}
+
 
 				eventN=eventnumber;
 				tword=tWord;
@@ -203,17 +215,20 @@ jerror_t Paddles_basic_track::evnt(JEventLoop *loop,uint64_t eventnumber)
 								}
 //			jout<<"Nevent= "<<eventN<<" id= "<<id<<" E_down= "<<E[0]<<" E_up= "<<E[1]<<" T_down= "<<T[0]<<" T_up="<<T[1]<<endl;
 
-				evhit->Get(faV);
-				cout<<faV.size()<<endl;
-				if (faV.size()!=1){
-				    jout<<"Not only 1 fa250Mode1CalibHit associated with this object"<<endl;
-				}
-				else{
-				    const fa250Mode1CalibHit *fa=faV[0];
-
-				}
+//				if (faV.size()!=1){
+//				    jout<<"Not associated object or more than 1 fa250Mode1CalibHit associated with this object"<<endl;
+//				}
+//				else{
+//				    const fa250Mode1CalibHit *fa=faV[0];
+//				}
 
 
+//				if (id==0) {
+//				for (int ii=0;ii<fa->samples.size();ii++){
+//										amp[ii]=fa->samples.at(ii);
+//										time[ii]=ii*4;		// in nsec
+//										}
+//				}
 
 	}
 
@@ -221,11 +236,22 @@ jerror_t Paddles_basic_track::evnt(JEventLoop *loop,uint64_t eventnumber)
 	E_up=E[1];
 	T_down=T[0];
 	T_up=T[1];
-//	cout<<"E_down= "<<E_down<<"E_up= "<<E_up<<endl;
 
 
-//			jout<<"Nevent= "<<eventN<<" id= "<<id<<" E_down= "<<E_down<<" E_up= "<<E_up<<" T_down= "<<T_down<<" T_up="<<T_up<<endl;
-//			jout<<"********************"<<endl;
+	for (data_it=data.begin();data_it<data.end();data_it++){			// loop paddles up - down
+				const PaddlesHit *evhit = *data_it;
+				evhit->Get(faV);
+				const fa250Mode1CalibHit *fa=faV[0];
+
+						if(evhit->m_channel.id==1){
+						for (int ii=0;ii<fa->samples.size();ii++){
+												amp[ii]=fa->samples.at(ii);
+												time[ii]=ii*4;		// in nsec
+												}
+						}
+			}
+
+
 
 	vector<const ExtVetoPMTHit*> data_extveto;
 	vector<const ExtVetoPMTHit*>::const_iterator data_extveto_it;
@@ -241,17 +267,14 @@ jerror_t Paddles_basic_track::evnt(JEventLoop *loop,uint64_t eventnumber)
 			E[i]=0;
 			T[i]=0;
 		}
-//		jout<<"AAAAAAAAAAAAA"<<endl;
 
 		for (data_extveto_it=data_extveto.begin();data_extveto_it<data_extveto.end();data_extveto_it++){
 			const ExtVetoPMTHit *evhit = *data_extveto_it;
 
-//			jout<<"ExtVeto channel= "<<evhit->m_channel.ext_veto.component<<endl;
 
 					component=evhit->m_channel.ext_veto.component;
 
 					if(evhit->m_channel.ext_veto.component==6){
-//						jout<<"Sono dentro component 6"<<endl;
 
 						E[0]=(*data_extveto_it)->Q;
 						T[0]=(*data_extveto_it)->T;

@@ -30,11 +30,14 @@ class Paddles_basic_track:public jana::JEventProcessor{
 		TTree *t;
 		JROOTOutput *m_ROOTOutput;
 
+		static const int time_window=100;  // Samples
+
 		double E_up,E_down,E6,E9;
 		double T_up,T_down,T6,T9;
 		int id,eventN,tword,mult,component;
 
-};
+		double amp[time_window];
+		int time[time_window];};
 
 #endif // _Paddles_basic_track_
 
