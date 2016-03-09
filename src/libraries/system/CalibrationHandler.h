@@ -55,12 +55,12 @@ template <class T> jerror_t CalibrationHandler<T>::fillCalib(const std::vector<s
 		if (irow>0) prevNdata=nData;
 		nData=calib_data.at(irow).size()-index.nIDs();
 		if (nData<=0) {
-			jerr<<"Error in IntvetoCalibration::fillCalib. No data?"<<endl;
+			jerr<<"Error in CalibrationHandler<T>:::fillCalib. No data?"<<endl;
 			m_calib.clear();
 			return 	VALUE_OUT_OF_RANGE;
 		}
 		if ((nData!=prevNdata)&&(irow!=0)){
-			jerr<<"Error in CalorimeterCalibration::fillCalib. Error on number of datas?"<<endl;
+			jerr<<"Error in CalibrationHandler<T>::fillCalib. Error on number of datas?"<<endl;
 			m_calib.clear();
 			return 	VALUE_OUT_OF_RANGE;
 		}
@@ -103,7 +103,7 @@ template <class T> vector<double> CalibrationHandler<T>::getCalib(const T &index
 	else{
 		it=m_calib.find(index);
 		if (it==m_calib.end()){
-			jerr<<"DAQCalibrationHandler:getCalib element not found"<<endl;
+			jerr<<"CalibrationHandler<T>::getCalib element not found"<<endl;
 			return ret;
 		}
 		else{
@@ -123,7 +123,7 @@ template <class T> double CalibrationHandler<T>::getCalibSingle(const T &index){
 		return this_data.at(0);
 	}
 	else{
-		jerr<<"CalibrationHandler::getCalibSingle error: more than 1 entry"<<std::endl;
+		jerr<<"CalibrationHandler<T>::getCalibSingle error: more than 1 entry"<<std::endl;
 		return 0;
 	}
 }
