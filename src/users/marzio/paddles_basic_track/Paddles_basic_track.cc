@@ -13,6 +13,8 @@ using namespace std;
 #include "system/BDXEventProcessor.h"
 #include <TT/TranslationTable.h>
 #include <DAQ/triggerData.h>
+#include <DAQ/fa250Mode1CalibHit.h>
+
 
 #include <Paddles/PaddlesHit.h>
 #include <ExtVeto/ExtVetoPMTHit.h>
@@ -152,6 +154,8 @@ jerror_t Paddles_basic_track::evnt(JEventLoop *loop,uint64_t eventnumber)
 	vector<const PaddlesHit*> data;
 	vector<const PaddlesHit*>::const_iterator data_it;
 
+	vector <const fa250Mode1CalibHit*> faV;
+
 	loop->Get(data);
 
 
@@ -198,6 +202,18 @@ jerror_t Paddles_basic_track::evnt(JEventLoop *loop,uint64_t eventnumber)
 									T[1]=(*data_it)->T;
 								}
 //			jout<<"Nevent= "<<eventN<<" id= "<<id<<" E_down= "<<E[0]<<" E_up= "<<E[1]<<" T_down= "<<T[0]<<" T_up="<<T[1]<<endl;
+
+				evhit->Get(faV);
+				cout<<faV.size()<<endl;
+				if (faV.size()!=1){
+				    jout<<"Not only 1 fa250Mode1CalibHit associated with this object"<<endl;
+				}
+				else{
+				    const fa250Mode1CalibHit *fa=faV[0];
+
+				}
+
+
 
 	}
 

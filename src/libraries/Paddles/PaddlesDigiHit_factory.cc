@@ -65,6 +65,7 @@ jerror_t PaddlesDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		m_PaddlesDigiHit->T=(*m_it)->T;
 		m_PaddlesDigiHit->PaddlesPMTHit_id=(*m_it)->id;
 
+		m_PaddlesDigiHit->AddAssociatedObject(*m_it);
 		_data.push_back(m_PaddlesDigiHit);
 	}
 
