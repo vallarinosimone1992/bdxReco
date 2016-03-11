@@ -65,7 +65,7 @@ jerror_t JEventProcessor_energycal::init(void)
 	//
 	app->RootWriteLock();
 
-	jout<<"test::init is called"<<std::endl;
+	jout<<"energycal::init is called"<<std::endl;
 	hp1 =new TH1D("hp1","hp1",5000,-0.5,20.5);
 	hp2 = new TH1D("hp2","hp2",5000,-0.5,20.5);
 	hp1_2 = new TH2D("hp1_2","hp1_2",5000,-0.5,20.5,5000,-0.5,20.5);
@@ -182,13 +182,16 @@ jerror_t JEventProcessor_energycal::evnt(JEventLoop *loop, uint64_t eventnumber)
 	vector<const CalorimeterHit*>::const_iterator cdata_it;
 	loop->Get(cdata);
 
-	double E,T,Qc,ep1,ep2;
+
+
+	app->RootWriteLock();
+	double E,T;
 	Qc1=-1;
 	Qc2=-1;
-	ep1=-10;
-	ep2=-10;
 	Tp1=-1;
 	Tp2=-1;
+	Ep1=-1;
+	Ep2=-1;
 
 
 	for (data_it=data.begin();data_it<data.end();data_it++){
@@ -198,11 +201,11 @@ jerror_t JEventProcessor_energycal::evnt(JEventLoop *loop, uint64_t eventnumber)
 		E = evhit->E;
 		T = evhit->T;
 		if(evhit->m_channel.id==0){
-			ep1=E;
+			Ep1=E;
 			Tp1=T;
 		}
 		if(evhit->m_channel.id==1){
-			ep2=E;
+			Ep2=E;
 			Tp2=T;
 		}
 	}
@@ -212,11 +215,8 @@ jerror_t JEventProcessor_energycal::evnt(JEventLoop *loop, uint64_t eventnumber)
 		Qc1 = evchit->Q1;
 		Qc2 = evchit->Q2;
 	}
-	Qc = Qc1+Qc2;
-	Tpdiff=Tp1-Tp2;
-	Qctot = Qc;
-
-	app->RootWriteLock();
+	Qctot = Qc1+Qc2;
+	Tpdiff= Tp1-Tp2;
 
 	if (Ep1!=-1)	hp1->Fill(Ep1);
 	if (Ep2!=-1)    hp2->Fill(Ep2);
@@ -225,13 +225,11 @@ jerror_t JEventProcessor_energycal::evnt(JEventLoop *loop, uint64_t eventnumber)
 	if (Qc1!=-1)  hc1->Fill(Qc1);
 	if (Qc2!=-1)  hc2->Fill(Qc2);
 	if (Qc1!=-1 && Qc2!=-1) {
-		hctot->Fill(Qc);
+		hctot->Fill(Qctot);
 		hc1_2->Fill(Qc1,Qc2);
 	}
-	Ep1=ep1;
-	Ep2=ep2;
 	eventN=eventnumber;
-	if((ep1 > 0.5) && (ep2 > 0.5)) t->Fill();
+	if((Ep1 > 0.5) && (Ep2 > 0.5)) t->Fill();
 
 	app->RootUnLock();
 
