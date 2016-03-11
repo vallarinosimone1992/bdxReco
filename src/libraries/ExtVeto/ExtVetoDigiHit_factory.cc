@@ -65,6 +65,8 @@ jerror_t ExtVetoDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		m_ExtVetoDigiHit->T=(*m_it)->T;
 		m_ExtVetoDigiHit->ExtVetoPMTHit_id=(*m_it)->id;
 
+
+		m_ExtVetoDigiHit->AddAssociatedObject(*m_it);
 		_data.push_back(m_ExtVetoDigiHit);
 	}
 

@@ -18,7 +18,7 @@ class ExtVetoHit:public jana::JObject{
 		// Add data members here. For example:
 		// int id;
 		// double E;
-		
+		double E,T;
 		// This method is used primarily for pretty printing
 		// the second argument to AddString is printf style format
 		void toStrings(vector<pair<string,string> > &items)const{
@@ -26,6 +26,7 @@ class ExtVetoHit:public jana::JObject{
 			// AddString(items, "E", "%f", E);
 		}
 		TranslationTable::EXT_VETO_Index_t m_channel; //Detector-specific ID. Since this is a detector-based object, the readout field will be ==0
+		oid_t ExtVetoDigiHit_id;
 };
 
 #endif // _ExtVetoHit_

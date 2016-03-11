@@ -11,9 +11,11 @@
 using namespace std;
 
 #include "ExtVetoDigiHit.h"
-#include "ExtVetoHit.h"
+//#include "ExtVetoHit.h"
 
 #include "ExtVetoHit_factory.h"
+#include <TT/TranslationTable.h>
+
 using namespace jana;
 
 //------------------
@@ -21,6 +23,7 @@ using namespace jana;
 //------------------
 jerror_t ExtVetoHit_factory::init(void)
 {
+	gPARMS->GetParameter("MC",isMC);
 	return NOERROR;
 }
 
@@ -29,8 +32,10 @@ jerror_t ExtVetoHit_factory::init(void)
 //------------------
 jerror_t ExtVetoHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber)
 {
-	gPARMS->GetParameter("MC",isMC);
-	return NOERROR;
+	vector<vector < double> > m_enecalib;
+		eventLoop->GetCalib("/ExtVeto/Ene", m_enecalib);
+		m_ENE_gain.fillCalib(m_enecalib);
+		return NOERROR;
 }
 
 //------------------
@@ -56,10 +61,12 @@ jerror_t ExtVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	vector <const ExtVetoDigiHit*> m_ExtVetoDigiHit;
 	vector <const ExtVetoDigiHit*>::const_iterator it;
 
+		double m_Ene;
+
 	ExtVetoHit *m_ExtVetoHit=0;
 
-	int readout;
-	double Q,T;
+//	int readout;
+//	double Q,T;
 
 	//1b: retrieve ExtVetoDigiHit objects
 
@@ -74,6 +81,16 @@ jerror_t ExtVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	for (it=m_ExtVetoDigiHit.begin();it!=m_ExtVetoDigiHit.end();it++){
 		m_ExtVetoHit=new ExtVetoHit();
 		m_ExtVetoHit->m_channel = (*it)->m_channel;
+
+		m_Ene=m_ENE_gain.getCalibSingle(m_ExtVetoHit->m_channel);
+
+		//jout <<m_ExtVetoHit->m_channel.component << " "<< m_Ene<<endl;
+					m_ExtVetoHit->E=((*it)->Q)*m_Ene;
+					m_ExtVetoHit->T=(*it)->T;
+
+					m_ExtVetoHit->AddAssociatedObject(*it);
+
+
 
 		//Do whatever you need here
 
