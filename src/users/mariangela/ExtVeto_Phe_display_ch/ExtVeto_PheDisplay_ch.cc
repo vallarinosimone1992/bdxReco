@@ -16,7 +16,7 @@ using namespace std;
 
 #include <TT/TranslationTable.h>
 
-#include <DAQ/triggerData.h>
+#include <DAQ/eventData.h>
 
 #include <ExtVeto/ExtVetoPMTHit.h>
 #include <ExtVeto/ExtVetoDigiHit.h>
@@ -186,7 +186,7 @@ jerror_t ExtVeto_PheDisplay_ch::evnt(JEventLoop *loop,uint64_t eventnumber)
 	const fa250Mode1CalibHit *fa;
 	loop->Get(data);
 
-	const triggerData* tData;
+	const eventData* tData;
 
 	//has to be in a try-catch block, since if no trigger data is there (prestart - start - end events) trows it!
 	try{

@@ -20,10 +20,10 @@ using namespace jana;
 
 #include <DAQ/fa250Mode1Hit.h>
 #include <DAQ/fa250Mode1CalibHit.h>
-#include "../../../libraries/DAQ/fa250Mode1CalibPedSubHit.h"
+#include <DAQ/fa250Mode1CalibPedSubHit.h>
 #include <TT/TranslationTable.h>
 
-#include <DAQ/triggerData.h>
+#include <DAQ/eventData.h>
 
 #include <IntVeto/IntVetoDigiHit.h>
 #include <IntVeto/IntVetoSiPMHit.h>

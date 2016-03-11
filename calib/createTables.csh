@@ -47,9 +47,10 @@ set ExtVetoEneLines = 1600
 echo "ExtVeto"
 echo "PMT gain"
 $command mktbl $ExtVetoFolder/PMT_gain -r $ExtVetoPMTGainLines $ExtVetoIndexes PMT_gain=double "#PMT gain"
-echo "threshold"
+echo "Threshold"
 $command mktbl $ExtVetoFolder/Threshold -r $ExtVetoThrLines $ExtVetoIndexes threshold=double "#thr"
-
+echo "Ene"
+$command mktbl $ExtVetoFolder/Ene -r $ExtVetoEneLines $ExtVetoIndexes ene=double "#ene"
 
 #Paddles
 set PaddlesFolder = "/Paddles"

@@ -17,7 +17,7 @@ using namespace std;
 
 #include <TT/TranslationTable.h>
 
-#include <DAQ/triggerData.h>
+#include <DAQ/eventData.h>
 
 #include <IntVeto/IntVetoDigiHit.h>
 #include <IntVeto/IntVetoSiPMHit.h>
@@ -202,7 +202,7 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop,uint64_t eventnumber)
 	const fa250Mode1CalibPedSubHit *fa;
 	loop->Get(data);
 
-	const triggerData* tData;
+	const eventData* tData;
 	//has to be in a try-catch block, since if no trigger data is there (prestart - start - end events) trows it!
 	try{
 		loop->GetSingle(tData);

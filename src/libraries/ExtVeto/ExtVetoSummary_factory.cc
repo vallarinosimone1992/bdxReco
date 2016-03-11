@@ -37,16 +37,6 @@ jerror_t ExtVetoSummary_factory::brun(jana::JEventLoop *eventLoop, int32_t runnu
 jerror_t ExtVetoSummary_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 
-	// Code to generate factory data goes here. Add it like:
-	//
-	// ExtVetoSummary *myExtVetoSummary = new ExtVetoSummary;
-	// myExtVetoSummary->x = x;
-	// myExtVetoSummary->y = y;
-	// ...
-	// _data.push_back(myExtVetoSummary);
-	//
-	// Note that the objects you create here will be deleted later
-	// by the system and the _data vector will be cleared automatically.
 	vector<const ExtVetoHit*> m_extVetoHits;
 	vector<const ExtVetoHit*>::const_iterator it;
 	const ExtVetoHit* m_extVetoHit;
@@ -66,14 +56,16 @@ jerror_t ExtVetoSummary_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 			m_extVetoSummary=new ExtVetoSummary(); //Create it
 			m_extVetoSummary->sector=sector;  //associate with the sector
 			m_extVetoSummary->nHits=0;        //nhits at 0
-
 			m_map[sector]=m_extVetoSummary;   //add it to the map, so that other hits with the same sector will find it.
 		}
 		else{ //YES, the object is already there
 			m_extVetoSummary=m_map[sector];
 		}
 		/*Ok, from here on we have the m_extVetoSummary associated with the sector of this hit (if it was not existing, we create id. Otherwise, we got it)
-		 * Need to check if the hit is above a given thr / is on time: if so, need to increment the nHits, to add the hit index to the hits vector, and to associate the object via AddAssociatedObject
+		 * Need to check if the hit is above a given thr / is on time. If so:
+		 * -need to increment the nHits,
+		 * -add the hit index to the hits vector,
+		 * -associate the object via AddAssociatedObject
 		 */
 
 		/*Dummy example: need to implement better selection*/
@@ -85,7 +77,7 @@ jerror_t ExtVetoSummary_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	}
 
-	/*Add all the objects now*/
+	/*Publish all the objects now - one per sector!*/
 	for (m_it=m_map.begin();m_it!=m_map.end();m_it++){
 		_data.push_back(m_it->second);
 	}

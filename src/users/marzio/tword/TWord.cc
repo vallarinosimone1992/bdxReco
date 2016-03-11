@@ -12,7 +12,7 @@ using namespace std;
 #include "TWord.h"
 #include "system/BDXEventProcessor.h"
 
-#include <DAQ/triggerData.h>
+#include <DAQ/eventData.h>
 
 #include <system/JROOTOutput.h>
 
@@ -138,7 +138,7 @@ jerror_t TWord::evnt(JEventLoop *loop,uint64_t eventnumber)
 	// Here's an example:
 	//
 
-	const triggerData* tData;
+	const eventData* tData;
 	//has to be in a try-catch block, since if no trigger data is there (prestart - start - end events) trows it!
 	try{
 		loop->GetSingle(tData);

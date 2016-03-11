@@ -18,10 +18,10 @@ using namespace jana;
 #include "system/BDXEventProcessor.h"
 
 #include <DAQ/fa250Mode1Hit.h>
-#include "../../../libraries/DAQ/fa250Mode1CalibPedSubHit.h"
+#include <DAQ/fa250Mode1CalibPedSubHit.h>
 #include <DAQ/fa250Mode1CalibHit.h>
 
-#include <DAQ/triggerData.h>
+#include <DAQ/eventData.h>
 
 #include <TT/TranslationTable.h>
 
