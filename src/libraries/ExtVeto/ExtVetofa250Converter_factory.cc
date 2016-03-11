@@ -36,7 +36,7 @@ jerror_t ExtVetofa250Converter_factory::brun(jana::JEventLoop *eventLoop, int32_
 	/************* reading threshold ***********/
 	m_extVetofa250Converter->threshold=new CalibrationHandler<TranslationTable::EXT_VETO_Index_t>;
 	vector<vector < double> > m_rawthreshold;
-	eventLoop->GetCalib("/ExtVeto/threshold", m_rawthreshold);
+	eventLoop->GetCalib("/ExtVeto/Threshold", m_rawthreshold);
 	m_extVetofa250Converter->threshold->fillCalib(m_rawthreshold);
 //	vector<double> mr;
 

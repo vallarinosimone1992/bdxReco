@@ -10,12 +10,12 @@
 
 #include <JANA/jerror.h>
 #include <JANA/JFactoryGenerator.h>
-
+#include "ExtVetofa250Converter_factory.h"
 #include "ExtVetoPMTHit_factory.h"
 #include "ExtVetoDigiHit_factory.h"
 #include "ExtVetoDigiHit_factory_MC.h"
 #include "ExtVetoHit_factory.h"
-#include "ExtVetofa250Converter_factory.h"
+#include "ExtVetoSummary_factory.h"
 
 class JFactoryGenerator_ExtVeto: public jana::JFactoryGenerator{
 	public:
@@ -40,7 +40,7 @@ class JFactoryGenerator_ExtVeto: public jana::JFactoryGenerator{
 			loop->AddFactory(new ExtVetoDigiHit_factory());
 			loop->AddFactory(new ExtVetoDigiHit_factory_MC());
 			loop->AddFactory(new ExtVetoHit_factory());
-
+			loop->AddFactory(new ExtVetoSummary_factory());
 			return NOERROR;
 		}
 	private:
