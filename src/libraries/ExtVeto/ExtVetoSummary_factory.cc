@@ -66,6 +66,7 @@ jerror_t ExtVetoSummary_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 			m_extVetoSummary=new ExtVetoSummary(); //Create it
 			m_extVetoSummary->sector=sector;  //associate with the sector
 			m_extVetoSummary->nHits=0;        //nhits at 0
+
 			m_map[sector]=m_extVetoSummary;   //add it to the map, so that other hits with the same sector will find it.
 		}
 		else{ //YES, the object is already there
@@ -79,6 +80,7 @@ jerror_t ExtVetoSummary_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		if (m_extVetoHit->E>0){
 			m_extVetoSummary->nHits++;     //increment number of hits
 			m_extVetoSummary->hits.push_back(m_extVetoHit->m_channel);  //add this hit channel to the list of channels
+			m_extVetoSummary->AddAssociatedObject(m_extVetoHit); //add the hit to the associated objects.
 		}
 
 	}
