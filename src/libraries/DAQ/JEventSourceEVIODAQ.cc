@@ -343,7 +343,7 @@ jerror_t JEventSourceEvioDAQ::GetObjects(JEvent &event, JFactory_base *factory)
 				}
 			}
 		}
-		jout<<"Done: "<<this_eventData->eventN<<" "<<this_eventData->runN<<" "<<this_eventData->time<<endl;
+	//	jout<<"Done: "<<this_eventData->eventN<<" "<<this_eventData->runN<<" "<<this_eventData->time<<endl;
 		if (this_eventData->triggerWords.size()!=0){
 			data.push_back(this_eventData);
 			fac_eventData->CopyTo(data);

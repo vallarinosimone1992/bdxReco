@@ -179,6 +179,13 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 		default:
 			break;
 		}
+
+		/*total charge*/
+		m_IntVetoDigiHit->Qtot=0;
+		for (int ii=0;ii<m_IntVetoDigiHit->m_data.size();ii++){
+			m_IntVetoDigiHit->Qtot+=m_IntVetoDigiHit->m_data[ii].Q;
+		}
+
 		_data.push_back(m_IntVetoDigiHit);
 	}
 

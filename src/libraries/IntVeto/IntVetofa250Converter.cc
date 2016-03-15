@@ -48,10 +48,12 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 	//0: refine pedestal, should be ~0 already
 	//0a: check if we can use this waveform as pedestal
 	ped=0;
-	for (int ii=0;ii<NPED;ii++){
+	/*
+	 * for (int ii=0;ii<NPED;ii++){
 		ped+=input->samples.at(ii);
 	}
 	ped /= NPED;
+	*/
 	//0b produced the waveform
 	for (int ii=0;ii<size;ii++){
 		m_waveform.push_back(input->samples.at(ii)-ped);

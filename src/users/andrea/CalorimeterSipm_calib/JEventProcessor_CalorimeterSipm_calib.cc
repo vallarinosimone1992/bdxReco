@@ -8,14 +8,9 @@
 #include "JEventProcessor_CalorimeterSipm_calib.h"
 using namespace jana;
 
-// Routine used to create our JEventProcessor
-#include <JANA/JApplication.h>
-#include <JANA/JFactory.h>
-
-
 
 #include "JEventProcessor_test.h"
-#include "system/BDXEventProcessor.h"
+#include <system/BDXEventProcessor.h>
 
 #include <DAQ/fa250Mode1Hit.h>
 #include <DAQ/fa250Mode1CalibPedSubHit.h>

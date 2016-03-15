@@ -9,6 +9,7 @@ set DAQFolder = "/DAQ"
 set DAQIndexes = "crate=int slot=int channel=int"
 set DAQPedestalLines = 6400
 echo "DAQ"
+$command mkdir $DAQFolder
 $command mktbl $DAQFolder/pedestals -r $DAQPedestalLines $DAQIndexes pedestal=double "#daq pedestals in fadc counts"
 
 #Calorimeter
@@ -18,6 +19,7 @@ set CalorimeterSipmGainLines = 40000
 
 echo "Calorimeter"
 echo "Sipm gain"
+$command mkdir $CalorimeterFolder
 $command mktbl $CalorimeterFolder/sipm_gain -r $CalorimeterSipmGainLines  $CalorimeterIndexes sipm_gain=double "#sipm gain"
 
 
@@ -29,6 +31,7 @@ set InnerVetoSipmAmplLines = 8000
 set InnerVetoEneLines = 1600
 
 echo "InnerVeto"
+$command mkdir $InnerVetoFolder
 echo "Sipm gain"
 $command mktbl $InnerVetoFolder/sipm_gain -r $InnerVetoSipmGainLines $InnerVetoIndexes sipm_gain=double "#sipm gain"
 echo "Sipm ampl"
@@ -45,6 +48,7 @@ set ExtVetoThrLines = 1600
 set ExtVetoEneLines = 1600
 
 echo "ExtVeto"
+$command mkdir $ExtVetoFolder
 echo "PMT gain"
 $command mktbl $ExtVetoFolder/PMT_gain -r $ExtVetoPMTGainLines $ExtVetoIndexes PMT_gain=double "#PMT gain"
 echo "Threshold"
@@ -60,6 +64,7 @@ set PaddlesThrLines = 2
 set PaddlesEneLines = 2
 
 echo "Paddles"
+$command mkdir $Paddles
 echo "PMT gain"
 $command mktbl $PaddlesFolder/PMT_gain -r $PaddlesPMTGainLines $PaddlesIndexes PMT_gain=double "#PMT gain"
 echo "threshold"

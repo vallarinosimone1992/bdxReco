@@ -33,8 +33,12 @@ private:
 	int m_isFirstCallToBrun;
 
 	int m_sector,m_layer,m_component,m_readout;
-	double Q,Q1,Q2,Q3,Q4,T;
-
+	double Q0,Q0_1,Q0_2,Q0_3,Q0_4; //up
+	double Q1,Q1_1,Q1_2,Q1_3,Q1_4; //left
+	double Q2,Q2_1,Q2_2,Q2_3,Q2_4; //right
+	double Q3,Q3_1,Q3_2,Q3_3,Q3_4; //down
+	double Q4,Q5; //plates
+	int tWord;
 
 	JROOTOutput *m_ROOTOutput;
 

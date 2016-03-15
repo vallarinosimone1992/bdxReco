@@ -18,7 +18,7 @@ using namespace jana;
 #include "system/BDXEventProcessor.h"
 
 #include <DAQ/fa250Mode1Hit.h>
-
+#include <DAQ/eventData.h>
 #include <TT/TranslationTable.h>
 
 #include <DAQ/eventData.h>
@@ -71,21 +71,46 @@ jerror_t JEventProcessor_intVeto_digi::init(void)
 {
 
 	//
-		japp->RootWriteLock();
-		t=new TTree("tout","tout");
+	japp->RootWriteLock();
+	t=new TTree("tout","tout");
 
-		t->Branch("sector",&m_sector);
-		t->Branch("layer",&m_layer);
-		t->Branch("component",&m_component);
-		t->Branch("readout",&m_readout);
-		t->Branch("Q",&Q);
-		t->Branch("T",&T);
-		t->Branch("Q1",&Q1);
-		t->Branch("Q2",&Q2);
-		t->Branch("Q3",&Q3);
-		t->Branch("Q4",&Q4);
-		t->Branch("eventN",&eventNumber);
-		japp->RootUnLock();
+	t->Branch("sector",&m_sector);
+	t->Branch("layer",&m_layer);
+	t->Branch("component",&m_component);
+	t->Branch("readout",&m_readout);
+
+	t->Branch("Q0",&Q0);
+	t->Branch("Q0_1",&Q0_1);
+	t->Branch("Q0_2",&Q0_2);
+	t->Branch("Q0_3",&Q0_3);
+	t->Branch("Q0_4",&Q0_4);
+
+	t->Branch("Q1",&Q1);
+	t->Branch("Q1_1",&Q1_1);
+	t->Branch("Q1_2",&Q1_2);
+	t->Branch("Q1_3",&Q1_3);
+	t->Branch("Q1_4",&Q1_4);
+
+	t->Branch("Q2",&Q2);
+	t->Branch("Q2_1",&Q2_1);
+	t->Branch("Q2_2",&Q2_2);
+	t->Branch("Q2_3",&Q2_3);
+	t->Branch("Q2_4",&Q2_4);
+
+	t->Branch("Q3",&Q3);
+	t->Branch("Q3_1",&Q3_1);
+	t->Branch("Q3_2",&Q3_2);
+	t->Branch("Q3_3",&Q3_3);
+	t->Branch("Q3_4",&Q3_4);
+
+	t->Branch("Q4",&Q4);
+	t->Branch("Q5",&Q5);
+
+	t->Branch("tWord",&tWord);
+
+
+	t->Branch("eventN",&eventNumber);
+	japp->RootUnLock();
 
 
 	return NOERROR;
@@ -144,6 +169,18 @@ jerror_t JEventProcessor_intVeto_digi::evnt(JEventLoop *loop, uint64_t eventnumb
 	vector<const IntVetoDigiHit*> data;
 	vector<const IntVetoSiPMHit*> associated_data;
 	vector<const IntVetoDigiHit*>::const_iterator data_it;
+
+	const eventData* tData;
+	try{
+		loop->GetSingle(tData);
+	}
+	catch(unsigned long e){
+		jout<<"No trig bank this event"<<endl;
+		return 	OBJECT_NOT_AVAILABLE;
+	}
+
+
+
 	loop->Get(data);
 	japp->RootWriteLock();
 
@@ -153,20 +190,52 @@ jerror_t JEventProcessor_intVeto_digi::evnt(JEventLoop *loop, uint64_t eventnumb
 		m_component=(*data_it)->m_channel.component;
 		m_readout=(*data_it)->m_channel.readout;
 
-	//	T=(*data_it)->T;
-	//	Q=(*data_it)->Q;
+		//	T=(*data_it)->T;
+		//	Q=(*data_it)->Q;
 		eventNumber=eventnumber;
-		(*data_it)->Get(associated_data,"",1);
-		if (m_component<=3){
-			Q1=associated_data.at(0)->Qphe;
-			Q2=associated_data.at(1)->Qphe;
-			Q3=associated_data.at(2)->Qphe;
-			Q4=associated_data.at(3)->Qphe;
+		//(*data_it)->Get(associated_data,"",1);
+		switch(m_component){
+		case (0):
+					Q0_1=(*data_it)->m_data[0].Q;
+		Q0_2=(*data_it)->m_data[1].Q;
+		Q0_3=(*data_it)->m_data[2].Q;
+		Q0_4=(*data_it)->m_data[3].Q;
+		Q0=Q0_1+Q0_2+Q0_3+Q0_4;
+		break;
+		case (1):
+					Q1_1=(*data_it)->m_data[0].Q;
+		Q1_2=(*data_it)->m_data[1].Q;
+		Q1_3=(*data_it)->m_data[2].Q;
+		Q1_4=(*data_it)->m_data[3].Q;
+		Q1=Q1_1+Q1_2+Q1_3+Q1_4;
+		break;
+		case (2):
+					Q2_1=(*data_it)->m_data[0].Q;
+		Q2_2=(*data_it)->m_data[1].Q;
+		Q2_3=(*data_it)->m_data[2].Q;
+		Q2_4=(*data_it)->m_data[3].Q;
+		Q2=Q2_1+Q2_2+Q2_3+Q2_4;
+		break;
+		case (3):
+					Q3_1=(*data_it)->m_data[0].Q;
+		Q3_2=(*data_it)->m_data[1].Q;
+		Q3_3=(*data_it)->m_data[2].Q;
+		Q3_4=(*data_it)->m_data[3].Q;
+		Q3=Q3_1+Q3_2+Q3_3+Q3_4;
+		break;
+		case (4):
+					Q4=(*data_it)->m_data[0].Q;
+		break;
+		case (5):
+					Q5=(*data_it)->m_data[0].Q;
+		break;
 		}
-		t->Fill();
+
 	}
 
+	tWord=tData->triggerWords.at(0);
 
+	t->Fill();
 	japp->RootUnLock();
 
 	return NOERROR;
