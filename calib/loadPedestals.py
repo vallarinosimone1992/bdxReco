@@ -45,6 +45,8 @@ for fn in os.listdir("DAQ_pedestals"):
     if os.path.isfile("DAQ_pedestals/"+fn):
         #fn is in the form: runxxxxx.ped
         run=fn[3:].split('.')[0]
+        if (int(run)<1000):
+            continue #since before are irrelevant
         print("Run number: "+run)
         outF=open("DAQ_pedestals/tables/run_"+run+".dat","w")
         #write the first crate up to slot #3
