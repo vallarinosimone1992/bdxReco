@@ -2,7 +2,7 @@
 
 #a dummy script to create all the tables
 
-set command = "ccdb -c $JANA_CALIB_URL"
+set command = "ccdb -c mysql://bdxwriter:e1tocome@clasdb.jlab.org/BDX"
 
 #DAQ
 set DAQFolder = "/DAQ"
