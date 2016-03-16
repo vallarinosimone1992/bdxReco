@@ -27,17 +27,17 @@ if (cur_fold != bdx_fold):
 
 parser = argparse.ArgumentParser(description='Load data in CCDB for given variation / runs')
 parser.add_argument('--variation', type=str, default="default", help='If set, set the variation to use. The variation should correspond to a folder with the txt files to upload')
-
+parser.add_argument('--connection', type=str,required=true,"Connection string to use")
 args = parser.parse_args()
 
 variation = args.variation
-
+connection_string = args.connection
 #check if DAQ_pedestals folder exists
 if (os.path.isdir("DAQ_pedestals")==False):
     print "Error, folder DAQ_pedestals does not exists"
     sys.exit()     
 
-commandBase = "ccdb -c "+os.environ['JANA_CALIB_URL']+" add -v "+variation
+commandBase = "ccdb -c "+connection_string+" add -v "+variation
 
 
 #now need to loop over ALL the files there
