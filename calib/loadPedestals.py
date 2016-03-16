@@ -58,7 +58,7 @@ for fn in os.listdir("DAQ_pedestals"):
         if (variation=="default"):
             for slot in range(4,20):
                 for channel in range(0,16):
-                       outF.write("0 "+str(slot)+" "+str(channel)+" "+str(ped)+"\n")
+                       outF.write("0 "+str(slot)+" "+str(channel)+" "+"0 \n")
         else: #load
             with open("DAQ_pedestals/"+fn) as inF:
                 for line in inF:
