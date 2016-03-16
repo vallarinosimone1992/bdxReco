@@ -27,12 +27,14 @@ if (cur_fold != bdx_fold):
 
 parser = argparse.ArgumentParser(description='Load data in CCDB for given variation / runs')
 parser.add_argument('--variation', type=str, default="default", help='If set, set the variation to use. The variation should correspond to a folder with the txt files to upload')
+parser.add_argument('--connection', type=str, required=True, help='Connection string')
 parser.add_argument('--runMin', type=int,help='If set, set the minimum run number')
 parser.add_argument('--runMax', type=int,help='If set, set the maximum run number')
 
 args = parser.parse_args()
 
 variation = args.variation
+connection = args.connection
 
 if args.runMin== None:
         runMin = -1     
@@ -51,7 +53,7 @@ if (os.path.isdir(variation)==False):
 
 #Proceed with tables loading
 #Prepare the command
-commandBase = "ccdb -c "+os.environ['JANA_CALIB_URL']+" add -v "+variation
+commandBase = "ccdb -c "+connection_string+" add -v "+variation
 if ((runMin != -1)and(runMax != -1)):
     commandBase += " -r "+str(runMin)+"-"+str(runMax)
 elif (runMin != -1):
@@ -66,6 +68,12 @@ filen = variation+"/Calorimeter.sipm_gain"
 command = commandBase+table+filen
 subprocess.call(command,shell=True)
 
+table = "/Calorimeter/Ene "
+filen = variation+"/Calorimeter.Ene "
+command = commandBase+table+filen
+subprocess.call(command,shell=True)
+
+
 #InnerVeto
 table = "/InnerVeto/sipm_gain "
 filen = variation+"/InnerVeto.sipm_gain"
@@ -74,11 +82,6 @@ subprocess.call(command,shell=True)
 
 table = "/InnerVeto/sipm_ampl "
 filen = variation+"/InnerVeto.sipm_ampl"
-command = commandBase+table+filen
-subprocess.call(command,shell=True)
-
-table = "/InnerVeto/Ene "
-filen = variation+"/InnerVeto.Ene"
 command = commandBase+table+filen
 subprocess.call(command,shell=True)
 
@@ -93,10 +96,10 @@ filen = variation+"/ExtVeto.Threshold"
 command = commandBase+table+filen
 subprocess.call(command,shell=True)
 
-#table = "/ExtVeto/Ene "
-#filen = variation+"/InnerVeto.Ene"
-#command = commandBase+table+filen
-#subprocess.call(command,shell=True)
+table = "/ExtVeto/Ene "
+filen = variation+"/ExtVeto.Ene"
+command = commandBase+table+filen
+subprocess.call(command,shell=True)
 
 #ExtVeto
 table = "/Paddles/PMT_gain "
