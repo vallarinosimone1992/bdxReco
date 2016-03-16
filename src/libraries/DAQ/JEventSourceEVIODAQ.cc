@@ -74,13 +74,6 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event)
 
 	event.SetRef(NULL);
 
-	vector<string> hitTypes;
-	hitTypes.push_back("ctof");
-
-	map<string, string> allSystems;
-	allSystems["ctof"] = "TEXT";
-
-	//banksMap = read_banks(bdxOpt, allSystems);
 
 	if(chan->read())
 	{

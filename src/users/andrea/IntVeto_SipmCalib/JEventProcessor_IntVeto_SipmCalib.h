@@ -13,11 +13,11 @@
 class TTree;
 class TH1D;
 class JROOTOutput;
-class JEventProcessor_sipm_calib:public jana::JEventProcessor{
+class JEventProcessor_IntVeto_SipmCalib:public jana::JEventProcessor{
 	public:
-		JEventProcessor_sipm_calib();
-		~JEventProcessor_sipm_calib();
-		const char* className(void){return "JEventProcessor_sipm_calib";}
+		JEventProcessor_IntVeto_SipmCalib();
+		~JEventProcessor_IntVeto_SipmCalib();
+		const char* className(void){return "JEventProcessor_IntVeto_SipmCalib";}
 
 	private:
 		jerror_t init(void);						///< Called once at program start.

@@ -5,18 +5,18 @@
 // Creator: celentan (on Linux apcx4 2.6.32-504.30.3.el6.x86_64 x86_64)
 //
 
-#ifndef _JEventProcessor_CalorimeterSipm_calib_
-#define _JEventProcessor_CalorimeterSipm_calib_
+#ifndef _JEventProcessor_Calorimeter_SipmCalib_
+#define _JEventProcessor_Calorimeter_SipmCalib_
 
 #include <JANA/JEventProcessor.h>
 class TTree;
 class JROOTOutput;
 class TH1D;
-class JEventProcessor_CalorimeterSipm_calib:public jana::JEventProcessor{
+class JEventProcessor_Calorimeter_SipmCalib:public jana::JEventProcessor{
 	public:
-		JEventProcessor_CalorimeterSipm_calib();
-		~JEventProcessor_CalorimeterSipm_calib();
-		const char* className(void){return "JEventProcessor_CalorimeterSipm_calib";}
+		JEventProcessor_Calorimeter_SipmCalib();
+		~JEventProcessor_Calorimeter_SipmCalib();
+		const char* className(void){return "JEventProcessor_Calorimeter_SipmCalib";}
 
 	private:
 		jerror_t init(void);						///< Called once at program start.
@@ -40,5 +40,4 @@ class JEventProcessor_CalorimeterSipm_calib:public jana::JEventProcessor{
 		JROOTOutput *m_ROOTOutput;
 };
 
-#endif // _JEventProcessor_CalorimeterSipm_calib_
-
+#endif

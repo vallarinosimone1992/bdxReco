@@ -1,11 +1,11 @@
 // $Id$
 //
-//    File: JEventProcessor_CalorimeterSipm_calib.cc
+//    File: JEventProcessor_Calorimeter_SipmCalib.cc
 // Created: Thu Feb 18 11:55:18 CET 2016
 // Creator: celentan (on Linux apcx4 2.6.32-504.30.3.el6.x86_64 x86_64)
 //
 
-#include "JEventProcessor_CalorimeterSipm_calib.h"
+#include "JEventProcessor_Calorimeter_SipmCalib.h"
 using namespace jana;
 
 
@@ -40,23 +40,23 @@ using namespace jana;
 extern "C"{
 void InitPlugin(JApplication *app){
 	InitJANAPlugin(app);
-	app->AddProcessor(new JEventProcessor_CalorimeterSipm_calib());
+	app->AddProcessor(new JEventProcessor_Calorimeter_SipmCalib());
 }
 } // "C"
 
 
 //------------------
-// JEventProcessor_CalorimeterSipm_calib (Constructor)
+// JEventProcessor_Calorimeter_SipmCalib (Constructor)
 //------------------
-JEventProcessor_CalorimeterSipm_calib::JEventProcessor_CalorimeterSipm_calib()
+JEventProcessor_Calorimeter_SipmCalib::JEventProcessor_Calorimeter_SipmCalib()
 {
 
 }
 
 //------------------
-// ~JEventProcessor_CalorimeterSipm_calib (Destructor)
+// ~JEventProcessor_Calorimeter_SipmCalib (Destructor)
 //------------------
-JEventProcessor_CalorimeterSipm_calib::~JEventProcessor_CalorimeterSipm_calib()
+JEventProcessor_Calorimeter_SipmCalib::~JEventProcessor_Calorimeter_SipmCalib()
 {
 
 }
@@ -64,7 +64,7 @@ JEventProcessor_CalorimeterSipm_calib::~JEventProcessor_CalorimeterSipm_calib()
 //------------------
 // init
 //------------------
-jerror_t JEventProcessor_CalorimeterSipm_calib::init(void)
+jerror_t JEventProcessor_Calorimeter_SipmCalib::init(void)
 {
 	// This is called once at program startup. If you are creating
 	// and filling historgrams in this plugin, you should lock the
@@ -99,7 +99,7 @@ jerror_t JEventProcessor_CalorimeterSipm_calib::init(void)
 //------------------
 // brun
 //------------------
-jerror_t JEventProcessor_CalorimeterSipm_calib::brun(JEventLoop *eventLoop, int32_t runnumber)
+jerror_t JEventProcessor_Calorimeter_SipmCalib::brun(JEventLoop *eventLoop, int32_t runnumber)
 {
 	if (m_isFirstCallToBrun){
 		string class_name,this_class_name;
@@ -144,7 +144,7 @@ jerror_t JEventProcessor_CalorimeterSipm_calib::brun(JEventLoop *eventLoop, int3
 //------------------
 // evnt
 //------------------
-jerror_t JEventProcessor_CalorimeterSipm_calib::evnt(JEventLoop *loop, uint64_t eventnumber)
+jerror_t JEventProcessor_Calorimeter_SipmCalib::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 	// This is called for every event. Use of common resources like writing
 	// to a file or filling a histogram should be mutex protected. Using
@@ -202,7 +202,7 @@ jerror_t JEventProcessor_CalorimeterSipm_calib::evnt(JEventLoop *loop, uint64_t 
 //------------------
 // erun
 //------------------
-jerror_t JEventProcessor_CalorimeterSipm_calib::erun(void)
+jerror_t JEventProcessor_Calorimeter_SipmCalib::erun(void)
 {
 	// This is called whenever the run number changes, before it is
 	// changed to give you a chance to clean up before processing
@@ -213,7 +213,7 @@ jerror_t JEventProcessor_CalorimeterSipm_calib::erun(void)
 //------------------
 // fini
 //------------------
-jerror_t JEventProcessor_CalorimeterSipm_calib::fini(void)
+jerror_t JEventProcessor_Calorimeter_SipmCalib::fini(void)
 {
 	// Called before program exit after event processing is finished.
 	return NOERROR;

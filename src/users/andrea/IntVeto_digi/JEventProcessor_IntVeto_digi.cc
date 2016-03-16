@@ -5,7 +5,7 @@
 // Creator: celentan (on Linux apcx4 2.6.32-504.30.3.el6.x86_64 x86_64)
 //
 
-#include "JEventProcessor_intVeto_digi.h"
+#include "JEventProcessor_IntVeto_digi.h"
 using namespace jana;
 
 // Routine used to create our JEventProcessor
@@ -45,7 +45,7 @@ using namespace jana;
 extern "C"{
 void InitPlugin(JApplication *app){
 	InitJANAPlugin(app);
-	app->AddProcessor(new JEventProcessor_intVeto_digi());
+	app->AddProcessor(new JEventProcessor_IntVeto_digi());
 }
 } // "C"
 
@@ -53,7 +53,7 @@ void InitPlugin(JApplication *app){
 //------------------
 // JEventProcessor_intVeto_digi (Constructor)
 //------------------
-JEventProcessor_intVeto_digi::JEventProcessor_intVeto_digi()
+JEventProcessor_IntVeto_digi::JEventProcessor_IntVeto_digi()
 {
 
 }
@@ -61,7 +61,7 @@ JEventProcessor_intVeto_digi::JEventProcessor_intVeto_digi()
 //------------------
 // ~JEventProcessor_intVeto_digi (Destructor)
 //------------------
-JEventProcessor_intVeto_digi::~JEventProcessor_intVeto_digi()
+JEventProcessor_IntVeto_digi::~JEventProcessor_IntVeto_digi()
 {
 
 }
@@ -69,7 +69,7 @@ JEventProcessor_intVeto_digi::~JEventProcessor_intVeto_digi()
 //------------------
 // init
 //------------------
-jerror_t JEventProcessor_intVeto_digi::init(void)
+jerror_t JEventProcessor_IntVeto_digi::init(void)
 {
 
 	//
@@ -126,7 +126,7 @@ jerror_t JEventProcessor_intVeto_digi::init(void)
 //------------------
 // brun
 //------------------
-jerror_t JEventProcessor_intVeto_digi::brun(JEventLoop *eventLoop, int32_t runnumber)
+jerror_t JEventProcessor_IntVeto_digi::brun(JEventLoop *eventLoop, int32_t runnumber)
 {
 
 	if (m_isFirstCallToBrun){
@@ -171,7 +171,7 @@ jerror_t JEventProcessor_intVeto_digi::brun(JEventLoop *eventLoop, int32_t runnu
 //------------------
 // evnt
 //------------------
-jerror_t JEventProcessor_intVeto_digi::evnt(JEventLoop *loop, uint64_t eventnumber)
+jerror_t JEventProcessor_IntVeto_digi::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 	vector<const IntVetoDigiHit*> data;
 	vector<const IntVetoSiPMHit*> associated_data;
@@ -283,7 +283,7 @@ jerror_t JEventProcessor_intVeto_digi::evnt(JEventLoop *loop, uint64_t eventnumb
 //------------------
 // erun
 //------------------
-jerror_t JEventProcessor_intVeto_digi::erun(void)
+jerror_t JEventProcessor_IntVeto_digi::erun(void)
 {
 	// This is called whenever the run number changes, before it is
 	// changed to give you a chance to clean up before processing
@@ -294,7 +294,7 @@ jerror_t JEventProcessor_intVeto_digi::erun(void)
 //------------------
 // fini
 //------------------
-jerror_t JEventProcessor_intVeto_digi::fini(void)
+jerror_t JEventProcessor_IntVeto_digi::fini(void)
 {
 	// Called before program exit after event processing is finished.
 	return NOERROR;

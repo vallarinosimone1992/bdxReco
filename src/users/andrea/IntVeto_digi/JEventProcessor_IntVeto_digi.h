@@ -5,8 +5,8 @@
 // Creator: celentan (on Linux apcx4 2.6.32-504.30.3.el6.x86_64 x86_64)
 //
 
-#ifndef _JEventProcessor_intVeto_digi_
-#define _JEventProcessor_intVeto_digi_
+#ifndef _JEventProcessor_IntVeto_digi_
+#define _JEventProcessor_IntVeto_digi_
 
 #include <JANA/JEventProcessor.h>
 #include <TT/TranslationTable.h>
@@ -14,11 +14,11 @@ class TTree;
 class JROOTOutput;
 
 
-class JEventProcessor_intVeto_digi:public jana::JEventProcessor{
+class JEventProcessor_IntVeto_digi:public jana::JEventProcessor{
 public:
-	JEventProcessor_intVeto_digi();
-	~JEventProcessor_intVeto_digi();
-	const char* className(void){return "JEventProcessor_intVeto_digi";}
+	JEventProcessor_IntVeto_digi();
+	~JEventProcessor_IntVeto_digi();
+	const char* className(void){return "JEventProcessor_IntVeto_digi";}
 
 private:
 	jerror_t init(void);						///< Called once at program start.

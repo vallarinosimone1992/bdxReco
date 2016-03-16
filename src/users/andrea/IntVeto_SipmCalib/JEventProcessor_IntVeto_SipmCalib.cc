@@ -5,7 +5,7 @@
 // Creator: celentan (on Linux apcx4 2.6.32-504.30.3.el6.x86_64 x86_64)
 //
 
-#include "JEventProcessor_sipm_calib.h"
+#include "JEventProcessor_IntVeto_SipmCalib.h"
 using namespace jana;
 
 
@@ -45,7 +45,7 @@ using namespace jana;
 extern "C"{
 void InitPlugin(JApplication *app){
 	InitJANAPlugin(app);
-	app->AddProcessor(new JEventProcessor_sipm_calib());
+	app->AddProcessor(new JEventProcessor_IntVeto_SipmCalib());
 }
 } // "C"
 
@@ -53,7 +53,7 @@ void InitPlugin(JApplication *app){
 //------------------
 // JEventProcessor_sipm_calib (Constructor)
 //------------------
-JEventProcessor_sipm_calib::JEventProcessor_sipm_calib()
+JEventProcessor_IntVeto_SipmCalib::JEventProcessor_IntVeto_SipmCalib()
 {
 	m_isFirstCallToBrun=1;
 	h=new TH1D("h","h",100,-0.5,99.5);
@@ -62,7 +62,7 @@ JEventProcessor_sipm_calib::JEventProcessor_sipm_calib()
 //------------------
 // ~JEventProcessor_sipm_calib (Destructor)
 //------------------
-JEventProcessor_sipm_calib::~JEventProcessor_sipm_calib()
+JEventProcessor_IntVeto_SipmCalib::~JEventProcessor_IntVeto_SipmCalib()
 {
 
 }
@@ -70,7 +70,7 @@ JEventProcessor_sipm_calib::~JEventProcessor_sipm_calib()
 //------------------
 // init
 //------------------
-jerror_t JEventProcessor_sipm_calib::init(void)
+jerror_t JEventProcessor_IntVeto_SipmCalib::init(void)
 {
 	// This is called once at program startup. If you are creating
 	// and filling historgrams in this plugin, you should lock the
@@ -101,7 +101,7 @@ jerror_t JEventProcessor_sipm_calib::init(void)
 //------------------
 // brun
 //------------------
-jerror_t JEventProcessor_sipm_calib::brun(JEventLoop *eventLoop, int32_t runnumber)
+jerror_t JEventProcessor_IntVeto_SipmCalib::brun(JEventLoop *eventLoop, int32_t runnumber)
 {
 	// This is called whenever the run number changes
 
@@ -149,7 +149,7 @@ jerror_t JEventProcessor_sipm_calib::brun(JEventLoop *eventLoop, int32_t runnumb
 //------------------
 // evnt
 //------------------
-jerror_t JEventProcessor_sipm_calib::evnt(JEventLoop *loop, uint64_t eventnumber)
+jerror_t JEventProcessor_IntVeto_SipmCalib::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 
 	vector<const IntVetoSiPMHit*> data;
@@ -195,7 +195,7 @@ jerror_t JEventProcessor_sipm_calib::evnt(JEventLoop *loop, uint64_t eventnumber
 //------------------
 // erun
 //------------------
-jerror_t JEventProcessor_sipm_calib::erun(void)
+jerror_t JEventProcessor_IntVeto_SipmCalib::erun(void)
 {
 	// This is called whenever the run number changes, before it is
 	// changed to give you a chance to clean up before processing
@@ -206,7 +206,7 @@ jerror_t JEventProcessor_sipm_calib::erun(void)
 //------------------
 // fini
 //------------------
-jerror_t JEventProcessor_sipm_calib::fini(void)
+jerror_t JEventProcessor_IntVeto_SipmCalib::fini(void)
 {
 	// Called before program exit after event processing is finished.
 	return NOERROR;
