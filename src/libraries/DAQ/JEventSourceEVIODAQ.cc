@@ -25,23 +25,6 @@ JEventSourceEvioDAQ::JEventSourceEvioDAQ(const char* source_name):JEventSource(s
 
 
 
-	// Setting CLAS12 constants
-	// Hardcoded for now but will be from database later on
-	/*int nsect      = 6;    // CLAS12 sectors
-	gPARMS->SetDefaultParameter("CLAS12:NSECTORS", nsect);
-	 */
-	// Drift Chambers
-	/*int dc_nreg    = 3;    // DC: Number or regions
-	int dc_nslay_r = 2;    // DC: Number of superlayers per region
-	int dc_nslay   = 6;    // DC: superlayers, 2 per region = 6 total
-	int dc_nlayr   = 6;    // DC: layers within the superlayer
-	int dc_nwire   = 113;  // DC: number of wires
-	gPARMS->SetDefaultParameter("DC:NREGIONS",     dc_nreg);
-	gPARMS->SetDefaultParameter("DC:NSLAYERS_R",   dc_nslay_r);
-	gPARMS->SetDefaultParameter("DC:NSLAYERS",     dc_nslay);
-	gPARMS->SetDefaultParameter("DC:NLAYERS",      dc_nlayr);	
-	gPARMS->SetDefaultParameter("DC:NWIRES",       dc_nwire);
-	 */
 
 	vme_mother_tag=0x1;
 	child_mode1_tag=0xe101;
@@ -119,7 +102,7 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event)
 				//				int leafSize = leaf->getSize();
 				vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
 				curRunNumber=pData->at(1);
-				jout<<"New run number: "<<curRunNumber<<endl;
+				jout<<"JEventSourceEvioDAQ::GetEvent new run number: "<<curRunNumber<<endl;
 			}
 			if((*iter)->tag==eventHeader_CODA_tag){ /*To be compatible also with data taken without header*/
 				const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*iter);
@@ -127,7 +110,7 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event)
 				vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
 				event.SetEventNumber(pData->at(0));
 			}
-			if((*iter)->tag==eventHeader_tag){
+			else if((*iter)->tag==eventHeader_tag){
 				const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*iter);
 				//				int leafSize = leaf->getSize();
 				vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
@@ -137,8 +120,6 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event)
 		}
 		if (overwriteRunNumber!=-1) event.SetRunNumber(overwriteRunNumber);
 		else event.SetRunNumber(curRunNumber);
-
-
 		return NOERROR;
 	}
 	else{
