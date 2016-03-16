@@ -34,7 +34,7 @@ parser.add_argument('--runMax', type=int,help='If set, set the maximum run numbe
 args = parser.parse_args()
 
 variation = args.variation
-connection = args.connection
+connection_string = args.connection
 
 if args.runMin== None:
         runMin = -1     
