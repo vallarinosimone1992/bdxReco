@@ -101,7 +101,6 @@ jerror_t IntVetoDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		m_IntVetoDigiHit_tmp->Qtot=0;
 
 		for (int ihit=0;ihit<m_IntVetoSiPMHit_tmp.size();ihit++){
-
 			IntVetoDigiHit::IntVetoSiPMDigiHit hit;
 			hit.Q=m_IntVetoSiPMHit_tmp.at(ihit)->Qphe;
 			hit.T=m_IntVetoSiPMHit_tmp.at(ihit)->T;

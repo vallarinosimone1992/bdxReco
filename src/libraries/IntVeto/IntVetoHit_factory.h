@@ -14,7 +14,7 @@
 
 class IntVetoHit_factory:public jana::JFactory<IntVetoHit>{
 	public:
-		IntVetoHit_factory(){isMC=0;};
+		IntVetoHit_factory();
 		~IntVetoHit_factory(){};
 
 
@@ -28,7 +28,10 @@ class IntVetoHit_factory:public jana::JFactory<IntVetoHit>{
 		jerror_t fini(void);						///< Called after last event of last event source has been processed.
 
 
-		CalibrationHandler<TranslationTable::INT_VETO_Index_t> m_ene;
+		double m_THR_singleReadout;
+		double m_THR_multipleReadout;
+		double m_N_multipleReadout;
+		int m_hit_bottom_workAround;
 };
 
 #endif // _IntVetoHit_factory_

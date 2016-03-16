@@ -29,6 +29,8 @@ using namespace jana;
 #include <ExtVeto/ExtVetoPMTHit.h>
 #include <ExtVeto/ExtVetoDigiHit.h>
 
+#include <Calorimeter/CalorimeterHit.h>
+#include <Paddles/PaddlesHit.h>
 
 #include <system/JROOTOutput.h>
 
@@ -106,6 +108,11 @@ jerror_t JEventProcessor_intVeto_digi::init(void)
 	t->Branch("Q4",&Q4);
 	t->Branch("Q5",&Q5);
 
+	t->Branch("Qc1",&Qc1);
+	t->Branch("Qc2",&Qc2);
+	t->Branch("Ep1",&Ep1);
+	t->Branch("Ep2",&Ep2);
+
 	t->Branch("tWord",&tWord);
 
 
@@ -170,6 +177,12 @@ jerror_t JEventProcessor_intVeto_digi::evnt(JEventLoop *loop, uint64_t eventnumb
 	vector<const IntVetoSiPMHit*> associated_data;
 	vector<const IntVetoDigiHit*>::const_iterator data_it;
 
+	vector<const CalorimeterHit*> cdata;
+	vector<const CalorimeterHit*>::const_iterator cdata_it;
+	vector<const PaddlesHit*> pdata;
+	vector<const PaddlesHit*>::const_iterator pdata_it;
+
+
 	const eventData* tData;
 	try{
 		loop->GetSingle(tData);
@@ -182,6 +195,9 @@ jerror_t JEventProcessor_intVeto_digi::evnt(JEventLoop *loop, uint64_t eventnumb
 
 
 	loop->Get(data);
+	loop->Get(cdata);
+	loop->Get(pdata);
+
 	japp->RootWriteLock();
 
 	for (data_it=data.begin();data_it<data.end();data_it++){
@@ -196,44 +212,67 @@ jerror_t JEventProcessor_intVeto_digi::evnt(JEventLoop *loop, uint64_t eventnumb
 		//(*data_it)->Get(associated_data,"",1);
 		switch(m_component){
 		case (0):
-					Q0_1=(*data_it)->m_data[0].Q;
+							Q0_1=(*data_it)->m_data[0].Q;
 		Q0_2=(*data_it)->m_data[1].Q;
 		Q0_3=(*data_it)->m_data[2].Q;
 		Q0_4=(*data_it)->m_data[3].Q;
 		Q0=Q0_1+Q0_2+Q0_3+Q0_4;
 		break;
 		case (1):
-					Q1_1=(*data_it)->m_data[0].Q;
+							Q1_1=(*data_it)->m_data[0].Q;
 		Q1_2=(*data_it)->m_data[1].Q;
 		Q1_3=(*data_it)->m_data[2].Q;
 		Q1_4=(*data_it)->m_data[3].Q;
 		Q1=Q1_1+Q1_2+Q1_3+Q1_4;
 		break;
 		case (2):
-					Q2_1=(*data_it)->m_data[0].Q;
+							Q2_1=(*data_it)->m_data[0].Q;
 		Q2_2=(*data_it)->m_data[1].Q;
 		Q2_3=(*data_it)->m_data[2].Q;
 		Q2_4=(*data_it)->m_data[3].Q;
 		Q2=Q2_1+Q2_2+Q2_3+Q2_4;
 		break;
 		case (3):
-					Q3_1=(*data_it)->m_data[0].Q;
+							Q3_1=(*data_it)->m_data[0].Q;
 		Q3_2=(*data_it)->m_data[1].Q;
 		Q3_3=(*data_it)->m_data[2].Q;
 		Q3_4=(*data_it)->m_data[3].Q;
 		Q3=Q3_1+Q3_2+Q3_3+Q3_4;
 		break;
 		case (4):
-					Q4=(*data_it)->m_data[0].Q;
+							Q4=(*data_it)->m_data[0].Q;
 		break;
 		case (5):
-					Q5=(*data_it)->m_data[0].Q;
+							Q5=(*data_it)->m_data[0].Q;
 		break;
 		}
 
 	}
 
 	tWord=tData->triggerWords.at(0);
+
+	/*Calorimeter*/
+	for (cdata_it=cdata.begin();cdata_it!=cdata.end();cdata_it++){
+		const CalorimeterHit *evchit= *cdata_it;
+		Qc1 = evchit->Q1;
+		Qc2 = evchit->Q2;
+	}
+
+	/*Paddles*/
+	for (pdata_it=pdata.begin();pdata_it!=pdata.end();pdata_it++){
+
+		const PaddlesHit *evhit = *pdata_it;
+		//jout << evhit->m_channel.id<<endl;
+
+		if(evhit->m_channel.id==0){
+			Ep1=evhit->E;
+
+		}
+		else if(evhit->m_channel.id==1){
+			Ep2=evhit->E;
+		}
+	}
+
 
 	t->Fill();
 	japp->RootUnLock();

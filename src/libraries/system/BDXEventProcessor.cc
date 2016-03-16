@@ -47,7 +47,7 @@ BDXEventProcessor::~BDXEventProcessor()
 jerror_t BDXEventProcessor::init(void)
 {
 
-	jout<<"BDXEventProcessor::init is called"<<endl;
+	jout<<"BDXEventProcessor::init"<<endl;
 
 
 
@@ -81,10 +81,10 @@ jerror_t BDXEventProcessor::init(void)
 		}
 
 	}
-
-
-
 	gPARMS->GetParameter("MC", isMC);
+
+
+
 
 	return NOERROR;
 }

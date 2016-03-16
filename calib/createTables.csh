@@ -16,11 +16,16 @@ $command mktbl $DAQFolder/pedestals -r $DAQPedestalLines $DAQIndexes pedestal=do
 set CalorimeterFolder = "/Calorimeter"
 set CalorimeterIndexes = "sector=int x=int y=int readout=int"
 set CalorimeterSipmGainLines = 40000
+set CalorimeterEneLines = 40000
+
 
 echo "Calorimeter"
-echo "Sipm gain"
 $command mkdir $CalorimeterFolder
+echo "Sipm gain"
 $command mktbl $CalorimeterFolder/sipm_gain -r $CalorimeterSipmGainLines  $CalorimeterIndexes sipm_gain=double "#sipm gain"
+echo "ene"
+$command mktbl $CalorimeterFolder/ene -r $CalorimeterEneLines  $CalorimeterIndexes ene=double "#sipm gain"
+
 
 
 #Inner Veto
@@ -33,11 +38,11 @@ set InnerVetoEneLines = 1600
 echo "InnerVeto"
 $command mkdir $InnerVetoFolder
 echo "Sipm gain"
-$command mktbl $InnerVetoFolder/sipm_gain -r $InnerVetoSipmGainLines $InnerVetoIndexes sipm_gain=double "#sipm gain"
+$command mktbl $InnerVetoFolder/sipm_gain -r $InnerVetoSipmGainLines $InnerVetoIndexes sipm_gain=double ped=double "#sipm gain and pedestal"
 echo "Sipm ampl"
 $command mktbl $InnerVetoFolder/sipm_ampl -r $InnerVetoSipmAmplLines $InnerVetoIndexes sipm_ampl=double "#sipm ampl"
-echo "Ene"
-$command mktbl $InnerVetoFolder/Ene -r $InnerVetoEneLines $InnerVetoIndexes sipm_gain=double "#ene readout is always 0"
+#echo "Ene"
+#$command mktbl $InnerVetoFolder/Ene -r $InnerVetoEneLines $InnerVetoIndexes sipm_gain=double "#ene readout is always 0"
 
 
 #Ext Veto

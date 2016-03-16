@@ -53,7 +53,7 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 		ped+=input->samples.at(ii);
 	}
 	ped /= NPED;
-	*/
+	 */
 	//0b produced the waveform
 	for (int ii=0;ii<size;ii++){
 		m_waveform.push_back(input->samples.at(ii)-ped);
@@ -70,13 +70,15 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 	double thr;
 
 
-	thr=m_thrCalib->getCalibSingle(output->m_channel.int_veto); //this is the 1 phe ampl
-	thr=thr*1./2.;
+	thr=m_thrCalib->getCalibSingle(output->m_channel.int_veto); //this is the 1 phe ampl FROM DB
+
+	thr=thr*m_thr;   //put a very low thr at this level, 1.5 phe.
+
 	//2: find thr crossings
 	m_thisCrossingTime.first=-1;
 	m_thisCrossingTime.second=-1;
-	if (m_waveform[NPED]>thr) m_thisCrossingTime.first=0;
-	for (int ii=NPED;ii<size;ii++){
+	if (m_waveform[0]>thr) m_thisCrossingTime.first=0;
+	for (int ii=0;ii<size;ii++){
 		if ((	m_waveform[ii]>thr)&&(	m_waveform[ii-1]<thr)) m_thisCrossingTime.first=ii;
 		else if ((	m_waveform[ii]<thr)&&(	m_waveform[ii-1]>thr) && (m_thisCrossingTime.first!=-1)) {
 			m_thisCrossingTime.second=ii;
@@ -104,7 +106,7 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 		if (m_crossingTimesDelta.at(itime)<0){
 			jerr<<"Calorimeterfa20Converter::convertMode1Hit error, negative ToT?"<<std::endl;
 		}
-		else if((m_crossingTimesDelta.at(itime)>MIN_TOT)||(m_crossingTimes.at(itime).second)==(size)||(m_crossingTimes.at(itime).first)==(0)){
+		else if((m_crossingTimesDelta.at(itime)>(m_minTot/4.))||(m_crossingTimes.at(itime).second)==(size)||(m_crossingTimes.at(itime).first)==(0)){
 			m_singleCrossingIndexes.push_back(itime);
 		}
 	}
@@ -112,7 +114,7 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 	if ((output->nSingles)==0){
 		output->m_type=IntVetoSiPMHit::noise;
 		output->Qraw=this->sumSamples(m_waveform.size(),&(m_waveform.at(0)));
-		output->A=this->getMaximum(NPED,m_waveform.size()-1,&(input->samples.at(0)),output->T);
+		output->A=this->getMaximum(m_waveform.size(),&(input->samples.at(0)),output->T);
 		output->T*=4; //in NS!!!
 		return NOERROR;
 	}
@@ -135,24 +137,28 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 		xmax=m_crossingTimes.at(imax).second;
 		max=this->getMaximum((int)xmin,(int)xmax,&(m_waveform.at(0)),Tmax);
 
-		xmin=Tmax-20;
+		xmin=Tmax-m_NSA;
 		if (xmin<0) xmin=0;
-		xmax=Tmax+30;
+		xmax=Tmax+m_NSB;
 		if (xmax>=size) (xmax=size-1);
-		xmin=m_crossingTimes.at(imax).first;  //this is the time of the sample OVER thr
+		output->Qraw=this->sumSamples(xmin,xmax,&(m_waveform.at(0)));
 
-		if (xmin==0) output->T=0;
-		else{
-			max=m_waveform.at(xmin);
-			min=m_waveform.at(xmin-1);
-		}
 
+		/*Now do timing*/
 		//y=min+(t-xmin)*(max-min)/(xmax-xmin) , xmin <= t <= xmax
 		//y=THR
 		//(THR-min)*(xmax-xmin)/(max-min)+xmin=t
+		xmax=m_crossingTimes.at(imax).first;  //this is the time of the sample OVER thr
+		xmin=m_crossingTimes.at(imax).first-1;  //this is the time of the sample UNDER thr
+		if (xmax==0) output->T=0;
+		else{
+			max=m_waveform.at(xmax);
+			min=m_waveform.at(xmin);
+		}
+
 		output->T=(thr-min)*(xmax-xmin)/(max-min)+xmin;
 		output->T*=4; //in NS!!!
-		output->Qraw=this->sumSamples(xmin,xmax,&(m_waveform.at(0)));
+
 
 		return NOERROR;
 	}

@@ -77,7 +77,9 @@ jerror_t IntVetoSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 	TranslationTable::ChannelInfo m_channel;
 	TranslationTable::csc_t		  m_csc;
-	double		 				  m_q_calib;
+	double		 				  m_q_gain;
+	double		 				  m_q_ped;
+
 	IntVetoSiPMHit *m_IntVetoSiPMHit=0;
 
 	//1: Here, we get from the framework the objects we need to process
@@ -114,12 +116,17 @@ jerror_t IntVetoSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 			//m_IntVetoSiPMHit->AddAssociatedObject(*it_fa250Mode1CalibHit);
 
 			/*Apply phe conversion if possible*/
-			m_q_calib=m_sipm_gain.getCalibSingle(m_channel.int_veto);
 
+			m_q_gain=m_sipm_gain.getCalib(m_channel.int_veto)[0];
+			m_q_ped=m_sipm_gain.getCalib(m_channel.int_veto)[1];
 
-			if ((m_q_calib>0)){
-				m_IntVetoSiPMHit->Qphe=	m_IntVetoSiPMHit->Qraw/m_q_calib;
+			m_IntVetoSiPMHit->Qphe = m_IntVetoSiPMHit->Qraw - m_q_ped;
+			if (m_q_gain>0){
+				m_IntVetoSiPMHit->Qphe /=m_q_gain;
 			}
+
+
+
 
 			_data.push_back(m_IntVetoSiPMHit);
 		}
@@ -135,9 +142,12 @@ jerror_t IntVetoSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 			m_IntVetoSiPMHit=m_intVetofa250Converter->convertHit((fa250Hit*)*it_fa250Mode7Hit,m_channel);
 
 			/*Apply phe conversion if possible*/
-			m_q_calib=m_sipm_gain.getCalibSingle(m_channel.int_veto);
-			if (m_q_calib>0){
-				m_IntVetoSiPMHit->Qphe=	m_IntVetoSiPMHit->Qraw/m_q_calib;
+			m_q_gain=m_sipm_gain.getCalib(m_channel.int_veto)[0];
+			m_q_ped=m_sipm_gain.getCalib(m_channel.int_veto)[1];
+
+			m_IntVetoSiPMHit->Qphe =m_IntVetoSiPMHit->Qraw - m_q_ped;
+			if (m_q_gain>0){
+				m_IntVetoSiPMHit->Qphe /=m_q_gain;
 			}
 
 			_data.push_back(m_IntVetoSiPMHit);

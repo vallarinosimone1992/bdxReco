@@ -38,6 +38,9 @@ private:
 	double Q2,Q2_1,Q2_2,Q2_3,Q2_4; //right
 	double Q3,Q3_1,Q3_2,Q3_3,Q3_4; //down
 	double Q4,Q5; //plates
+
+	double Qc1,Qc2,Ep1,Ep2; //crystal and paddles
+
 	int tWord;
 
 	JROOTOutput *m_ROOTOutput;
