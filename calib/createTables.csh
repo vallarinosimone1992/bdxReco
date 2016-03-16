@@ -69,7 +69,7 @@ set PaddlesThrLines = 2
 set PaddlesEneLines = 2
 
 echo "Paddles"
-$command mkdir $Paddles
+$command mkdir $PaddlesFolder
 echo "PMT gain"
 $command mktbl $PaddlesFolder/PMT_gain -r $PaddlesPMTGainLines $PaddlesIndexes PMT_gain=double "#PMT gain"
 echo "threshold"
