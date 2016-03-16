@@ -68,6 +68,7 @@ for fn in os.listdir("DAQ_pedestals"):
                     ped=data[2]
                     RMS=data[3]
                     outF.write("0 "+str(slot)+" "+str(channel)+" "+str(ped)+"\n")
+            inF.close()
         #done up to slot 9. need to proceed up to 19
         for slot in range(10,20):
             for channel in range(0,16):
@@ -76,8 +77,6 @@ for fn in os.listdir("DAQ_pedestals"):
                 for slot in range(0,20):
                     for channel in range(0,16):
                         outF.write(str(crate)+" "+str(slot)+" "+str(channel)+" 0\n")        
-
-        inF.close()
         outF.close()
         #at this point, we have the file for run 
         #specify in the command
