@@ -53,15 +53,21 @@ for fn in os.listdir("DAQ_pedestals"):
         for slot in range(0,4):
             for channel in range(0,16):
                 outF.write("0 "+str(slot)+" "+str(channel)+" 0\n")
-
-        with open("DAQ_pedestals/"+fn) as inF:
-            for line in inF:
-                data=line.split()
-                slot=data[0]
-                channel=data[1]
-                ped=data[2]
-                RMS=data[3]
-                outF.write("0 "+str(slot)+" "+str(channel)+" "+str(ped)+"\n")
+        
+        #in case of default variation, do not load
+        if (variation=="default"):
+            for slot in range(4,20):
+                for channel in range(0,16):
+                       outF.write("0 "+str(slot)+" "+str(channel)+" "+str(ped)+"\n")
+        else: #load
+            with open("DAQ_pedestals/"+fn) as inF:
+                for line in inF:
+                    data=line.split()
+                    slot=data[0]
+                    channel=data[1]
+                    ped=data[2]
+                    RMS=data[3]
+                    outF.write("0 "+str(slot)+" "+str(channel)+" "+str(ped)+"\n")
         #done up to slot 9. need to proceed up to 19
         for slot in range(10,20):
             for channel in range(0,16):
