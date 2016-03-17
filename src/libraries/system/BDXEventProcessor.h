@@ -21,6 +21,7 @@ using namespace evio;
 
 class TranslationTable;
 class JOutput;
+class TTree;
 
 /*This class is the "main" event processor, that gets called in any case,
  * also if we use users plugins
@@ -51,7 +52,12 @@ class BDXEventProcessor:public JEventProcessor
 		int isMC;
 	//		TFile *outf;
 
+		/*The EventHeader tree*/
+		TTree *t;
+		int eventN,runN,tword,eventT;
 
+		/*Time*/
+		int startTime,stopTime,deltaTime;
 
 };
 

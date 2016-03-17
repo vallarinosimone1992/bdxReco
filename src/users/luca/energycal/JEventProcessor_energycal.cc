@@ -212,8 +212,24 @@ jerror_t JEventProcessor_energycal::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	for (cdata_it=cdata.begin();cdata_it<cdata.end();cdata_it++){
 		const CalorimeterHit *evchit= *cdata_it;
-		Qc1 = evchit->Q1;
-		Qc2 = evchit->Q2;
+		Qc1=0;
+		Qc2=0;
+		for (int idata=0;idata<evchit->m_data.size();idata++){
+			switch (evchit->m_data[idata].readout){
+			case (1):
+						Qc1 = evchit->m_data[idata].Q;
+			break;
+			case (2):
+						Qc2 = evchit->m_data[idata].Q;
+			break;
+			default:
+				break;
+
+			}
+		}
+
+
+
 	}
 	Qctot = Qc1+Qc2;
 	Tpdiff= Tp1-Tp2;

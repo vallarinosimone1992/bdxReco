@@ -14,7 +14,15 @@
 
 
 class CalorimeterHit:public jana::JObject{
+
 	public:
+	struct CalorimeterComponentHit{
+			int readout;
+			double E;
+			double Q;
+			double T;
+	};
+
 		JOBJECT_PUBLIC(CalorimeterHit);
 		
 		// Add data members here. For example:
@@ -27,9 +35,11 @@ class CalorimeterHit:public jana::JObject{
 			// AddString(items, "id", "%4d", id);
 			// AddString(items, "E", "%f", E);
 		}
-		double E1,E2,E;
-		double T1,T2,T;
-		double Q1,Q2,Q;   //I assume here at max 2 detectors per crystal..
+		vector<CalorimeterComponentHit> m_data;
+		double E,Q,T;
+		int N; //how many counters associated with this object were above thr (i.e. how many entries in m_data?
+
+
 
 		TranslationTable::CALO_Index_t m_channel; //Detector-specific ID. Since this is a detector-based object, the readout field will be ==0
 };

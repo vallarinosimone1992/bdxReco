@@ -32,10 +32,10 @@ class JEventProcessor_Calorimeter_SipmCalib:public jana::JEventProcessor{
 		int eventNumber;
 		int m_isFirstCallToBrun;
 		int m_type;
-		int m_sector,m_layer,m_component,m_readout;
+		int m_sector,m_x,m_y,m_readout;
 
 		int m_singles,m_signals;
-		double Q,A,T,average;
+		double Qphe,Qraw,A,T,average;
 
 		JROOTOutput *m_ROOTOutput;
 };

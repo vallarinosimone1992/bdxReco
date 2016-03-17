@@ -10,11 +10,12 @@ using namespace std;
 #include "BDXEventProcessor.h"
 #include "string_utilities.h"
 //DAQ
+#include <DAQ/eventData.h>
 
 // TT
 #include <TT/TranslationTable.h>
-//#include "ctofHitR.h"
-//#include "marcoCluster.h"
+
+#include "TTree.h"
 
 
 #include "JOutput.h"
@@ -32,9 +33,10 @@ BDXEventProcessor::BDXEventProcessor():
 	 */
 
 	optf="";
-	//string hd_msg = bdxOpt.optMap["LOG_MSG"].args + " Event: >> " ;
 
 
+	startTime=99999999;
+	stopTime=-99999999;
 }
 
 // Destructor
@@ -83,9 +85,19 @@ jerror_t BDXEventProcessor::init(void)
 	}
 	gPARMS->GetParameter("MC", isMC);
 
+	japp->RootWriteLock();
 
-
-
+	t=new TTree("EventHeader","EventHeader");
+	t->Branch("eventN",&eventN);
+	t->Branch("runN",&runN);
+	t->Branch("T",&eventT);
+	t->Branch("tword",&tword);
+	if (m_output){
+		if (m_output->className()=="JRootOutput"){
+			JROOTOutput* m_ROOTOutput=(JROOTOutput*)m_output;
+			(m_ROOTOutput)->AddObject(t);
+		}
+	}
 	return NOERROR;
 }
 
@@ -104,6 +116,27 @@ jerror_t BDXEventProcessor::brun(JEventLoop *eventLoop, int32_t runnumber)
 jerror_t BDXEventProcessor::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 
+	const eventData* tData;
+	try{
+		loop->GetSingle(tData);
+	}
+	catch(unsigned long e){
+		jout<<"No eventData bank this event"<<endl;
+		return 	OBJECT_NOT_AVAILABLE;
+	}
+	japp->RootWriteLock();
+
+	eventT=tData->time;
+	eventN=eventnumber;
+	tword=tData->triggerWords[0];
+	runN=tData->runN;
+	t->Fill();
+
+
+	/*Time*/
+	if (eventT<startTime) startTime=eventT;
+	if (eventT>stopTime)  stopTime=eventT;
+	japp->RootUnLock();
 
 	return NOERROR;
 }
@@ -111,9 +144,10 @@ jerror_t BDXEventProcessor::evnt(JEventLoop *loop, uint64_t eventnumber)
 // erun
 jerror_t BDXEventProcessor::erun(void)
 {
+	deltaTime=stopTime-startTime;
 	jout<<"BDXEventProcessor::erun "<<endl;
-	// Any final calculations on histograms (like dividing them)
-	// should be done here. This may get called more than once.
+	jout<<"Run start: "<<startTime<<" stop: "<<stopTime<<" diff: "<<deltaTime<<endl;
+
 	return NOERROR;
 }
 

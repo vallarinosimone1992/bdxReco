@@ -151,7 +151,7 @@ jerror_t CalorimeterSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 
 
 
-	return NOERROR;
+
 
 
 

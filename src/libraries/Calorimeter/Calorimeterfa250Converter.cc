@@ -81,8 +81,6 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 	output->T=0;
 	output->A=0;
 	output->m_type=CalorimeterSiPMHit::noise;
-	/*This part is to read pedestal from dB*/
-	double pedV;
 
 
 	output->AddAssociatedObject(input);
@@ -109,27 +107,24 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 	output->average/=input->samples.size();
 
 
-	///TODO NOT HARDCODED!
-	int thr;
-	if (output->m_channel.calorimeter.readout==1) thr=8;
-	if (output->m_channel.calorimeter.readout==2) thr=8;
 
-	//2: find thr crossings
+
+	//2: find m_THR crossings
 	m_thisCrossingTime.first=-1;
 	m_thisCrossingTime.second=-1;
-	if (input->samples[0]>thr) m_thisCrossingTime.first=0;
+	if (input->samples[0]>m_THR) m_thisCrossingTime.first=0;
 
 	for (int ii=1;ii<size;ii++){
-		if ((	input->samples[ii]>thr)&&(	input->samples[ii-1]<thr)) m_thisCrossingTime.first=ii;
-		else if ((	input->samples[ii]<thr)&&(	input->samples[ii-1]>thr) && (m_thisCrossingTime.first!=-1)) {
+		if ((	input->samples[ii]>m_THR)&&	(input->samples[ii-1]<m_THR)) m_thisCrossingTime.first=ii;
+		else if ((	input->samples[ii]<m_THR) && (input->samples[ii-1]>m_THR) && (m_thisCrossingTime.first!=-1)) {
 			m_thisCrossingTime.second=ii;
 			m_crossingTimes.push_back(m_thisCrossingTime);
 			m_thisCrossingTime.first=-1;
 			m_thisCrossingTime.second=-1;
 		}
 	}
-	//It may happen that the last sample is still over thr!
-	if (input->samples[size-1]>thr){
+	//It may happen that the last sample is still over m_THR!
+	if (input->samples[size-1]>m_THR){
 		m_thisCrossingTime.second=size;
 		m_crossingTimes.push_back(m_thisCrossingTime);
 	}
@@ -149,10 +144,10 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 		if (m_crossingTimesDelta.at(itime)<0){
 			jerr<<"Calorimeterfa20Converter::convertMode1Hit error, negative ToT?"<<std::endl;
 		}
-		else if (m_crossingTimesDelta.at(itime)>SINGLE_SIGNAL_TOT){
+		else if (m_crossingTimesDelta.at(itime)>m_SINGLE_SIGNAL_TOT/4){
 			m_signalCrossingIndexes.push_back(itime);
 		}
-		else if((m_crossingTimesDelta.at(itime)>MIN_TOT)||(m_crossingTimes.at(itime).second)==(size)||(m_crossingTimes.at(itime).first)==(0)){
+		else if((m_crossingTimesDelta.at(itime)>m_MIN_TOT/4)||(m_crossingTimes.at(itime).second)==(size)||(m_crossingTimes.at(itime).first)==(0)){
 			m_singleCrossingIndexes.push_back(itime);
 		}
 	}
@@ -164,15 +159,16 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 	if (((output->nSignals)==0)&&(output->nSingles)==0){
 		output->m_type=CalorimeterSiPMHit::noise;
 		output->T=0;
-		output->Qraw=this->sumSamples(input->samples.size(),&(input->samples.at(0)));
+		output->Qraw=this->sumSamples(0,m_NSB+m_NSA,&(input->samples[0])); //to be uniform with the case below
 		output->A=0;
 		return NOERROR;
 	}
 	else if ((output->nSignals==0)&&(output->nSingles==1)){
-		idx=m_singleCrossingIndexes.at(0);
-		if ((m_crossingTimes.at(idx).first<=30)||(m_crossingTimes.at(idx).second>=(size-1-30))){
+		output->A=this->getMaximum(m_crossingTimes[0].first,m_crossingTimes[0].second,&(input->samples[0]),Tmax);
+
+		if ((Tmax<=m_NSB)||(Tmax>=(size-1-m_NSA))){
 			output->m_type=CalorimeterSiPMHit::one_phe;
-			output->Qraw=this->sumSamples(input->samples.size(),&(input->samples.at(0)));
+			output->Qraw=this->sumSamples(0,m_NSB+m_NSA,&(input->samples[0])); //to be uniform with the case below
 			output->T=0;
 			return NOERROR;
 		}
@@ -180,59 +176,44 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 
 
 			output->m_type=CalorimeterSiPMHit::good_one_phe;
-			xmin=m_crossingTimes.at(idx).first-20;
-			xmax=m_crossingTimes.at(idx).second+80;
+			xmin=Tmax-m_NSB;
+			xmax=Tmax+m_NSA;
 
+			/*This should never happen*/
 			if (xmin<0) xmin=0;
 			if (xmax>=size) xmax=(size-1);
+
 			N=int((xmax-xmin))+1;
 
-			/*Refine the pedestal*/
-			output->ped=0;
-			output->average=0;
-			for (int ii=0;ii<20;ii++) output->ped+=input->samples.at(ii);
-			output->ped/=20;
-
-			vector<double> new_samples;
-
-			for (int ii=0;ii<size;ii++){
-				new_samples.push_back(input->samples.at(ii)-output->ped);
-				output->average+=new_samples.at(ii);
-			}
 			output->average/=input->samples.size();
-			output->A=this->getMaximum(m_crossingTimes.at(idx).first,m_crossingTimes.at(idx).second,&(input->samples.at(0)),output->T);
-			xmin=output->T-10;
-			xmax=output->T+20;
+			output->T=Tmax;
+			output->Qraw=this->sumSamples((int)xmin,(int)xmax,&(input->samples[0]));
+			/*now timing*/
+			xmax=m_crossingTimes[0].first; //first sample above m_THR
+			xmin=xmax-1; //sample befor m_THR
+			max=input->samples[xmax];
+			min=input->samples[xmin];
 
-			if ((xmin<=0)||(xmax>size)){
-				jerr<<xmin<<" "<<xmax<<" "<<output->T<<" "<<m_crossingTimes.at(idx).first<<" "<<m_crossingTimes.at(idx).second<<std::endl;
-			}
-			output->Qraw=this->sumSamples((int)xmin,(int)xmax,&(input->samples.at(0)));
-
-
+			output->T=(m_THR-min)*(xmax-xmin)/(max-min)+xmin;
 			output->T*=4; //in NS!!!
 
 		}
 	}
 	else if (output->nSignals>=1){
 		output->m_type=CalorimeterSiPMHit::real_signal;
-		output->Qraw=this->sumSamples(input->samples.size(),&(input->samples.at(0)));
-		output->A=this->getMaximum(input->samples.size(),&(input->samples.at(0)),output->T);
+		output->Qraw=this->sumSamples(input->samples.size(),&(input->samples[0]));
+		output->A=this->getMaximum(input->samples.size(),&(input->samples[0]),Tmax);
 
-		idx=m_signalCrossingIndexes.at(0);
-		xmin=m_crossingTimes.at(idx).first;  //this is the time of the sample OVER thr
-		xmax=m_crossingTimes.at(idx).first+1;
+		idx=m_signalCrossingIndexes[0];
+		xmax=m_crossingTimes[idx].first;  //this is the time of the sample OVER m_THR
+		xmin=m_crossingTimes[idx].first-1;
 		if (xmin==0) output->T=0;
 		else{
-			max=input->samples.at(xmin);
-			min=input->samples.at(xmin-1);
+			max=input->samples[xmax];
+			min=input->samples[xmin];
 		}
-		//y=min+(t-xmin)*(max-min)/(xmax-xmin) , xmin <= t <= xmax
-		//y=THR
-		//(THR-min)*(xmax-xmin)/(max-min)+xmin=t
 
-		output->T=(thr-min)*(xmax-xmin)/(max-min)+xmin;
-
+		output->T=(m_THR-min)*(xmax-xmin)/(max-min)+xmin;
 		output->T*=4; //in NS!!!
 
 
@@ -243,34 +224,29 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 		output->Qraw=0;
 		prev_xmin=0;
 		for (int iphe=0;iphe<output->nSingles;iphe++){
-			idx=m_singleCrossingIndexes.at(iphe);
-			xmin=m_crossingTimes.at(idx).first;
-			xmax=m_crossingTimes.at(idx).second;
-			max=this->getMaximum((int)xmin,(int)xmax,&(input->samples.at(0)),Tmax);
+			idx=m_singleCrossingIndexes[iphe];
+			xmin=m_crossingTimes[idx].first;
+			xmax=m_crossingTimes[idx].second;
+			max=this->getMaximum((int)xmin,(int)xmax,&(input->samples[0]),Tmax);
 			if ((output->A) < max) output->A=max;
 
-			xmin=Tmax-10;
-			xmax=Tmax+20;
+			xmin=Tmax-m_NSB;
+			xmax=Tmax+m_NSA;
 
 			if (xmin<prev_xmin) xmin=prev_xmin;
 			if (xmax>size) xmax=(size-1);
 
-			output->Qraw+=this->sumSamples((int)xmin,(int)xmax,&(input->samples.at(0)));
+			output->Qraw+=this->sumSamples((int)xmin,(int)xmax,&(input->samples[0]));
 		}
-		idx=m_singleCrossingIndexes.at(0);
-		xmin=m_crossingTimes.at(idx).first;  //this is the time of the sample OVER thr
-		xmax=m_crossingTimes.at(idx).first+1;
+		idx=m_singleCrossingIndexes[0];
+		xmax=m_crossingTimes.at(idx).first;  //this is the time of the sample OVER m_THR
+		xmin=m_crossingTimes.at(idx).first-1;
 		if (xmin==0) output->T=0;
 		else{
-			max=input->samples.at(xmin);
-			min=input->samples.at(xmin-1);
+			max=input->samples[xmax];
+			min=input->samples[xmin];
 		}
-		//y=min+(t-xmin)*(max-min)/(xmax-xmin) , xmin <= t <= xmax
-		//y=THR
-		//(THR-min)*(xmax-xmin)/(max-min)+xmin=t
-
-		output->T=(thr-min)*(xmax-xmin)/(max-min)+xmin;
-
+		output->T=(m_THR-min)*(xmax-xmin)/(max-min)+xmin;
 		output->T*=4; //in NS!!!
 
 
