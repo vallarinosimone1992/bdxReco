@@ -110,6 +110,7 @@ jerror_t PaddlesPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 
 		if (m_channel.det_sys==TranslationTable::PADDLES){
+//			jout<<"Nevent="<<eventnumber<<endl;
 			m_PaddlesPMTHit=m_Paddlesfa250Converter->convertHit((fa250Hit*)*it_fa250Mode1CalibHit,m_channel);
 			m_PaddlesPMTHit->AddAssociatedObject(*it_fa250Mode1CalibHit);
 			//						jout<<"Q= "<<m_PaddlesPMTHit->Q<<endl;
