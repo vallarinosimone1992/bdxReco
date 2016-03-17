@@ -47,7 +47,7 @@ void InitPlugin(JApplication *app){
 //------------------
 // ExtVeto_SigDisplay (Constructor)
 //------------------
-ExtVeto_SigDisplay::ExtVeto_SigDisplay():m_isFirstCallToBrun(1)
+ExtVeto_SigDisplay::ExtVeto_SigDisplay():m_isFirstCallToBrun(1),m_ROOTOutput(0)
 {
 
 }

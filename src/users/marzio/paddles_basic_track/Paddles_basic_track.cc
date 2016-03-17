@@ -40,7 +40,7 @@ void InitPlugin(JApplication *app){
 //------------------
 //  (Constructor)
 //------------------
-Paddles_basic_track::Paddles_basic_track():m_isFirstCallToBrun(1)
+Paddles_basic_track::Paddles_basic_track():m_isFirstCallToBrun(1),m_ROOTOutput(0)
 {
 
 }

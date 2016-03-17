@@ -53,7 +53,8 @@ void InitPlugin(JApplication *app){
 //------------------
 // JEventProcessor_sipm_calib (Constructor)
 //------------------
-JEventProcessor_IntVeto_SipmCalib::JEventProcessor_IntVeto_SipmCalib()
+JEventProcessor_IntVeto_SipmCalib::JEventProcessor_IntVeto_SipmCalib():
+		m_ROOTOutput(0)
 {
 	m_isFirstCallToBrun=1;
 	h=new TH1D("h","h",100,-0.5,99.5);
@@ -81,7 +82,7 @@ jerror_t JEventProcessor_IntVeto_SipmCalib::init(void)
 	// japp->RootUnLock();
 	//
 	japp->RootWriteLock();
-	t=new TTree("tout","tout");
+	t=new TTree("IntVeto_SipmCalib","IntVeto_SipmCalib");
 
 	t->Branch("sector",&m_sector);
 	t->Branch("layer",&m_layer);

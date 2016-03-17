@@ -37,7 +37,7 @@ void InitPlugin(JApplication *app){
 //------------------
 // JEventProcessor_energycal (Constructor)
 //------------------
-JEventProcessor_energycal::JEventProcessor_energycal()
+JEventProcessor_energycal::JEventProcessor_energycal():m_ROOTOutput(0)
 {
 
 }

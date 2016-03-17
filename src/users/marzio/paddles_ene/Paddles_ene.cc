@@ -38,7 +38,7 @@ void InitPlugin(JApplication *app){
 //------------------
 // Paddles_SigDisplay (Constructor)
 //------------------
-Paddles_ene::Paddles_ene():m_isFirstCallToBrun(1)
+Paddles_ene::Paddles_ene():m_isFirstCallToBrun(1),m_ROOTOutput(0)
 {
 
 }

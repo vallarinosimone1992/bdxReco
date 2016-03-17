@@ -15,13 +15,14 @@ using namespace jana;
 
 
 #include "JEventProcessor_test.h"
-#include "system/BDXEventProcessor.h"
+#include <system/BDXEventProcessor.h>
+#include <system/JROOTOutput.h>
 
 #include <DAQ/fa250Mode1Hit.h>
 #include <DAQ/eventData.h>
+
 #include <TT/TranslationTable.h>
 
-#include <DAQ/eventData.h>
 
 #include <IntVeto/IntVetoDigiHit.h>
 #include <IntVeto/IntVetoSiPMHit.h>
@@ -32,7 +33,7 @@ using namespace jana;
 #include <Calorimeter/CalorimeterHit.h>
 #include <Paddles/PaddlesHit.h>
 
-#include <system/JROOTOutput.h>
+
 
 #include "TH1D.h"
 #include "TH2D.h"
@@ -53,7 +54,8 @@ void InitPlugin(JApplication *app){
 //------------------
 // JEventProcessor_intVeto_digi (Constructor)
 //------------------
-JEventProcessor_IntVeto_digi::JEventProcessor_IntVeto_digi()
+JEventProcessor_IntVeto_digi::JEventProcessor_IntVeto_digi():
+		m_ROOTOutput(0)
 {
 
 }
@@ -74,7 +76,7 @@ jerror_t JEventProcessor_IntVeto_digi::init(void)
 
 	//
 	japp->RootWriteLock();
-	t=new TTree("tout","tout");
+	t=new TTree("IntVeto_digi","IntVeto_digi");
 
 	t->Branch("sector",&m_sector);
 	t->Branch("layer",&m_layer);

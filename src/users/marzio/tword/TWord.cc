@@ -37,7 +37,7 @@ void InitPlugin(JApplication *app){
 //------------------
 // TWord (Constructor)
 //------------------
-TWord::TWord():m_isFirstCallToBrun(1)
+TWord::TWord():m_isFirstCallToBrun(1),m_ROOTOutput(0)
 {
 
 }

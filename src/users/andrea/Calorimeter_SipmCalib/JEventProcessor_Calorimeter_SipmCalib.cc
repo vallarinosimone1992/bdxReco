@@ -48,7 +48,8 @@ void InitPlugin(JApplication *app){
 //------------------
 // JEventProcessor_Calorimeter_SipmCalib (Constructor)
 //------------------
-JEventProcessor_Calorimeter_SipmCalib::JEventProcessor_Calorimeter_SipmCalib()
+JEventProcessor_Calorimeter_SipmCalib::JEventProcessor_Calorimeter_SipmCalib():
+		m_ROOTOutput(0)
 {
 
 }

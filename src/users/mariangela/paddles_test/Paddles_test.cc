@@ -40,7 +40,7 @@ void InitPlugin(JApplication *app){
 //------------------
 //  (Constructor)
 //------------------
-Paddles_test::Paddles_test():m_isFirstCallToBrun(1)
+Paddles_test::Paddles_test():m_isFirstCallToBrun(1),m_ROOTOutput(0)
 {
 
 }
