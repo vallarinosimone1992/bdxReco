@@ -14,7 +14,7 @@ using namespace std;
 //DAQ
 #include <DAQ/fa250Mode1Hit.h>
 #include <DAQ/fa250Mode7Hit.h>
-#include <DAQ/triggerData.h>
+#include <DAQ/eventData.h>
 
 
 // Constructor
@@ -25,23 +25,6 @@ JEventSourceEvioDAQ::JEventSourceEvioDAQ(const char* source_name):JEventSource(s
 
 
 
-	// Setting CLAS12 constants
-	// Hardcoded for now but will be from database later on
-	/*int nsect      = 6;    // CLAS12 sectors
-	gPARMS->SetDefaultParameter("CLAS12:NSECTORS", nsect);
-	 */
-	// Drift Chambers
-	/*int dc_nreg    = 3;    // DC: Number or regions
-	int dc_nslay_r = 2;    // DC: Number of superlayers per region
-	int dc_nslay   = 6;    // DC: superlayers, 2 per region = 6 total
-	int dc_nlayr   = 6;    // DC: layers within the superlayer
-	int dc_nwire   = 113;  // DC: number of wires
-	gPARMS->SetDefaultParameter("DC:NREGIONS",     dc_nreg);
-	gPARMS->SetDefaultParameter("DC:NSLAYERS_R",   dc_nslay_r);
-	gPARMS->SetDefaultParameter("DC:NSLAYERS",     dc_nslay);
-	gPARMS->SetDefaultParameter("DC:NLAYERS",      dc_nlayr);	
-	gPARMS->SetDefaultParameter("DC:NWIRES",       dc_nwire);
-	 */
 
 	vme_mother_tag=0x1;
 	child_mode1_tag=0xe101;
@@ -66,7 +49,7 @@ JEventSourceEvioDAQ::JEventSourceEvioDAQ(const char* source_name):JEventSource(s
 	jout << " Opening input file " << source_name << "." << endl;
 
 	try{
-//		chan = new evioFileChannel(source_name, "r", 300000);
+		//		chan = new evioFileChannel(source_name, "r", 300000);
 		chan = new evioFileChannel(source_name, "r", 10804);
 		chan->open();
 	}
@@ -91,13 +74,6 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event)
 
 	event.SetRef(NULL);
 
-	vector<string> hitTypes;
-	hitTypes.push_back("ctof");
-
-	map<string, string> allSystems;
-	allSystems["ctof"] = "TEXT";
-
-	//banksMap = read_banks(bdxOpt, allSystems);
 
 	if(chan->read())
 	{
@@ -116,20 +92,20 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event)
 		for(iter=fullList->begin(); iter!=fullList->end(); iter++) {
 			if(((*iter)->tag==prestart_tag)&&(overwriteRunNumber==-1)){
 				const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*iter);
-//				int leafSize = leaf->getSize();
+				//				int leafSize = leaf->getSize();
 				vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
 				curRunNumber=pData->at(1);
-				jout<<"New run number: "<<curRunNumber<<endl;
+				jout<<"JEventSourceEvioDAQ::GetEvent new run number: "<<curRunNumber<<endl;
 			}
 			if((*iter)->tag==eventHeader_CODA_tag){ /*To be compatible also with data taken without header*/
 				const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*iter);
-//				int leafSize = leaf->getSize();
+				//				int leafSize = leaf->getSize();
 				vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
 				event.SetEventNumber(pData->at(0));
 			}
-			if((*iter)->tag==eventHeader_tag){
+			else if((*iter)->tag==eventHeader_tag){
 				const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*iter);
-//				int leafSize = leaf->getSize();
+				//				int leafSize = leaf->getSize();
 				vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
 				event.SetEventNumber(pData->at(2));
 				curRunNumber=pData->at(1);
@@ -137,8 +113,6 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event)
 		}
 		if (overwriteRunNumber!=-1) event.SetRunNumber(overwriteRunNumber);
 		else event.SetRunNumber(curRunNumber);
-
-
 		return NOERROR;
 	}
 	else{
@@ -173,7 +147,7 @@ jerror_t JEventSourceEvioDAQ::GetObjects(JEvent &event, JFactory_base *factory)
 	//As suggested by David, do a check on the factory type to decide what to do
 	JFactory<fa250Mode1Hit> *fac_fa250Mode1hit = dynamic_cast<JFactory<fa250Mode1Hit>*>(factory);
 	JFactory<fa250Mode7Hit> *fac_fa250Mode7hit = dynamic_cast<JFactory<fa250Mode7Hit>*>(factory);
-	JFactory<triggerData> 	*fac_triggerData = dynamic_cast<JFactory<triggerData>*>(factory);
+	JFactory<eventData> 	*fac_eventData = dynamic_cast<JFactory<eventData>*>(factory);
 
 	if(fac_fa250Mode1hit != NULL){
 
@@ -298,15 +272,15 @@ jerror_t JEventSourceEvioDAQ::GetObjects(JEvent &event, JFactory_base *factory)
 		fac_fa250Mode7hit->CopyTo(data);
 		return NOERROR;
 	}
-	else if(fac_triggerData != NULL){
-		vector<triggerData*> data;
+	else if(fac_eventData != NULL){
+		vector<eventData*> data;
 		evioDOMTree* local_EDT=(evioDOMTree*)event.GetRef();
 
 		evio::evioDOMNodeListP fullList     = local_EDT->getNodeList();
 		evio::evioDOMNodeList::const_iterator iter;
 		evio::evioDOMNodeList::const_iterator branch;
 
-
+		eventData *this_eventData=new eventData();
 
 		for(iter=fullList->begin(); iter!=fullList->end(); iter++) {
 			if((*iter)->tag==vme_mother_tag){
@@ -314,24 +288,40 @@ jerror_t JEventSourceEvioDAQ::GetObjects(JEvent &event, JFactory_base *factory)
 
 				for(branch=leafList->begin();branch!=leafList->end(); branch++){
 					if( (*branch)->tag==child_trigger_tag){
-
-
 						const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*branch);
 						int leafSize = leaf->getSize();
 						vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
 						if (leafSize>0){
-							triggerData *this_triggerData=new triggerData();
+
 							for (int itrigWord=0;itrigWord<pData->size();itrigWord++){
-								this_triggerData->triggerWords.push_back(pData->at(itrigWord));
+								this_eventData->triggerWords.push_back(pData->at(itrigWord));
 							}
-							data.push_back(this_triggerData);
+
 						}
 
+					}
+
+					else if( (*branch)->tag==eventHeader_tag){
+						const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*branch);
+						int leafSize = leaf->getSize();
+						vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
+						if (leafSize!=5){  //should have 5 words in head bank
+							jerr<<"Incompatible number of words in head bank: got "<<leafSize<<endl;
+						}
+						else{
+							this_eventData->eventN=pData->at(2);
+							this_eventData->runN=pData->at(1);
+							this_eventData->time=pData->at(3);
+						}
 					}
 				}
 			}
 		}
-		fac_triggerData->CopyTo(data);
+	//	jout<<"Done: "<<this_eventData->eventN<<" "<<this_eventData->runN<<" "<<this_eventData->time<<endl;
+		if (this_eventData->triggerWords.size()!=0){
+			data.push_back(this_eventData);
+			fac_eventData->CopyTo(data);
+		}
 		return NOERROR;
 	}
 

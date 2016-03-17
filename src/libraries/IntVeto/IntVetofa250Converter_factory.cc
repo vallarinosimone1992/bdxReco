@@ -13,11 +13,33 @@ using namespace std;
 #include "IntVetofa250Converter_factory.h"
 using namespace jana;
 
+IntVetofa250Converter_factory::IntVetofa250Converter_factory():
+		m_isFirstCallToBrun(1),m_intVetofa250Converter(0){
+	jout<<"IntVetofa250Converter_factory::creator"<<endl;
+
+
+	m_minTot=12;
+	m_thr=1.5;
+	m_NSB=20;
+	m_NSA=30;
+
+	gPARMS->SetDefaultParameter("INTVETO:MIN_TOT",m_minTot,"Min ToT (in ns) for a pulse to be considered");
+	gPARMS->SetDefaultParameter("INTVETO:THR",m_thr,"Min amplitude (in number of phe) for a pulse to be considered");
+	gPARMS->SetDefaultParameter("INTVETO:NSB",m_NSB,"Samples before the maximum to include in integration");
+	gPARMS->SetDefaultParameter("INTVETO:NSA",m_NSA,"Samples after the maximum to include in integration");
+
+
+
+};
+
 //------------------
 // init
 //------------------
 jerror_t IntVetofa250Converter_factory::init(void)
 {
+	jout<<"IntVetofa250Converter_factory::init"<<endl;
+
+
 	return NOERROR;
 }
 
@@ -26,6 +48,7 @@ jerror_t IntVetofa250Converter_factory::init(void)
 //------------------
 jerror_t IntVetofa250Converter_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber)
 {
+	jout<<"IntVetofa250Converter_factory::brun"<<endl;
 
 	m_intVetofa250Converter=new IntVetofa250Converter();
 	m_intVetofa250Converter->m_thrCalib=new CalibrationHandler<TranslationTable::INT_VETO_Index_t>;
@@ -36,7 +59,10 @@ jerror_t IntVetofa250Converter_factory::brun(jana::JEventLoop *eventLoop, int32_
 
 	gPARMS->GetParameter("INTVETO:VERBOSE",m_intVetofa250Converter->verbose());
 
-	m_intVetofa250Converter->MIN_TOT=3;
+	m_intVetofa250Converter->m_minTot=m_minTot;
+	m_intVetofa250Converter->m_thr=m_thr;
+	m_intVetofa250Converter->m_NSB=m_NSB;
+	m_intVetofa250Converter->m_NSA=m_NSA;
 
 
 	_data.push_back(m_intVetofa250Converter);

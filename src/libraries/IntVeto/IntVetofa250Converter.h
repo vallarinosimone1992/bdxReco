@@ -31,8 +31,9 @@ public:
 
 	CalibrationHandler<TranslationTable::INT_VETO_Index_t> *m_thrCalib;
 
-	static const int NPED = 20;
-	int MIN_TOT;
+	int m_minTot;
+	int m_thr;
+	int m_NSB,m_NSA;
 };
 
 #endif // _IntVetofa250Converter_

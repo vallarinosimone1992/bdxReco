@@ -73,19 +73,19 @@ jerror_t IntVetoDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		m_channel = (*it)->m_channel.int_veto;
 		m_channel.readout = 0;
  		m_map_it=m_map.find(m_channel);
- 		if (m_map_it == m_map.end()){ //not here. Create a new VetoIntDigiHit object, and associate the id of this SiPM hit with it
+ 		if (m_map_it == m_map.end()){ //not here. Create a new VetoIntDigiHit object
  			m_IntVetoDigiHit=new IntVetoDigiHit;
  			m_IntVetoDigiHit->m_channel=m_channel;
  			m_IntVetoDigiHit->AddAssociatedObject((*it));
  			m_map.insert(std::make_pair(m_channel,m_IntVetoDigiHit));
 		}
- 		else{ //element already exists. Get the VetoIntDigiHit and add this hit as id.
+ 		else{ //element already exists. Get the VetoIntDigiHit
  			m_IntVetoDigiHit=m_map[m_channel];
  			m_IntVetoDigiHit->AddAssociatedObject((*it));
  		}
 	}
 
-	/*Now the map is full of all the hits in different active elements of active veto, i.e. with different identifiers, BUT readout, that maps the sipm hits.
+	/*Now the map is full of all the hits in different active elements of active veto, i.e. with different identifiers, that maps the sipm hits.
 	 * Each hit has a reference to the SiPM hits that made it
 	 */
 	vector <const IntVetoSiPMHit*> m_IntVetoSiPMHit_tmp;
@@ -98,15 +98,15 @@ jerror_t IntVetoDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		m_IntVetoDigiHit_tmp=m_map_it->second;
 		m_IntVetoDigiHit_tmp->Get(m_IntVetoSiPMHit_tmp,"",0);  //0 means "associated only with this object
 
-		for (int ihit=0;ihit<m_IntVetoSiPMHit_tmp.size();ihit++){
+		m_IntVetoDigiHit_tmp->Qtot=0;
 
+		for (int ihit=0;ihit<m_IntVetoSiPMHit_tmp.size();ihit++){
 			IntVetoDigiHit::IntVetoSiPMDigiHit hit;
 			hit.Q=m_IntVetoSiPMHit_tmp.at(ihit)->Qphe;
 			hit.T=m_IntVetoSiPMHit_tmp.at(ihit)->T;
 			hit.readout=m_IntVetoSiPMHit_tmp.at(ihit)->m_channel.int_veto.readout;
 			m_IntVetoDigiHit_tmp->m_data.push_back(hit);
-
-
+			m_IntVetoDigiHit_tmp->Qtot+=hit.Q;
 		}
 		_data.push_back(m_IntVetoDigiHit_tmp); //publish it
 	}

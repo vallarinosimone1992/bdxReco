@@ -17,8 +17,9 @@ using namespace std;
 
 #include <TT/TranslationTable.h>
 
-#include <DAQ/triggerData.h>
+#include <DAQ/eventData.h>
 
+#include <IntVeto/IntVetoHit.h>
 #include <IntVeto/IntVetoDigiHit.h>
 #include <IntVeto/IntVetoSiPMHit.h>
 
@@ -199,10 +200,17 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop,uint64_t eventnumber)
 	//
 	vector<const IntVetoSiPMHit*> data;
 	vector<const IntVetoSiPMHit*>::const_iterator data_it;
+
+	vector<const IntVetoHit*> idata;
+	vector<const IntVetoHit*>::const_iterator idata_it;
+
 	const fa250Mode1CalibPedSubHit *fa;
 	loop->Get(data);
+	loop->Get(idata);
 
-	const triggerData* tData;
+	int isHit;
+
+	const eventData* tData;
 	//has to be in a try-catch block, since if no trigger data is there (prestart - start - end events) trows it!
 	try{
 		loop->GetSingle(tData);
@@ -224,11 +232,19 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop,uint64_t eventnumber)
 
 	japp->RootWriteLock();
 	//  ... fill historgrams or trees ...
-	for (data_it=data.begin();data_it<data.end();data_it++){
+	for (data_it=data.begin();data_it!=data.end();data_it++){
 	
 		const IntVetoSiPMHit *ivhit = *data_it;
-
-
+		isHit=0;
+		for (idata_it=idata.begin();idata_it!=idata.end();idata_it++){
+			TranslationTable::INT_VETO_Index_t ch;
+			ch=ivhit->m_channel.int_veto;
+			ch.readout=0;
+			if ((*idata_it)->m_channel==ch){
+				isHit=1;
+				break;
+			}
+		}
 
 			//jout<<"Component= "<<ivhit->m_channel.ext_veto.component<<" Readout= "<<ivhit->m_channel.ext_veto.readout<<" Size= "<<fa->samples.size()<<endl;
 
@@ -238,7 +254,7 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop,uint64_t eventnumber)
 			if(!fa) continue; // need fa250Mode1CalibHit to continue
 
 			h->Reset();
-			h->SetName(Form("h_%lld_%i_%i",eventnumber,ivhit->m_channel.int_veto.component,ivhit->m_channel.int_veto.readout));
+			h->SetName(Form("h_%lld_%i_%i_%i:::%i",eventnumber,ivhit->m_channel.int_veto.component,ivhit->m_channel.int_veto.readout,ivhit->m_type,isHit));
 
 
 

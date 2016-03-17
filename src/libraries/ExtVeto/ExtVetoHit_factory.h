@@ -10,6 +10,7 @@
 
 #include <JANA/JFactory.h>
 #include "ExtVetoHit.h"
+#include <system/CalibrationHandler.h>
 
 class ExtVetoHit_factory:public jana::JFactory<ExtVetoHit>{
 	public:
@@ -24,6 +25,9 @@ class ExtVetoHit_factory:public jana::JFactory<ExtVetoHit>{
 		jerror_t evnt(jana::JEventLoop *eventLoop, uint64_t eventnumber);	///< Called every event.
 		jerror_t erun(void);						///< Called everytime run number changes, provided brun has been called.
 		jerror_t fini(void);						///< Called after last event of last event source has been processed.
+		const TranslationTable *m_tt;
+		CalibrationHandler<TranslationTable::EXT_VETO_Index_t> m_ENE_gain;
+
 };
 
 #endif // _ExtVetoHit_factory_

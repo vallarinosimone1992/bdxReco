@@ -47,7 +47,7 @@ BDXEventProcessor::~BDXEventProcessor()
 jerror_t BDXEventProcessor::init(void)
 {
 
-	jout<<"BDXEventProcessor::init is called"<<endl;
+	jout<<"BDXEventProcessor::init"<<endl;
 
 
 
@@ -81,10 +81,10 @@ jerror_t BDXEventProcessor::init(void)
 		}
 
 	}
-
-
-
 	gPARMS->GetParameter("MC", isMC);
+
+
+
 
 	return NOERROR;
 }
@@ -92,6 +92,8 @@ jerror_t BDXEventProcessor::init(void)
 // brun
 jerror_t BDXEventProcessor::brun(JEventLoop *eventLoop, int32_t runnumber)
 {
+
+	jout<<"BDXEventProcessor::brun "<<runnumber<<endl;
 	if (isMC==0) {
 		eventLoop->GetSingle(m_tt);
 	}
@@ -109,6 +111,7 @@ jerror_t BDXEventProcessor::evnt(JEventLoop *loop, uint64_t eventnumber)
 // erun
 jerror_t BDXEventProcessor::erun(void)
 {
+	jout<<"BDXEventProcessor::erun "<<endl;
 	// Any final calculations on histograms (like dividing them)
 	// should be done here. This may get called more than once.
 	return NOERROR;

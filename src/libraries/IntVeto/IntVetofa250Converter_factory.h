@@ -13,7 +13,7 @@
 
 class IntVetofa250Converter_factory:public jana::JFactory<IntVetofa250Converter>{
 	public:
-		IntVetofa250Converter_factory():m_isFirstCallToBrun(1),m_intVetofa250Converter(0){};
+		IntVetofa250Converter_factory();
 		~IntVetofa250Converter_factory(){};
 
 
@@ -26,6 +26,9 @@ class IntVetofa250Converter_factory:public jana::JFactory<IntVetofa250Converter>
 
 		int m_isFirstCallToBrun;
 		IntVetofa250Converter *m_intVetofa250Converter;
+
+		double m_minTot,m_thr;
+		int m_NSB,m_NSA;
 };
 
 #endif // _IntVetofa250Converter_factory_

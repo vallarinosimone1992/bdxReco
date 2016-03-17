@@ -12,7 +12,7 @@ using namespace std;
 #include "Paddles_ene.h"
 #include "system/BDXEventProcessor.h"
 #include <TT/TranslationTable.h>
-#include <DAQ/triggerData.h>
+#include <DAQ/eventData.h>
 
 #include <Paddles/PaddlesDigiHit.h>
 #include <Paddles/PaddlesHit.h>
@@ -38,7 +38,7 @@ void InitPlugin(JApplication *app){
 //------------------
 // Paddles_SigDisplay (Constructor)
 //------------------
-Paddles_ene::Paddles_ene():m_isFirstCallToBrun(1)
+Paddles_ene::Paddles_ene():m_isFirstCallToBrun(1),m_ROOTOutput(0)
 {
 
 }
@@ -150,7 +150,7 @@ jerror_t Paddles_ene::evnt(JEventLoop *loop,uint64_t eventnumber)
 
 	loop->Get(data);
 
-	const triggerData* tData;
+	const eventData* tData;
 	try{
 		loop->GetSingle(tData);
 	}

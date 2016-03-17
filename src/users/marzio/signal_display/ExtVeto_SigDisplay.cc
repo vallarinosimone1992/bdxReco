@@ -16,7 +16,7 @@ using namespace std;
 
 #include <TT/TranslationTable.h>
 
-#include <DAQ/triggerData.h>
+#include <DAQ/eventData.h>
 
 #include <ExtVeto/ExtVetoPMTHit.h>
 #include <ExtVeto/ExtVetoDigiHit.h>
@@ -47,7 +47,7 @@ void InitPlugin(JApplication *app){
 //------------------
 // ExtVeto_SigDisplay (Constructor)
 //------------------
-ExtVeto_SigDisplay::ExtVeto_SigDisplay():m_isFirstCallToBrun(1)
+ExtVeto_SigDisplay::ExtVeto_SigDisplay():m_isFirstCallToBrun(1),m_ROOTOutput(0)
 {
 
 }
@@ -157,7 +157,7 @@ jerror_t ExtVeto_SigDisplay::evnt(JEventLoop *loop,uint64_t eventnumber)
 	loop->Get(data);
 
 
-	const triggerData* tData;
+	const eventData* tData;
 	//has to be in a try-catch block, since if no trigger data is there (prestart - start - end events) trows it!
 	try{
 		loop->GetSingle(tData);

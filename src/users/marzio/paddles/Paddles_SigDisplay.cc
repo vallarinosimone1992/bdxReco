@@ -16,7 +16,7 @@ using namespace std;
 
 #include <TT/TranslationTable.h>
 
-#include <DAQ/triggerData.h>
+#include <DAQ/eventData.h>
 
 #include <Paddles/PaddlesPMTHit.h>
 #include <Paddles/PaddlesDigiHit.h>
@@ -187,7 +187,7 @@ jerror_t Paddles_SigDisplay::evnt(JEventLoop *loop,uint64_t eventnumber)
 	const double thr_0=90; // in mV
 	const double thr_1=104;
 
-	const triggerData* tData;
+	const eventData* tData;
 	//has to be in a try-catch block, since if no trigger data is there (prestart - start - end events) trows it!
 	try{
 		loop->GetSingle(tData);

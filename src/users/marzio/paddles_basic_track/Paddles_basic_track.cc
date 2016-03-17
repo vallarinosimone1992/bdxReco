@@ -12,7 +12,7 @@ using namespace std;
 #include "Paddles_basic_track.h"
 #include "system/BDXEventProcessor.h"
 #include <TT/TranslationTable.h>
-#include <DAQ/triggerData.h>
+#include <DAQ/eventData.h>
 #include <DAQ/fa250Mode1CalibHit.h>
 
 
@@ -40,7 +40,7 @@ void InitPlugin(JApplication *app){
 //------------------
 //  (Constructor)
 //------------------
-Paddles_basic_track::Paddles_basic_track():m_isFirstCallToBrun(1)
+Paddles_basic_track::Paddles_basic_track():m_isFirstCallToBrun(1),m_ROOTOutput(0)
 {
 
 }
@@ -162,7 +162,7 @@ jerror_t Paddles_basic_track::evnt(JEventLoop *loop,uint64_t eventnumber)
 
 	loop->Get(data);
 
-	const triggerData* tData;
+	const eventData* tData;
 	try{
 		loop->GetSingle(tData);
 	}
