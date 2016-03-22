@@ -282,7 +282,7 @@ jerror_t CalorimeterCluster_factory::fini(void)
 void CalorimeterCluster_factory::computePosition(CalorimeterCluster* cluster,const std::vector<std::pair<const CalorimeterHit*, double> >& whits) const {
 	std::vector<std::pair<const CalorimeterHit*, double> >::const_iterator whits_it;
 	double Etot=cluster->E;
-	double E;
+	double E,f;
 	double pos_weight;
 
 	double den,Xnum,Ynum;
@@ -292,6 +292,8 @@ void CalorimeterCluster_factory::computePosition(CalorimeterCluster* cluster,con
 
 	for (whits_it=whits.begin();whits_it!=whits.end();whits_it++){
 		E=(*whits_it).first->E;
+		f=(*whits_it).second;
+		E*=f;
 		pos_weight=std::max(0.,(m_CLUSTER_POS_W0+log(E/Etot)));
 		den+=E*pos_weight;
 		Xnum+=(*whits_it).first->m_channel.x*pos_weight;
