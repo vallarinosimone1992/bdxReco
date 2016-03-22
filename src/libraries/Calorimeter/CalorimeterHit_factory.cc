@@ -136,7 +136,7 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 				_data.push_back(m_CalorimeterHit);
 			}
 		}
-		else if ((*it)->m_data.size()==2){
+		else if ((*it)->m_data.size()>=2){   /*Multiple readout object*/
 			for (int idigi=0;idigi<m_CalorimeterDigiHit->m_data.size();idigi++){
 				Q=m_CalorimeterDigiHit->m_data[idigi].Q;
 				T=m_CalorimeterDigiHit->m_data[idigi].T;
