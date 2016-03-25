@@ -145,6 +145,8 @@ public:
 				return false;
 			return false;
 		}
+		string name()const{return "EXT_Veto";}
+
 	};
 
 	class INT_VETO_Index_t {
@@ -202,6 +204,7 @@ public:
 				return false;
 			return false;
 		}
+		string name()const{return "INT_Veto";}
 	};
 
 	class CALO_Index_t {
@@ -257,6 +260,7 @@ public:
 				return false;
 			return false;
 		}
+		string name()const{return "CALO";}
 	};
 
 	class PADDLES_Index_t {
@@ -291,7 +295,7 @@ public:
 
 			return false;
 		}
-
+		string name() const{return "PADDLES";}
 	};
 
 	/*A single class that handles ALL the possible indexes trough a C++ union*/

@@ -28,10 +28,11 @@ jerror_t CalorimeterHit_factory::init(void)
 {
 	m_THR_singleReadout=5;
 	m_THR_multipleReadout=3;
-	//	m_N_multipleReadout=2;
+	m_N_multipleReadout=2;
+
 	gPARMS->SetDefaultParameter("CALORIMETER:HIT_THR_SINGLE",m_THR_singleReadout,"Threshold in phe (charge) for a detector with single readout");
 	gPARMS->SetDefaultParameter("CALORIMETER:HIT_THR_MULTI",m_THR_multipleReadout,"Threshold in phe (charge) for a detector with multi readout");
-	//gPARMS->SetDefaultParameter("CALORIMETER:HIT_N_MULTI",m_N_multipleReadout,"Multiplicity for a detector with multi readout");
+	gPARMS->SetDefaultParameter("CALORIMETER:HIT_N_MULTI",m_N_multipleReadout,"Multiplicity for a detector with multi readout");
 
 	gPARMS->GetParameter("MC", isMC);
 	return NOERROR;
@@ -53,7 +54,7 @@ jerror_t CalorimeterHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnu
 		jout<<"Got following ene for run number: "<<runnumber<<endl;
 		jout<<"Rows: "<<gainCalibMap.size()<<endl;
 		for (gainCalibMap_it=gainCalibMap.begin();gainCalibMap_it!=gainCalibMap.end();gainCalibMap_it++){
-			jout<<gainCalibMap_it->first.sector<<" "<<gainCalibMap_it->first.x<<" "<<gainCalibMap_it->first.y<<" "<<gainCalibMap_it->first.readout<<" "<<gainCalibMap_it->second[0]<<endl;
+			jout<<gainCalibMap_it->first.sector<<" "<<gainCalibMap_it->first.x<<" "<<gainCalibMap_it->first.y<<" "<<gainCalibMap_it->first.readout<<" "<<gainCalibMap_it->second[0]<<" "<<gainCalibMap_it->second[1]<<endl;
 		}
 	}
 
@@ -137,9 +138,11 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 			}
 		}
 		else if ((*it)->m_data.size()>=2){   /*Multiple readout object*/
+
 			for (int idigi=0;idigi<m_CalorimeterDigiHit->m_data.size();idigi++){
 				Q=m_CalorimeterDigiHit->m_data[idigi].Q;
 				T=m_CalorimeterDigiHit->m_data[idigi].T;
+
 				if (Q>m_THR_multipleReadout){
 					flagOk++;
 					Qtot+=Q;
@@ -149,6 +152,7 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 					Tmax=T;
 				}
 			}
+
 			/*At the end of this loop, flagOK is the number of counters above thr*/
 			if (flagOk>=m_N_multipleReadout){
 				m_CalorimeterHit=new CalorimeterHit();
@@ -179,8 +183,6 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 							hit.E/=gain;
 						}
 						m_CalorimeterHit->E=hit.E;
-
-
 						m_CalorimeterHit->m_data.push_back(hit);
 					}
 				}

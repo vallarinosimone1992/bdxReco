@@ -59,10 +59,7 @@ jerror_t PaddlesDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 		/*Here comes the annoying routine that, given the geometry Marco used in the MC, in particular the indexing scheme,
 		 * returns it to the scheme I am using in the reconstruction. This was chacked by Andrea and Luca*/
-		m_PaddlesDigiHit->id=m_PaddlesMCHit->channel;
-
-
-
+		m_PaddlesDigiHit->m_channel.id=m_PaddlesMCHit->channel-1;
 		m_PaddlesDigiHit->Q=m_PaddlesMCHit->adc;
 		m_PaddlesDigiHit->T=m_PaddlesMCHit->tdc;
 		_data.push_back(m_PaddlesDigiHit);

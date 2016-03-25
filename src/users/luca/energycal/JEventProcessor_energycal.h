@@ -34,7 +34,14 @@ private:
 	TTree *t;
 	JROOTOutput *m_ROOTOutput;
 
+	int isMC;
+
+	//data variables
 	double Qc1,Qc2,Ep1,Ep2,Qctot,Tp1,Tp2,Tpdiff,Tc1,Tc2;
+
+	//MC variables
+	double Ec_MC;
+
 	int eventN;
 
 };

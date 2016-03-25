@@ -14,6 +14,7 @@
 #include "Paddlesfa250Converter_factory.h"
 #include "PaddlesPMTHit_factory.h"
 #include "PaddlesDigiHit_factory.h"
+#include "PaddlesDigiHit_factory_MC.h"
 #include "PaddlesHit_factory.h"
 
 class JFactoryGenerator_Paddles: public jana::JFactoryGenerator{
@@ -32,6 +33,7 @@ class JFactoryGenerator_Paddles: public jana::JFactoryGenerator{
 			loop->AddFactory(new Paddlesfa250Converter_factory());
 			loop->AddFactory(new PaddlesPMTHit_factory());
 			loop->AddFactory(new PaddlesDigiHit_factory());
+			loop->AddFactory(new PaddlesDigiHit_factory_MC());
 			loop->AddFactory(new PaddlesHit_factory());
 
 			return NOERROR;

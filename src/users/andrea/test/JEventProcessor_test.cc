@@ -27,7 +27,7 @@ using namespace std;
 #include <ExtVeto/ExtVetoDigiHit.h>
 
 #include <Calorimeter/CalorimeterSiPMHit.h>
-
+#include <Calorimeter/CalorimeterHit.h>
 
 #include <system/JROOTOutput.h>
 
@@ -120,6 +120,8 @@ jerror_t JEventProcessor_test::init(void)
 
 	t->Branch("component",&component);
 	t->Branch("Q",&Q);
+	t->Branch("Q1",&Q1);
+	t->Branch("Q2",&Q2);
 	t->Branch("eventN",&eventN);
 
 	app->RootUnLock();
@@ -204,9 +206,13 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop,uint64_t eventnumber)
 	vector<const IntVetoHit*> idata;
 	vector<const IntVetoHit*>::const_iterator idata_it;
 
+	vector<const CalorimeterHit*> cdata;
+	vector<const CalorimeterHit*>::const_iterator cdata_it;
+
 	const fa250Mode1CalibPedSubHit *fa;
 	loop->Get(data);
 	loop->Get(idata);
+	loop->Get(cdata);
 
 	int isHit;
 
@@ -232,7 +238,16 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop,uint64_t eventnumber)
 
 	japp->RootWriteLock();
 	//  ... fill historgrams or trees ...
-	for (data_it=data.begin();data_it!=data.end();data_it++){
+	for (cdata_it=cdata.begin();cdata_it!=cdata.end();cdata_it++){
+		const CalorimeterHit *calohit = *cdata_it;
+		eventN=eventnumber;
+		component=calohit->m_channel.readout;
+		Q=(*cdata_it)->Q;
+		Q1=(*cdata_it)->m_data[0].Q;
+		Q2=(*cdata_it)->m_data[1].Q;
+		t->Fill();
+	}
+	/*for (data_it=data.begin();data_it!=data.end();data_it++){
 	
 		const IntVetoSiPMHit *ivhit = *data_it;
 		isHit=0;
@@ -276,7 +291,7 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop,uint64_t eventnumber)
 
 
 
-	}
+	}*/
 
 
 	japp->RootUnLock();

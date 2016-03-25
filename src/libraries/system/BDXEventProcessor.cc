@@ -23,7 +23,7 @@ using namespace std;
 
 // Constructor
 BDXEventProcessor::BDXEventProcessor():
-		m_output(0),m_tt(0),isMC(0)
+				m_output(0),m_tt(0),isMC(0)
 {
 	/* Opens output file if specified
 	the string should be of the form
@@ -56,8 +56,8 @@ jerror_t BDXEventProcessor::init(void)
 
 
 	gPARMS->SetDefaultParameter("SYSTEM:OUTPUT",optf,
-						"Set OUTPUT file type and name, using the form \"TYPE,FILENAME\". Type can be ROOT, EVIO, TXT.\n"
-						"Example: -PSYSTEM:OUTPUT=\"ROOT,out.root\" ");
+			"Set OUTPUT file type and name, using the form \"TYPE,FILENAME\". Type can be ROOT, EVIO, TXT.\n"
+			"Example: -PSYSTEM:OUTPUT=\"ROOT,out.root\" ");
 
 	outType.assign(optf, 0, optf.find(",")) ;
 	outFile.assign(optf,    optf.find(",") + 1, optf.size()) ;
@@ -117,28 +117,33 @@ jerror_t BDXEventProcessor::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 
 	const eventData* tData;
-	try{
-		loop->GetSingle(tData);
+	if (isMC){
+		return NOERROR;
 	}
-	catch(unsigned long e){
-		jout<<"No eventData bank this event"<<endl;
-		return 	OBJECT_NOT_AVAILABLE;
+	else{
+		try{
+			loop->GetSingle(tData);
+		}
+		catch(unsigned long e){
+			jout<<"No eventData bank this event"<<endl;
+			return 	OBJECT_NOT_AVAILABLE;
+		}
+		japp->RootWriteLock();
+
+		eventT=tData->time;
+		eventN=eventnumber;
+		tword=tData->triggerWords[0];
+		runN=tData->runN;
+		t->Fill();
+
+
+		/*Time*/
+		if (eventT<startTime) startTime=eventT;
+		if (eventT>stopTime)  stopTime=eventT;
+		japp->RootUnLock();
+
+		return NOERROR;
 	}
-	japp->RootWriteLock();
-
-	eventT=tData->time;
-	eventN=eventnumber;
-	tword=tData->triggerWords[0];
-	runN=tData->runN;
-	t->Fill();
-
-
-	/*Time*/
-	if (eventT<startTime) startTime=eventT;
-	if (eventT>stopTime)  stopTime=eventT;
-	japp->RootUnLock();
-
-	return NOERROR;
 }
 
 // erun

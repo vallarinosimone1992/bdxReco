@@ -104,10 +104,10 @@ template <class T> vector<double> CalibrationHandler<T>::getCalib(const T &index
 		it=m_calib.find(index);
 		if (it==m_calib.end()){
 			jerr<<"CalibrationHandler<T>::getCalib element not found"<<endl;
+			jerr<<"T: "<<index.name()<<endl;
 			return ret;
 		}
 		else{
-
 			m_actualCalibIndex.push_back(index);
 			m_actualCalib.push_back(it->second);
 			return it->second;
@@ -124,6 +124,7 @@ template <class T> double CalibrationHandler<T>::getCalibSingle(const T &index){
 	}
 	else{
 		jerr<<"CalibrationHandler<T>::getCalibSingle error: more than 1 entry"<<std::endl;
+		jerr<<"T: "<<index.name()<<endl;
 		return 0;
 	}
 }
