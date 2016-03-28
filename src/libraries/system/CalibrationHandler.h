@@ -14,11 +14,31 @@
 #include <vector>
 #include <map>
 #include <algorithm>
+#include <string>
 
 using namespace std;
 
-template <class T> class CalibrationHandler{  //T is supposed to be an index in the TT library
+class CalibrationHandlerBase{
 public:
+	CalibrationHandlerBase(string table):m_hasLoadedCurrentRun(false){m_table=table;};
+	virtual ~CalibrationHandlerBase(){};
+	virtual jerror_t fillCalib(const std::vector<std::vector<double> > &calib_data)=0;
+
+	void setLoadedCurrentRun(bool hasLoadedCurrentRun){m_hasLoadedCurrentRun=hasLoadedCurrentRun;}
+	bool hasLoadedCurrentRun(){return m_hasLoadedCurrentRun;}
+
+	string getTable(){return m_table;}
+	void setTable(string table){m_table=table;}
+
+protected:
+	bool m_hasLoadedCurrentRun;
+	string m_table;
+};
+
+
+template <class T> class CalibrationHandler : public CalibrationHandlerBase{  //T is supposed to be an index in the TT library
+public:
+	CalibrationHandler(string name):CalibrationHandlerBase(name){};
 	jerror_t fillCalib(const std::vector<std::vector<double> > &calib_data);
 	vector<double> getCalib(const T &index);
 	std::vector < double > operator[](const T &index);

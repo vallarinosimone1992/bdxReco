@@ -23,7 +23,7 @@ using namespace std;
 
 // Constructor
 BDXEventProcessor::BDXEventProcessor():
-				m_output(0),m_tt(0),isMC(0)
+								m_output(0),m_tt(0),isMC(0)
 {
 	/* Opens output file if specified
 	the string should be of the form
@@ -109,6 +109,24 @@ jerror_t BDXEventProcessor::brun(JEventLoop *eventLoop, int32_t runnumber)
 	if (isMC==0) {
 		eventLoop->GetSingle(m_tt);
 	}
+	/*This is the part where we load ALL the calibrations,
+	 * provided they were associated with this processor!
+	 */
+	/*jout<<"Loading calibrations "<<endl;
+	jout<<"There are: "<<m_calibrations.size()<<" calibrations to load"<<endl;
+	string table;
+	CalibrationHandlerBase* calib;
+	vector<vector < double> > m_rawcalib;
+	for(m_calibrations_it= m_calibrations.begin(); m_calibrations_it!= m_calibrations.end(); m_calibrations_it++){
+
+		table=(*m_calibrations_it).second;
+		calib=(*m_calibrations_it).first;
+		jout<<"Loading table: "<<table<<endl;
+		m_rawcalib.clear();
+		eventLoop->GetCalib(table, m_rawcalib);
+		calib->fillCalib(m_rawcalib);
+	}
+	 */
 	return NOERROR;
 }
 
@@ -170,3 +188,64 @@ jerror_t BDXEventProcessor::fini(void)
 	return NOERROR;
 }
 
+void BDXEventProcessor::updateCalibration(CalibrationHandlerBase* cal,JEventLoop* eventLoop) {
+	/*First, check the table name for cal*/
+	string name=cal->getTable();
+	/*Verify the key is in the map*/
+	m_calibrations_it=m_calibrations.find(name);
+	if (m_calibrations_it==m_calibrations.end()){
+		jerr<<"BDXEventProcessor::updateCalibration error, calibration handler associated with table "<<name<<" was not registered!"<<endl;
+		return;
+	}
+
+	vector<CalibrationHandlerBase*> calibrations=m_calibrations[name];
+	vector<CalibrationHandlerBase*>::iterator calibrations_it;
+
+	/*Another check*/
+	calibrations_it=find(calibrations.begin(),calibrations.end(),cal);
+	if (calibrations_it==calibrations.end()){
+		jerr<<"BDXEventProcessor::updateCalibration, key: "<<name<<" was found but not this specific calibrationHandler!"<<endl;
+		return;
+	}
+	/*Verify if all the calibrators already have been set for this run*/
+	bool flag=true;
+	for (calibrations_it=calibrations.begin();calibrations_it!=calibrations.end();calibrations_it++){
+		if ((*calibrations_it)->hasLoadedCurrentRun()==false) flag=false;
+	}
+	if (flag){ /*it means all the calibrations have been already loaded!*/
+		return;
+	}
+	else{
+		/*Get the data*/
+		vector< vector < double > > m_data;
+		eventLoop->GetCalib(name, m_data);
+		cout<<"Going to fill the CalibrationHandlers for table: "<<name<<" there are: "<<calibrations.size()<<endl;
+		for (calibrations_it=calibrations.begin();calibrations_it!=calibrations.end();calibrations_it++){
+			(*calibrations_it)->fillCalib(m_data);
+		}
+	}
+}
+
+void BDXEventProcessor::clearCalibration(CalibrationHandlerBase* cal) {
+	/*First, check the table name for cal*/
+	string name=cal->getTable();
+	/*Verify the key is in the map*/
+	m_calibrations_it=m_calibrations.find(name);
+	if (m_calibrations_it==m_calibrations.end()){
+		jerr<<"BDXEventProcessor::clearCalibration error, calibration handler associated with table "<<name<<" was not registered!"<<endl;
+		return;
+	}
+
+	vector<CalibrationHandlerBase*> calibrations=m_calibrations[name];
+	vector<CalibrationHandlerBase*>::iterator calibrations_it;
+
+	/*Another check*/
+	calibrations_it=find(calibrations.begin(),calibrations.end(),cal);
+	if (calibrations_it==calibrations.end()){
+		jerr<<"BDXEventProcessor::clearCalibration, key: "<<name<<" was found but not this specific calibrationHandler!"<<endl;
+		return;
+	}
+	for (calibrations_it=calibrations.begin();calibrations_it!=calibrations.end();calibrations_it++){
+		(*calibrations_it)->setLoadedCurrentRun(false);
+	}
+}

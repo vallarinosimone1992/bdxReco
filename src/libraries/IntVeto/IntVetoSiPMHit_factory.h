@@ -9,7 +9,7 @@
 #define _VetoIntSIPMHit_factory_
 
 #include <JANA/JFactory.h>
-
+#include <system/BDXFactory.h>
 #include "IntVetoSiPMHit.h"
 #include <system/CalibrationHandler.h>
 
@@ -18,9 +18,9 @@ class IntVetofa250Converter;
 
 
 
-class IntVetoSiPMHit_factory:public jana::JFactory<IntVetoSiPMHit>{
+class IntVetoSiPMHit_factory:public BDXFactory<IntVetoSiPMHit>{
 	public:
-		IntVetoSiPMHit_factory():m_tt(0){};
+		IntVetoSiPMHit_factory();
 		~IntVetoSiPMHit_factory(){};
 
 
@@ -34,7 +34,7 @@ class IntVetoSiPMHit_factory:public jana::JFactory<IntVetoSiPMHit>{
 		const TranslationTable *m_tt;
 		const IntVetofa250Converter *m_intVetofa250Converter;
 
-		CalibrationHandler<TranslationTable::INT_VETO_Index_t> m_sipm_gain;
+		CalibrationHandler<TranslationTable::INT_VETO_Index_t> *m_sipm_gain;
 
 		int VERBOSE;
 
