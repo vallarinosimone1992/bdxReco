@@ -11,10 +11,11 @@
 #include <JANA/JFactory.h>
 #include <Paddles/PaddlesHit.h>
 #include <system/CalibrationHandler.h>
+#include <system/BDXFactory.h>
 
-class PaddlesHit_factory:public jana::JFactory<PaddlesHit>{
+class PaddlesHit_factory:public BDXFactory<PaddlesHit>{
 	public:
-		PaddlesHit_factory(){isMC=0;};
+		PaddlesHit_factory():m_ENE_gain(0),m_tt(0){isMC=0;};
 		~PaddlesHit_factory(){};
 
 
@@ -27,7 +28,7 @@ class PaddlesHit_factory:public jana::JFactory<PaddlesHit>{
 
 		const TranslationTable *m_tt;
 		int isMC;
-		CalibrationHandler<TranslationTable::PADDLES_Index_t> m_ENE_gain;
+		CalibrationHandler<TranslationTable::PADDLES_Index_t> *m_ENE_gain;
 
 };
 

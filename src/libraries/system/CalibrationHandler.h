@@ -30,16 +30,22 @@ public:
 	string getTable(){return m_table;}
 	void setTable(string table){m_table=table;}
 
+	std::vector<std::vector<double> > getRawCalibData(){return m_rawCalibData;}
+
 protected:
 	bool m_hasLoadedCurrentRun;
 	string m_table;
+	std::vector<std::vector<double> > m_rawCalibData;
+
+
+
 };
 
 
 template <class T> class CalibrationHandler : public CalibrationHandlerBase{  //T is supposed to be an index in the TT library
 public:
 	CalibrationHandler(string name):CalibrationHandlerBase(name){};
-	jerror_t fillCalib(const std::vector<std::vector<double> > &calib_data);
+	virtual jerror_t fillCalib(const std::vector<std::vector<double> > &calib_data);
 	vector<double> getCalib(const T &index);
 	std::vector < double > operator[](const T &index);
 
@@ -69,6 +75,9 @@ template <class T> jerror_t CalibrationHandler<T>::fillCalib(const std::vector<s
 	int nData=0;
 	int prevNdata=0;
 	m_calib.clear();
+
+	m_rawCalibData.clear();
+	m_rawCalibData=calib_data;
 
 	for (int irow=0;irow<calib_data.size();irow++){
 		data.clear();

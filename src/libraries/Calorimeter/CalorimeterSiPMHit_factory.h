@@ -12,11 +12,12 @@
 #include "CalorimeterSiPMHit.h"
 #include <system/CalibrationHandler.h>
 #include <TT/TranslationTable.h>
+#include <system/BDXFactory.h>
 class Calorimeterfa250Converter;
 
-class CalorimeterSiPMHit_factory:public jana::JFactory<CalorimeterSiPMHit>{
+class CalorimeterSiPMHit_factory:public BDXFactory<CalorimeterSiPMHit>{
 	public:
-		CalorimeterSiPMHit_factory(){};
+		CalorimeterSiPMHit_factory():m_sipm_gain(0),m_tt(0),m_Calorimeterfa250Converter(0),VERBOSE(0){};
 		~CalorimeterSiPMHit_factory(){};
 
 
@@ -30,7 +31,7 @@ class CalorimeterSiPMHit_factory:public jana::JFactory<CalorimeterSiPMHit>{
 		const TranslationTable *m_tt;
 		const Calorimeterfa250Converter *m_Calorimeterfa250Converter;
 
-		CalibrationHandler<TranslationTable::CALO_Index_t> m_sipm_gain;
+		CalibrationHandler<TranslationTable::CALO_Index_t> *m_sipm_gain;
 		int VERBOSE;
 };
 

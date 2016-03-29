@@ -1,23 +1,24 @@
 // $Id$
 //
-//    File: ExtVetofa250Converter_factory.h
-// Created: Mon Jan 25 16:28:59 CET 2016
+//    File: JEventProcessor_Calorimeter_rate.h
+// Created: Fri Mar 25 18:38:03 CET 2016
 // Creator: celentan (on Linux apcx4 2.6.32-504.30.3.el6.x86_64 x86_64)
 //
 
-#ifndef _Paddlesfa250Converter_factory_
-#define _Paddlesfa250Converter_factory_
+#ifndef _JEventProcessor_Calorimeter_rate_
+#define _JEventProcessor_Calorimeter_rate_
 
-#include <JANA/JFactory.h>
-#include "Paddlesfa250Converter.h"
-#include <system/BDXFactory.h>
+#include <JANA/JEventProcessor.h>
 
+class TTree;
+class JROOTOutput;
+class TH1D;
 
-class Paddlesfa250Converter_factory:public BDXFactory<Paddlesfa250Converter>{
+class JEventProcessor_Calorimeter_rate:public jana::JEventProcessor{
 	public:
-		Paddlesfa250Converter_factory():m_isFirstCallToBrun(1),m_Paddlesfa250Converter(0){};
-		~Paddlesfa250Converter_factory(){};
-
+		JEventProcessor_Calorimeter_rate();
+		~JEventProcessor_Calorimeter_rate();
+		const char* className(void){return "JEventProcessor_Calorimeter_rate";}
 
 	private:
 		jerror_t init(void);						///< Called once at program start.
@@ -26,10 +27,14 @@ class Paddlesfa250Converter_factory:public BDXFactory<Paddlesfa250Converter>{
 		jerror_t erun(void);						///< Called everytime run number changes, provided brun has been called.
 		jerror_t fini(void);						///< Called after last event of last event source has been processed.
 
+		int eventNumber;
 		int m_isFirstCallToBrun;
-		Paddlesfa250Converter *m_Paddlesfa250Converter;
 
+		double Ec;
+
+		TTree *t;
+		JROOTOutput *m_ROOTOutput;
 };
 
-#endif // _Paddlesfa250Converter_factory_
+#endif // _JEventProcessor_Calorimeter_rate_
 

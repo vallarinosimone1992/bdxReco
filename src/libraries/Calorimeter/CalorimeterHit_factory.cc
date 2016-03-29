@@ -34,6 +34,9 @@ jerror_t CalorimeterHit_factory::init(void)
 	gPARMS->SetDefaultParameter("CALORIMETER:HIT_THR_MULTI",m_THR_multipleReadout,"Threshold in phe (charge) for a detector with multi readout");
 	gPARMS->SetDefaultParameter("CALORIMETER:HIT_N_MULTI",m_N_multipleReadout,"Multiplicity for a detector with multi readout");
 
+	m_ene=new CalibrationHandler<TranslationTable::CALO_Index_t>("/Calorimeter/Ene");
+	this->mapCalibrationHandler(m_ene);
+
 	gPARMS->GetParameter("MC", isMC);
 	return NOERROR;
 }
@@ -43,14 +46,16 @@ jerror_t CalorimeterHit_factory::init(void)
 //------------------
 jerror_t CalorimeterHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber)
 {
-	vector<vector < double> > m_rawcalib;
-	eventLoop->GetCalib("/Calorimeter/Ene", m_rawcalib);
-	m_ene.fillCalib(m_rawcalib);
+
+
+	this->updateCalibrationHandler(m_ene,eventLoop);
+
+
 	gPARMS->GetParameter("CALORIMETER:VERBOSE",VERBOSE);
 	if (VERBOSE>3){
 		std::map  < TranslationTable::CALO_Index_t, std::vector < double > > gainCalibMap;
 		std::map  < TranslationTable::CALO_Index_t, std::vector < double > >::iterator gainCalibMap_it;
-		gainCalibMap=m_ene.getCalibMap();
+		gainCalibMap=m_ene->getCalibMap();
 		jout<<"Got following ene for run number: "<<runnumber<<endl;
 		jout<<"Rows: "<<gainCalibMap.size()<<endl;
 		for (gainCalibMap_it=gainCalibMap.begin();gainCalibMap_it!=gainCalibMap.end();gainCalibMap_it++){
@@ -125,8 +130,8 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 				/*Try to calibrate in energy and ped-sub*/
 				m_index=m_CalorimeterHit->m_channel;
 				m_index.readout=m_CalorimeterDigiHit->m_data[0].readout;
-				gain=m_ene.getCalib(m_index)[0];
-				ped=m_ene.getCalib(m_index)[1];
+				gain=m_ene->getCalib(m_index)[0];
+				ped=m_ene->getCalib(m_index)[1];
 				hit.E=(Q-ped);
 				if (gain!=0){
 					hit.E/=gain;
@@ -176,8 +181,8 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 						/*Try to calibrate in energy and ped-sub*/
 						m_index=m_CalorimeterHit->m_channel;
 						m_index.readout=m_CalorimeterDigiHit->m_data[idigi].readout;
-						gain=m_ene.getCalib(m_index)[0];
-						ped=m_ene.getCalib(m_index)[1];
+						gain=m_ene->getCalib(m_index)[0];
+						ped=m_ene->getCalib(m_index)[1];
 						hit.E=(Q-ped);
 						if (gain!=0){
 							hit.E/=gain;
@@ -207,6 +212,9 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 //------------------
 jerror_t CalorimeterHit_factory::erun(void)
 {
+
+	this->clearCalibrationHandler(m_ene);
+
 	return NOERROR;
 }
 

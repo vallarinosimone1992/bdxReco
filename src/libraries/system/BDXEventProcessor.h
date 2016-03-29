@@ -39,7 +39,7 @@ public:
 
 	JOutput* getOutput(){return m_output;}
 
-	void addCalibration(CalibrationHandlerBase* cal){m_calibrations[cal->getTable()].push_back(cal);}
+	void addCalibration(CalibrationHandlerBase* cal);
 	void updateCalibration(CalibrationHandlerBase* cal,JEventLoop* eventLoop);
 	void clearCalibration(CalibrationHandlerBase* cal);
 private:
@@ -76,6 +76,8 @@ private:
 	/*Time*/
 	int startTime,stopTime,deltaTime;
 
+	JStreamLog bout;
+	JStreamLog berr;
 };
 
 #endif

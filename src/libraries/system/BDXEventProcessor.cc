@@ -25,18 +25,14 @@ using namespace std;
 BDXEventProcessor::BDXEventProcessor():
 								m_output(0),m_tt(0),isMC(0)
 {
-	/* Opens output file if specified
-	the string should be of the form
-	type filename
-	with type: TXT EVIO ROOT
-	and filename anything
-	 */
-
 	optf="";
 
 
 	startTime=99999999;
 	stopTime=-99999999;
+
+	bout.SetTag("BDXEventProcessor >>");
+	berr.SetTag("BDXEventProcessorError >>");
 }
 
 // Destructor
@@ -49,7 +45,7 @@ BDXEventProcessor::~BDXEventProcessor()
 jerror_t BDXEventProcessor::init(void)
 {
 
-	jout<<"BDXEventProcessor::init"<<endl;
+	bout<<"BDXEventProcessor::init"<<endl;
 
 
 
@@ -68,18 +64,18 @@ jerror_t BDXEventProcessor::init(void)
 
 	if(optf!= "none")
 	{
-		jout<<"Out file type is: "<<outType<<endl;
+		bout<<"Out file type is: "<<outType<<endl;
 		if(outType == "root"){
 			m_output=new JROOTOutput(outFile);
 		}
 		else if (outType == "evio"){
-			jerr<<"evio not yet implemented"<<endl;
+			berr<<"evio not yet implemented"<<endl;
 		}
 		else if (outType == "txt"){
-			jerr<<"txt not yet implemented"<<endl;
+			berr<<"txt not yet implemented"<<endl;
 		}
 		else{
-			jerr<<"file type not recognized"<<endl;
+			berr<<"file type not recognized"<<endl;
 		}
 
 	}
@@ -105,15 +101,15 @@ jerror_t BDXEventProcessor::init(void)
 jerror_t BDXEventProcessor::brun(JEventLoop *eventLoop, int32_t runnumber)
 {
 
-	jout<<"BDXEventProcessor::brun "<<runnumber<<endl;
+	bout<<"BDXEventProcessor::brun "<<runnumber<<endl;
 	if (isMC==0) {
 		eventLoop->GetSingle(m_tt);
 	}
 	/*This is the part where we load ALL the calibrations,
 	 * provided they were associated with this processor!
 	 */
-	/*jout<<"Loading calibrations "<<endl;
-	jout<<"There are: "<<m_calibrations.size()<<" calibrations to load"<<endl;
+	/*bout<<"Loading calibrations "<<endl;
+	bout<<"There are: "<<m_calibrations.size()<<" calibrations to load"<<endl;
 	string table;
 	CalibrationHandlerBase* calib;
 	vector<vector < double> > m_rawcalib;
@@ -121,7 +117,7 @@ jerror_t BDXEventProcessor::brun(JEventLoop *eventLoop, int32_t runnumber)
 
 		table=(*m_calibrations_it).second;
 		calib=(*m_calibrations_it).first;
-		jout<<"Loading table: "<<table<<endl;
+		bout<<"Loading table: "<<table<<endl;
 		m_rawcalib.clear();
 		eventLoop->GetCalib(table, m_rawcalib);
 		calib->fillCalib(m_rawcalib);
@@ -143,7 +139,7 @@ jerror_t BDXEventProcessor::evnt(JEventLoop *loop, uint64_t eventnumber)
 			loop->GetSingle(tData);
 		}
 		catch(unsigned long e){
-			jout<<"No eventData bank this event"<<endl;
+			bout<<"No eventData bank this event"<<endl;
 			return 	OBJECT_NOT_AVAILABLE;
 		}
 		japp->RootWriteLock();
@@ -168,8 +164,8 @@ jerror_t BDXEventProcessor::evnt(JEventLoop *loop, uint64_t eventnumber)
 jerror_t BDXEventProcessor::erun(void)
 {
 	deltaTime=stopTime-startTime;
-	jout<<"BDXEventProcessor::erun "<<endl;
-	jout<<"Run start: "<<startTime<<" stop: "<<stopTime<<" diff: "<<deltaTime<<endl;
+	bout<<"BDXEventProcessor::erun "<<endl;
+	bout<<"Run start: "<<startTime<<" stop: "<<stopTime<<" diff: "<<deltaTime<<endl;
 
 	return NOERROR;
 }
@@ -194,7 +190,7 @@ void BDXEventProcessor::updateCalibration(CalibrationHandlerBase* cal,JEventLoop
 	/*Verify the key is in the map*/
 	m_calibrations_it=m_calibrations.find(name);
 	if (m_calibrations_it==m_calibrations.end()){
-		jerr<<"BDXEventProcessor::updateCalibration error, calibration handler associated with table "<<name<<" was not registered!"<<endl;
+		berr<<"BDXEventProcessor::updateCalibration error, calibration handler associated with table "<<name<<" was not registered!"<<endl;
 		return;
 	}
 
@@ -204,26 +200,48 @@ void BDXEventProcessor::updateCalibration(CalibrationHandlerBase* cal,JEventLoop
 	/*Another check*/
 	calibrations_it=find(calibrations.begin(),calibrations.end(),cal);
 	if (calibrations_it==calibrations.end()){
-		jerr<<"BDXEventProcessor::updateCalibration, key: "<<name<<" was found but not this specific calibrationHandler!"<<endl;
+		berr<<"UpdateCalibration, key: "<<name<<" was found but not this specific calibrationHandler!"<<endl;
 		return;
 	}
 	/*Verify if all the calibrators already have been set for this run*/
-	bool flag=true;
+	/*Since we are multi-thread mode, it is possible this method is called by different factories at different times.
+	 * Need to perform a clever check:
+	 * 1) Loop over all the calibrations handlers for the given table.
+	 * 1A) If ALL off them have been loaded, do nothing
+	 * 1B) If NONE of them have been loaded, do that
+	 * 1C) If ONE of them at least have been loaded, use it for all the non-calibrated ones
+	 */
+	bool flagAll=true;
+	int calibratedOne=-1;
 	for (calibrations_it=calibrations.begin();calibrations_it!=calibrations.end();calibrations_it++){
-		if ((*calibrations_it)->hasLoadedCurrentRun()==false) flag=false;
+		if ((*calibrations_it)->hasLoadedCurrentRun()==false) flagAll=false;
+		else calibratedOne=std::distance(calibrations.begin(),calibrations_it); //save the index of this calibrated object
 	}
-	if (flag){ /*it means all the calibrations have been already loaded!*/
+	if (flagAll){ /*flagAll is true if ALL off them have been loaded*/
+		bout<<"Going to fill CalibrationHandlers for table: "<<name<<" there are: "<<calibrations.size()<<" ALREADY DONE "<<endl;
 		return;
+	}
+	else if (calibratedOne != -1){ /*It means there is at least an already-calibrated object!*/
+		bout<<"Going to fill CalibrationHandlers for table: "<<name<<" there are: "<<calibrations.size()<<" Load from data: "<<calibratedOne<<endl;
+		for (int ical=0;ical<calibrations.size();ical++){
+			if (ical==calibratedOne) continue;
+			else if (calibrations[ical]->hasLoadedCurrentRun()==true) continue;
+			else{
+				calibrations[ical]->fillCalib(calibrations[calibratedOne]->getRawCalibData());
+			}
+		}
 	}
 	else{
 		/*Get the data*/
 		vector< vector < double > > m_data;
 		eventLoop->GetCalib(name, m_data);
-		cout<<"Going to fill the CalibrationHandlers for table: "<<name<<" there are: "<<calibrations.size()<<endl;
+		bout<<"Going to fill CalibrationHandlers for table: "<<name<<" there are: "<<calibrations.size()<<" Load from DB "<<endl;
 		for (calibrations_it=calibrations.begin();calibrations_it!=calibrations.end();calibrations_it++){
 			(*calibrations_it)->fillCalib(m_data);
+			(*calibrations_it)->setLoadedCurrentRun(true);
 		}
 	}
+	bout<<"Done table"<<name<<endl;
 }
 
 void BDXEventProcessor::clearCalibration(CalibrationHandlerBase* cal) {
@@ -232,7 +250,7 @@ void BDXEventProcessor::clearCalibration(CalibrationHandlerBase* cal) {
 	/*Verify the key is in the map*/
 	m_calibrations_it=m_calibrations.find(name);
 	if (m_calibrations_it==m_calibrations.end()){
-		jerr<<"BDXEventProcessor::clearCalibration error, calibration handler associated with table "<<name<<" was not registered!"<<endl;
+		berr<<"BDXEventProcessor::clearCalibration error, calibration handler associated with table "<<name<<" was not registered!"<<endl;
 		return;
 	}
 
@@ -242,10 +260,14 @@ void BDXEventProcessor::clearCalibration(CalibrationHandlerBase* cal) {
 	/*Another check*/
 	calibrations_it=find(calibrations.begin(),calibrations.end(),cal);
 	if (calibrations_it==calibrations.end()){
-		jerr<<"BDXEventProcessor::clearCalibration, key: "<<name<<" was found but not this specific calibrationHandler!"<<endl;
+		berr<<"BDXEventProcessor::clearCalibration, key: "<<name<<" was found but not this specific calibrationHandler!"<<endl;
 		return;
 	}
 	for (calibrations_it=calibrations.begin();calibrations_it!=calibrations.end();calibrations_it++){
 		(*calibrations_it)->setLoadedCurrentRun(false);
 	}
+}
+
+void BDXEventProcessor::addCalibration(CalibrationHandlerBase* cal) {
+	this->m_calibrations[cal->getTable()].push_back(cal);
 }

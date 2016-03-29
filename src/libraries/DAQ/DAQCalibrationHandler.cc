@@ -8,6 +8,9 @@ jerror_t DAQCalibrationHandler::fillCalib(const std::vector<std::vector<double> 
 	int prevNdata=0;
 	m_calib.clear();
 
+	m_rawCalibData.clear();
+	m_rawCalibData=calib_data;
+
 	for (int irow=0;irow<calib_data.size();irow++){
 		data.clear();
 		if (irow>0) prevNdata=nData;

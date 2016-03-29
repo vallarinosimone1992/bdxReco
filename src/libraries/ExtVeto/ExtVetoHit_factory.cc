@@ -24,6 +24,10 @@ using namespace jana;
 jerror_t ExtVetoHit_factory::init(void)
 {
 	gPARMS->GetParameter("MC",isMC);
+
+	m_ENE_gain=new CalibrationHandler<TranslationTable::EXT_VETO_Index_t>("ExtVeto/Ene");
+	this->mapCalibrationHandler(m_ENE_gain);
+
 	return NOERROR;
 }
 
@@ -32,10 +36,11 @@ jerror_t ExtVetoHit_factory::init(void)
 //------------------
 jerror_t ExtVetoHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber)
 {
-	vector<vector < double> > m_enecalib;
-		eventLoop->GetCalib("/ExtVeto/Ene", m_enecalib);
-		m_ENE_gain.fillCalib(m_enecalib);
-		return NOERROR;
+
+
+	this->updateCalibrationHandler(m_ENE_gain,eventLoop);
+
+	return NOERROR;
 }
 
 //------------------
@@ -82,7 +87,7 @@ jerror_t ExtVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		m_ExtVetoHit=new ExtVetoHit();
 		m_ExtVetoHit->m_channel = (*it)->m_channel;
 
-		m_Ene=m_ENE_gain.getCalibSingle(m_ExtVetoHit->m_channel);
+		m_Ene=m_ENE_gain->getCalibSingle(m_ExtVetoHit->m_channel);
 
 		//jout <<m_ExtVetoHit->m_channel.component << " "<< m_Ene<<endl;
 					m_ExtVetoHit->E=((*it)->Q)*m_Ene;
@@ -107,6 +112,9 @@ jerror_t ExtVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 //------------------
 jerror_t ExtVetoHit_factory::erun(void)
 {
+
+	this->clearCalibrationHandler(m_ENE_gain);
+
 	return NOERROR;
 }
 

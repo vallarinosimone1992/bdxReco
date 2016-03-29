@@ -19,6 +19,13 @@ using namespace jana;
 //------------------
 jerror_t Paddlesfa250Converter_factory::init(void)
 {
+	m_Paddlesfa250Converter=new Paddlesfa250Converter();
+
+	m_Paddlesfa250Converter->threshold=new CalibrationHandler<TranslationTable::PADDLES_Index_t>("/Paddles/Threshold");
+	this->mapCalibrationHandler(m_Paddlesfa250Converter->threshold);
+
+	m_Paddlesfa250Converter->m_pedestals=new DAQCalibrationHandler("/DAQ/pedestals");
+	this->mapCalibrationHandler(m_Paddlesfa250Converter->m_pedestals);
 	return NOERROR;
 }
 
@@ -28,37 +35,15 @@ jerror_t Paddlesfa250Converter_factory::init(void)
 jerror_t Paddlesfa250Converter_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber)
 {
 	if (m_isFirstCallToBrun){
-			m_isFirstCallToBrun=0;
-			m_Paddlesfa250Converter=new Paddlesfa250Converter();
-
-				/***** Reading Thresholds from CCDB *******/
-				m_Paddlesfa250Converter->threshold=new CalibrationHandler<TranslationTable::PADDLES_Index_t>;
-				vector<vector < double> > m_rawthreshold;
-				eventLoop->GetCalib("/Paddles/Threshold", m_rawthreshold);
-				m_Paddlesfa250Converter->threshold->fillCalib(m_rawthreshold);
-
-
-//				/***** Reading Pedestals from CCDB *******/
-//				m_Paddlesfa250Converter->pedestal_init=new CalibrationHandler<TranslationTable::PADDLES_Index_t>;
-//				vector<vector < double> > m_rawpedestal_init;
-//				eventLoop->GetCalib("/Paddles/Pedestal", m_rawpedestal_init);
-//				m_Paddlesfa250Converter->pedestal_init->fillCalib(m_rawpedestal_init);
-
-				/***** Reading Pedestals from CCDB - DAQ database *******/
-				m_Paddlesfa250Converter->m_pedestals=new DAQCalibrationHandler();
-				eventLoop->GetCalib("/DAQ/pedestals",m_Paddlesfa250Converter->m_rawpedestal);
-				m_Paddlesfa250Converter->m_pedestals->fillCalib(m_Paddlesfa250Converter->m_rawpedestal);
-
-/*
-				for (int u = 0; u < m_Paddlesfa250Converter->m_rawpedestal.size(); u++) {
-					for (int  v = 0; v < m_Paddlesfa250Converter->m_rawpedestal[u].size(); v++) {
-						cout << u<< " "<<v<<" "<<m_Paddlesfa250Converter->m_rawpedestal[u][v] << " "<<cout << endl;
-					}
-				}
-*/
-			_data.push_back(m_Paddlesfa250Converter);
-			SetFactoryFlag(PERSISTANT);
+		m_isFirstCallToBrun=0;
+		_data.push_back(m_Paddlesfa250Converter);
+		SetFactoryFlag(PERSISTANT);
 	}
+
+
+	this->updateCalibrationHandler(m_Paddlesfa250Converter->threshold,eventLoop);
+	this->updateCalibrationHandler(m_Paddlesfa250Converter->m_pedestals,eventLoop);
+
 
 
 
@@ -92,6 +77,11 @@ jerror_t Paddlesfa250Converter_factory::evnt(JEventLoop *loop, uint64_t eventnum
 //------------------
 jerror_t Paddlesfa250Converter_factory::erun(void)
 {
+
+	this->clearCalibrationHandler(m_Paddlesfa250Converter->threshold);
+	this->clearCalibrationHandler(m_Paddlesfa250Converter->m_pedestals);
+
+
 	return NOERROR;
 }
 

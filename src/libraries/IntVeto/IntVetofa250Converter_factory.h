@@ -10,8 +10,9 @@
 
 #include <JANA/JFactory.h>
 #include "IntVetofa250Converter.h"
+#include <system/BDXFactory.h>
 
-class IntVetofa250Converter_factory:public jana::JFactory<IntVetofa250Converter>{
+class IntVetofa250Converter_factory:public BDXFactory<IntVetofa250Converter>{
 	public:
 		IntVetofa250Converter_factory();
 		~IntVetofa250Converter_factory(){};

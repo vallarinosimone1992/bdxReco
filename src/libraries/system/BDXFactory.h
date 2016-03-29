@@ -58,7 +58,9 @@ template<class T> void BDXFactory<T>::mapCalibrationHandler(CalibrationHandlerBa
 		}
 	}
 	if (m_BDXEventProcessor){
+		japp->RootWriteLock();
 		m_BDXEventProcessor->addCalibration(calib);
+		japp->RootUnLock();
 	}
 	else{
 		cout<<"Error, BDXEventProcessor not found"<<endl;
@@ -77,7 +79,9 @@ template<class T> void BDXFactory<T>::updateCalibrationHandler(CalibrationHandle
 			}
 		}
 		if (m_BDXEventProcessor){
+			japp->RootWriteLock();
 			m_BDXEventProcessor->updateCalibration(calib,loop);
+			japp->RootUnLock();
 		}
 		else{
 			cout<<"Error, BDXEventProcessor not found"<<endl;
@@ -97,7 +101,9 @@ template<class T> void BDXFactory<T>::clearCalibrationHandler(CalibrationHandler
 			}
 		}
 		if (m_BDXEventProcessor){
+			japp->RootWriteLock();
 			m_BDXEventProcessor->clearCalibration(calib);
+			japp->RootUnLock();
 		}
 		else{
 			cout<<"Error, BDXEventProcessor not found"<<endl;

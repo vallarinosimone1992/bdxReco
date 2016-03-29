@@ -63,7 +63,7 @@ jerror_t IntVetoSiPMHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnu
 	}
 
 	japp->RootWriteLock();
-	this->updateCalibrationHandler(m_sipm_gain);
+	this->updateCalibrationHandler(m_sipm_gain,eventLoop);
 	japp->RootUnLock();
 
 	gPARMS->GetParameter("INTVETO:VERBOSE",VERBOSE);
