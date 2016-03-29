@@ -62,9 +62,9 @@ jerror_t IntVetoSiPMHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnu
 		return OBJECT_NOT_AVAILABLE;
 	}
 
-	japp->RootWriteLock();
+
 	this->updateCalibrationHandler(m_sipm_gain,eventLoop);
-	japp->RootUnLock();
+
 
 	gPARMS->GetParameter("INTVETO:VERBOSE",VERBOSE);
 	if (VERBOSE>3){
@@ -175,6 +175,7 @@ jerror_t IntVetoSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 //------------------
 jerror_t IntVetoSiPMHit_factory::erun(void)
 {
+	this->clearCalibrationHandler(m_sipm_gain);
 	return NOERROR;
 }
 

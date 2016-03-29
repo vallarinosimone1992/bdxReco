@@ -21,11 +21,9 @@ using namespace std;
 
 using namespace jana;
 
-//------------------
-// init
-//------------------
-jerror_t CalorimeterHit_factory::init(void)
-{
+CalorimeterHit_factory::CalorimeterHit_factory():m_ene(0),m_tt(0){
+	VERBOSE=0;
+	isMC=0;
 	m_THR_singleReadout=5;
 	m_THR_multipleReadout=3;
 	m_N_multipleReadout=2;
@@ -33,6 +31,15 @@ jerror_t CalorimeterHit_factory::init(void)
 	gPARMS->SetDefaultParameter("CALORIMETER:HIT_THR_SINGLE",m_THR_singleReadout,"Threshold in phe (charge) for a detector with single readout");
 	gPARMS->SetDefaultParameter("CALORIMETER:HIT_THR_MULTI",m_THR_multipleReadout,"Threshold in phe (charge) for a detector with multi readout");
 	gPARMS->SetDefaultParameter("CALORIMETER:HIT_N_MULTI",m_N_multipleReadout,"Multiplicity for a detector with multi readout");
+	gPARMS->GetParameter("CALORIMETER:VERBOSE",VERBOSE);
+
+}
+
+//------------------
+// init
+//------------------
+jerror_t CalorimeterHit_factory::init(void)
+{
 
 	m_ene=new CalibrationHandler<TranslationTable::CALO_Index_t>("/Calorimeter/Ene");
 	this->mapCalibrationHandler(m_ene);
@@ -51,7 +58,7 @@ jerror_t CalorimeterHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnu
 	this->updateCalibrationHandler(m_ene,eventLoop);
 
 
-	gPARMS->GetParameter("CALORIMETER:VERBOSE",VERBOSE);
+
 	if (VERBOSE>3){
 		std::map  < TranslationTable::CALO_Index_t, std::vector < double > > gainCalibMap;
 		std::map  < TranslationTable::CALO_Index_t, std::vector < double > >::iterator gainCalibMap_it;
