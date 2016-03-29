@@ -81,14 +81,15 @@ jerror_t JEventProcessor_Calorimeter_SipmCalib::init(void)
 
 	t->Branch("evnt",&eventNumber);
 	t->Branch("sector",&m_sector);
-	t->Branch("layer",&m_layer);
-	t->Branch("component",&m_component);
+	t->Branch("x",&m_x);
+	t->Branch("y",&m_y);
 	t->Branch("readout",&m_readout);
 	t->Branch("type",&m_type);
 	t->Branch("nsingles",&m_singles);
 	t->Branch("nsignals",&m_signals);
 
-	t->Branch("Q",&Q);
+	t->Branch("Qraw",&Qraw);
+	t->Branch("Qphe",&Qphe);
 	t->Branch("T",&T);
 	t->Branch("A",&A);
 	t->Branch("average",&average);
@@ -162,7 +163,7 @@ jerror_t JEventProcessor_Calorimeter_SipmCalib::evnt(JEventLoop *loop, uint64_t 
 	// japp->RootUnLock();
 	vector<const CalorimeterSiPMHit*> data;
 	vector<const CalorimeterSiPMHit*>::const_iterator data_it;
-	const fa250Mode1CalibHit *m_waveform;
+	const fa250Mode1CalibPedSubHit *m_waveform;
 	loop->Get(data);
 
 	japp->RootWriteLock();
@@ -172,23 +173,25 @@ jerror_t JEventProcessor_Calorimeter_SipmCalib::evnt(JEventLoop *loop, uint64_t 
 	for (data_it=data.begin();data_it<data.end();data_it++){
 
 		h->Reset();
-		h->SetName(Form("h_%lld_%i_%i_%i_%i",eventnumber,(*data_it)->m_channel.calorimeter.readout,(*data_it)->m_type,(*data_it)->nSingles,(*data_it)->nSignals));
-
+		h->SetName(Form("h_%i_%i",eventnumber,(*data_it)->m_channel.calorimeter.readout));
+		m_waveform=0;
 		(*data_it)->GetSingle(m_waveform);
-		m_sector=(*data_it)->m_channel.int_veto.sector;
-		m_layer=(*data_it)->m_channel.int_veto.layer;
-		m_component=(*data_it)->m_channel.int_veto.component;
-		m_readout=(*data_it)->m_channel.int_veto.readout;
+
+		m_sector=(*data_it)->m_channel.calorimeter.sector;
+		m_x=(*data_it)->m_channel.calorimeter.x;
+		m_y=(*data_it)->m_channel.calorimeter.y;
+		m_readout=(*data_it)->m_channel.calorimeter.readout;
 		m_type=(*data_it)->m_type;
 		m_singles=(*data_it)->nSingles;
 		m_signals=(*data_it)->nSignals;
-		Q=(*data_it)->Qphe;
+		Qphe=(*data_it)->Qphe;
+		Qraw=(*data_it)->Qraw;
 		A=(*data_it)->A;
 		T=(*data_it)->T;
 		average=(*data_it)->average;
 
-		//	for (int ii=0;ii<m_waveform->samples.size();ii++) h->Fill(ii,m_waveform->samples.at(ii));
-		//	h->Write();
+		//for (int ii=0;ii<m_waveform->samples.size();ii++) h->Fill(ii,m_waveform->samples.at(ii));
+	//	h->Write();
 
 
 

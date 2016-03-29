@@ -24,7 +24,7 @@ $command mkdir $CalorimeterFolder
 echo "Sipm gain"
 $command mktbl $CalorimeterFolder/sipm_gain -r $CalorimeterSipmGainLines  $CalorimeterIndexes sipm_gain=double "#sipm gain"
 echo "ene"
-$command mktbl $CalorimeterFolder/ene -r $CalorimeterEneLines  $CalorimeterIndexes ene=double "#sipm gain"
+$command mktbl $CalorimeterFolder/Ene -r $CalorimeterEneLines  $CalorimeterIndexes ene=double ped=double "#energy calibration and pedestal"
 
 
 

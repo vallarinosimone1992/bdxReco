@@ -21,14 +21,24 @@ using namespace std;
 #include "IntVetoSiPMHit_factory.h"
 using namespace jana;
 
+
+IntVetoSiPMHit_factory::IntVetoSiPMHit_factory():m_tt(0){
+	m_sipm_gain=0;
+	m_intVetofa250Converter=0;
+	VERBOSE=0;
+}
+
 //------------------
 // init
 //------------------
 jerror_t IntVetoSiPMHit_factory::init(void)
 {
+	jout<<"IntVetoSiPMHit_factory::init"<<endl;
+	VERBOSE=0;
+	m_sipm_gain=new CalibrationHandler<TranslationTable::INT_VETO_Index_t>("/InnerVeto/sipm_gain");
+	this->mapCalibrationHandler(m_sipm_gain);
 	return NOERROR;
 
-	VERBOSE=0;
 
 }
 
@@ -52,14 +62,15 @@ jerror_t IntVetoSiPMHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnu
 		return OBJECT_NOT_AVAILABLE;
 	}
 
-	vector<vector < double> > m_rawcalib;
-	eventLoop->GetCalib("/InnerVeto/sipm_gain", m_rawcalib);
-	m_sipm_gain.fillCalib(m_rawcalib);
+	japp->RootWriteLock();
+	this->updateCalibrationHandler(m_sipm_gain,eventLoop);
+	japp->RootUnLock();
+
 	gPARMS->GetParameter("INTVETO:VERBOSE",VERBOSE);
 	if (VERBOSE>3){
 		std::map  < TranslationTable::INT_VETO_Index_t, std::vector < double > > gainCalibMap;
 		std::map  < TranslationTable::INT_VETO_Index_t, std::vector < double > >::iterator gainCalibMap_it;
-		gainCalibMap=m_sipm_gain.getCalibMap();
+		gainCalibMap=m_sipm_gain->getCalibMap();
 		jout<<"Got following sipm_gain for run number: "<<runnumber<<endl;
 		jout<<"Rows: "<<gainCalibMap.size()<<endl;
 		for (gainCalibMap_it=gainCalibMap.begin();gainCalibMap_it!=gainCalibMap.end();gainCalibMap_it++){
@@ -117,8 +128,8 @@ jerror_t IntVetoSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 			/*Apply phe conversion if possible*/
 
-			m_q_gain=m_sipm_gain.getCalib(m_channel.int_veto)[0];
-			m_q_ped=m_sipm_gain.getCalib(m_channel.int_veto)[1];
+			m_q_gain=m_sipm_gain->getCalib(m_channel.int_veto)[0];
+			m_q_ped=m_sipm_gain->getCalib(m_channel.int_veto)[1];
 
 			m_IntVetoSiPMHit->Qphe = m_IntVetoSiPMHit->Qraw - m_q_ped;
 			if (m_q_gain>0){
@@ -142,8 +153,8 @@ jerror_t IntVetoSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 			m_IntVetoSiPMHit=m_intVetofa250Converter->convertHit((fa250Hit*)*it_fa250Mode7Hit,m_channel);
 
 			/*Apply phe conversion if possible*/
-			m_q_gain=m_sipm_gain.getCalib(m_channel.int_veto)[0];
-			m_q_ped=m_sipm_gain.getCalib(m_channel.int_veto)[1];
+			m_q_gain=m_sipm_gain->getCalib(m_channel.int_veto)[0];
+			m_q_ped=m_sipm_gain->getCalib(m_channel.int_veto)[1];
 
 			m_IntVetoSiPMHit->Qphe =m_IntVetoSiPMHit->Qraw - m_q_ped;
 			if (m_q_gain>0){

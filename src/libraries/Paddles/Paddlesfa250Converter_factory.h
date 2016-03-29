@@ -10,9 +10,10 @@
 
 #include <JANA/JFactory.h>
 #include "Paddlesfa250Converter.h"
+#include <system/BDXFactory.h>
 
 
-class Paddlesfa250Converter_factory:public jana::JFactory<Paddlesfa250Converter>{
+class Paddlesfa250Converter_factory:public BDXFactory<Paddlesfa250Converter>{
 	public:
 		Paddlesfa250Converter_factory():m_isFirstCallToBrun(1),m_Paddlesfa250Converter(0){};
 		~Paddlesfa250Converter_factory(){};

@@ -12,8 +12,10 @@ using namespace jana;
 #include <Calorimeter/CalorimeterSiPMHit.h>
 #include <Calorimeter/CalorimeterDigiHit.h>
 #include <Calorimeter/CalorimeterHit.h>
+
 #include <Paddles/PaddlesHit.h>
 
+#include <MC/CalorimeterMCHit.h>
 
 // Routine used to create our JEventProcessor
 #include <JANA/JApplication.h>
@@ -39,6 +41,7 @@ void InitPlugin(JApplication *app){
 //------------------
 JEventProcessor_energycal::JEventProcessor_energycal():m_ROOTOutput(0)
 {
+	isMC=0;
 
 }
 
@@ -63,6 +66,9 @@ jerror_t JEventProcessor_energycal::init(void)
 	//  ... fill historgrams or trees ...
 	// japp->RootUnLock();
 	//
+
+	gPARMS->GetParameter("MC", isMC);
+
 	app->RootWriteLock();
 
 	jout<<"energycal::init is called"<<std::endl;
@@ -84,6 +90,9 @@ jerror_t JEventProcessor_energycal::init(void)
 	t->Branch("Tp1",&Tp1);
 	t->Branch("Tp2",&Tp2);
 	t->Branch("Tpdiff",&Tpdiff);
+
+	//Create always MC branch
+	t->Branch("Ec_MC",&Ec_MC);
 
 	app->RootUnLock();
 	return NOERROR;
@@ -183,6 +192,7 @@ jerror_t JEventProcessor_energycal::evnt(JEventLoop *loop, uint64_t eventnumber)
 	loop->Get(cdata);
 
 
+	vector<const CalorimeterMCHit*> mc_data;
 
 	app->RootWriteLock();
 	double E,T;
@@ -212,9 +222,40 @@ jerror_t JEventProcessor_energycal::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	for (cdata_it=cdata.begin();cdata_it<cdata.end();cdata_it++){
 		const CalorimeterHit *evchit= *cdata_it;
-		Qc1 = evchit->Q1;
-		Qc2 = evchit->Q2;
+		Qc1=0;
+		Qc2=0;
+		for (int idata=0;idata<evchit->m_data.size();idata++){
+			switch (evchit->m_data[idata].readout){
+			case (1):
+								Qc1 = evchit->m_data[idata].Q;
+			break;
+			case (2):
+								Qc2 = evchit->m_data[idata].Q;
+			break;
+			default:
+				break;
+
+			}
+		}
+
+		if (isMC){
+			evchit->Get(mc_data); //use a vector since it is re-iterating!
+			if (mc_data.size()!=1){
+				cout<<"luca_EnergyCal error, no associated CalorimeterMCHit : got "<<mc_data.size()<<endl;
+			}
+			else{
+				Ec_MC=mc_data[0]->totEdep;
+			}
+		}
+		else{
+			Ec_MC=-1;
+		}
+
 	}
+
+
+
+
 	Qctot = Qc1+Qc2;
 	Tpdiff= Tp1-Tp2;
 

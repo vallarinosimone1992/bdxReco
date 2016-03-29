@@ -63,6 +63,7 @@ jerror_t CalorimeterDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnum
 		m_CalorimeterDigiHit->m_channel.x=m_CalorimeterMCHit->x;
 		m_CalorimeterDigiHit->m_channel.y=m_CalorimeterMCHit->y;
 		m_CalorimeterDigiHit->m_channel.readout=0;  //this is an active-volume object
+		m_CalorimeterDigiHit->AddAssociatedObject(m_CalorimeterMCHit);
 
 		digi_hit.readout=1;  ///TODO: ask Marco
 		digi_hit.Q=m_CalorimeterMCHit->adcl;

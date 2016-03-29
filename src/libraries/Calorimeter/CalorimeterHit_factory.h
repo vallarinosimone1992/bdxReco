@@ -10,12 +10,14 @@
 
 #include <JANA/JFactory.h>
 #include "CalorimeterHit.h"
+#include <system/CalibrationHandler.h>
+#include <system/BDXFactory.h>
 class TranslationTable;
 
 
-class CalorimeterHit_factory:public jana::JFactory<CalorimeterHit>{
+class CalorimeterHit_factory:public BDXFactory<CalorimeterHit>{
 	public:
-		CalorimeterHit_factory(){isMC=0;};
+		CalorimeterHit_factory():m_ene(0),m_tt(0){isMC=0;};
 		~CalorimeterHit_factory(){};
 
 
@@ -28,6 +30,13 @@ class CalorimeterHit_factory:public jana::JFactory<CalorimeterHit>{
 
 		int isMC;
 		const TranslationTable *m_tt;
+
+		int m_THR_singleReadout;
+		int m_THR_multipleReadout;
+		int m_N_multipleReadout;
+		int VERBOSE;
+
+		CalibrationHandler<TranslationTable::CALO_Index_t> *m_ene;
 };
 
 #endif // _CalorimeterHit_factory_

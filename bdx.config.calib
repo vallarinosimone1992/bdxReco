@@ -11,8 +11,8 @@ INTVETO:THR	 1.5   #min amplitude of a pulse -in phe units
 INTVETO:NSB	 20    #num of samples before the maximum
 INTVETO:NSA	 30    #num of samples after  the maximum
 
-INTVETO:HIT_THR_SINGLE  5   #thr in phe charge for a detector with single readout
-INTVETO:HIT_THR_MULTI   3   #thr in phe charge for a detector with multiple readout
+INTVETO:HIT_THR_SINGLE  -30   #thr in phe charge for a detector with single readout
+INTVETO:HIT_THR_MULTI   -30   #thr in phe charge for a detector with multiple readout
 INTVETO:HIT_N_MULTI     2   #multiplicity for a detector with multi readout
 
 INTVETO:HIT_BOTTOM_WORKAROUND 1 #the work-around for the bottom plate (sector=layer=0 component=3), that is seen as a single object but is separate
@@ -27,8 +27,8 @@ CALORIMETER:MIN_TOT            12
 CALORIMETER:NSB		       10	#num of samples before the maximum
 CALORIMETER:NSA		       20 	#num of samples after  the maximum 
 CALORIMETER:SINGLE_SIGNAL_TOT  120
-CALORIMETER:HIT_THR_SINGLE  5  #thr in phe charge for a detector with single readout
-CALORIMETER:HIT_THR_MULTI   3  #thr in phe charge for a detector with multiple readout
+CALORIMETER:HIT_THR_SINGLE  -30  #thr in phe charge for a detector with single readout
+CALORIMETER:HIT_THR_MULTI   -30  #thr in phe charge for a detector with multiple readout
 CALORIMETER:HIT_N_MULTI     2  #multiplicity for a detector with multi readout
 
 CALORIMETER:CLUSTER_HIT_THR  20  #threshold on hits - in MeV

@@ -20,6 +20,8 @@ using namespace jana;
 //------------------
 jerror_t fa250Mode1CalibPedSubHit_factory::init(void)
 {
+	m_pedestals=new DAQCalibrationHandler("/DAQ/pedestals");
+	this->mapCalibrationHandler(m_pedestals);
 	return NOERROR;
 }
 
@@ -30,13 +32,11 @@ jerror_t fa250Mode1CalibPedSubHit_factory::brun(jana::JEventLoop *eventLoop, int
 {
 	// Here, we would normally get this from the CalibPedSubration DB.
 	// For now, we hard code it...
-
-	m_pedestals=new DAQCalibrationHandler();
-	vector<vector < double> > m_rawpedestal;
-	eventLoop->GetCalib("/DAQ/pedestals",m_rawpedestal);
-	m_pedestals->fillCalib(m_rawpedestal);
-
 	LSB=0.4884;
+
+
+	this->updateCalibrationHandler(m_pedestals,eventLoop);
+
 
 
 	return NOERROR;
@@ -92,7 +92,11 @@ jerror_t fa250Mode1CalibPedSubHit_factory::evnt(JEventLoop *loop, uint64_t event
 //------------------
 jerror_t fa250Mode1CalibPedSubHit_factory::erun(void)
 {
-	if (m_pedestals) delete m_pedestals;
+
+	this->clearCalibrationHandler(m_pedestals);
+
+
+
 	return NOERROR;
 }
 

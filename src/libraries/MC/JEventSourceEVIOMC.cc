@@ -194,8 +194,8 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory)
 			CalorimeterMCHit *hit = new CalorimeterMCHit;
 
 			hit->sector=bankDgt[ih].getIntDgtVar("sector");
-			hit->x=bankDgt[ih].getIntDgtVar("x");
-			hit->y=bankDgt[ih].getIntDgtVar("y");
+			hit->x=bankDgt[ih].getIntDgtVar("xch");
+			hit->y=bankDgt[ih].getIntDgtVar("ych");
 
 
 			/*dgtz banks*/

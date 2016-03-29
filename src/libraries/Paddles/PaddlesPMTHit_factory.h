@@ -10,7 +10,7 @@
 
 #include <JANA/JFactory.h>
 #include <Paddles/PaddlesPMTHit.h>
-
+#include <system/BDXFactory.h>
 #include <system/CalibrationHandler.h>
 
 class TranslationTable;
@@ -18,9 +18,9 @@ class Paddlesfa250Converter;
 
 
 
-class PaddlesPMTHit_factory:public jana::JFactory<PaddlesPMTHit>{
+class PaddlesPMTHit_factory:public BDXFactory<PaddlesPMTHit>{
 	public:
-		PaddlesPMTHit_factory():m_tt(0){};
+		PaddlesPMTHit_factory():m_tt(0),m_Paddlesfa250Converter(0),m_PMT_gain(0){};
 		~PaddlesPMTHit_factory(){};
 
 
@@ -34,7 +34,7 @@ class PaddlesPMTHit_factory:public jana::JFactory<PaddlesPMTHit>{
 		const TranslationTable *m_tt;
 		const Paddlesfa250Converter *m_Paddlesfa250Converter;
 
-		CalibrationHandler<TranslationTable::PADDLES_Index_t> m_PMT_gain;
+		CalibrationHandler<TranslationTable::PADDLES_Index_t> *m_PMT_gain;
 
 		int VERBOSE;
 

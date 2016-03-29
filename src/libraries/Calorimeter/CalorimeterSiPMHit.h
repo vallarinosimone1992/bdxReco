@@ -46,7 +46,7 @@ public:
 	/*These 3 variables are: hit charge (u.a.), hit time (in ns), hit amplitude (in mV)*/
 	double Qraw,Qphe,T,A;
 	double average;
-	double ped;
+
 
 	hit_type m_type;
 

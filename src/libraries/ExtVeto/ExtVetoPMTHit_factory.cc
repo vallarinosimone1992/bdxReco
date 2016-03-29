@@ -26,6 +26,8 @@ using namespace jana;
 //------------------
 jerror_t ExtVetoPMTHit_factory::init(void)
 {
+	m_PMT_gain=new CalibrationHandler<TranslationTable::EXT_VETO_Index_t>("/ExtVeto/PMT_gain");
+	this->mapCalibrationHandler(m_PMT_gain);
 	return NOERROR;
 }
 
@@ -48,16 +50,15 @@ jerror_t ExtVetoPMTHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnum
 		jerr<<" unable to get the extVetofa250Converter!"<<endl;
 		return OBJECT_NOT_AVAILABLE;
 	}
-
-	vector<vector < double> > m_rawcalib;
-	eventLoop->GetCalib("/ExtVeto/PMT_gain", m_rawcalib);
-	m_PMT_gain.fillCalib(m_rawcalib);
+	japp->RootWriteLock();
+	this->updateCalibrationHandler(m_PMT_gain,eventLoop);
+	japp->RootUnLock();
 	gPARMS->GetParameter("EXTVETO:VERBOSE",VERBOSE);
 
 	if (VERBOSE>3){
 		std::map  < TranslationTable::EXT_VETO_Index_t, std::vector < double > > gainCalibMap;
 		std::map  < TranslationTable::EXT_VETO_Index_t, std::vector < double > >::iterator gainCalibMap_it;
-		gainCalibMap=m_PMT_gain.getCalibMap();
+		gainCalibMap=m_PMT_gain->getCalibMap();
 		jout<<"Got following PMT_gain for run number: "<<runnumber<<endl;
 		jout<<"Rows: "<<gainCalibMap.size()<<endl;
 		for (gainCalibMap_it=gainCalibMap.begin();gainCalibMap_it!=gainCalibMap.end();gainCalibMap_it++){
@@ -92,7 +93,7 @@ jerror_t ExtVetoPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	//1b: retrieve objects
 	loop->Get(m_fa250Mode1CalibHit);
 	loop->Get(m_fa250Mode7Hit);
-//	jout << "sono qui" <<std::endl;
+	//	jout << "sono qui" <<std::endl;
 	/*2: Now we have the daq objects, still indexed as "crate-slot-channel"
 	 *	 Use the translation table to produce the digitized hit of the inner veto
 	 *	 Note that we can produce a single object type here, i.e. ExtVetoPMTHit,
@@ -114,7 +115,7 @@ jerror_t ExtVetoPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 			m_ExtVetoPMTHit->AddAssociatedObject(*it_fa250Mode1CalibHit);
 
 			/*Apply phe conversion */
-			m_q_calib=m_PMT_gain.getCalibSingle(m_channel.ext_veto);
+			m_q_calib=m_PMT_gain->getCalibSingle(m_channel.ext_veto);
 			if (m_q_calib>0){
 				m_ExtVetoPMTHit->Q/=((1.602*1E-19)*1E9);	// number of electrons at the exit of the PMT
 				m_ExtVetoPMTHit->Q/=m_q_calib;		// number of phe
@@ -140,7 +141,7 @@ jerror_t ExtVetoPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 			m_ExtVetoPMTHit=m_extVetofa250Converter->convertHit((fa250Hit*)*it_fa250Mode7Hit,m_channel);
 			m_ExtVetoPMTHit->AddAssociatedObject(*it_fa250Mode7Hit);
 			/*Apply phe conversion */
-			m_q_calib=m_PMT_gain.getCalibSingle(m_channel.ext_veto);
+			m_q_calib=m_PMT_gain->getCalibSingle(m_channel.ext_veto);
 			if (m_q_calib>0){
 				m_ExtVetoPMTHit->Q/=((1.602*1E-19)*1E9);	// number of electrons at the exit of the PMT
 				m_ExtVetoPMTHit->Q/=m_q_calib;		// number of phe
@@ -161,6 +162,10 @@ jerror_t ExtVetoPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 //------------------
 jerror_t ExtVetoPMTHit_factory::erun(void)
 {
+
+	japp->RootWriteLock();
+	this->clearCalibrationHandler(m_PMT_gain);
+	japp->RootUnLock();
 	return NOERROR;
 }
 

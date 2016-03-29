@@ -13,7 +13,7 @@
 
 class Calorimeterfa250Converter_factory:public jana::JFactory<Calorimeterfa250Converter>{
 	public:
-		Calorimeterfa250Converter_factory():m_calorimeterfa250Converter(0){};
+		Calorimeterfa250Converter_factory();
 		~Calorimeterfa250Converter_factory(){};
 
 
@@ -27,7 +27,11 @@ class Calorimeterfa250Converter_factory:public jana::JFactory<Calorimeterfa250Co
 		//int m_isFirstCallToBrun;
 		Calorimeterfa250Converter *m_calorimeterfa250Converter;
 
-
+		double m_SINGLE_SIGNAL_TOT;
+		double m_MIN_TOT;
+		double m_THR;
+		int m_NSB;
+		int m_NSA;
 
 };
 

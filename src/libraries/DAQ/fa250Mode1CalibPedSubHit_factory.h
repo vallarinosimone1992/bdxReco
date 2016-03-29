@@ -9,10 +9,11 @@
 #define _fa250Mode1PedSubHit_factory_
 
 #include <JANA/JFactory.h>
+#include <system/BDXFactory.h>
 #include <DAQ/DAQCalibrationHandler.h>
 #include "fa250Mode1CalibPedSubHit.h"
 
-class fa250Mode1CalibPedSubHit_factory:public jana::JFactory<fa250Mode1CalibPedSubHit>{
+class fa250Mode1CalibPedSubHit_factory:public BDXFactory<fa250Mode1CalibPedSubHit>{
 	public:
 		fa250Mode1CalibPedSubHit_factory():m_pedestals(0){};
 		~fa250Mode1CalibPedSubHit_factory(){};

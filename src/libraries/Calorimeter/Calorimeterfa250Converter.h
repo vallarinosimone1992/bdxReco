@@ -34,11 +34,13 @@ class Calorimeterfa250Converter:public fa250Converter<CalorimeterSiPMHit>{
 
 
 
-		CalibrationHandler<TranslationTable::CALO_Index_t> *thr;
+	//	CalibrationHandler<TranslationTable::CALO_Index_t> *thr;
 
-		int NPED;
-		int SINGLE_SIGNAL_TOT;
-		int MIN_TOT;
+		double m_THR;
+		double m_SINGLE_SIGNAL_TOT;
+		double m_MIN_TOT;
+
+		int m_NSB,m_NSA;
 
 
 

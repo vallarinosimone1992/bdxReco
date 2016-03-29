@@ -14,7 +14,7 @@ using namespace std;
 using namespace jana;
 
 IntVetofa250Converter_factory::IntVetofa250Converter_factory():
-		m_isFirstCallToBrun(1),m_intVetofa250Converter(0){
+				m_isFirstCallToBrun(1),m_intVetofa250Converter(0){
 	jout<<"IntVetofa250Converter_factory::creator"<<endl;
 
 
@@ -38,7 +38,9 @@ IntVetofa250Converter_factory::IntVetofa250Converter_factory():
 jerror_t IntVetofa250Converter_factory::init(void)
 {
 	jout<<"IntVetofa250Converter_factory::init"<<endl;
-
+	m_intVetofa250Converter=new IntVetofa250Converter();
+	m_intVetofa250Converter->m_thrCalib=new CalibrationHandler<TranslationTable::INT_VETO_Index_t>("/InnerVeto/sipm_ampl");
+	this->mapCalibrationHandler(m_intVetofa250Converter->m_thrCalib);
 
 	return NOERROR;
 }
@@ -49,13 +51,7 @@ jerror_t IntVetofa250Converter_factory::init(void)
 jerror_t IntVetofa250Converter_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber)
 {
 	jout<<"IntVetofa250Converter_factory::brun"<<endl;
-
-	m_intVetofa250Converter=new IntVetofa250Converter();
-	m_intVetofa250Converter->m_thrCalib=new CalibrationHandler<TranslationTable::INT_VETO_Index_t>;
-
-	vector< vector < double > > m_rawThr;
-	eventLoop->GetCalib("/InnerVeto/sipm_ampl",m_rawThr);
-	m_intVetofa250Converter->m_thrCalib->fillCalib(m_rawThr);
+	this->updateCalibrationHandler(	m_intVetofa250Converter->m_thrCalib,eventLoop);
 
 	gPARMS->GetParameter("INTVETO:VERBOSE",m_intVetofa250Converter->verbose());
 
@@ -64,8 +60,10 @@ jerror_t IntVetofa250Converter_factory::brun(jana::JEventLoop *eventLoop, int32_
 	m_intVetofa250Converter->m_NSB=m_NSB;
 	m_intVetofa250Converter->m_NSA=m_NSA;
 
-
-	_data.push_back(m_intVetofa250Converter);
+	if (m_isFirstCallToBrun){
+		_data.push_back(m_intVetofa250Converter);
+		m_isFirstCallToBrun=0;
+	}
 	SetFactoryFlag(PERSISTANT);
 
 	return NOERROR;
@@ -96,6 +94,8 @@ jerror_t IntVetofa250Converter_factory::evnt(JEventLoop *loop, uint64_t eventnum
 //------------------
 jerror_t IntVetofa250Converter_factory::erun(void)
 {
+
+	this->clearCalibrationHandler(m_intVetofa250Converter->m_thrCalib);
 	if (m_intVetofa250Converter){
 		delete m_intVetofa250Converter;
 	}

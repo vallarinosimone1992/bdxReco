@@ -29,6 +29,9 @@ using namespace jana;
 jerror_t CalorimeterSiPMHit_factory::init(void)
 {
 	VERBOSE=0;
+
+	m_sipm_gain=new CalibrationHandler<TranslationTable::CALO_Index_t>("/Calorimeter/sipm_gain");
+	this->mapCalibrationHandler(m_sipm_gain);
 	return NOERROR;
 }
 
@@ -55,14 +58,15 @@ jerror_t CalorimeterSiPMHit_factory::brun(jana::JEventLoop *eventLoop, int32_t r
 	}
 
 
-	vector<vector < double> > m_rawcalib;
-	eventLoop->GetCalib("/Calorimeter/sipm_gain", m_rawcalib);
-	m_sipm_gain.fillCalib(m_rawcalib);
+	this->updateCalibrationHandler(m_sipm_gain,eventLoop);
+
+
+
 	gPARMS->GetParameter("CALORIMETER:VERBOSE",VERBOSE);
 	if (VERBOSE>3){
 		std::map  < TranslationTable::CALO_Index_t, std::vector < double > > gainCalibMap;
 		std::map  < TranslationTable::CALO_Index_t, std::vector < double > >::iterator gainCalibMap_it;
-		gainCalibMap=m_sipm_gain.getCalibMap();
+		gainCalibMap=m_sipm_gain->getCalibMap();
 		jout<<"Got following sipm_gain for run number: "<<runnumber<<endl;
 		jout<<"Rows: "<<gainCalibMap.size()<<endl;
 		for (gainCalibMap_it=gainCalibMap.begin();gainCalibMap_it!=gainCalibMap.end();gainCalibMap_it++){
@@ -120,7 +124,7 @@ jerror_t CalorimeterSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 			m_CalorimeterSiPMHit=m_Calorimeterfa250Converter->convertHit((fa250Hit*)*it_fa250Mode1CalibPedSubHit,m_channel);
 
 			/*Apply phe conversion if possible*/
-			m_q_calib=m_sipm_gain.getCalibSingle(m_channel.calorimeter);
+			m_q_calib=m_sipm_gain->getCalibSingle(m_channel.calorimeter);
 			if (m_q_calib>0){
 				m_CalorimeterSiPMHit->Qphe=m_CalorimeterSiPMHit->Qraw/m_q_calib;
 			}
@@ -140,7 +144,7 @@ jerror_t CalorimeterSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 			m_CalorimeterSiPMHit=m_Calorimeterfa250Converter->convertHit((fa250Hit*)*it_fa250Mode7Hit,m_channel);
 
 			/*Apply phe conversion if possible*/
-			m_q_calib=m_sipm_gain.getCalibSingle(m_channel.calorimeter);
+			m_q_calib=m_sipm_gain->getCalibSingle(m_channel.calorimeter);
 			if (m_q_calib>0){
 				m_CalorimeterSiPMHit->Qphe=m_CalorimeterSiPMHit->Qraw/m_q_calib;
 			}
@@ -151,7 +155,7 @@ jerror_t CalorimeterSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 
 
 
-	return NOERROR;
+
 
 
 
@@ -163,6 +167,10 @@ jerror_t CalorimeterSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 //------------------
 jerror_t CalorimeterSiPMHit_factory::erun(void)
 {
+
+	this->clearCalibrationHandler(m_sipm_gain);
+
+
 	return NOERROR;
 }
 

@@ -9,9 +9,10 @@
 #define _ExtVetofa250Converter_factory_
 
 #include <JANA/JFactory.h>
+#include <system/BDXFactory.h>
 #include "ExtVetofa250Converter.h"
 
-class ExtVetofa250Converter_factory:public jana::JFactory<ExtVetofa250Converter>{
+class ExtVetofa250Converter_factory:public BDXFactory<ExtVetofa250Converter>{
 	public:
 		ExtVetofa250Converter_factory():m_isFirstCallToBrun(1),m_extVetofa250Converter(0){};
 		~ExtVetofa250Converter_factory(){};

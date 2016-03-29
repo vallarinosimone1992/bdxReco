@@ -18,6 +18,13 @@ using namespace jana;
 //------------------
 jerror_t ExtVetofa250Converter_factory::init(void)
 {
+	m_extVetofa250Converter=new ExtVetofa250Converter();
+	m_extVetofa250Converter->threshold=new CalibrationHandler<TranslationTable::EXT_VETO_Index_t>("ExtVeto/Threshold");
+	this->mapCalibrationHandler(m_extVetofa250Converter->threshold);
+
+	m_extVetofa250Converter->m_pedestals=new DAQCalibrationHandler("/DAQ/pedestals");
+	this->mapCalibrationHandler(m_extVetofa250Converter->m_pedestals);
+
 	return NOERROR;
 }
 
@@ -27,48 +34,14 @@ jerror_t ExtVetofa250Converter_factory::init(void)
 jerror_t ExtVetofa250Converter_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber)
 {
 	if (m_isFirstCallToBrun){
-			m_isFirstCallToBrun=0;
-			m_extVetofa250Converter=new ExtVetofa250Converter();
-
-
-	m_extVetofa250Converter=new ExtVetofa250Converter();
-
-	/************* reading threshold ***********/
-	m_extVetofa250Converter->threshold=new CalibrationHandler<TranslationTable::EXT_VETO_Index_t>;
-	vector<vector < double> > m_rawthreshold;
-	eventLoop->GetCalib("/ExtVeto/Threshold", m_rawthreshold);
-	m_extVetofa250Converter->threshold->fillCalib(m_rawthreshold);
-//	vector<double> mr;
-
-	/************** reading pedestal ****************/
-
-	m_extVetofa250Converter->m_pedestals=new DAQCalibrationHandler();
-		vector<vector < double> > m_rawpedestal;
-		eventLoop->GetCalib("/DAQ/pedestals", m_rawpedestal);
-		m_extVetofa250Converter->m_pedestals->fillCalib(m_rawpedestal);
-
-
-
-		/*
-		for (int u = 0; u<m_rawpedestal.size(); u++) {
-							for (int  v = 0; v < m_rawpedestal[u].size(); v++) {
-								cout << u<< " "<<v<<" "<<m_rawpedestal[u][v] << endl;
-							}
-						}
-
-*/
-	_data.push_back(m_extVetofa250Converter);
-			SetFactoryFlag(PERSISTANT);
+		m_isFirstCallToBrun=0;
+		_data.push_back(m_extVetofa250Converter);
+		SetFactoryFlag(PERSISTANT);
 	}
 
 
-
-
-
-
-
-
-
+	this->updateCalibrationHandler(m_extVetofa250Converter->threshold,eventLoop);
+	this->updateCalibrationHandler(m_extVetofa250Converter->m_pedestals,eventLoop);
 
 
 
@@ -101,6 +74,10 @@ jerror_t ExtVetofa250Converter_factory::evnt(JEventLoop *loop, uint64_t eventnum
 //------------------
 jerror_t ExtVetofa250Converter_factory::erun(void)
 {
+
+	this->clearCalibrationHandler(m_extVetofa250Converter->threshold);
+	this->clearCalibrationHandler(m_extVetofa250Converter->m_pedestals);
+
 	return NOERROR;
 }
 

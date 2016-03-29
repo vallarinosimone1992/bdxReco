@@ -11,15 +11,18 @@
 #include <JANA/JObject.h>
 #include <JANA/jerror.h>
 #include <TT/TranslationTable.h>
+#include <system/CalibrationHandler.h>
 #include <vector>
 #include <map>
 #include <algorithm>
-
+#include <string>
 using namespace std;
 
-class DAQCalibrationHandler{
+class DAQCalibrationHandler : public CalibrationHandlerBase{
 public:
-	jerror_t fillCalib(const std::vector<std::vector<double> > &calib_data);
+
+	DAQCalibrationHandler(string name):CalibrationHandlerBase(name){};
+	virtual jerror_t fillCalib(const std::vector<std::vector<double> > &calib_data);
 	vector<double> getCalib(const TranslationTable::csc_t &index);
 	vector < double > operator[](const TranslationTable::csc_t &index);
 

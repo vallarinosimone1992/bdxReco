@@ -9,12 +9,13 @@
 #define _ExtVetoHit_factory_
 
 #include <JANA/JFactory.h>
+#include <system/BDXFactory.h>
 #include "ExtVetoHit.h"
 #include <system/CalibrationHandler.h>
 
-class ExtVetoHit_factory:public jana::JFactory<ExtVetoHit>{
+class ExtVetoHit_factory:public BDXFactory<ExtVetoHit>{
 	public:
-		ExtVetoHit_factory(){isMC=0;};
+		ExtVetoHit_factory():m_tt(0),m_ENE_gain(0){isMC=0;};
 		~ExtVetoHit_factory(){};
 
 
@@ -26,7 +27,7 @@ class ExtVetoHit_factory:public jana::JFactory<ExtVetoHit>{
 		jerror_t erun(void);						///< Called everytime run number changes, provided brun has been called.
 		jerror_t fini(void);						///< Called after last event of last event source has been processed.
 		const TranslationTable *m_tt;
-		CalibrationHandler<TranslationTable::EXT_VETO_Index_t> m_ENE_gain;
+		CalibrationHandler<TranslationTable::EXT_VETO_Index_t> *m_ENE_gain;
 
 };
 

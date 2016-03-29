@@ -40,10 +40,9 @@ class JEventProcessor_test:public jana::JEventProcessor{
 		TTree *t;
 		JROOTOutput *m_ROOTOutput;
 
-		double Q;
+		double Q1,Q2,Q;
 		int component,eventN;
 
-		CalibrationHandler<TranslationTable::CALO_Index_t> m_pedestal;
 
 		TH1D *hGlob;
 		TF1  *fGlob;

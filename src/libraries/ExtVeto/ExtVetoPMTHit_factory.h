@@ -11,12 +11,13 @@
 #include <JANA/JFactory.h>
 #include "ExtVetoPMTHit.h"
 #include <system/CalibrationHandler.h>
+#include <system/BDXFactory.h>
 
 class TranslationTable;
 class ExtVetofa250Converter;
-class ExtVetoPMTHit_factory:public jana::JFactory<ExtVetoPMTHit>{
+class ExtVetoPMTHit_factory:public BDXFactory<ExtVetoPMTHit>{
 	public:
-		ExtVetoPMTHit_factory():m_tt(0){};
+		ExtVetoPMTHit_factory():m_tt(0),m_extVetofa250Converter(0),m_PMT_gain(0),VERBOSE(0){};
 		~ExtVetoPMTHit_factory(){};
 
 
@@ -29,7 +30,7 @@ class ExtVetoPMTHit_factory:public jana::JFactory<ExtVetoPMTHit>{
 
 		const TranslationTable *m_tt;
 		const ExtVetofa250Converter *m_extVetofa250Converter;
-		CalibrationHandler<TranslationTable::EXT_VETO_Index_t> m_PMT_gain;
+		CalibrationHandler<TranslationTable::EXT_VETO_Index_t> *m_PMT_gain;
 
 		int VERBOSE;
 

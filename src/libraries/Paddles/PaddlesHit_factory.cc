@@ -23,6 +23,9 @@ using namespace jana;
 jerror_t PaddlesHit_factory::init(void)
 {
 	gPARMS->GetParameter("MC",isMC);
+	m_ENE_gain=new	CalibrationHandler<TranslationTable::PADDLES_Index_t>("Paddles/Ene");
+	this->mapCalibrationHandler(m_ENE_gain);
+
 	return NOERROR;
 }
 
@@ -31,9 +34,7 @@ jerror_t PaddlesHit_factory::init(void)
 //------------------
 jerror_t PaddlesHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber)
 {
-	vector<vector < double> > m_enecalib;
-	eventLoop->GetCalib("/Paddles/Ene", m_enecalib);
-	m_ENE_gain.fillCalib(m_enecalib);
+	this->updateCalibrationHandler(m_ENE_gain,eventLoop);
 	return NOERROR;
 }
 
@@ -69,18 +70,18 @@ jerror_t PaddlesHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	PaddlesHit *m_PaddlesHit=0;
 
 	for (m_it=m_data.begin();m_it!=m_data.end();m_it++){
-			m_PaddlesHit=new PaddlesHit;
+		m_PaddlesHit=new PaddlesHit;
 
-			/*For now, very dummy!*/
-			m_PaddlesHit->m_channel=(*m_it)->m_channel;
+		/*For now, very dummy!*/
+		m_PaddlesHit->m_channel=(*m_it)->m_channel;
 
-			m_Ene=m_ENE_gain.getCalibSingle(m_PaddlesHit->m_channel);
-			m_PaddlesHit->E=((*m_it)->Q)*m_Ene;
-			m_PaddlesHit->T=(*m_it)->T;
+		m_Ene=m_ENE_gain->getCalibSingle(m_PaddlesHit->m_channel);
+		m_PaddlesHit->E=((*m_it)->Q)*m_Ene;
+		m_PaddlesHit->T=(*m_it)->T;
 
-			m_PaddlesHit->AddAssociatedObject(*m_it);
-			_data.push_back(m_PaddlesHit);
-		}
+		m_PaddlesHit->AddAssociatedObject(*m_it);
+		_data.push_back(m_PaddlesHit);
+	}
 
 
 
@@ -93,6 +94,7 @@ jerror_t PaddlesHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 //------------------
 jerror_t PaddlesHit_factory::erun(void)
 {
+	this->clearCalibrationHandler(m_ENE_gain);
 	return NOERROR;
 }
 

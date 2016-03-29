@@ -14,12 +14,38 @@
 #include <vector>
 #include <map>
 #include <algorithm>
+#include <string>
 
 using namespace std;
 
-template <class T> class CalibrationHandler{  //T is supposed to be an index in the TT library
+class CalibrationHandlerBase{
 public:
-	jerror_t fillCalib(const std::vector<std::vector<double> > &calib_data);
+	CalibrationHandlerBase(string table):m_hasLoadedCurrentRun(false){m_table=table;};
+	virtual ~CalibrationHandlerBase(){};
+	virtual jerror_t fillCalib(const std::vector<std::vector<double> > &calib_data)=0;
+
+	void setLoadedCurrentRun(bool hasLoadedCurrentRun){m_hasLoadedCurrentRun=hasLoadedCurrentRun;}
+	bool hasLoadedCurrentRun(){return m_hasLoadedCurrentRun;}
+
+	string getTable(){return m_table;}
+	void setTable(string table){m_table=table;}
+
+	std::vector<std::vector<double> > getRawCalibData(){return m_rawCalibData;}
+
+protected:
+	bool m_hasLoadedCurrentRun;
+	string m_table;
+	std::vector<std::vector<double> > m_rawCalibData;
+
+
+
+};
+
+
+template <class T> class CalibrationHandler : public CalibrationHandlerBase{  //T is supposed to be an index in the TT library
+public:
+	CalibrationHandler(string name):CalibrationHandlerBase(name){};
+	virtual jerror_t fillCalib(const std::vector<std::vector<double> > &calib_data);
 	vector<double> getCalib(const T &index);
 	std::vector < double > operator[](const T &index);
 
@@ -49,6 +75,9 @@ template <class T> jerror_t CalibrationHandler<T>::fillCalib(const std::vector<s
 	int nData=0;
 	int prevNdata=0;
 	m_calib.clear();
+
+	m_rawCalibData.clear();
+	m_rawCalibData=calib_data;
 
 	for (int irow=0;irow<calib_data.size();irow++){
 		data.clear();
@@ -104,10 +133,10 @@ template <class T> vector<double> CalibrationHandler<T>::getCalib(const T &index
 		it=m_calib.find(index);
 		if (it==m_calib.end()){
 			jerr<<"CalibrationHandler<T>::getCalib element not found"<<endl;
+			jerr<<"T: "<<index.name()<<endl;
 			return ret;
 		}
 		else{
-
 			m_actualCalibIndex.push_back(index);
 			m_actualCalib.push_back(it->second);
 			return it->second;
@@ -124,6 +153,7 @@ template <class T> double CalibrationHandler<T>::getCalibSingle(const T &index){
 	}
 	else{
 		jerr<<"CalibrationHandler<T>::getCalibSingle error: more than 1 entry"<<std::endl;
+		jerr<<"T: "<<index.name()<<endl;
 		return 0;
 	}
 }

@@ -28,10 +28,10 @@ using namespace jana;
 //------------------
 jerror_t PaddlesPMTHit_factory::init(void)
 {
-	return NOERROR;
-
 	VERBOSE=0;
-
+	m_PMT_gain=new CalibrationHandler<TranslationTable::PADDLES_Index_t>("/Paddles/PMT_gain");
+	this->mapCalibrationHandler(m_PMT_gain);
+	return NOERROR;
 }
 
 //------------------
@@ -54,14 +54,15 @@ jerror_t PaddlesPMTHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnum
 		return OBJECT_NOT_AVAILABLE;
 	}
 
-	vector<vector < double> > m_rawcalib;
-	eventLoop->GetCalib("/Paddles/PMT_gain", m_rawcalib);
-	m_PMT_gain.fillCalib(m_rawcalib);
+
+	this->updateCalibrationHandler(m_PMT_gain,eventLoop);
+
+
 	gPARMS->GetParameter("PADDLES:VERBOSE",VERBOSE);
 	if (VERBOSE>3){
 		std::map  < TranslationTable::PADDLES_Index_t, std::vector < double > > gainCalibMap;
 		std::map  < TranslationTable::PADDLES_Index_t, std::vector < double > >::iterator gainCalibMap_it;
-		gainCalibMap=m_PMT_gain.getCalibMap();
+		gainCalibMap=m_PMT_gain->getCalibMap();
 		jout<<"Got following PMT_gain for run number: "<<runnumber<<endl;
 		jout<<"Rows: "<<gainCalibMap.size()<<endl;
 		for (gainCalibMap_it=gainCalibMap.begin();gainCalibMap_it!=gainCalibMap.end();gainCalibMap_it++){
@@ -78,7 +79,7 @@ jerror_t PaddlesPMTHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnum
 jerror_t PaddlesPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 	TranslationTable::ChannelInfo m_channel;
-//	TranslationTable::csc_t		  m_csc;
+	//	TranslationTable::csc_t		  m_csc;
 	double		 				  m_q_calib;
 
 	PaddlesPMTHit *m_PaddlesPMTHit=0;
@@ -91,6 +92,7 @@ jerror_t PaddlesPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	vector <const fa250Mode7Hit*>::const_iterator it_fa250Mode7Hit;
 
 	//1b: retrieve objects
+
 	loop->Get(m_fa250Mode1CalibHit);
 	loop->Get(m_fa250Mode7Hit);
 
@@ -113,10 +115,10 @@ jerror_t PaddlesPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 //			jout<<"Nevent="<<eventnumber<<endl;
 			m_PaddlesPMTHit=m_Paddlesfa250Converter->convertHit((fa250Hit*)*it_fa250Mode1CalibHit,m_channel);
 			m_PaddlesPMTHit->AddAssociatedObject(*it_fa250Mode1CalibHit);
-			//						jout<<"Q= "<<m_PaddlesPMTHit->Q<<endl;
+
 
 			/*Apply phe conversion */
-			m_q_calib=m_PMT_gain.getCalibSingle(m_channel.paddles);
+			m_q_calib=m_PMT_gain->getCalibSingle(m_channel.paddles);
 			//															jout<<"**********"<<endl;
 			//															jout<<m_q_calib.size()<<endl;
 			//															jout<<m_q_calib.at(0)<<" "<<endl;
@@ -144,7 +146,7 @@ jerror_t PaddlesPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 			m_PaddlesPMTHit->AddAssociatedObject(*it_fa250Mode7Hit);
 
 			/*Apply phe conversion */
-			m_q_calib=m_PMT_gain.getCalibSingle(m_channel.paddles);
+			m_q_calib=m_PMT_gain->getCalibSingle(m_channel.paddles);
 			//															jout<<"**********"<<endl;
 			//															jout<<m_q_calib.size()<<endl;
 			//															jout<<m_q_calib.at(0)<<" "<<endl;
@@ -170,6 +172,11 @@ jerror_t PaddlesPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 //------------------
 jerror_t PaddlesPMTHit_factory::erun(void)
 {
+
+	this->clearCalibrationHandler(m_PMT_gain);
+
+
+
 	return NOERROR;
 }
 
