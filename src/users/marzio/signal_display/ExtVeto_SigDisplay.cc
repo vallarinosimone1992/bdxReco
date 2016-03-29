@@ -21,6 +21,9 @@ using namespace std;
 #include <ExtVeto/ExtVetoPMTHit.h>
 #include <ExtVeto/ExtVetoDigiHit.h>
 
+#include <Calorimeter/CalorimeterSipmHit.h>
+
+
 
 #include <system/JROOTOutput.h>
 
@@ -151,8 +154,8 @@ jerror_t ExtVeto_SigDisplay::evnt(JEventLoop *loop,uint64_t eventnumber)
 	// since multiple threads may call this method at the same time.
 	// Here's an example:
 	//
-	vector<const ExtVetoPMTHit*> data;
-	vector<const ExtVetoPMTHit*>::const_iterator data_it;
+	vector<const CalorimeterSiPMHit*> data;
+	vector<const CalorimeterSiPMHit*>::const_iterator data_it;
 	const fa250Mode1CalibHit *fa;
 	loop->Get(data);
 
@@ -182,7 +185,7 @@ jerror_t ExtVeto_SigDisplay::evnt(JEventLoop *loop,uint64_t eventnumber)
 	//  ... fill historgrams or trees ...
 	for (data_it=data.begin();data_it<data.end();data_it++){
 
-		const ExtVetoPMTHit *evhit = *data_it;
+		const CalorimeterSiPMHit *evhit = *data_it;
 
 //		if ((evhit->m_channel.ext_veto.component==0)){
 
@@ -191,7 +194,7 @@ jerror_t ExtVeto_SigDisplay::evnt(JEventLoop *loop,uint64_t eventnumber)
 			evhit->GetSingle(fa);
 
 //			jout<<"Sector= "<<evhit->m_channel.ext_veto.sector<<" Layer= "<<evhit->m_channel.ext_veto.layer<<endl;
-			jout<<"Component= "<<evhit->m_channel.ext_veto.component<<" Readout= "<<evhit->m_channel.ext_veto.readout<<" Size= "<<fa->samples.size()<<endl;
+//			jout<<"Component= "<<evhit->m_channel.ext_veto.component<<" Readout= "<<evhit->m_channel.ext_veto.readout<<" Size= "<<fa->samples.size()<<endl;
 
 			if(!fa) continue; // need fa250Mode1CalibHit to continue
 
@@ -203,8 +206,8 @@ jerror_t ExtVeto_SigDisplay::evnt(JEventLoop *loop,uint64_t eventnumber)
 
 			h->Write();
 			eventN=eventnumber;
-			component=evhit->m_channel.ext_veto.readout;
-			Q=(*data_it)->Q;
+//			component=evhit->m_channel.ext_veto.readout;
+//			Q=(*data_it)->Q;
 			t->Fill();
 //		}
 
