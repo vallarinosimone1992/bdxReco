@@ -32,9 +32,6 @@ jerror_t PaddlesPMTHit_factory::init(void)
 	m_PMT_gain=new CalibrationHandler<TranslationTable::PADDLES_Index_t>("/Paddles/PMT_gain");
 	this->mapCalibrationHandler(m_PMT_gain);
 	return NOERROR;
-
-
-
 }
 
 //------------------
@@ -95,6 +92,7 @@ jerror_t PaddlesPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	vector <const fa250Mode7Hit*>::const_iterator it_fa250Mode7Hit;
 
 	//1b: retrieve objects
+
 	loop->Get(m_fa250Mode1CalibHit);
 	loop->Get(m_fa250Mode7Hit);
 
@@ -116,7 +114,7 @@ jerror_t PaddlesPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		if (m_channel.det_sys==TranslationTable::PADDLES){
 			m_PaddlesPMTHit=m_Paddlesfa250Converter->convertHit((fa250Hit*)*it_fa250Mode1CalibHit,m_channel);
 			m_PaddlesPMTHit->AddAssociatedObject(*it_fa250Mode1CalibHit);
-			//						jout<<"Q= "<<m_PaddlesPMTHit->Q<<endl;
+
 
 			/*Apply phe conversion */
 			m_q_calib=m_PMT_gain->getCalibSingle(m_channel.paddles);

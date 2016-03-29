@@ -19,6 +19,7 @@ using namespace jana;
 //------------------
 jerror_t Paddlesfa250Converter_factory::init(void)
 {
+	m_isFirstCallToBrun=1;
 	m_Paddlesfa250Converter=new Paddlesfa250Converter();
 
 	m_Paddlesfa250Converter->threshold=new CalibrationHandler<TranslationTable::PADDLES_Index_t>("/Paddles/Threshold");
@@ -34,16 +35,16 @@ jerror_t Paddlesfa250Converter_factory::init(void)
 //------------------
 jerror_t Paddlesfa250Converter_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber)
 {
-	if (m_isFirstCallToBrun){
-		m_isFirstCallToBrun=0;
-		_data.push_back(m_Paddlesfa250Converter);
-		SetFactoryFlag(PERSISTANT);
-	}
 
 
 	this->updateCalibrationHandler(m_Paddlesfa250Converter->threshold,eventLoop);
 	this->updateCalibrationHandler(m_Paddlesfa250Converter->m_pedestals,eventLoop);
 
+	if (m_isFirstCallToBrun){
+			m_isFirstCallToBrun=0;
+			_data.push_back(m_Paddlesfa250Converter);
+			SetFactoryFlag(PERSISTANT);
+		}
 
 
 
