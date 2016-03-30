@@ -46,7 +46,7 @@ jerror_t BDXEventProcessor::init(void)
 {
 
 	bout<<"BDXEventProcessor::init"<<endl;
-
+	gPARMS->GetParameter("MC", isMC);
 
 
 
@@ -79,21 +79,27 @@ jerror_t BDXEventProcessor::init(void)
 		}
 
 	}
-	gPARMS->GetParameter("MC", isMC);
+
 
 	japp->RootWriteLock();
+	eventHeader=new TTree("EventHeader","EventHeader");
+	eventHeader->Branch("eventN",&eventN);
+	eventHeader->Branch("runN",&runN);
+	eventHeader->Branch("T",&eventT);
+	eventHeader->Branch("tword",&tword);
 
-	t=new TTree("EventHeader","EventHeader");
-	t->Branch("eventN",&eventN);
-	t->Branch("runN",&runN);
-	t->Branch("T",&eventT);
-	t->Branch("tword",&tword);
+	runInfo=new TTree("RunInfo","RunInfo");
+	runInfo->Branch("runN",&runN);
+	runInfo->Branch("dT",&deltaTime);
 	if (m_output){
 		if (m_output->className()=="JRootOutput"){
 			JROOTOutput* m_ROOTOutput=(JROOTOutput*)m_output;
-			(m_ROOTOutput)->AddObject(t);
+			(m_ROOTOutput)->AddObject(eventHeader);
+			(m_ROOTOutput)->AddObject(runInfo);
 		}
 	}
+	japp->RootUnLock();
+
 	return NOERROR;
 }
 
@@ -148,7 +154,7 @@ jerror_t BDXEventProcessor::evnt(JEventLoop *loop, uint64_t eventnumber)
 		eventN=eventnumber;
 		tword=tData->triggerWords[0];
 		runN=tData->runN;
-		t->Fill();
+		eventHeader->Fill();
 
 
 		/*Time*/
@@ -163,9 +169,13 @@ jerror_t BDXEventProcessor::evnt(JEventLoop *loop, uint64_t eventnumber)
 // erun
 jerror_t BDXEventProcessor::erun(void)
 {
+	japp->RootWriteLock();
 	deltaTime=stopTime-startTime;
 	bout<<"BDXEventProcessor::erun "<<endl;
 	bout<<"Run start: "<<startTime<<" stop: "<<stopTime<<" diff: "<<deltaTime<<endl;
+	runInfo->Fill();
+	japp->RootUnLock();
+
 
 	return NOERROR;
 }

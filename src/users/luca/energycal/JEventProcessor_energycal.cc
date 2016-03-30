@@ -95,7 +95,7 @@ jerror_t JEventProcessor_energycal::init(void)
 	t->Branch("Ec_MC",&Ec_MC);
 
 	app->RootUnLock();
-	return NOERROR;
+
 	return NOERROR;
 }
 

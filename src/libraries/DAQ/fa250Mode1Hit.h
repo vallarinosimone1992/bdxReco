@@ -13,7 +13,7 @@
 
 
 #include "fa250Hit.h"
-
+class TH1D;
 class fa250Mode1Hit:public fa250Hit{
 	public:
 		JOBJECT_PUBLIC(fa250Mode1Hit);
@@ -35,7 +35,10 @@ class fa250Mode1Hit:public fa250Hit{
 
 			// AddString(items, "E", "%f", E);
 		}
+		void toHisto(TH1D *h) const;
 		
+
+
 };
 
 #endif // _fa250Mode1Hit_
