@@ -17,8 +17,8 @@ class fa250Mode1CalibPedSubHit:public fa250Mode1Hit{
 	public:
 		JOBJECT_PUBLIC(fa250Mode1CalibPedSubHit);
 		
-		vector <double> samples; // calibrated - ped. subtracted samples
 		
+
 		// This method is used primarily for pretty printing
 		// the second argument to AddString is printf style format
 		void toStrings(vector<pair<string,string> > &items)const{

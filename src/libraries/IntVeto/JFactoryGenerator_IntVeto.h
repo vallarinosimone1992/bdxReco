@@ -16,6 +16,7 @@
 #include "IntVetoDigiHit_factory_MC.h"
 #include "IntVetoHit_factory.h"
 #include "IntVetofa250Converter_factory.h"
+#include "IntVetoSummary_factory.h"
 class JFactoryGenerator_IntVeto: public jana::JFactoryGenerator{
 	public:
 		JFactoryGenerator_IntVeto(){
@@ -35,7 +36,7 @@ class JFactoryGenerator_IntVeto: public jana::JFactoryGenerator{
 			loop->AddFactory(new IntVetoDigiHit_factory());
 			loop->AddFactory(new IntVetoDigiHit_factory_MC());
 			loop->AddFactory(new IntVetoHit_factory());
-
+			loop->AddFactory(new IntVetoSummary_factory());
 			return NOERROR;
 
 		}

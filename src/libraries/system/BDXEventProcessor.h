@@ -70,11 +70,14 @@ private:
 
 
 	/*The EventHeader tree*/
-	TTree *t;
+	TTree *eventHeader;
 	int eventN,runN,tword,eventT;
 
 	/*Time*/
 	int startTime,stopTime,deltaTime;
+
+	/*The RunInfo tree*/
+	TTree *runInfo;
 
 	JStreamLog bout;
 	JStreamLog berr;

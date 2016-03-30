@@ -17,7 +17,7 @@ class TranslationTable;
 
 class CalorimeterHit_factory:public BDXFactory<CalorimeterHit>{
 	public:
-		CalorimeterHit_factory():m_ene(0),m_tt(0){isMC=0;};
+		CalorimeterHit_factory();
 		~CalorimeterHit_factory(){};
 
 
