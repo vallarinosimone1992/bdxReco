@@ -80,7 +80,7 @@ jerror_t JEventProcessor_energycal::init(void)
 	hctot = new TH1D("hctot","hctot",5000,0,1500);
 	hc1_2 = new TH2D("hc1_2","hc1_2",5000,0,750,5000,0,750);
 
-	t=new TTree("tout","tout");
+	t=new TTree("energycal","energycal");
 	t->Branch("eventN",&eventN);
 	t->Branch("Qc1",&Qc1);
 	t->Branch("Qc2",&Qc2);
