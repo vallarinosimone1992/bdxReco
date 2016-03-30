@@ -80,11 +80,13 @@ jerror_t JEventProcessor_energycal::init(void)
 	hctot = new TH1D("hctot","hctot",5000,0,1500);
 	hc1_2 = new TH2D("hc1_2","hc1_2",5000,0,750,5000,0,750);
 
-	t=new TTree("tout","tout");
+	t=new TTree("energycal","energycal");
 	t->Branch("eventN",&eventN);
 	t->Branch("Qc1",&Qc1);
 	t->Branch("Qc2",&Qc2);
 	t->Branch("Qctot",&Qctot);
+	t->Branch("Tc1",&Tc1);
+	t->Branch("Tc2",&Tc2);
 	t->Branch("Ep1",&Ep1);
 	t->Branch("Ep2",&Ep2);
 	t->Branch("Tp1",&Tp1);
@@ -95,7 +97,7 @@ jerror_t JEventProcessor_energycal::init(void)
 	t->Branch("Ec_MC",&Ec_MC);
 
 	app->RootUnLock();
-
+	return NOERROR;
 	return NOERROR;
 }
 
@@ -228,9 +230,11 @@ jerror_t JEventProcessor_energycal::evnt(JEventLoop *loop, uint64_t eventnumber)
 			switch (evchit->m_data[idata].readout){
 			case (1):
 								Qc1 = evchit->m_data[idata].Q;
+								Tc1 = evchit->m_data[idata].T;
 			break;
 			case (2):
 								Qc2 = evchit->m_data[idata].Q;
+								Tc2 = evchit->m_data[idata].T;
 			break;
 			default:
 				break;
