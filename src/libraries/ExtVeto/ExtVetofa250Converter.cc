@@ -54,30 +54,7 @@ jerror_t ExtVetofa250Converter::convertMode1Hit(ExtVetoPMTHit* output,const fa25
 
 
     // ************************** Timing calculation ***************************************
-/*
-        for (int ii=0;ii<size;ii++){
 
-	    		if((input->samples.at(ii)>=Thr)){
-	    		     if(ii==0) goto jump;
-	    			    Tinf = ii-1;
-                      Tsup = ii;
-	    		        Ainf = input->samples.at(ii-1);
-	    		        Asup = input->samples.at(ii);
-       //      jout << Tinf << " "<< Tsup << " " << Ainf << " " <<Asup <<std::endl;
-
-                      break;
-    	         } //endif
-
-	    		if((ii==size-1)){
-
-	    			  T=-10;
-	    			  goto jump;
-	    		}
-
-	    	                       }//endfor
-        T=(((Tsup-Tinf)/(Asup-Ainf))*(Thr-Ainf))+Tinf;		// linear extrapolation
-jump:
-*/
     for (int ii=0;ii<size;ii++){
     	if((input->samples.at(ii)>=Thr)){
     		 if(ii==0){
@@ -108,7 +85,7 @@ jump:
     //    jout << "T= " << T << std::endl;
 
         // ********************************** Pedestal & Charge Calculation ******************************
-
+        if (T>=0){
         if(T>35){
 
           nSamples = T-5;
@@ -143,7 +120,7 @@ jump:
          	  } //endfor
 
                                            } //endif-else
-
+        }
 
               //********************** correction Q<0
 
@@ -181,7 +158,7 @@ jump:
 
 	output->Q = (Q*4*2*1E-3)/50;         /// charge in nWb , 50 ohm, *2 ->splitter
 	output->T=T*4;                     //// Time in nS
-  //  output->pedestal=pedestal;
+    output->pedestal=pedestal;
 
 
 

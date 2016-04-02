@@ -34,7 +34,7 @@ class ExtVeto_calib:public jana::JEventProcessor{
 		JROOTOutput *m_ROOTOutput;
 
 	//	double Q, pedestal, T;
-	   double Q,T;
+	   double Q,T,ped;
 		int component,eventN, Tw;
 
 

@@ -79,6 +79,8 @@ jerror_t ExtVeto_calib::init(void)
 
 	t->Branch("component",&component);
     t->Branch("Q",&Q);
+    t->Branch("ped",&ped);
+
     t->Branch("T",&T);
 	t->Branch("eventN",&eventN);
 	t->Branch("Tw",&Tw);
@@ -205,6 +207,7 @@ jerror_t ExtVeto_calib::evnt(JEventLoop *loop,uint64_t eventnumber)
 			component=evhit->m_channel.ext_veto.component;
 	   	    Q=(*data_it)->Q;
 	   	 T=(*data_it)->T;
+	   	 ped=(*data_it)->pedestal;
 			Tw=tData->triggerWords.at(0);
 
 
