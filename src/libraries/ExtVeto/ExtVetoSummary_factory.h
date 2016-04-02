@@ -10,6 +10,7 @@
 
 #include <JANA/JFactory.h>
 #include "ExtVetoSummary.h"
+#include <system/CalibrationHandler.h>
 
 class ExtVetoSummary_factory:public jana::JFactory<ExtVetoSummary>{
 	public:

@@ -54,7 +54,7 @@ jerror_t ExtVetofa250Converter::convertMode1Hit(ExtVetoPMTHit* output,const fa25
 
 
     // ************************** Timing calculation ***************************************
-
+/*
         for (int ii=0;ii<size;ii++){
 
 	    		if((input->samples.at(ii)>=Thr)){
@@ -70,13 +70,39 @@ jerror_t ExtVetofa250Converter::convertMode1Hit(ExtVetoPMTHit* output,const fa25
 
 	    		if((ii==size-1)){
 
-	    			  T=0;
+	    			  T=-10;
 	    			  goto jump;
 	    		}
 
 	    	                       }//endfor
         T=(((Tsup-Tinf)/(Asup-Ainf))*(Thr-Ainf))+Tinf;		// linear extrapolation
 jump:
+*/
+    for (int ii=0;ii<size;ii++){
+    	if((input->samples.at(ii)>=Thr)){
+    		 if(ii==0){
+    			 T=0;
+    			 break;
+    		           }
+			    Tinf = ii-1;
+           Tsup = ii;
+		        Ainf = input->samples.at(ii-1);
+		        Asup = input->samples.at(ii);
+//      jout << Tinf << " "<< Tsup << " " << Ainf << " " <<Asup <<std::endl;
+
+           break;
+      } //endif
+
+		if((ii==size-1)){
+
+    			  T=-10;
+
+
+    	}
+                      }//endfor
+
+               if(Tinf>0)   T=(((Tsup-Tinf)/(Asup-Ainf))*(Thr-Ainf))+Tinf;
+
 
    //    jout << "component= " << output->m_channel.ext_veto.component << std::endl;
     //    jout << "T= " << T << std::endl;
@@ -84,41 +110,28 @@ jump:
         // ********************************** Pedestal & Charge Calculation ******************************
 
         if(T>35){
-      	/*
-      	  if(output->m_channel.ext_veto.component ==8){
-      	  jout <<" T= " << T << std::endl;
-      	  }
-*/
+
           nSamples = T-5;
-    //      jout <<nSamples <<std::endl;
+
              int j=0;
             for(int ii=0; ii<nSamples;ii++){
 
            Q_pedestal+=input->samples.at(ii);
            j +=1;
 
-            } //endfor
+                       } //endfor
 
-     //       jout <<j <<std::endl;
-       //    pedestal = Q_pedestal/nSamples;
-                       pedestal = Q_pedestal/j;
-                       Vpedestal_backup[output->m_channel.ext_veto.component] = pedestal;
+                 pedestal = Q_pedestal/j;
+                 Vpedestal_backup[output->m_channel.ext_veto.component] = pedestal;
 
  //                      jout << "papta " <<output->m_channel.ext_veto.component << " " << pedestal_DAQ <<" " <<Vpedestal_backup.at(output->m_channel.ext_veto.component) <<std::endl;
 
 
              for (int ii=0;ii<size;ii++){
-          	/*
-          	   if(output->m_channel.ext_veto.component ==11&&T>0){
+                        Q+=(input->samples.at(ii)-pedestal);
+                                        } //endfor
 
-         		   jout << ii<< " "<< input->samples.at(ii) <<" "<< input->samples.at(ii)-pedestal << std::endl;
-          	   }
-          	   */
-                  Q+=(input->samples.at(ii)-pedestal);
-
-              } //endfor
-
-           } else                // ******************************* Pedestal & Charge Calculation for T<25 ************************************
+           } else                // ******************************* Pedestal & Charge Calculation for T<35 ************************************
                  {
 
          	  pedestal = Vpedestal_backup[output->m_channel.ext_veto.component];
@@ -132,13 +145,39 @@ jump:
                                            } //endif-else
 
 
-/*
-               if(output->m_channel.ext_veto.component ==11&&T>0){
+              //********************** correction Q<0
 
-              	 jout << T <<" "<< pedestal << " "<<Q <<std::endl;
-               }
+          int T_index_max =0;
+          int T_index_min=0;
 
-*/
+             if(T>=0&&Q<0){
+
+            	 Q=0;
+      //  jout << "component= "<<output->m_channel.ext_veto.component<<" "<< "Q= "<<Q<<endl;
+
+             T_index_min = T - 2;
+             if(T_index_min<0) T_index_min=0;
+             T_index_max = T + 4;
+             if(T_index_max>=(size-1)) T_index_max = size-1;
+
+             for(int ii=T_index_min; ii<T_index_max;ii++){
+
+            	 Q+=(input->samples.at(ii)-pedestal_DAQ*0.4884);
+
+             }
+
+
+
+         //    jout <<"new Q =  "<< Q <<endl;
+             } //end if Q<0
+
+
+
+
+
+
+
+
 
 	output->Q = (Q*4*2*1E-3)/50;         /// charge in nWb , 50 ohm, *2 ->splitter
 	output->T=T*4;                     //// Time in nS
