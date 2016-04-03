@@ -7,10 +7,17 @@ for user in users_names :
 	plugins = getSubdirs(str(user))
 	for plugin in plugins:
 		print  bcolors.OKGREEN,"Found plugin ",plugin," for user ",user,bcolors.ENDC
+		#save the relative dir and the absolute dir
+		reldir = str(user)+'/'+str(plugin)
+		absdir = Dir('#/src/users/'+reldir).srcnode().abspath	
 		#We do not want to increment "at libitum" CPPPATH
-		tmp_cpppath=env['CPPPATH'];
-		dir = str(user)+'/'+str(plugin)
-		user_plugin_src  =  Glob(dir+'/*.cc');
-		env.Append(CPPPATH=dir)
+		tmp_cpppath=env['CPPPATH'];	
+		env.Append(CPPPATH=reldir)
+		AddROOTdict(env,reldir,absdir);
+		user_plugin_src  = Glob(reldir+'/*.cc');
+		#print root_dict_src
+		#print user_plugin_src
+		
 		env.SharedLibrary(source=user_plugin_src,target='#/lib/users/'+user+'_'+plugin,SHLIBPREFIX='',SHLIBSUFFIX='.so')
 		env.Replace(CPPPATH = tmp_cpppath)		
+	
