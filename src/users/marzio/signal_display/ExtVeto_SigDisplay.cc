@@ -21,7 +21,7 @@ using namespace std;
 #include <ExtVeto/ExtVetoPMTHit.h>
 #include <ExtVeto/ExtVetoDigiHit.h>
 
-#include <Calorimeter/CalorimeterSipmHit.h>
+#include <Calorimeter/CalorimeterSiPMHit.h>
 
 
 
