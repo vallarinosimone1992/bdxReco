@@ -92,6 +92,8 @@ jerror_t JEventProcessor_Calorimeter_SipmCalib::init(void)
 	t->Branch("Qphe",&Qphe);
 	t->Branch("T",&T);
 	t->Branch("A",&A);
+	t->Branch("ped",&ped);
+	t->Branch("pedSigma",&pedSigma);
 	t->Branch("average",&average);
 	japp->RootUnLock();
 
@@ -189,7 +191,8 @@ jerror_t JEventProcessor_Calorimeter_SipmCalib::evnt(JEventLoop *loop, uint64_t 
 		A=(*data_it)->A;
 		T=(*data_it)->T;
 		average=(*data_it)->average;
-
+		ped=(*data_it)->ped;
+		pedSigma=(*data_it)->pedSigma;
 		//for (int ii=0;ii<m_waveform->samples.size();ii++) h->Fill(ii,m_waveform->samples.at(ii));
 	//	h->Write();
 

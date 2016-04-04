@@ -32,6 +32,7 @@ class CalorimeterSiPMHit_factory:public BDXFactory<CalorimeterSiPMHit>{
 		const Calorimeterfa250Converter *m_Calorimeterfa250Converter;
 
 		CalibrationHandler<TranslationTable::CALO_Index_t> *m_sipm_gain;
+
 		int VERBOSE;
 };
 

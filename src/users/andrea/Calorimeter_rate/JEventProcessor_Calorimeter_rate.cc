@@ -201,7 +201,7 @@ jerror_t JEventProcessor_Calorimeter_rate::evnt(JEventLoop *loop, uint64_t event
 	}
 	Ec=chits[0]->E;
 
-	if ((nHits==0)&&(Ec>20)){
+	if (nHits==0){
 
 		N=0;
 		for (waves_it=waves.begin();waves_it!=waves.end();waves_it++){

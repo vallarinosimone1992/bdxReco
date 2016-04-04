@@ -102,10 +102,19 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 	output->average=0;
 	//1: compute the average
 	for (int ii=0;ii<size;ii++){
-		output->average+=input->samples.at(ii);
+		output->average+=input->samples[ii];
 	}
 	output->average/=input->samples.size();
-
+	//1a: compute the pedestal
+	output->ped=0;
+	output->pedSigma=0;
+	for (int ii=0;ii<m_NPED;ii++){
+		output->ped+=input->samples[ii];
+		output->pedSigma+=input->samples[ii]*input->samples[ii];
+	}
+	output->pedSigma/=m_NPED;
+	output->ped/=m_NPED;
+	output->pedSigma=sqrt(output->pedSigma-output->ped*output->ped);
 
 
 

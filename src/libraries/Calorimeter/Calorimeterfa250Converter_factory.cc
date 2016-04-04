@@ -28,11 +28,13 @@ Calorimeterfa250Converter_factory::Calorimeterfa250Converter_factory():m_calorim
 	m_SINGLE_SIGNAL_TOT=120;
 	m_MIN_TOT=12;
 	m_THR=8;
+	m_NPED=20;
 	gPARMS->SetDefaultParameter("CALORIMETER:MIN_TOT",m_MIN_TOT,"Min ToT (in ns) for a pulse to be considered");
 	gPARMS->SetDefaultParameter("CALORIMETER:SINGLE_SIGNAL_TOT",m_SINGLE_SIGNAL_TOT,"Min ToT (in ns) of a good signal");
 	gPARMS->SetDefaultParameter("CALORIMETER:THR",m_THR,"Min amplitude (in mV) for a signal to be considered");
 	gPARMS->SetDefaultParameter("CALORIMETER:NSB",m_NSB,"Samples before the maximum to integrate for single phes");
 	gPARMS->SetDefaultParameter("CALORIMETER:NSA",m_NSA,"Samples after the maximum to integrate for single phes");
+	gPARMS->SetDefaultParameter("CALORIMETER:NPED",m_NPED,"Number of samples to include in the pedestal computation event-by-event");
 
 }
 //------------------
@@ -62,7 +64,7 @@ jerror_t Calorimeterfa250Converter_factory::brun(jana::JEventLoop *eventLoop, in
 	m_calorimeterfa250Converter->m_THR=m_THR;
 	m_calorimeterfa250Converter->m_NSB=m_NSB;
 	m_calorimeterfa250Converter->m_NSA=m_NSA;
-
+	m_calorimeterfa250Converter->m_NPED=m_NPED;
 
 
 

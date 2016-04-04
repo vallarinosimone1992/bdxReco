@@ -35,7 +35,7 @@ class JEventProcessor_Calorimeter_SipmCalib:public jana::JEventProcessor{
 		int m_sector,m_x,m_y,m_readout;
 
 		int m_singles,m_signals;
-		double Qphe,Qraw,A,T,average;
+		double Qphe,Qraw,A,T,average,ped,pedSigma;
 
 		JROOTOutput *m_ROOTOutput;
 };

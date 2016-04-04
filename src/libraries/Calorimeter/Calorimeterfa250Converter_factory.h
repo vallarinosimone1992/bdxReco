@@ -32,6 +32,7 @@ class Calorimeterfa250Converter_factory:public jana::JFactory<Calorimeterfa250Co
 		double m_THR;
 		int m_NSB;
 		int m_NSA;
+		int m_NPED;
 
 };
 
