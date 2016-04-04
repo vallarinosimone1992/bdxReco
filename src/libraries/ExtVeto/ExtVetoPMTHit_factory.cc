@@ -36,7 +36,7 @@ jerror_t ExtVetoPMTHit_factory::init(void)
 //------------------
 jerror_t ExtVetoPMTHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber)
 {
-	jout<<"VetoExtDigiHit_factory::brun new run number: "<<runnumber<<endl;
+	jout<<"ExtVetoDigiHit_factory::brun new run number: "<<runnumber<<endl;
 	m_tt=0;
 	eventLoop->GetSingle(m_tt);
 	if (m_tt==0){

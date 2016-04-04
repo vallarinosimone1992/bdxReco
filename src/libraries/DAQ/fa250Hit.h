@@ -11,7 +11,8 @@
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
 #include <TT/TranslationTable.h>
-class fa250Hit : public jana::JObject{
+#include <system/BDXObject.h>
+class fa250Hit : public BDXObject{
 public:
 
 

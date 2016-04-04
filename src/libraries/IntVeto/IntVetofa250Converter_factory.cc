@@ -41,7 +41,7 @@ jerror_t IntVetofa250Converter_factory::init(void)
 	m_intVetofa250Converter=new IntVetofa250Converter();
 	m_intVetofa250Converter->m_thrCalib=new CalibrationHandler<TranslationTable::INT_VETO_Index_t>("/InnerVeto/sipm_ampl");
 	this->mapCalibrationHandler(m_intVetofa250Converter->m_thrCalib);
-
+	jout<<"IntVetofa250Converter_factory::init done"<<endl;
 	return NOERROR;
 }
 

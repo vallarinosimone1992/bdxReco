@@ -1,9 +1,13 @@
+from utils import *
 Import('env')
 
 # Loop over libraries, building each
 libs=['IntVeto','ExtVeto','Calorimeter','Paddles','TT','system','DAQ','MC']
 
 for lib in libs:
-    src =Glob(lib+'/*.cc')
-    env.Library(source=src,target='#/lib/'+lib)
+	reldir = str(lib)
+	absdir = Dir('#/src/libraries/'+reldir).srcnode().abspath	
+	AddROOTdict(env,reldir,absdir)
+	src =Glob(lib+'/*.cc')
+	env.Library(source=src,target='#/lib/'+lib)
 Return('libs')

@@ -1,8 +1,16 @@
 from utils import *
 from init_env import init_environment
 import platform
+import SCons
+
+	
+	
+	
+
+
 
 env = init_environment("qt5 clas12 evio jana clhep root banks ccdb geant4 xercesc")
+
 
 debug = ARGUMENTS.get('debug', 0)
 if int(debug):
@@ -16,6 +24,7 @@ if (platform.system()=="Darwin"):
  
 env.Append(CPPPATH='#/src/external')
 env.Append(CPPPATH='#/src/libraries')
+env.Append(CPPPATH='#/.')
 env.AppendUnique(LINKFLAGS=['-lMinuit2','-lMinuit'])
 
 libExt=SConscript('src/external/SConstruct',exports='env')
@@ -28,7 +37,7 @@ env.Prepend(LIBS=lib)
 
 env.Append(LIBPATH = ['#/lib'])
 
-#bdxReco  = env.Program(source = 'bdxReco.cc',target = 'bdxReco')
+
 
 
 

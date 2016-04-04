@@ -10,19 +10,18 @@
 
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
-
-
 #include "fa250Hit.h"
+
+
 class TH1D;
+class TCanvas;
 class fa250Mode1Hit:public fa250Hit{
 	public:
 		JOBJECT_PUBLIC(fa250Mode1Hit);
 		
-		// Add data members here. For example:
-		// int id;
-		// double E;
 		
-
+		fa250Mode1Hit();
+		virtual ~fa250Mode1Hit();
 
 		vector <double> samples;
 
@@ -37,8 +36,10 @@ class fa250Mode1Hit:public fa250Hit{
 		}
 		void toHisto(TH1D *h) const;
 		
+		virtual TCanvas* Draw();
 
-
+	protected:
+		TH1D *hWave;
 };
 
 #endif // _fa250Mode1Hit_

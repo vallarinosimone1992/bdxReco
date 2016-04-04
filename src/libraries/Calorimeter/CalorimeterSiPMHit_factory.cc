@@ -78,7 +78,7 @@ jerror_t CalorimeterSiPMHit_factory::brun(jana::JEventLoop *eventLoop, int32_t r
 		}
 	}
 
-
+	jout<<"CalorimeterSiPMHit_factory::brun done"<<endl;
 	return NOERROR;
 }
 
