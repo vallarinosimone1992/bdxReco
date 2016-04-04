@@ -36,7 +36,7 @@ class fa250Mode1Hit:public fa250Hit{
 		}
 		void toHisto(TH1D *h) const;
 		
-		virtual TCanvas* Draw();
+		virtual TCanvas* Draw(int id=0);
 
 	protected:
 		TH1D *hWave;

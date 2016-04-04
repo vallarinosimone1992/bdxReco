@@ -20,10 +20,10 @@ class BDXObject : public jana::JObject{
 public:
 	BDXObject();
 	virtual ~BDXObject();
-	virtual	TCanvas* Draw(){return m_canvas;}
+	virtual	TCanvas* Draw(int id=0)const{return m_canvas;}
 
 protected:
-	TCanvas *m_canvas;
+	mutable TCanvas *m_canvas;
 
 
 };

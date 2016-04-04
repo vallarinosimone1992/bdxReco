@@ -13,6 +13,7 @@ BDXObject::BDXObject():m_canvas(0){
 
 BDXObject::~BDXObject() {
 	if (m_canvas) delete m_canvas;
+	m_canvas=0;
 }
 
 

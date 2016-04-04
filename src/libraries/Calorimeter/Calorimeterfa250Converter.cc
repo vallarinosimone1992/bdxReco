@@ -182,7 +182,8 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 			return NOERROR;
 		}
 		else{
-
+			/*this instruction is to do sipm studies*/
+			output->Qraw=this->sumSamples(input->samples.size(),&(input->samples[0]));
 
 			output->m_type=CalorimeterSiPMHit::good_one_phe;
 			xmin=Tmax-m_NSB;
@@ -196,12 +197,14 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 
 			output->average/=input->samples.size();
 			output->T=Tmax;
-			output->Qraw=this->sumSamples((int)xmin,(int)xmax,&(input->samples[0]));
+			output->QrawS=this->sumSamples((int)xmin,(int)xmax,&(input->samples[0]));
 			/*now timing*/
 			xmax=m_crossingTimes[0].first; //first sample above m_THR
 			xmin=xmax-1; //sample befor m_THR
 			max=input->samples[xmax];
 			min=input->samples[xmin];
+
+
 
 			output->T=(m_THR-min)*(xmax-xmin)/(max-min)+xmin;
 			output->T*=4; //in NS!!!
@@ -211,7 +214,15 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 	else if (output->nSignals>=1){
 		output->m_type=CalorimeterSiPMHit::real_signal;
 		output->Qraw=this->sumSamples(input->samples.size(),&(input->samples[0]));
+
 		output->A=this->getMaximum(input->samples.size(),&(input->samples[0]),Tmax);
+		xmin=Tmax-m_NSB;
+		xmax=Tmax+m_NSA;
+
+		if (xmin<0) xmin=0;
+		if (xmax>=size) xmax=(size-1);
+		output->QrawS=this->sumSamples((int)xmin,(int)xmax,&(input->samples[0]));
+
 
 		idx=m_signalCrossingIndexes[0];
 		xmax=m_crossingTimes[idx].first;  //this is the time of the sample OVER m_THR
@@ -226,11 +237,13 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 		output->T*=4; //in NS!!!
 
 
+
 	}
 	else{
 		output->m_type=CalorimeterSiPMHit::many_phe;
 		output->A=0;
 		output->Qraw=0;
+		output->QrawS=0;
 		prev_xmin=0;
 		for (int iphe=0;iphe<output->nSingles;iphe++){
 			idx=m_singleCrossingIndexes[iphe];

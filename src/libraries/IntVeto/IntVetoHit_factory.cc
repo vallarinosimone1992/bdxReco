@@ -123,7 +123,7 @@ jerror_t IntVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 				m_IntVetoHit->m_channel = m_IntVetoDigiHit->m_channel;
 				m_IntVetoHit->Q=Qmax;
 				m_IntVetoHit->T=Tmax;
-				m_IntVetoHit->N=flagOk;   /*This is the number of bars over thr (1..4). Note that bars here are NOT optically related.
+				m_IntVetoHit->N=flagOk;   /*This is the number of bars over thr (1..4). Note that bars here are NOT optically related.*/
 				m_IntVetoHit->AddAssociatedObject(m_IntVetoDigiHit); /*Note that with this instruction we can always go back to the raw info*/
 				_data.push_back(m_IntVetoHit);
 			}
