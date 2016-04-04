@@ -48,16 +48,6 @@ if (os.path.isdir(variation)==False):
 commandBase = "ccdb -c "+connection_string+" add -v "+variation+" "
 
 #Calorimeter
-table = "/Calorimeter/sipm_gain "
-filen = variation+"/Calorimeter.sipm_gain"
-files = glob.glob(filen+".*")
-for file in files:
-    run=file.split("/")[1].split(".")[2]
-    print file+" ",run
-    command = commandBase+table+"-r "+str(run)+"-"+str(run)+" "+file
-    subprocess.call(command,shell=True)
-
-
 table = "/Calorimeter/Ene "
 filen = variation+"/Calorimeter.Ene"
 files = glob.glob(filen+".*")
@@ -89,24 +79,6 @@ for file in files:
 
 
 #ExtVeto
-table = "/ExtVeto/PMT_gain "
-filen = variation+"/ExtVeto.PMT_gain"
-files = glob.glob(filen+".*")
-for file in files:
-    run=file.split("/")[1].split(".")[2]
-    print file+" ",run
-    command = commandBase+table+"-r "+str(run)+"-"+str(run)+" "+file
-    subprocess.call(command,shell=True)
-
-table = "/ExtVeto/Threshold "
-filen = variation+"/ExtVeto.Threshold"
-files = glob.glob(filen+".*")
-for file in files:
-    run=file.split("/")[1].split(".")[2]
-    print file+" ",run
-    command = commandBase+table+"-r "+str(run)+"-"+str(run)+" "+file
-    subprocess.call(command,shell=True)
-
 table = "/ExtVeto/Ene "
 filen = variation+"/ExtVeto.Ene"
 files = glob.glob(filen+".*")
@@ -116,27 +88,7 @@ for file in files:
     command = commandBase+table+"-r "+str(run)+"-"+str(run)+" "+file
     subprocess.call(command,shell=True)
 
-#ExtVeto
-table = "/Paddles/PMT_gain "
-filen = variation+"/Paddles.PMT_gain"
-files = glob.glob(filen+".*")
-for file in files:
-    run=file.split("/")[1].split(".")[2]
-    print file+" ",run
-    command = commandBase+table+"-r "+str(run)+"-"+str(run)+" "+file
-    subprocess.call(command,shell=True)
-
-
-table = "/Paddles/Threshold "
-filen = variation+"/Paddles.Threshold"
-files = glob.glob(filen+".*")
-for file in files:
-    run=file.split("/")[1].split(".")[2]
-    print file+" ",run
-    command = commandBase+table+"-r "+str(run)+"-"+str(run)+" "+file
-    subprocess.call(command,shell=True)
-
-
+#Paddles
 table = "/Paddles/Ene "
 filen = variation+"/Paddles.Ene"
 files = glob.glob(filen+".*")
