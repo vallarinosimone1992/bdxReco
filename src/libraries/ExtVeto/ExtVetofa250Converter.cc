@@ -7,7 +7,6 @@
 
 
 ExtVetoPMTHit* ExtVetofa250Converter::convertHit(const fa250Hit *hit,const TranslationTable::ChannelInfo &m_channel)const{
-//	 jout << "sono qui"<<std::endl;
 	ExtVetoPMTHit *m_ExtVetoPMTHit=new ExtVetoPMTHit;
 	m_ExtVetoPMTHit->m_channel=m_channel;
 
@@ -44,7 +43,7 @@ jerror_t ExtVetofa250Converter::convertMode1Hit(ExtVetoPMTHit* output,const fa25
 
     pedestal_DAQ = m_pedestals->getCalibSingle(input->m_channel);
 
-    //jout << "prima " <<output->m_channel.ext_veto.component << " " << pedestal_DAQ <<" " <<Vpedestal_backup.at(output->m_channel.ext_veto.component) <<std::endl;
+
 
     if (Vpedestal_backup.at(output->m_channel.ext_veto.component) == 0){
 

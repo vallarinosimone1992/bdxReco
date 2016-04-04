@@ -44,22 +44,14 @@ jerror_t ExtVetoSummary_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	ExtVetoSummary *m_extVetoSummary;
 
 	int sector;
-    int component;
 	loop->Get(m_extVetoHits);
 
 	m_map.clear();
 	/*We need to handle in a different way hits corresponding to different sectors*/
 	for (it=m_extVetoHits.begin();it!=m_extVetoHits.end();it++){
 		m_extVetoHit=(*it);
-	//	m_extVetoSummary=new ExtVetoSummary();
-
 		sector=m_extVetoHit->m_channel.sector;
-	//	m_extVetoSummary->component = m_extVetoHit->m_channel.component;
-
-
-
 		/*Check if this sector is already in the map*/
-
 		if (m_map.find(sector)==m_map.end()){ //NO
 			m_extVetoSummary=new ExtVetoSummary(); //Create it
 			m_extVetoSummary->sector=sector;  //associate with the sector
@@ -79,19 +71,9 @@ jerror_t ExtVetoSummary_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		/*Dummy example: need to implement better selection*/
 		if (m_extVetoHit->T>0){
 			m_extVetoSummary->nHits++;     //increment number of hits
-
 			m_extVetoSummary->hits.push_back(m_extVetoHit->m_channel);  //add this hit channel to the list of channels
-
-
+			m_extVetoSummary->AddAssociatedObject(m_extVetoHit); //add the hit to the associated objects.
 		}
-
-		//		m_extVetoSummary->m_channel = m_extVetoHit->m_channel;
-//		m_extVetoSummary->E =m_extVetoHit->E;
-//		m_extVetoSummary->T =m_extVetoHit->T;
-	//	 jout <<m_extVetoSummary->m_channel.component<<endl;
-		m_extVetoSummary->AddAssociatedObject(m_extVetoHit); //add the hit to the associated objects.
-
-
 	}
 
 	/*Publish all the objects now - one per sector!*/
