@@ -27,7 +27,7 @@ using namespace std;
 #include <TRootEmbeddedCanvas.h>
 #include <TColor.h>
 #include <TTimer.h>
-
+#include <TGNumberEntry.h>
 #include "JVFactoryInfo.h"
 
 #if !defined(__CINT__) && !defined(__CLING__)
@@ -74,6 +74,7 @@ class jv_mainframe:public TGMainFrame{
 		void HandleMenu(Int_t id);
 		void DoQuit(void);
 		void DoNext(void);
+		void DoNextN(void);
 		void DoDelayedSelectObjectType(void);
 		void DoSelectObjectType(Int_t id);
 
@@ -115,6 +116,7 @@ class jv_mainframe:public TGMainFrame{
 		TGListBox *lbAssociatedToObjects;
 		TGListBox *lbObjectValues;
 
+		TGNumberEntry *fCh;
 		
 		TGTab *fTab;
 		TGVerticalFrame *fCanvas,*fCanvas2;

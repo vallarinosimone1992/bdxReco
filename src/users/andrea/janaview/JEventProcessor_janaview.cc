@@ -60,7 +60,10 @@ void* JanaViewRootGUIThread(void *arg)
 	JVMF = new jv_mainframe(gClient->GetRoot(), 600, 600, true);
 	
 	try{
+		sleep(2);
+		jout<<"JanaViewRootGuiThread: before app.Run()"<<endl;
 		app.Run();
+
 	}catch(std::exception &e){
 		_DBG_ << "Exception: " << e.what() << endl;
 	}

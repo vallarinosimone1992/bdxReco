@@ -124,6 +124,20 @@ void jv_mainframe::DoNext(void)
 }
 
 //-------------------
+// DoNextN
+//-------------------
+void jv_mainframe::DoNextN(void)
+{
+	int N=fCh->GetIntNumber();
+	jout<<"Going next "<< N <<" events"<<endl;
+	for (int ivt=0;ivt<N;ivt++){
+		JEP->NextEvent();
+		usleep(100000);
+	}
+}
+
+
+//-------------------
 // DoDelayedSelectObjectType
 //-------------------
 void jv_mainframe::DoDelayedSelectObjectType(void)
@@ -426,8 +440,11 @@ void jv_mainframe::UpdateObjectTypeList(vector<JVFactoryInfo> &facinfo)
 //-------------------
 void jv_mainframe::DrawObject(BDXObject *obj)
 {
-	TCanvas *canvas=obj->Draw();
+	TCanvas *canvas=obj->Draw(canvas2->GetCanvasWindowId());
+
+
 	canvas2->AdoptCanvas(canvas);
+	canvas->Modified();
 	canvas->Update();
 
 }
@@ -543,7 +560,7 @@ TGLabel* jv_mainframe::AddNamedLabel(TGCompositeFrame* frame, string title, Int_
 {
 	TGHorizontalFrame *f = new TGHorizontalFrame(frame);
 	AddLabel(f, title, kTextRight);
-	TGLabel *lab = AddLabel(f, "---------", mode);
+	TGLabel *lab = AddLabel(f, "--------------", mode);
 	frame->AddFrame(f, new TGLayoutHints(kLHintsExpandX,2,2,2,2));
 
 	return lab;
@@ -704,10 +721,16 @@ void jv_mainframe::CreateGUI(void)
 
 	lSource = AddNamedLabel(fInfo, "Source:");
 	lRun    = AddNamedLabel(fInfo, "   Run:");
-	lEvent  = AddNamedLabel(fInfo, " Event:");
+	lEvent  = AddNamedLabel(fInfo, " Event:        ");
 
 	TGButton *bNext = AddButton(fInfo, "Next");
-
+	/*TGButton *bNextN = AddButton(fInfo, "NextN");
+	fCh = new TGNumberEntry(fInfo, 0, 2, 0,
+				TGNumberFormat::kNESInteger, //style
+				TGNumberFormat::kNEANonNegative, //input value filter
+				TGNumberFormat::kNELLimitMinMax,
+				0,1000000); //specify limits
+	fInfo->AddFrame(fCh, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));*/
 	//....... Middle Frame .......
 	
 	TGVerticalFrame *fObjectTypes = new TGVerticalFrame(fMainMid);
@@ -769,7 +792,7 @@ void jv_mainframe::CreateGUI(void)
 	fCanvas2 = new TGVerticalFrame(gcanvas2->GetViewPort(), 10, 10);
 	gcanvas2->SetContainer(fCanvas2);
 
-	canvas2 = new TRootEmbeddedCanvas("rec1", fCanvas2, 400, 400);
+	canvas2 = new TRootEmbeddedCanvas(0, fCanvas2, 400, 400);
 	canvas2->GetCanvas()->SetFillColor(TColor::GetColor( (Float_t)0.96, 0.96, 0.99));
 	fCanvas2->AddFrame(canvas2, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY,2,2,2,2));
 
@@ -782,6 +805,7 @@ void jv_mainframe::CreateGUI(void)
 	//==================== Connect GUI elements to methods ====================
 	bQuit->Connect("Clicked()","jv_mainframe", this, "DoQuit()");
 	bNext->Connect("Clicked()","jv_mainframe", this, "DoNext()");
+	//bNextN->Connect("Clicked()","jv_mainframe", this, "DoNextN()");
 	lbObjectTypes->Connect("Selected(Int_t)","jv_mainframe", this, "DoSelectObjectType(Int_t)");
 	lbObjects->Connect("Selected(Int_t)","jv_mainframe", this, "DoSelectObject(Int_t)");
 	lbObjects2->Connect("Selected(Int_t)","jv_mainframe", this, "DoSelectObject2(Int_t)");
