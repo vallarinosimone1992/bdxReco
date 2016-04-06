@@ -3,9 +3,8 @@ Import('env')
 
 # Loop over libraries, building each
 libs=['evioReader']
-
+src=[]
 for lib in libs:
-    src=Glob(lib+'/*.cc')
-    env.Library(source=src,target='#/lib/'+lib) 
-
-Return('libs')
+    src=src+Glob(lib+'/*.cc')
+    
+env.SharedLibrary(source=src,target='#/lib/bdxRecoExt') 

@@ -22,20 +22,21 @@ if (platform.system()=="Darwin"):
 	env.AppendUnique(LINKFLAGS='-flat_namespace')
 	env.AppendUnique(SHLINKFLAGS=['-undefined', 'suppress'])
  
-env.Append(CPPPATH='#/src/external')
-env.Append(CPPPATH='#/src/libraries')
-env.Append(CPPPATH='#/.')
+env.Append(CPPPATH=Dir('#/src/external').srcnode().abspath)
+env.Append(CPPPATH=Dir('#/src/libraries').srcnode().abspath)
+env.Append(CPPPATH=Dir('#/.').srcnode().abspath)
 env.AppendUnique(LINKFLAGS=['-lMinuit2','-lMinuit'])
+env.Append(LIBPATH = ['#/lib'])
 
 libExt=SConscript('src/external/SConstruct',exports='env')
 lib=SConscript('src/libraries/SConstruct',exports='env')
 progs=SConscript('src/programs/SConstruct',exports='env')
 users=SConscript('src/users/SConstruct',exports='env')
 
-env.Prepend(LIBS=libExt) 
-env.Prepend(LIBS=lib)
+#env.Prepend(LIBS="libExt") 
+#env.Prepend(LIBS="libbdxReco")
 
-env.Append(LIBPATH = ['#/lib'])
+
 
 
 

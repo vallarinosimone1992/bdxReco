@@ -16,3 +16,6 @@ bin
 
 #ccdb file
 calib/ccdb.calib
+
+#root Dictionary files
+*Dict*

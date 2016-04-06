@@ -5,4 +5,4 @@ progs=['bdxReco']
 
 for prog in progs:
     src =Glob(prog+'/*.cc')
-    env.Program(source=src,target='#/bin/'+prog)
+    env.Program(source=src,target='#/bin/'+prog,LIBS=['bdxRecoExt','bdxReco'])
