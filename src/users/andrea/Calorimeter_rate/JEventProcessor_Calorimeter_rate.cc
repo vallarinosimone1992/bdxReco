@@ -17,6 +17,11 @@
 #include <Calorimeter/CalorimeterHit.h>
 #include <IntVeto/IntVetoHit.h>
 #include <IntVeto/IntVetoSummary.h>
+#include <ExtVeto/ExtVetoPMTHit.h>
+#include <ExtVeto/ExtVetoDigiHit.h>
+#include <ExtVeto/ExtVetoHit.h>
+#include <ExtVeto/ExtVetoSummary.h>
+
 
 #include <system/JROOTOutput.h>
 
@@ -41,8 +46,6 @@ void InitPlugin(JApplication *app){
 }
 } // "C"
 
-
-void *waveTohisto(const fa250Mode1Hit *hit,TH1D *h);
 
 //------------------
 // JEventProcessor_Calorimeter_rate (Constructor)
@@ -77,14 +80,12 @@ jerror_t JEventProcessor_Calorimeter_rate::init(void)
 	t=new TTree("CaloRate","CaloRate");
 	t->Branch("eventN",&eventNumber);
 	t->Branch("Ec",&Ec);
-	t->Branch("nHits",&nHits);
-
-	h=new TH1D*[100];
-	for (int ii=0;ii<100;ii++){
-		h[ii]=new TH1D("h","h",500,0,500);
-	}
-
+	t->Branch("Ec2",&Ec1);
+	t->Branch("Ec1",&Ec2);
+	t->Branch("nHitsIntVeto",&nHitsIntVeto);
+	t->Branch("nHitsExtVeto",&nHitsExtVeto);
 	japp->RootUnLock();
+
 	return NOERROR;
 }
 
@@ -129,9 +130,6 @@ jerror_t JEventProcessor_Calorimeter_rate::brun(JEventLoop *eventLoop, int32_t r
 		/*For ALL objects you want to add to ROOT file, use the following:*/
 		if (m_ROOTOutput){
 			m_ROOTOutput->AddObject(t);
-			for (int ii=0;ii<100;ii++){
-				m_ROOTOutput->AddObject(h[ii]);
-			}
 		}
 	}
 
@@ -154,16 +152,26 @@ jerror_t JEventProcessor_Calorimeter_rate::evnt(JEventLoop *loop, uint64_t event
 	vector<const IntVetoHit*> ivhits;
 	vector<const IntVetoHit*>::iterator ivhits_it;
 
-	vector <const fa250Mode1CalibPedSubHit*> waves;
-	vector <const fa250Mode1CalibPedSubHit*>::iterator waves_it;
+	vector<const ExtVetoPMTHit*> evPMThits;
+	vector<const ExtVetoPMTHit*>::iterator evPMThits_it;
+
+	vector<const ExtVetoDigiHit*> evdigihits;
+	vector<const ExtVetoDigiHit*>::iterator evdigihits_it;
+
+	vector<const ExtVetoHit*> evhits;
+	vector<const ExtVetoHit*>::iterator evhits_it;
+
 
 	vector <const IntVetoSummary*> IntVetoSum;
 	vector <const IntVetoSummary*>::iterator IntVetoSum_it;
 
+	vector <const ExtVetoSummary*> ExtVetoSum;
+	vector <const ExtVetoSummary*>::iterator ExtVetoSum_it;
 
 	const eventData* evdata;
 
 	const IntVetoSummary* IntVetoSum0;
+	const ExtVetoSummary* ExtVetoSum0;
 
 	int sector,layer,component;
 	int crate,slot,channel;
@@ -172,51 +180,57 @@ jerror_t JEventProcessor_Calorimeter_rate::evnt(JEventLoop *loop, uint64_t event
 
 	loop->Get(chits);
 	loop->Get(ivhits);
-	loop->Get(waves);
+	loop->Get(evhits);
+
 	loop->Get(IntVetoSum);
+	loop->Get(ExtVetoSum);
+
 	try{
 		loop->GetSingle(evdata);
 	}
 	catch(unsigned long e){
 		jout<<"No trig bank this event"<<endl;
-		return 	OBJECT_NOT_AVAILABLE;
+		return NOERROR;
 	}
 
 	int tWord=evdata->triggerWords[0];
 	if ((tWord&0x1)==0) return NOERROR;
-	if (chits.size()!=1) return RESOURCE_UNAVAILABLE;
+	if (chits.size()!=1) return NOERROR;
 
 
 	japp->RootWriteLock();
 	flag=false;
-	nHits=0;
+	nHitsIntVeto=0;
+	nHitsExtVeto=0;
+
 	eventNumber=eventnumber;
 
 	if (IntVetoSum.size()==1){
 		IntVetoSum0=IntVetoSum[0];
-		nHits=IntVetoSum0->nHits;
+		nHitsIntVeto=IntVetoSum0->nHits;
 	}
 	else{
-		nHits=0;
+		nHitsIntVeto=0;
+	}
+	if (ExtVetoSum.size()==1){
+		ExtVetoSum0=ExtVetoSum[0];
+		nHitsExtVeto=ExtVetoSum0->nHits;
+	}
+	else{
+		nHitsExtVeto=0;
 	}
 	Ec=chits[0]->E;
-
-	if ((nHits==0)&&(Ec>20)){
-
-		N=0;
-		for (waves_it=waves.begin();waves_it!=waves.end();waves_it++){
-			(*waves_it)->toHisto(h[N]);
-			h[N]->SetName(Form("%i___%i_%i",eventnumber,(*waves_it)->m_channel.slot,(*waves_it)->m_channel.channel));
-			h[N]->SetTitle(Form("%i___%i_%i",eventnumber,(*waves_it)->m_channel.slot,(*waves_it)->m_channel.channel));
-			h[N]->Write();
-			N++;
+	for (int ihit=0;ihit<chits[0]->m_data.size();ihit++){
+		switch (chits[0]->m_data[ihit].readout){
+		case (1):
+				Ec1=chits[0]->m_data[ihit].E;
+				break;
+		case (2):
+				Ec2=chits[0]->m_data[ihit].E;
+				break;
 		}
 	}
-
-
 	t->Fill();
-
-
 	japp->RootUnLock();
 
 

@@ -11,9 +11,11 @@
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
 #include <TT/TranslationTable.h>
+#include <system/BDXObject.h>
 
-
-class CalorimeterHit:public jana::JObject{
+class TCanvas;
+class TH1D;
+class CalorimeterHit:public BDXObject{
 
 	public:
 	struct CalorimeterComponentHit{
@@ -39,9 +41,12 @@ class CalorimeterHit:public jana::JObject{
 		double E,Q,T;
 		int N; //how many counters associated with this object were above thr (i.e. how many entries in m_data?
 
-
+		virtual TCanvas* Draw(int id)const;
 
 		TranslationTable::CALO_Index_t m_channel; //Detector-specific ID. Since this is a detector-based object, the readout field will be ==0
+
+	private:
+		mutable vector<TH1D*> hWaves;
 };
 
 #endif // _CalorimeterHit_

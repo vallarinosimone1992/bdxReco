@@ -11,7 +11,13 @@
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
 #include <TT/TranslationTable.h>
-class IntVetoSummary:public jana::JObject{
+
+#include <system/BDXObject.h>
+
+class TCanvas;
+class TH1D;
+
+class IntVetoSummary:public BDXObject{
 	public:
 		JOBJECT_PUBLIC(IntVetoSummary);
 		
@@ -22,8 +28,12 @@ class IntVetoSummary:public jana::JObject{
 		// This method is used primarily for pretty printing
 		// the second argument to AddString is printf style format
 		void toStrings(vector<pair<string,string> > &items)const{
-			// AddString(items, "id", "%4d", id);
-			// AddString(items, "E", "%f", E);
+			 AddString(items, "sector", "%4d",sector);
+			 AddString(items, "Nhits\n","%4d",hits.size());
+			 for (int ii=0;ii<hits.size();ii++){
+				 AddString(items, "component hit layer", "%4d", hits[ii].layer);
+				 AddString(items, "component hit component\n", "%4d", hits[ii].component);
+			 }
 		}
 		int sector;
 		
@@ -31,6 +41,10 @@ class IntVetoSummary:public jana::JObject{
 		vector<TranslationTable::INT_VETO_Index_t> hits;
 
 
+		virtual TCanvas* Draw(int id)const;
+
+	private:
+		vector <TH1D*> hWaves;
 };
 
 #endif // _IntVetoSummary_

@@ -30,11 +30,10 @@ class JEventProcessor_Calorimeter_rate:public jana::JEventProcessor{
 		int eventNumber;
 		int m_isFirstCallToBrun;
 
-		double Ec;
-		int nHits;
+		double Ec,Ec1,Ec2;
+		int nHitsIntVeto,nHitsExtVeto;
 
 		TTree *t;
-		TH1D **h;
 		JROOTOutput *m_ROOTOutput;
 };
 

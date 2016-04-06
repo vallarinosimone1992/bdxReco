@@ -36,7 +36,7 @@ jerror_t ExtVetoPMTHit_factory::init(void)
 //------------------
 jerror_t ExtVetoPMTHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber)
 {
-	jout<<"VetoExtDigiHit_factory::brun new run number: "<<runnumber<<endl;
+	jout<<"ExtVetoDigiHit_factory::brun new run number: "<<runnumber<<endl;
 	m_tt=0;
 	eventLoop->GetSingle(m_tt);
 	if (m_tt==0){
@@ -50,9 +50,9 @@ jerror_t ExtVetoPMTHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnum
 		jerr<<" unable to get the extVetofa250Converter!"<<endl;
 		return OBJECT_NOT_AVAILABLE;
 	}
-	japp->RootWriteLock();
+
 	this->updateCalibrationHandler(m_PMT_gain,eventLoop);
-	japp->RootUnLock();
+
 	gPARMS->GetParameter("EXTVETO:VERBOSE",VERBOSE);
 
 	if (VERBOSE>3){
@@ -162,10 +162,7 @@ jerror_t ExtVetoPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 //------------------
 jerror_t ExtVetoPMTHit_factory::erun(void)
 {
-
-	japp->RootWriteLock();
 	this->clearCalibrationHandler(m_PMT_gain);
-	japp->RootUnLock();
 	return NOERROR;
 }
 

@@ -243,7 +243,7 @@ jerror_t Paddles_basic_track::evnt(JEventLoop *loop,uint64_t eventnumber)
 				evhit->Get(faV);
 				const fa250Mode1CalibHit *fa=faV[0];
 
-						if(evhit->m_channel.id==1){
+						if(evhit->m_channel.id==0){
 						for (int ii=0;ii<fa->samples.size();ii++){
 												amp[ii]=fa->samples.at(ii);
 												time[ii]=ii*4;		// in nsec

@@ -63,7 +63,6 @@ jerror_t IntVetoSummary_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		sector=m_intVetoHit->m_channel.sector;
 		layer=m_intVetoHit->m_channel.layer;
 		component=m_intVetoHit->m_channel.component;
-
 		/*Check if this sector is already in the map*/
 		if (m_map.find(sector)==m_map.end()){ //NO
 			m_intVetoSummary=new IntVetoSummary(); //Create it

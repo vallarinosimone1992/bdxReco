@@ -84,10 +84,10 @@ void InitPlugin(JApplication *app){
 //------------------
 JEventProcessor_test::JEventProcessor_test():m_isFirstCallToBrun(1)
 {
-tau=3.5;
-T0=500;
-fGlob=new TF1("fGlob",this,&JEventProcessor_test::integrand,-10*tau,T0+10*tau,1);
-fGlob->SetNpx(1000);
+	tau=3.5;
+	T0=500;
+	fGlob=new TF1("fGlob",this,&JEventProcessor_test::integrand,-10*tau,T0+10*tau,1);
+	fGlob->SetNpx(1000);
 }
 
 //------------------
@@ -200,103 +200,37 @@ jerror_t JEventProcessor_test::evnt(JEventLoop *loop,uint64_t eventnumber)
 	// since multiple threads may call this method at the same time.
 	// Here's an example:
 	//
-	vector<const IntVetoSiPMHit*> data;
-	vector<const IntVetoSiPMHit*>::const_iterator data_it;
 
-	vector<const IntVetoHit*> idata;
-	vector<const IntVetoHit*>::const_iterator idata_it;
-
-	vector<const CalorimeterHit*> cdata;
-	vector<const CalorimeterHit*>::const_iterator cdata_it;
-
-	const fa250Mode1CalibPedSubHit *fa;
-	loop->Get(data);
-	loop->Get(idata);
-	loop->Get(cdata);
-
-	int isHit;
-
-	const eventData* tData;
-	//has to be in a try-catch block, since if no trigger data is there (prestart - start - end events) trows it!
-	try{
-		loop->GetSingle(tData);
-	}
-	catch(unsigned long e){
-		jout<<"No trig bank this event"<<endl;
-		return 	OBJECT_NOT_AVAILABLE;
-	}
-
-	int tWord=tData->triggerWords.at(0);
-
-	int isMPPC=0;
-	for (int ii=0;ii<4;ii++){
-		if ((((tWord)>>ii)&0x1)&&(ii==2)) isMPPC=1;
-	}
-	//if (!isMPPC) return OBJECT_NOT_AVAILABLE;
-//	jout<<"****************************************************************"<<endl;
+	if ((eventnumber==33571)||(eventnumber==362954)||(eventnumber==41649)||(eventnumber==3606108)){
 
 
-	japp->RootWriteLock();
-	//  ... fill historgrams or trees ...
-	for (cdata_it=cdata.begin();cdata_it!=cdata.end();cdata_it++){
-		const CalorimeterHit *calohit = *cdata_it;
-		eventN=eventnumber;
-		component=calohit->m_channel.readout;
-		Q=(*cdata_it)->Q;
-		Q1=(*cdata_it)->m_data[0].Q;
-		Q2=(*cdata_it)->m_data[1].Q;
-		t->Fill();
-	}
-	/*for (data_it=data.begin();data_it!=data.end();data_it++){
+
+		vector<const fa250Mode1Hit*> cdata;
+		vector<const fa250Mode1Hit*>::const_iterator cdata_it;
+
+		loop->Get(cdata);
+
 	
-		const IntVetoSiPMHit *ivhit = *data_it;
-		isHit=0;
-		for (idata_it=idata.begin();idata_it!=idata.end();idata_it++){
-			TranslationTable::INT_VETO_Index_t ch;
-			ch=ivhit->m_channel.int_veto;
-			ch.readout=0;
-			if ((*idata_it)->m_channel==ch){
-				isHit=1;
-				break;
-			}
-		}
 
-			//jout<<"Component= "<<ivhit->m_channel.ext_veto.component<<" Readout= "<<ivhit->m_channel.ext_veto.readout<<" Size= "<<fa->samples.size()<<endl;
 
-			// Get associated fa250Mode1CalibHit object
-			fa = NULL;
-			ivhit->GetSingle(fa);
-			if(!fa) continue; // need fa250Mode1CalibHit to continue
-
+		japp->RootWriteLock();
+		//  ... fill historgrams or trees ...
+		for (cdata_it=cdata.begin();cdata_it!=cdata.end();cdata_it++){
 			h->Reset();
-			h->SetName(Form("h_%lld_%i_%i_%i:::%i",eventnumber,ivhit->m_channel.int_veto.component,ivhit->m_channel.int_veto.readout,ivhit->m_type,isHit));
+			h->SetName(Form("h_%lld_%i_%i",eventnumber,(*cdata_it)->m_channel.slot,(*cdata_it)->m_channel.channel));
 
-
-
-			for (int ii=0;ii<fa->samples.size();ii++){
-				h->Fill(ii,fa->samples.at(ii));
+			for (int ii=0;ii<(*cdata_it)->samples.size();ii++){
+				h->Fill(ii,(*cdata_it)->samples.at(ii));
 			}
-
-
-
-
 			h->Write();
 
-
-		//	h1->Write();
-			eventN=eventnumber;
-			component=ivhit->m_channel.int_veto.readout;
-			Q=(*data_it)->Qphe;
-			t->Fill();
+		}
 
 
 
-	}*/
+		japp->RootUnLock();
 
-
-	japp->RootUnLock();
-
-
+	}
 
 
 	return NOERROR;

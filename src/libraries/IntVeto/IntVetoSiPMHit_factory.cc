@@ -37,6 +37,7 @@ jerror_t IntVetoSiPMHit_factory::init(void)
 	VERBOSE=0;
 	m_sipm_gain=new CalibrationHandler<TranslationTable::INT_VETO_Index_t>("/InnerVeto/sipm_gain");
 	this->mapCalibrationHandler(m_sipm_gain);
+	jout<<"IntVetoSiPMHit_factory::init done"<<endl;
 	return NOERROR;
 
 
@@ -47,7 +48,7 @@ jerror_t IntVetoSiPMHit_factory::init(void)
 //------------------
 jerror_t IntVetoSiPMHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber)
 {
-	jout<<"VetoIntSiPMHit_factory::brun new run number: "<<runnumber<<endl;
+	jout<<"IntVetoSiPMHit_factory::brun new run number: "<<runnumber<<endl;
 	m_tt=0;
 	eventLoop->GetSingle(m_tt);
 	if (m_tt==0){
@@ -77,7 +78,7 @@ jerror_t IntVetoSiPMHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnu
 			jout<<gainCalibMap_it->first.sector<<" "<<gainCalibMap_it->first.layer<<" "<<gainCalibMap_it->first.component<<" "<<gainCalibMap_it->first.readout<<" "<<gainCalibMap_it->second.at(0)<<endl;
 		}
 	}
-
+	jout<<"IntVetoSiPMHit_factory::brun done"<<endl;
 	return NOERROR;
 }
 

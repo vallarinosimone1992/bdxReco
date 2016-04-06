@@ -28,7 +28,8 @@ jerror_t ExtVetoSummary_factory::init(void)
 //------------------
 jerror_t ExtVetoSummary_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber)
 {
-	return NOERROR;
+
+			return NOERROR;
 }
 
 //------------------
@@ -43,7 +44,6 @@ jerror_t ExtVetoSummary_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	ExtVetoSummary *m_extVetoSummary;
 
 	int sector;
-
 	loop->Get(m_extVetoHits);
 
 	m_map.clear();
@@ -69,12 +69,11 @@ jerror_t ExtVetoSummary_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		 */
 
 		/*Dummy example: need to implement better selection*/
-		if (m_extVetoHit->E>0){
+		if (m_extVetoHit->T>0){
 			m_extVetoSummary->nHits++;     //increment number of hits
 			m_extVetoSummary->hits.push_back(m_extVetoHit->m_channel);  //add this hit channel to the list of channels
 			m_extVetoSummary->AddAssociatedObject(m_extVetoHit); //add the hit to the associated objects.
 		}
-
 	}
 
 	/*Publish all the objects now - one per sector!*/

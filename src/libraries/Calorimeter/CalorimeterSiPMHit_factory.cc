@@ -29,6 +29,10 @@ using namespace jana;
 jerror_t CalorimeterSiPMHit_factory::init(void)
 {
 	VERBOSE=0;
+	gPARMS->GetParameter("CALORIMETER:VERBOSE",VERBOSE);
+
+
+
 
 	m_sipm_gain=new CalibrationHandler<TranslationTable::CALO_Index_t>("/Calorimeter/sipm_gain");
 	this->mapCalibrationHandler(m_sipm_gain);
@@ -62,7 +66,7 @@ jerror_t CalorimeterSiPMHit_factory::brun(jana::JEventLoop *eventLoop, int32_t r
 
 
 
-	gPARMS->GetParameter("CALORIMETER:VERBOSE",VERBOSE);
+
 	if (VERBOSE>3){
 		std::map  < TranslationTable::CALO_Index_t, std::vector < double > > gainCalibMap;
 		std::map  < TranslationTable::CALO_Index_t, std::vector < double > >::iterator gainCalibMap_it;
@@ -74,7 +78,7 @@ jerror_t CalorimeterSiPMHit_factory::brun(jana::JEventLoop *eventLoop, int32_t r
 		}
 	}
 
-
+	jout<<"CalorimeterSiPMHit_factory::brun done"<<endl;
 	return NOERROR;
 }
 
@@ -127,6 +131,7 @@ jerror_t CalorimeterSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 			m_q_calib=m_sipm_gain->getCalibSingle(m_channel.calorimeter);
 			if (m_q_calib>0){
 				m_CalorimeterSiPMHit->Qphe=m_CalorimeterSiPMHit->Qraw/m_q_calib;
+				m_CalorimeterSiPMHit->QpheS=m_CalorimeterSiPMHit->QrawS/m_q_calib;
 			}
 
 
@@ -147,6 +152,7 @@ jerror_t CalorimeterSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 			m_q_calib=m_sipm_gain->getCalibSingle(m_channel.calorimeter);
 			if (m_q_calib>0){
 				m_CalorimeterSiPMHit->Qphe=m_CalorimeterSiPMHit->Qraw/m_q_calib;
+				m_CalorimeterSiPMHit->QpheS=m_CalorimeterSiPMHit->QrawS/m_q_calib;
 			}
 
 			_data.push_back(m_CalorimeterSiPMHit);

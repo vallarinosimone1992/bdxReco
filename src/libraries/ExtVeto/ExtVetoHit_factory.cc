@@ -25,7 +25,7 @@ jerror_t ExtVetoHit_factory::init(void)
 {
 	gPARMS->GetParameter("MC",isMC);
 
-	m_ENE_gain=new CalibrationHandler<TranslationTable::EXT_VETO_Index_t>("ExtVeto/Ene");
+	m_ENE_gain=new CalibrationHandler<TranslationTable::EXT_VETO_Index_t>("/ExtVeto/Ene");
 	this->mapCalibrationHandler(m_ENE_gain);
 
 	return NOERROR;
@@ -49,29 +49,18 @@ jerror_t ExtVetoHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber
 jerror_t ExtVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 
-	// Code to generate factory data goes here. Add it like:
-	//
-	// ExtVetoHit *myExtVetoHit = new ExtVetoHit;
-	// myExtVetoHit->x = x;
-	// myExtVetoHit->y = y;
-	// ...
-	// _data.push_back(myExtVetoHit);
-	//
-	// Note that the objects you create here will be deleted later
-	// by the system and the _data vector will be cleared automatically.
-
 
 	//1: Here, we get from the framework the objects we need to process
 	//1a: create vectors
 	vector <const ExtVetoDigiHit*> m_ExtVetoDigiHit;
 	vector <const ExtVetoDigiHit*>::const_iterator it;
 
-		double m_Ene;
+	double m_Ene;
 
 	ExtVetoHit *m_ExtVetoHit=0;
 
-//	int readout;
-//	double Q,T;
+	//	int readout;
+	//	double Q,T;
 
 	//1b: retrieve ExtVetoDigiHit objects
 
@@ -82,28 +71,17 @@ jerror_t ExtVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	else{
 		loop->Get(m_ExtVetoDigiHit);
 	}
-
 	for (it=m_ExtVetoDigiHit.begin();it!=m_ExtVetoDigiHit.end();it++){
 		m_ExtVetoHit=new ExtVetoHit();
 		m_ExtVetoHit->m_channel = (*it)->m_channel;
-
 		m_Ene=m_ENE_gain->getCalibSingle(m_ExtVetoHit->m_channel);
-
 		//jout <<m_ExtVetoHit->m_channel.component << " "<< m_Ene<<endl;
-					m_ExtVetoHit->E=((*it)->Q)*m_Ene;
-					m_ExtVetoHit->T=(*it)->T;
-
-					m_ExtVetoHit->AddAssociatedObject(*it);
-
-
-
+		m_ExtVetoHit->E=((*it)->Q)*m_Ene;
+		m_ExtVetoHit->T=(*it)->T;
+		m_ExtVetoHit->AddAssociatedObject(*it);
 		//Do whatever you need here
-
 		_data.push_back(m_ExtVetoHit);
 	}
-
-
-
 	return NOERROR;
 }
 

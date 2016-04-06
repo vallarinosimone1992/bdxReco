@@ -19,7 +19,7 @@ using namespace jana;
 jerror_t ExtVetofa250Converter_factory::init(void)
 {
 	m_extVetofa250Converter=new ExtVetofa250Converter();
-	m_extVetofa250Converter->threshold=new CalibrationHandler<TranslationTable::EXT_VETO_Index_t>("ExtVeto/Threshold");
+	m_extVetofa250Converter->threshold=new CalibrationHandler<TranslationTable::EXT_VETO_Index_t>("/ExtVeto/Threshold");
 	this->mapCalibrationHandler(m_extVetofa250Converter->threshold);
 
 	m_extVetofa250Converter->m_pedestals=new DAQCalibrationHandler("/DAQ/pedestals");
