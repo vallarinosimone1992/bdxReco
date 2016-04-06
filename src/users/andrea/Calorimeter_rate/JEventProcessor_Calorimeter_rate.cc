@@ -188,7 +188,7 @@ jerror_t JEventProcessor_Calorimeter_rate::evnt(JEventLoop *loop, uint64_t event
 	loop->Get(chits);
 	loop->Get(ivhits);
 	loop->Get(evhits);
-	loop->Get(waves);
+
 
 	loop->Get(IntVetoSum);
 	loop->Get(ExtVetoSum);
