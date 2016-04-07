@@ -70,7 +70,7 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 	double thr;
 
 
-	thr=m_thrCalib->getCalibSingle(output->m_channel.int_veto); //this is the 1 phe ampl FROM DB
+	thr=m_thrCalib->getCalibSingle(*output->m_channel.int_veto); //this is the 1 phe ampl FROM DB
 
 	thr=thr*m_thr;   //put a very low thr at this level, 1.5 phe.
 

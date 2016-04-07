@@ -129,8 +129,8 @@ jerror_t IntVetoSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 			/*Apply phe conversion if possible*/
 
-			m_q_gain=m_sipm_gain->getCalib(m_channel.int_veto)[0];
-			m_q_ped=m_sipm_gain->getCalib(m_channel.int_veto)[1];
+			m_q_gain=m_sipm_gain->getCalib(*m_channel.int_veto)[0];
+			m_q_ped=m_sipm_gain->getCalib(*m_channel.int_veto)[1];
 
 			m_IntVetoSiPMHit->Qphe = m_IntVetoSiPMHit->Qraw - m_q_ped;
 			if (m_q_gain>0){
@@ -154,8 +154,8 @@ jerror_t IntVetoSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 			m_IntVetoSiPMHit=m_intVetofa250Converter->convertHit((fa250Hit*)*it_fa250Mode7Hit,m_channel);
 
 			/*Apply phe conversion if possible*/
-			m_q_gain=m_sipm_gain->getCalib(m_channel.int_veto)[0];
-			m_q_ped=m_sipm_gain->getCalib(m_channel.int_veto)[1];
+			m_q_gain=m_sipm_gain->getCalib(*m_channel.int_veto)[0];
+			m_q_ped=m_sipm_gain->getCalib(*m_channel.int_veto)[1];
 
 			m_IntVetoSiPMHit->Qphe =m_IntVetoSiPMHit->Qraw - m_q_ped;
 			if (m_q_gain>0){

@@ -122,13 +122,13 @@ jerror_t CalorimeterSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 		m_channel=m_tt->getChannelInfo((*it_fa250Mode1CalibPedSubHit)->m_channel);
 
 
-		if ((m_channel.det_sys==TranslationTable::CALORIMETER)&&(m_channel.calorimeter.readout<=2)){
+		if ((m_channel.det_sys==TranslationTable::CALORIMETER)&&(m_channel.calorimeter->readout<=2)){
 			//A.C. do not touch these
 			//jout<<eventnumber<<endl;
 			m_CalorimeterSiPMHit=m_Calorimeterfa250Converter->convertHit((fa250Hit*)*it_fa250Mode1CalibPedSubHit,m_channel);
 
 			/*Apply phe conversion if possible*/
-			m_q_calib=m_sipm_gain->getCalibSingle(m_channel.calorimeter);
+			m_q_calib=m_sipm_gain->getCalibSingle(*(m_channel.calorimeter));
 			if (m_q_calib>0){
 				m_CalorimeterSiPMHit->Qphe=m_CalorimeterSiPMHit->Qraw/m_q_calib;
 				m_CalorimeterSiPMHit->QpheS=m_CalorimeterSiPMHit->QrawS/m_q_calib;
@@ -149,7 +149,7 @@ jerror_t CalorimeterSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 			m_CalorimeterSiPMHit=m_Calorimeterfa250Converter->convertHit((fa250Hit*)*it_fa250Mode7Hit,m_channel);
 
 			/*Apply phe conversion if possible*/
-			m_q_calib=m_sipm_gain->getCalibSingle(m_channel.calorimeter);
+			m_q_calib=m_sipm_gain->getCalibSingle(*(m_channel.calorimeter));
 			if (m_q_calib>0){
 				m_CalorimeterSiPMHit->Qphe=m_CalorimeterSiPMHit->Qraw/m_q_calib;
 				m_CalorimeterSiPMHit->QpheS=m_CalorimeterSiPMHit->QrawS/m_q_calib;

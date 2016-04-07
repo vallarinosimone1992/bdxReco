@@ -94,7 +94,7 @@ public:
 	 * readout = 0 when dealing with the PHYSICAL volume
 	 * readout = 1 ... Nreadouts when dealing with the sensors
 	 * */
-	class EXT_VETO_Index_t {
+	class EXT_VETO_Index_t :  public TObject{
 	public:
 		int sector;
 		int layer;
@@ -150,10 +150,10 @@ public:
 			return false;
 		}
 		string name()const{return "EXT_Veto";}
-
+		ClassDef(EXT_VETO_Index_t,1);
 	};
 
-	class INT_VETO_Index_t {
+	class INT_VETO_Index_t : public TObject{
 	public:
 		int sector;
 		int layer;
@@ -209,9 +209,10 @@ public:
 			return false;
 		}
 		string name()const{return "INT_Veto";}
+		ClassDef(INT_VETO_Index_t,1);
 	};
 
-	class CALO_Index_t {
+	class CALO_Index_t : public TObject{
 	public:
 		int sector;
 		int x, y;
@@ -265,9 +266,10 @@ public:
 			return false;
 		}
 		string name()const{return "CALO";}
+		ClassDef(CALO_Index_t,1);
 	};
 
-	class PADDLES_Index_t {
+	class PADDLES_Index_t : public TObject{
 	public:
 		int id;
 		int& ID(int n) {
@@ -300,20 +302,22 @@ public:
 			return false;
 		}
 		string name() const{return "PADDLES";}
+		ClassDef(PADDLES_Index_t,1);
 	};
 
 	/*A single class that handles ALL the possible indexes trough a C++ union*/
-	class ChannelInfo {
+	class ChannelInfo : public TObject{
 	public:
 		csc_t CSC;   //This is crate - slot - channel
 		//DModuleType::type_id_t module_type;
 		Detector_t det_sys;
 		union {
-			EXT_VETO_Index_t ext_veto;
-			INT_VETO_Index_t int_veto;
-			CALO_Index_t calorimeter;
-			PADDLES_Index_t paddles;
+			EXT_VETO_Index_t *ext_veto;
+			INT_VETO_Index_t *int_veto;
+			CALO_Index_t *calorimeter;
+			PADDLES_Index_t *paddles;
 		};
+		ClassDef(ChannelInfo,1);
 	};
 
 	// This method is used primarily for pretty printing

@@ -118,7 +118,7 @@ jerror_t PaddlesPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 
 			/*Apply phe conversion */
-			m_q_calib=m_PMT_gain->getCalibSingle(m_channel.paddles);
+			m_q_calib=m_PMT_gain->getCalibSingle(*m_channel.paddles);
 			//															jout<<"**********"<<endl;
 			//															jout<<m_q_calib.size()<<endl;
 			//															jout<<m_q_calib.at(0)<<" "<<endl;
@@ -146,7 +146,7 @@ jerror_t PaddlesPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 			m_PaddlesPMTHit->AddAssociatedObject(*it_fa250Mode7Hit);
 
 			/*Apply phe conversion */
-			m_q_calib=m_PMT_gain->getCalibSingle(m_channel.paddles);
+			m_q_calib=m_PMT_gain->getCalibSingle(*m_channel.paddles);
 			//															jout<<"**********"<<endl;
 			//															jout<<m_q_calib.size()<<endl;
 			//															jout<<m_q_calib.at(0)<<" "<<endl;

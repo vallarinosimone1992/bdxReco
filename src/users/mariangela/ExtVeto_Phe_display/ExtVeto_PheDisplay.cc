@@ -207,7 +207,7 @@ jerror_t ExtVeto_ChargeDisplay::evnt(JEventLoop *loop,uint64_t eventnumber)
 
 
 			eventN=eventnumber;
-			component=evhit->m_channel.ext_veto.component;
+			component=evhit->m_channel.ext_veto->component;
 	   	    Q=(*data_it)->Q;
 	//		pedestal=(*data_it)->pedestal;
 			Tw=tData->triggerWords.at(0);

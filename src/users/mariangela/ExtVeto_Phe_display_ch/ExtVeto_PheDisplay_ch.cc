@@ -221,7 +221,7 @@ jerror_t ExtVeto_PheDisplay_ch::evnt(JEventLoop *loop,uint64_t eventnumber)
 
 
 			eventN=eventnumber;
-			component=(*data_it)->m_channel.ext_veto.component;
+			component=(*data_it)->m_channel.ext_veto->component;
 
 			if (component==0){
 							Q0=(*data_it)->Q*2;

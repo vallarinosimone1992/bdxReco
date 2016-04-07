@@ -26,7 +26,7 @@ PaddlesPMTHit* Paddlesfa250Converter::convertHit(const fa250Hit *hit,const Trans
 jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa250Mode1CalibHit *input, const TranslationTable::ChannelInfo &m_channel) const{
 
 	double Thr;
-	Thr=threshold->getCalibSingle(output->m_channel.paddles);
+	Thr=threshold->getCalibSingle(*output->m_channel.paddles);
 
 //	vector<double> m_pedestal_init;
 //	m_pedestal_init=pedestal_init->getCalib(output->m_channel.paddles);
@@ -94,13 +94,13 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 
 //		jout<<"Ped= "<<Ped<<" Ped_prev_id_0= " <<Ped_prev_id0<<" Ped_prev_id_1= "<<Ped_prev_id1<<std::endl;
 
-	if(T_index<Nsamples&&m_channel.paddles.id==0){Ped=Ped_prev_id0;}
-	else if(T_index<Nsamples&&m_channel.paddles.id==1){Ped=Ped_prev_id1;}
+	if(T_index<Nsamples&&m_channel.paddles->id==0){Ped=Ped_prev_id0;}
+	else if(T_index<Nsamples&&m_channel.paddles->id==1){Ped=Ped_prev_id1;}
 	else {
 		for (int ii=0;ii<Nsamples;ii++)Ped+=input->samples.at(ii);
 							Ped=Ped/30;
-							if(m_channel.paddles.id==0)Ped_prev_id0=Ped;
-							if(m_channel.paddles.id==1)Ped_prev_id1=Ped;
+							if(m_channel.paddles->id==0)Ped_prev_id0=Ped;
+							if(m_channel.paddles->id==1)Ped_prev_id1=Ped;
 	}
 //		jout<<"Ped= "<<Ped<<" Ped_prev_id0= "<<Ped_prev_id0<<" Ped_prev_id1= "<<Ped_prev_id1<<std::endl;
 

@@ -69,7 +69,7 @@ jerror_t CalorimeterDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 	 */
 	m_map.clear();
 	for (it=m_CalorimeterSiPMHit.begin(); it != m_CalorimeterSiPMHit.end() ; it++){
-		m_channel = (*it)->m_channel.calorimeter;
+		m_channel = *((*it)->m_channel.calorimeter);
 		m_channel.readout = 0;
 		m_map_it=m_map.find(m_channel);
 		if (m_map_it == m_map.end()){ //not here. Create a new CalorimeterDigiHit object, and associate the id of this SiPM hit with it
@@ -98,7 +98,7 @@ jerror_t CalorimeterDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 			CalorimeterDigiHit::CalorimeterSiPMDigiHit hit;
 			hit.Q=m_CalorimeterSiPMHit_tmp.at(ihit)->Qphe;
 			hit.T=m_CalorimeterSiPMHit_tmp.at(ihit)->T;
-			hit.readout=m_CalorimeterSiPMHit_tmp.at(ihit)->m_channel.int_veto.readout;
+			hit.readout=m_CalorimeterSiPMHit_tmp.at(ihit)->m_channel.calorimeter->readout;
 			m_CalorimeterDigiHit_tmp->m_data.push_back(hit);
 		}
 		_data.push_back(m_CalorimeterDigiHit_tmp); //publish it

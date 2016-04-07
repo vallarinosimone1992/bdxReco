@@ -26,20 +26,40 @@ def AddROOTdict(env,reldir,absdir):
 	rootcintpath  = "%s/bin/rootcint" % (rootsys)
 	rootclingpath = "%s/bin/rootcling" % (rootsys)
 	if env['SHOWBUILD']==0:
-			rootcintaction  = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCE" % (rootcintpath," -I".join(env['CPPPATH'])), 'ROOTCINT   [$SOURCE]')
-			rootclingaction = SCons.Script.Action("%s  -f $TARGET -c -p -I%s $SOURCE" % (rootclingpath," -I".join(env['CPPPATH'])), 'ROOTCLING  [$SOURCE]')
+			rootcintactionNoLinkDef  = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCE" % (rootcintpath," -I".join(env['CPPPATH'])), 'ROOTCINT   [$SOURCE]')
+			rootclingactionNoLinkDef = SCons.Script.Action("%s  -f $TARGET -c -p -I%s $SOURCE" % (rootclingpath," -I".join(env['CPPPATH'])), 'ROOTCLING  [$SOURCE]')
 	else:
-			rootcintaction  = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCE" % (rootcintpath," -I".join(env['CPPPATH'])))
-			rootclingaction = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCE" % (rootclingpath," -I".join(env['CPPPATH'])))
+			rootcintactionNoLinkDef  = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCE" % (rootcintpath," -I".join(env['CPPPATH'])))
+			rootclingactionNoLinkDef = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCE" % (rootclingpath," -I".join(env['CPPPATH'])))
 
 	if os.path.exists(rootclingpath) :
-			bld = SCons.Script.Builder(action = rootclingaction, suffix='_Dict.cc', src_suffix='.h')
+			bldNoLinkDef = SCons.Script.Builder(action = rootclingactionNoLinkDef, suffix='_Dict.cc', src_suffix='.h')
 	elif os.path.exists(rootcintpath):
-			bld = SCons.Script.Builder(action = rootcintaction, suffix='_Dict.cc', src_suffix='.h')
+			bldNoLinkDef = SCons.Script.Builder(action = rootcintactionNoLinkDef, suffix='_Dict.cc', src_suffix='.h')
 	else:
 			print 'Neither rootcint nor rootcling exists. Unable to create ROOT dictionaries if any encountered.'
 			return
-	env.Append(BUILDERS = {'ROOTDict' : bld})
+
+
+	if env['SHOWBUILD']==0:
+			rootcintactionLinkDef  = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCE %s" % (rootcintpath," -I".join(env['CPPPATH']),reldir+"/LinkDef.h"), 'ROOTCINT   [$SOURCE]')
+			rootclingactionLinkDef = SCons.Script.Action("%s  -f $TARGET -c -p -I%s $SOURCE %s" % (rootclingpath," -I".join(env['CPPPATH']),reldir+"/LinkDef.h"), 'ROOTCLING  [$SOURCE]')
+	else:
+			rootcintactionLinkDef  = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCE %s" % (rootcintpath," -I".join(env['CPPPATH']),reldir+"/LinkDef.h"))
+			rootclingactionLinkDef = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCE %s" % (rootclingpath," -I".join(env['CPPPATH']),reldir+"/LinkDef.h"))
+
+	if os.path.exists(rootclingpath) :
+			bldLinkDef = SCons.Script.Builder(action = rootclingactionLinkDef, suffix='_Dict.cc', src_suffix='.h')
+	elif os.path.exists(rootcintpath):
+			bldLinkDef = SCons.Script.Builder(action = rootcintactionLinkDef, suffix='_Dict.cc', src_suffix='.h')
+	else:
+			print 'Neither rootcint nor rootcling exists. Unable to create ROOT dictionaries if any encountered.'
+			return	
+
+
+	env.Append(BUILDERS = {'ROOTDictNoLinkDef' : bldNoLinkDef})
+	env.Append(BUILDERS = {'ROOTDictLinkDef' : bldLinkDef})
+
 	# Generate ROOT dictionary file targets for each header
 	# containing "ClassDef"
 	#
@@ -54,13 +74,19 @@ def AddROOTdict(env,reldir,absdir):
 	if(int(env['SHOWBUILD'])>=1):
 		print "---- Scanning for headers to generate ROOT dictionaries in: %s" % (srcpath)	
 	os.chdir(srcpath)
+	
+		 
 	retVal="";
 	for f in glob.glob('*.[h|hh|hpp]'):
 		if 'ClassDef' in open(f).read():
 			if(int(env['SHOWBUILD'])>=1):
 				print "  ----->  ROOT dictionary for %s" % f
-			retVal=env.ROOTDict(reldir+"/"+f)
-#			#env.AppendUnique(ALL_SOURCES = env.ROOTDict(f))
+			if os.path.isfile("LinkDef.h"):
+				if(int(env['SHOWBUILD'])>=1):
+					print " -----> Using LinkDef.h file found" 
+				retVal=env.ROOTDictLinkDef(reldir+"/"+f)
+			else:
+				retVal=env.ROOTDictNoLinkDef(reldir+"/"+f)
 	os.chdir(curpath)
 	
 	

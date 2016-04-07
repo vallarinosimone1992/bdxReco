@@ -354,14 +354,14 @@ jerror_t Paddles_test::evnt(JEventLoop *loop,uint64_t eventnumber)
 			const ExtVetoPMTHit *evhit = *data_extveto_it;
 
 
-					component=evhit->m_channel.ext_veto.component;
+					component=evhit->m_channel.ext_veto->component;
 
-					if(evhit->m_channel.ext_veto.component==6){
+					if(evhit->m_channel.ext_veto->component==6){
 
 						E[0]=(*data_extveto_it)->Q;
 						T[0]=(*data_extveto_it)->T;
 					}
-					if(evhit->m_channel.ext_veto.component==9){
+					if(evhit->m_channel.ext_veto->component==9){
 										E[1]=(*data_extveto_it)->Q;
 										T[1]=(*data_extveto_it)->T;
 									}

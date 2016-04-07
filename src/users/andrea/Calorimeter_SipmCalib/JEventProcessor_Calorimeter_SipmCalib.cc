@@ -175,14 +175,14 @@ jerror_t JEventProcessor_Calorimeter_SipmCalib::evnt(JEventLoop *loop, uint64_t 
 	for (data_it=data.begin();data_it<data.end();data_it++){
 
 		h->Reset();
-		h->SetName(Form("h_%i_%i",eventnumber,(*data_it)->m_channel.calorimeter.readout));
+		h->SetName(Form("h_%i_%i",eventnumber,(*data_it)->m_channel.calorimeter->readout));
 		m_waveform=0;
 		(*data_it)->GetSingle(m_waveform);
 
-		m_sector=(*data_it)->m_channel.calorimeter.sector;
-		m_x=(*data_it)->m_channel.calorimeter.x;
-		m_y=(*data_it)->m_channel.calorimeter.y;
-		m_readout=(*data_it)->m_channel.calorimeter.readout;
+		m_sector=(*data_it)->m_channel.calorimeter->sector;
+		m_x=(*data_it)->m_channel.calorimeter->x;
+		m_y=(*data_it)->m_channel.calorimeter->y;
+		m_readout=(*data_it)->m_channel.calorimeter->readout;
 		m_type=(*data_it)->m_type;
 		m_singles=(*data_it)->nSingles;
 		m_signals=(*data_it)->nSignals;

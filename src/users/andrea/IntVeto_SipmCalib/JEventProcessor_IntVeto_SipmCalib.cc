@@ -163,10 +163,10 @@ jerror_t JEventProcessor_IntVeto_SipmCalib::evnt(JEventLoop *loop, uint64_t even
 	japp->RootWriteLock();
 	//  ... fill historgrams or trees ...
 	for (data_it=data.begin();data_it<data.end();data_it++){
-		m_sector=(*data_it)->m_channel.int_veto.sector;
-		m_layer=(*data_it)->m_channel.int_veto.layer;
-		m_component=(*data_it)->m_channel.int_veto.component;
-		m_readout=(*data_it)->m_channel.int_veto.readout;
+		m_sector=(*data_it)->m_channel.int_veto->sector;
+		m_layer=(*data_it)->m_channel.int_veto->layer;
+		m_component=(*data_it)->m_channel.int_veto->component;
+		m_readout=(*data_it)->m_channel.int_veto->readout;
 
 		(*data_it)->GetSingle(m_waveform);
 	/*	h->Reset();

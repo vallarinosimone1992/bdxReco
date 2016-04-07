@@ -36,7 +36,7 @@ TCanvas* IntVetoHit::Draw(int id)const{
 	for (int ih=0;ih<Nhits;ih++){
 		hits[ih]->GetSingle(wave);
 		Nsamples=wave->samples.size();
-		hWaves.push_back(new TH1D(Form("h%i_%i_%i_%i",hits[ih]->m_channel.int_veto.sector,hits[ih]->m_channel.int_veto.layer,hits[ih]->m_channel.int_veto.component,hits[ih]->m_channel.int_veto.readout),Form("h%i_%i_%i_%i",hits[ih]->m_channel.int_veto.sector,hits[ih]->m_channel.int_veto.layer,hits[ih]->m_channel.int_veto.component,hits[ih]->m_channel.int_veto.readout),Nsamples,-0.5,Nsamples-0.5));
+		hWaves.push_back(new TH1D(Form("h%i_%i_%i_%i",hits[ih]->m_channel.int_veto->sector,hits[ih]->m_channel.int_veto->layer,hits[ih]->m_channel.int_veto->component,hits[ih]->m_channel.int_veto->readout),Form("h%i_%i_%i_%i",hits[ih]->m_channel.int_veto->sector,hits[ih]->m_channel.int_veto->layer,hits[ih]->m_channel.int_veto->component,hits[ih]->m_channel.int_veto->readout),Nsamples,-0.5,Nsamples-0.5));
 		wave->toHisto(hWaves[ih]);
 		m_canvas->cd(ih+1);
 		hWaves[ih]->Draw();

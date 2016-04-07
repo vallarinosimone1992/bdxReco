@@ -37,7 +37,7 @@ jerror_t ExtVetofa250Converter::convertMode1Hit(ExtVetoPMTHit* output,const fa25
 	static  vector<double> Vpedestal_backup(100,0);
 	double Thr;		//mV
 
-    	Thr = threshold->getCalibSingle(output->m_channel.ext_veto);
+    	Thr = threshold->getCalibSingle(*(output->m_channel.ext_veto));
     double pedestal_DAQ;
 
 
@@ -45,9 +45,9 @@ jerror_t ExtVetofa250Converter::convertMode1Hit(ExtVetoPMTHit* output,const fa25
 
 
 
-    if (Vpedestal_backup.at(output->m_channel.ext_veto.component) == 0){
+    if (Vpedestal_backup.at(output->m_channel.ext_veto->component) == 0){
 
-    	Vpedestal_backup.at(output->m_channel.ext_veto.component) = pedestal_DAQ*0.4884;
+    	Vpedestal_backup.at(output->m_channel.ext_veto->component) = pedestal_DAQ*0.4884;
     }
   //  jout << "dopo " <<output->m_channel.ext_veto.component << " " << pedestal_DAQ <<" " <<Vpedestal_backup.at(output->m_channel.ext_veto.component) <<std::endl;
 
@@ -98,7 +98,7 @@ jerror_t ExtVetofa250Converter::convertMode1Hit(ExtVetoPMTHit* output,const fa25
                        } //endfor
 
                  pedestal = Q_pedestal/j;
-                 Vpedestal_backup[output->m_channel.ext_veto.component] = pedestal;
+                 Vpedestal_backup[output->m_channel.ext_veto->component] = pedestal;
 
  //                      jout << "papta " <<output->m_channel.ext_veto.component << " " << pedestal_DAQ <<" " <<Vpedestal_backup.at(output->m_channel.ext_veto.component) <<std::endl;
 
@@ -110,7 +110,7 @@ jerror_t ExtVetofa250Converter::convertMode1Hit(ExtVetoPMTHit* output,const fa25
            } else                // ******************************* Pedestal & Charge Calculation for T<35 ************************************
                  {
 
-         	  pedestal = Vpedestal_backup[output->m_channel.ext_veto.component];
+         	  pedestal = Vpedestal_backup[output->m_channel.ext_veto->component];
 
 
          	  for (int ii=0;ii<size;ii++){

@@ -170,7 +170,7 @@ jerror_t JEventProcessor_Calorimeter_SipmStudies::evnt(JEventLoop *loop, uint64_
 
 	for (cdata_it=cdata.begin();cdata_it!=cdata.end();cdata_it++){
 		const CalorimeterSiPMHit *sipmhit= *cdata_it;
-		switch (sipmhit->m_channel.int_veto.readout){
+		switch (sipmhit->m_channel.int_veto->readout){
 		case (1):
 			m_Q1 = sipmhit->Qphe;
 			m_Q1s= sipmhit->QpheS;

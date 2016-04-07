@@ -352,25 +352,29 @@ void StartElement(void *userData, const char *xmlname, const char **atts)
 		//This is the part that - probably - has to be modified
 		switch (ci.det_sys) {
 		case TranslationTable::EXT_VETO:
-			ci.ext_veto.sector = sector;
-			ci.ext_veto.layer = layer;
-			ci.ext_veto.component = component;
-			ci.ext_veto.readout = readout;
+			ci.ext_veto = new TranslationTable::EXT_VETO_Index_t;
+			ci.ext_veto->sector = sector;
+			ci.ext_veto->layer = layer;
+			ci.ext_veto->component = component;
+			ci.ext_veto->readout = readout;
 			break;
 		case TranslationTable::INT_VETO:
-			ci.int_veto.sector = sector;
-			ci.int_veto.layer = layer;
-			ci.int_veto.component = component;
-			ci.int_veto.readout = readout;
+			ci.int_veto = new TranslationTable::INT_VETO_Index_t;
+			ci.int_veto->sector = sector;
+			ci.int_veto->layer = layer;
+			ci.int_veto->component = component;
+			ci.int_veto->readout = readout;
 			break;
 		case TranslationTable::CALORIMETER:
-			ci.calorimeter.sector = sector;
-			ci.calorimeter.x = column;  //A.C. fine, x is a column and y is a row
-			ci.calorimeter.y = row;
-			ci.calorimeter.readout = readout;
+			ci.calorimeter = new TranslationTable::CALO_Index_t;
+			ci.calorimeter->sector = sector;
+			ci.calorimeter->x = column;  //A.C. fine, x is a column and y is a row
+			ci.calorimeter->y = row;
+			ci.calorimeter->readout = readout;
 			break;
 		case TranslationTable::PADDLES:
-			ci.paddles.id = id;
+			ci.paddles = new TranslationTable::PADDLES_Index_t;
+			ci.paddles->id = id;
 			break;
 		case TranslationTable::UNKNOWN_DETECTOR:
 		default:

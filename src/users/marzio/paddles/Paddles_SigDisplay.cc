@@ -217,7 +217,7 @@ jerror_t Paddles_SigDisplay::evnt(JEventLoop *loop,uint64_t eventnumber)
 
 				eventN=eventnumber;
 				tword=tWord;
-				component=evhit->m_channel.paddles.id;
+				component=evhit->m_channel.paddles->id;
 
 
 //				if(tword==2&&eventN==445){
