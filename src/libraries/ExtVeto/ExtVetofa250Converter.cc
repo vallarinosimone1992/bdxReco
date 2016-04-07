@@ -28,124 +28,124 @@ jerror_t ExtVetofa250Converter::convertMode1Hit(ExtVetoPMTHit* output,const fa25
 	int size=input->samples.size();
 	double nSamples=0; // number of the samples from the beginning of the time windows used to calculate the pedestal
 	double Q_pedestal = 0;
-    double pedestal= 0;
+	double pedestal= 0;
 	double Q =0;
 	double Tinf=0, Ainf=0;
 	double Tsup=0, Asup=0;
 	double T=0;
- //   static  double Vpedestal_backup[12]={93.26,91,92,95.6,93,92,92,76.5,98,79,90,108};
+	//   static  double Vpedestal_backup[12]={93.26,91,92,95.6,93,92,92,76.5,98,79,90,108};
 	static  vector<double> Vpedestal_backup(100,0);
 	double Thr;		//mV
 
-    	Thr = threshold->getCalibSingle(*(output->m_channel.ext_veto));
-    double pedestal_DAQ;
+	Thr = threshold->getCalibSingle(*(output->m_channel.ext_veto));
+	double pedestal_DAQ;
 
 
-    pedestal_DAQ = m_pedestals->getCalibSingle(input->m_channel);
+	pedestal_DAQ = m_pedestals->getCalib(input->m_channel)[0];
 
 
 
-    if (Vpedestal_backup.at(output->m_channel.ext_veto->component) == 0){
+	if (Vpedestal_backup.at(output->m_channel.ext_veto->component) == 0){
 
-    	Vpedestal_backup.at(output->m_channel.ext_veto->component) = pedestal_DAQ*0.4884;
-    }
-  //  jout << "dopo " <<output->m_channel.ext_veto.component << " " << pedestal_DAQ <<" " <<Vpedestal_backup.at(output->m_channel.ext_veto.component) <<std::endl;
+		Vpedestal_backup.at(output->m_channel.ext_veto->component) = pedestal_DAQ*0.4884;
+	}
+	//  jout << "dopo " <<output->m_channel.ext_veto.component << " " << pedestal_DAQ <<" " <<Vpedestal_backup.at(output->m_channel.ext_veto.component) <<std::endl;
 
 
-    // ************************** Timing calculation ***************************************
+	// ************************** Timing calculation ***************************************
 
-    for (int ii=0;ii<size;ii++){
-    	if((input->samples.at(ii)>=Thr)){
-    		 if(ii==0){
-    			 T=0;
-    			 break;
-    		           }
-			    Tinf = ii-1;
-           Tsup = ii;
-		        Ainf = input->samples.at(ii-1);
-		        Asup = input->samples.at(ii);
-//      jout << Tinf << " "<< Tsup << " " << Ainf << " " <<Asup <<std::endl;
+	for (int ii=0;ii<size;ii++){
+		if((input->samples.at(ii)>=Thr)){
+			if(ii==0){
+				T=0;
+				break;
+			}
+			Tinf = ii-1;
+			Tsup = ii;
+			Ainf = input->samples.at(ii-1);
+			Asup = input->samples.at(ii);
+			//      jout << Tinf << " "<< Tsup << " " << Ainf << " " <<Asup <<std::endl;
 
-           break;
-      } //endif
+			break;
+		} //endif
 
 		if((ii==size-1)){
 
-    			  T=-10;
+			T=-10;
 
 
-    	}
-                      }//endfor
+		}
+	}//endfor
 
-               if(Tinf>0)   T=(((Tsup-Tinf)/(Asup-Ainf))*(Thr-Ainf))+Tinf;
-
-
-   //    jout << "component= " << output->m_channel.ext_veto.component << std::endl;
-    //    jout << "T= " << T << std::endl;
-
-        // ********************************** Pedestal & Charge Calculation ******************************
-        if (T>=0){
-        if(T>35){
-
-          nSamples = T-5;
-
-             int j=0;
-            for(int ii=0; ii<nSamples;ii++){
-
-           Q_pedestal+=input->samples.at(ii);
-           j +=1;
-
-                       } //endfor
-
-                 pedestal = Q_pedestal/j;
-                 Vpedestal_backup[output->m_channel.ext_veto->component] = pedestal;
-
- //                      jout << "papta " <<output->m_channel.ext_veto.component << " " << pedestal_DAQ <<" " <<Vpedestal_backup.at(output->m_channel.ext_veto.component) <<std::endl;
+	if(Tinf>0)   T=(((Tsup-Tinf)/(Asup-Ainf))*(Thr-Ainf))+Tinf;
 
 
-             for (int ii=0;ii<size;ii++){
-                        Q+=(input->samples.at(ii)-pedestal);
-                                        } //endfor
+	//    jout << "component= " << output->m_channel.ext_veto.component << std::endl;
+	//    jout << "T= " << T << std::endl;
 
-           } else                // ******************************* Pedestal & Charge Calculation for T<35 ************************************
-                 {
+	// ********************************** Pedestal & Charge Calculation ******************************
+	if (T>=0){
+		if(T>35){
 
-         	  pedestal = Vpedestal_backup[output->m_channel.ext_veto->component];
+			nSamples = T-5;
 
+			int j=0;
+			for(int ii=0; ii<nSamples;ii++){
 
-         	  for (int ii=0;ii<size;ii++){
+				Q_pedestal+=input->samples.at(ii);
+				j +=1;
 
-                  Q+=(input->samples.at(ii)-pedestal);
-         	  } //endfor
+			} //endfor
 
-                                           } //endif-else
-        }
+			pedestal = Q_pedestal/j;
+			Vpedestal_backup[output->m_channel.ext_veto->component] = pedestal;
 
-              //********************** correction Q<0
-
-          int T_index_max =0;
-          int T_index_min=0;
-
-             if(T>=0&&Q<0){
-
-            	 Q=0;
-      //  jout << "component= "<<output->m_channel.ext_veto.component<<" "<< "Q= "<<Q<<endl;
-
-             T_index_min = T - 2;
-             if(T_index_min<0) T_index_min=0;
-             T_index_max = T + 4;
-             if(T_index_max>=(size-1)) T_index_max = size-1;
-
-             for(int ii=T_index_min; ii<T_index_max;ii++){
-
-            	 Q+=(input->samples.at(ii)-pedestal_DAQ*0.4884);
-
-             }
+			//                      jout << "papta " <<output->m_channel.ext_veto.component << " " << pedestal_DAQ <<" " <<Vpedestal_backup.at(output->m_channel.ext_veto.component) <<std::endl;
 
 
+			for (int ii=0;ii<size;ii++){
+				Q+=(input->samples.at(ii)-pedestal);
+			} //endfor
 
-         //    jout <<"new Q =  "<< Q <<endl;
-             } //end if Q<0
+		} else                // ******************************* Pedestal & Charge Calculation for T<35 ************************************
+		{
+
+			pedestal = Vpedestal_backup[output->m_channel.ext_veto->component];
+
+
+			for (int ii=0;ii<size;ii++){
+
+				Q+=(input->samples.at(ii)-pedestal);
+			} //endfor
+
+		} //endif-else
+	}
+
+	//********************** correction Q<0
+
+	int T_index_max =0;
+	int T_index_min=0;
+
+	if(T>=0&&Q<0){
+
+		Q=0;
+		//  jout << "component= "<<output->m_channel.ext_veto.component<<" "<< "Q= "<<Q<<endl;
+
+		T_index_min = T - 2;
+		if(T_index_min<0) T_index_min=0;
+		T_index_max = T + 4;
+		if(T_index_max>=(size-1)) T_index_max = size-1;
+
+		for(int ii=T_index_min; ii<T_index_max;ii++){
+
+			Q+=(input->samples.at(ii)-pedestal_DAQ*0.4884);
+
+		}
+
+
+
+		//    jout <<"new Q =  "<< Q <<endl;
+	} //end if Q<0
 
 
 
@@ -157,7 +157,7 @@ jerror_t ExtVetofa250Converter::convertMode1Hit(ExtVetoPMTHit* output,const fa25
 
 	output->Q = (Q*4*2*1E-3)/50;         /// charge in nWb , 50 ohm, *2 ->splitter
 	output->T=T*4;                     //// Time in nS
-    output->pedestal=pedestal;
+	output->pedestal=pedestal;
 
 
 

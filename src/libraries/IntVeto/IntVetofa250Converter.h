@@ -34,7 +34,6 @@ public:
 	int m_minTot;
 	int m_thr;
 	int m_NSB,m_NSA,m_NPED;
-	double m_PEDRMS;
 };
 
 #endif // _IntVetofa250Converter_

@@ -60,7 +60,6 @@ jerror_t IntVetofa250Converter_factory::brun(jana::JEventLoop *eventLoop, int32_
 	m_intVetofa250Converter->m_NSB=m_NSB;
 	m_intVetofa250Converter->m_NSA=m_NSA;
 	m_intVetofa250Converter->m_NPED=m_NPED;
-	m_intVetofa250Converter->m_PEDRMS=m_PEDRMS;
 	if (m_isFirstCallToBrun){
 		_data.push_back(m_intVetofa250Converter);
 		m_isFirstCallToBrun=0;

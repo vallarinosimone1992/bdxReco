@@ -31,9 +31,9 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 	// not have to change this code.
 
 	int N,n,idx,imax;
-	int istart;
+	int istart,istartmin;
 	double min,max,xmin,xmax,prev_xmin,prev_xmax,rms,Tmax;
-	double ped,pedRMS,thr;
+	double ped,pedRMS,thr,pedRMSmin,pedmin;
 	bool found;
 	std::pair<int,int> m_thisCrossingTime;
 
@@ -53,6 +53,7 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 	//0: refine pedestal, should be ~0 already
 	//0a: check if we can use this waveform as pedestal
 	found=false;
+	pedRMSmin=9999;
 	for (istart=0;istart<(input->samples.size()-m_NPED);istart++){
 		/*Compute pedestal and rms starting at this point*/
 		ped=0;
@@ -65,25 +66,30 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 		ped/=m_NPED;
 		pedRMS/=m_NPED;
 		pedRMS=sqrt(pedRMS-ped*ped);
-		if (pedRMS<=m_PEDRMS){
-			found=true;
-			break;
+		if (pedRMS <= pedRMSmin ){
+			pedRMSmin = pedRMS;
+			pedmin=ped;
+			istartmin=istart;
 		}
+	}
+	if (pedRMSmin < input->m_RMS){  //input->m_RMS is read from DB. This is the DAQ-measured RMS, equal for all hits in the same channel and the same run)
+		found=true;
+		ped=pedmin;
+		pedRMS=pedRMSmin;
+		istart=istartmin;
 	}
 	if (found==false){/*It means we were not able to correct the pedestal here!*/
 		ped=0;
 	}
-	TFile *f=new TFile("out11.root","update");
-	TH1D *h=new TH1D(Form("h_%i_%i_%f_%f",found,istart,ped,pedRMS),Form("h_%i_%i_%f_%f",found,istart,ped,pedRMS),size,-0.5,size-0.5);
+
 
 
 	//0b produced the waveform
 	for (int ii=0;ii<size;ii++){
-		h->Fill(ii,input->samples[ii]-ped);
+
 		m_waveform.push_back(input->samples[ii]-ped);
 	}
-	h->Write();
-	f->Close();
+
 
 
 	//1: compute the average

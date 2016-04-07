@@ -28,6 +28,7 @@ class fa250Mode1CalibPedSubHit:public fa250Mode1Hit{
 			 AddString(items, "nsamples", "%4d", samples.size());
 		}
 		
+		double m_ped,m_RMS; //from DB
 
 };
 
