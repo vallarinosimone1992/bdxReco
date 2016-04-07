@@ -56,7 +56,7 @@ for fn in os.listdir("DAQ_pedestals"):
         
         #in case of default variation, do not load
         if (variation=="default"):
-            for slot in range(4,20):
+            for slot in range(4,10):
                 for channel in range(0,16):
                        outF.write("0 "+str(slot)+" "+str(channel)+" "+"0 0 \n")
         else: #load
