@@ -156,11 +156,7 @@ jerror_t JEventProcessor_Calorimeter_rate::evnt(JEventLoop *loop, uint64_t event
 	vector<const IntVetoHit*> ivhits;
 	vector<const IntVetoHit*>::iterator ivhits_it;
 
-	vector<const ExtVetoPMTHit*> evPMThits;
-	vector<const ExtVetoPMTHit*>::iterator evPMThits_it;
 
-	vector<const ExtVetoDigiHit*> evdigihits;
-	vector<const ExtVetoDigiHit*>::iterator evdigihits_it;
 
 	vector<const ExtVetoHit*> evhits;
 	vector<const ExtVetoHit*>::iterator evhits_it;
@@ -188,7 +184,7 @@ jerror_t JEventProcessor_Calorimeter_rate::evnt(JEventLoop *loop, uint64_t event
 	loop->Get(chits);
 	loop->Get(ivhits);
 	loop->Get(evhits);
-
+	loop->Get(waves);
 
 	loop->Get(IntVetoSum);
 	loop->Get(ExtVetoSum);
@@ -207,6 +203,8 @@ jerror_t JEventProcessor_Calorimeter_rate::evnt(JEventLoop *loop, uint64_t event
 
 
 	japp->RootWriteLock();
+
+
 	flag=false;
 	nHitsIntVeto=0;
 	nHitsExtVeto=0;

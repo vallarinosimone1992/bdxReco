@@ -20,12 +20,12 @@ using namespace jana;
 //------------------
 jerror_t IntVetoSummary_factory::init(void)
 {
-	m_q_thr[0]=10;
-	m_q_thr[1]=10;
-	m_q_thr[2]=10;
-	m_q_thr[3]=10;
-	m_q_thr[4]=10;
-	m_q_thr[5]=10;
+	m_q_thr[0]=5;
+	m_q_thr[1]=5;
+	m_q_thr[2]=5;
+	m_q_thr[3]=5;
+	m_q_thr[4]=5;
+	m_q_thr[5]=5;
 
 
 	return NOERROR;
