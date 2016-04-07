@@ -10,7 +10,6 @@
 
 #include <DAQ/eventData.h>
 #include <DAQ/fa250Mode1CalibPedSubHit.h>
-
 #include <TT/TranslationTable.h>
 
 
@@ -80,10 +79,15 @@ jerror_t JEventProcessor_Calorimeter_rate::init(void)
 	t=new TTree("CaloRate","CaloRate");
 	t->Branch("eventN",&eventNumber);
 	t->Branch("Ec",&Ec);
-	t->Branch("Ec2",&Ec1);
-	t->Branch("Ec1",&Ec2);
+	t->Branch("Ec1",&Ec1);
+	t->Branch("Ec2",&Ec2);
 	t->Branch("nHitsIntVeto",&nHitsIntVeto);
 	t->Branch("nHitsExtVeto",&nHitsExtVeto);
+
+	for (int iwave=0;iwave<100;iwave++){
+		hwaves.push_back(NULL);
+	}
+
 	japp->RootUnLock();
 
 	return NOERROR;
@@ -152,11 +156,7 @@ jerror_t JEventProcessor_Calorimeter_rate::evnt(JEventLoop *loop, uint64_t event
 	vector<const IntVetoHit*> ivhits;
 	vector<const IntVetoHit*>::iterator ivhits_it;
 
-	vector<const ExtVetoPMTHit*> evPMThits;
-	vector<const ExtVetoPMTHit*>::iterator evPMThits_it;
 
-	vector<const ExtVetoDigiHit*> evdigihits;
-	vector<const ExtVetoDigiHit*>::iterator evdigihits_it;
 
 	vector<const ExtVetoHit*> evhits;
 	vector<const ExtVetoHit*>::iterator evhits_it;
@@ -167,6 +167,9 @@ jerror_t JEventProcessor_Calorimeter_rate::evnt(JEventLoop *loop, uint64_t event
 
 	vector <const ExtVetoSummary*> ExtVetoSum;
 	vector <const ExtVetoSummary*>::iterator ExtVetoSum_it;
+
+	vector <const fa250Mode1CalibPedSubHit*> waves;
+	vector <const fa250Mode1CalibPedSubHit*>::iterator waves_it;
 
 	const eventData* evdata;
 
@@ -181,6 +184,7 @@ jerror_t JEventProcessor_Calorimeter_rate::evnt(JEventLoop *loop, uint64_t event
 	loop->Get(chits);
 	loop->Get(ivhits);
 	loop->Get(evhits);
+	loop->Get(waves);
 
 	loop->Get(IntVetoSum);
 	loop->Get(ExtVetoSum);
@@ -199,6 +203,8 @@ jerror_t JEventProcessor_Calorimeter_rate::evnt(JEventLoop *loop, uint64_t event
 
 
 	japp->RootWriteLock();
+
+
 	flag=false;
 	nHitsIntVeto=0;
 	nHitsExtVeto=0;
@@ -230,6 +236,32 @@ jerror_t JEventProcessor_Calorimeter_rate::evnt(JEventLoop *loop, uint64_t event
 				break;
 		}
 	}
+
+
+	if ((Ec1>50)&&(nHitsExtVeto==0)&&(nHitsIntVeto==0)) flag=true;
+
+	if (flag){
+		for (int iwave=0;iwave<waves.size();iwave++){
+			hwave=hwaves[iwave];
+			int N=waves[iwave]->samples.size();
+			if (hwave==0){
+				hwaves[iwave]=new TH1D(Form("h_%i",iwave),Form("h_%i",iwave),N,-0.5,N-0.5);
+				m_ROOTOutput->AddObject(hwaves[iwave]);
+			}
+
+			/*Title*/
+			hwave=hwaves[iwave];
+			hwave->Reset();
+			hwave->SetName(Form("h_%i_%i__%i__%f",waves[iwave]->m_channel.slot,waves[iwave]->m_channel.channel,eventnumber,Ec1));
+			hwave->SetTitle(Form("h_%i_%i__%i__%f",waves[iwave]->m_channel.slot,waves[iwave]->m_channel.channel,eventnumber,Ec1));
+			for (int isample=0;isample<N;isample++){
+				hwave->Fill(isample,waves[iwave]->samples[isample]);
+			}
+			hwave->Write();
+		}
+	}
+
+
 	t->Fill();
 	japp->RootUnLock();
 

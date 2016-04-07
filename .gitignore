@@ -16,7 +16,9 @@ bin
 
 #ccdb file
 calib/ccdb.calib
-
 #IDE stuff
 .project
 .cproject
+#root Dictionary files
+*Dict*
+

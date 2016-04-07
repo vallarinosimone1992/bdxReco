@@ -12,7 +12,7 @@ for user in users_names :
 		absdir = Dir('#/src/users/'+reldir).srcnode().abspath	
 		#We do not want to increment "at libitum" CPPPATH
 		tmp_cpppath=env['CPPPATH'];	
-		env.Append(CPPPATH=reldir)
+		env.Append(CPPPATH=absdir)
 		AddROOTdict(env,reldir,absdir);
 		user_plugin_src  = Glob(reldir+'/*.cc');
 		#print root_dict_src

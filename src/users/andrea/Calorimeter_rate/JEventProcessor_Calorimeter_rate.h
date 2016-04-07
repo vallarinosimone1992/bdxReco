@@ -34,6 +34,8 @@ class JEventProcessor_Calorimeter_rate:public jana::JEventProcessor{
 		int nHitsIntVeto,nHitsExtVeto;
 
 		TTree *t;
+		vector<TH1D *> hwaves;
+		TH1D*		   hwave;
 		JROOTOutput *m_ROOTOutput;
 };
 

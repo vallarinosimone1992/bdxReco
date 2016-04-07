@@ -26,11 +26,12 @@ def AddROOTdict(env,reldir,absdir):
 	rootcintpath  = "%s/bin/rootcint" % (rootsys)
 	rootclingpath = "%s/bin/rootcling" % (rootsys)
 	if env['SHOWBUILD']==0:
-			rootcintaction  = SCons.Script.Action("%s -f $TARGET -c $SOURCE" % (rootcintpath) , 'ROOTCINT   [$SOURCE]')
-			rootclingaction = SCons.Script.Action("%s -f $TARGET -c $SOURCE" % (rootclingpath), 'ROOTCLING  [$SOURCE]')
+			rootcintaction  = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCE" % (rootcintpath," -I".join(env['CPPPATH'])), 'ROOTCINT   [$SOURCE]')
+			rootclingaction = SCons.Script.Action("%s  -f $TARGET -c -p -I%s $SOURCE" % (rootclingpath," -I".join(env['CPPPATH'])), 'ROOTCLING  [$SOURCE]')
 	else:
-			rootcintaction  = SCons.Script.Action("%s -f $TARGET -c $SOURCE" % (rootcintpath) )
-			rootclingaction = SCons.Script.Action("%s -f $TARGET -c $SOURCE" % (rootclingpath))
+			rootcintaction  = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCE" % (rootcintpath," -I".join(env['CPPPATH'])))
+			rootclingaction = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCE" % (rootclingpath," -I".join(env['CPPPATH'])))
+
 	if os.path.exists(rootclingpath) :
 			bld = SCons.Script.Builder(action = rootclingaction, suffix='_Dict.cc', src_suffix='.h')
 	elif os.path.exists(rootcintpath):
@@ -58,7 +59,6 @@ def AddROOTdict(env,reldir,absdir):
 		if 'ClassDef' in open(f).read():
 			if(int(env['SHOWBUILD'])>=1):
 				print "  ----->  ROOT dictionary for %s" % f
-			print reldir
 			retVal=env.ROOTDict(reldir+"/"+f)
 #			#env.AppendUnique(ALL_SOURCES = env.ROOTDict(f))
 	os.chdir(curpath)

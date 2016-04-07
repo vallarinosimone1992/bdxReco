@@ -11,6 +11,8 @@
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
 #include <TT/TranslationTable.h>
+
+#include "TObject.h"
 /*
  * A.C.
  * This object represents a not-yet calibrated it in the inner veto.
@@ -19,16 +21,13 @@
  * - Be as similar as possible to what is obtained from GEMC, while we wait GEMC producing composite, fadc-like, banks.
  */
 
-class IntVetoDigiHit:public jana::JObject{
+class IntVetoDigiHit:public jana::JObject,public TObject{
 public:
 	struct IntVetoSiPMDigiHit{
 			int readout;
 			double Q;
 			double T;
-		};
-
-
-
+	};
 	JOBJECT_PUBLIC(IntVetoDigiHit);
 
 	// Add data members here. For example:
@@ -46,6 +45,8 @@ public:
 	vector <IntVetoSiPMDigiHit> m_data; //keep in this way to be MC-compatible!
 
 	double Qtot;
+
+	ClassDef(IntVetoDigiHit,1);
 
 };
 
