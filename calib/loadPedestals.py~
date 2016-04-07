@@ -1,0 +1,43 @@
+#!/usr/local/bin/python                                                                                                                                                                                                                             
+# -*- coding: utf-8 -*-                                                                                                                                                                                                                             
+
+import string,math,os,sys,subprocess
+import argparse
+
+#check current working dir
+command = "cd "+os.environ['BDXRECO_ROOT']+"/calib ; pwd "
+p = subprocess.Popen(command,shell=True,stdout=subprocess.PIPE)
+bdx_fold , err = p.communicate()
+
+command = "pwd"
+p = subprocess.Popen(command,shell=True,stdout=subprocess.PIPE)
+cur_fold , err = p.communicate()
+
+if (cur_fold != bdx_fold):
+    print "Error, cur folder is ",cur_fold
+    print "This script is supposed to run from ",bdx_fold
+    sys.exit()
+
+#Chek input arguments
+#this should be: -v Variation -min runMin -max runMax
+#if variation is not specified, use "default"
+#if min and/or max are not specified, used CCDB default behavior
+
+
+
+parser = argparse.ArgumentParser(description='Load data in CCDB for given variation / runs')
+parser.add_argument('--variation', type=str, default="default", help='If set, set the variation to use. The variation should correspond to a folder with the txt files to upload')
+
+args = parser.parse_args()
+
+variation = args.variation
+
+#check if DAQ_pedestals folder exists
+if (os.path.isdir("DAQ_pedestals")==False):
+    print "Error, folder DAQ_pedestals does not exists"
+    sys.exit()     
+
+command = "ccdb -c "+os.environ['JANA_CALIB_URL']+" add -v "+variation
+
+
+#now need 
