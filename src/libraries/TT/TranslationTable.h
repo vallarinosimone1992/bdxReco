@@ -15,9 +15,13 @@
 #include <JANA/JException.h>
 #include <JANA/JEventSource.h>
 
+#include <TObject.h>
+
 using namespace jana;
 
-class TranslationTable: public jana::JObject {
+
+
+class TranslationTable: public jana::JObject,public TObject {
 
 public:
 	JOBJECT_PUBLIC(TranslationTable);
@@ -361,6 +365,8 @@ private:
 	map<TranslationTable::csc_t, TranslationTable::ChannelInfo>& Get_TT(
 			void) const;
 
+
+	ClassDef(TranslationTable,1);
 };
 
 #endif // _TranslationTable_

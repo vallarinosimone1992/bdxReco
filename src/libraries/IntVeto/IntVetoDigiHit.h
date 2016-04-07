@@ -10,8 +10,8 @@
 
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
-#include <TT/TranslationTable.h>
 
+#include <TT/TranslationTable.h>
 #include "TObject.h"
 /*
  * A.C.
@@ -49,6 +49,5 @@ public:
 	ClassDef(IntVetoDigiHit,1);
 
 };
-
 #endif // _IntVetoDigiHit_
 

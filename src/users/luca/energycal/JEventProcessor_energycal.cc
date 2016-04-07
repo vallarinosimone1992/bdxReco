@@ -98,7 +98,6 @@ jerror_t JEventProcessor_energycal::init(void)
 
 	app->RootUnLock();
 	return NOERROR;
-	return NOERROR;
 }
 
 //------------------

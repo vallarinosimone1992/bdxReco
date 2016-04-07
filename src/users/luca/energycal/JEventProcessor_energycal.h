@@ -13,7 +13,10 @@ class TH1D;
 class TH2D;
 class TF1;
 class TTree;
+class IntVetoDigiHit;
 class JROOTOutput;
+
+
 class JEventProcessor_energycal:public jana::JEventProcessor{
 public:
 	JEventProcessor_energycal();
@@ -38,6 +41,8 @@ private:
 
 	//data variables
 	double Qc1,Qc2,Ep1,Ep2,Qctot,Tp1,Tp2,Tpdiff,Tc1,Tc2;
+	const IntVetoDigiHit* topHit;
+
 
 	//MC variables
 	double Ec_MC;
