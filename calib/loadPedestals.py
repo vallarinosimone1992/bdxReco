@@ -72,7 +72,7 @@ for fn in os.listdir("DAQ_pedestals"):
         #done up to slot 9. need to proceed up to 19
         for slot in range(10,20):
             for channel in range(0,16):
-                outF.write("0 "+str(slot)+" "+str(channel)+" 0\n")        
+                outF.write("0 "+str(slot)+" "+str(channel)+" 0 0\n")        
         for crate in range(1,20):
                 for slot in range(0,20):
                     for channel in range(0,16):
