@@ -24,9 +24,9 @@
 class IntVetoDigiHit:public jana::JObject,public TObject{
 public:
 	struct IntVetoSiPMDigiHit{
-			int readout;
-			double Q;
-			double T;
+		int readout;
+		double Q;
+		double T;
 	};
 	JOBJECT_PUBLIC(IntVetoDigiHit);
 
@@ -37,8 +37,10 @@ public:
 	// This method is used primarily for pretty printing
 	// the second argument to AddString is printf style format
 	void toStrings(vector<pair<string,string> > &items)const{
-		// AddString(items, "id", "%4d", id);
-		// AddString(items, "E", "%f", E);
+		AddString(items, "sector", "%4d", m_channel.sector);
+		AddString(items, "layer", "%4d", m_channel.layer);
+		AddString(items, "component", "%4d", m_channel.component);
+
 	}
 	//A.C. do not touch these
 	TranslationTable::INT_VETO_Index_t m_channel; //both crate-slot channel and detector-specific ID. Since this is a detector-based object, the readout field will be ==0

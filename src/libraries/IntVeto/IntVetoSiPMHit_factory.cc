@@ -125,8 +125,6 @@ jerror_t IntVetoSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		if (m_channel.det_sys==TranslationTable::INT_VETO){
 			//A.C. do not touch these
 			m_IntVetoSiPMHit=m_intVetofa250Converter->convertHit((fa250Hit*)*it_fa250Mode1CalibPedSubHit,m_channel);
-			//m_IntVetoSiPMHit->AddAssociatedObject(*it_fa250Mode1CalibHit);
-
 			/*Apply phe conversion if possible*/
 
 			m_q_gain=m_sipm_gain->getCalib(*m_channel.int_veto)[0];
@@ -136,10 +134,6 @@ jerror_t IntVetoSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 			if (m_q_gain>0){
 				m_IntVetoSiPMHit->Qphe /=m_q_gain;
 			}
-
-
-
-
 			_data.push_back(m_IntVetoSiPMHit);
 		}
 	}

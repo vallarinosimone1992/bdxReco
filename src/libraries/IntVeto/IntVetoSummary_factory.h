@@ -27,7 +27,7 @@ class IntVetoSummary_factory:public jana::JFactory<IntVetoSummary>{
 		std::map<int,IntVetoSummary*> m_map;
 		std::map<int,IntVetoSummary*>::iterator m_it;
 
-		double m_q_thr[6];
+
 
 };
 

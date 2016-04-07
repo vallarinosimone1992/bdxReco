@@ -8,8 +8,10 @@ THREAD_TIMEOUT_FIRST_EVENT 120
 #IntVeto parameters
 INTVETO:MIN_TOT  12    #min tot in ns to consider a pulse
 INTVETO:THR	 1.5   #min amplitude of a pulse -in phe units
+INTVETO:NPED 10    #num of samples in pedestal determination event by event
 INTVETO:NSB	 20    #num of samples before the maximum
 INTVETO:NSA	 30    #num of samples after  the maximum
+
 
 INTVETO:HIT_THR_SINGLE  -30   #thr in phe charge for a detector with single readout
 INTVETO:HIT_THR_MULTI   -30   #thr in phe charge for a detector with multiple readout
@@ -23,7 +25,7 @@ EXTVETO:VERBOSE	2
 
 #Calorimeter parameters
 CALORIMETER:THR		       8	#min amplitude of a pulse - in mV
-CALORIMETER:MIN_TOT            12
+CALORIMETER:MIN_TOT        12
 CALORIMETER:NPED	       20	#num of samples to include in pedestal
 CALORIMETER:NSB		       10	#num of samples before the maximum
 CALORIMETER:NSA		       20 	#num of samples after  the maximum 

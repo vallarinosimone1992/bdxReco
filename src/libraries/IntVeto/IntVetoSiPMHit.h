@@ -25,10 +25,11 @@ public:
 	// This method is used primarily for pretty printing
 	// the second argument to AddString is printf style format
 	void toStrings(vector<pair<string,string> > &items)const{
-		// AddString(items, "id", "%4d", id);
-		// AddString(items, "E", "%f", E);
+		AddString(items, "sector", "%4d", m_channel.int_veto->sector);
+		AddString(items, "layer", "%4d", m_channel.int_veto->layer);
+		AddString(items, "component", "%4d", m_channel.int_veto->component);
+		AddString(items, "readout", "%4d", m_channel.int_veto->readout);
 	}
-
 	typedef enum{
 		noise=0,
 		real_signal=1, //not much more to distinguish!

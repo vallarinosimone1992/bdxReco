@@ -10,7 +10,7 @@ set DAQIndexes = "crate=int slot=int channel=int"
 set DAQPedestalLines = 6400
 echo "DAQ"
 $command mkdir $DAQFolder
-$command mktbl $DAQFolder/pedestals -r $DAQPedestalLines $DAQIndexes pedestal=double "#daq pedestals in fadc counts"
+$command mktbl $DAQFolder/pedestals -r $DAQPedestalLines $DAQIndexes pedestal=double rms=double "#daq pedestals and RMS in fadc counts"
 
 #Calorimeter
 set CalorimeterFolder = "/Calorimeter"

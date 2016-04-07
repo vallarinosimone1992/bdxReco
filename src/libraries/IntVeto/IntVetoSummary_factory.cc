@@ -20,14 +20,6 @@ using namespace jana;
 //------------------
 jerror_t IntVetoSummary_factory::init(void)
 {
-	m_q_thr[0]=5;
-	m_q_thr[1]=5;
-	m_q_thr[2]=5;
-	m_q_thr[3]=5;
-	m_q_thr[4]=5;
-	m_q_thr[5]=5;
-
-
 	return NOERROR;
 }
 
@@ -81,7 +73,7 @@ jerror_t IntVetoSummary_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		 */
 
 		/*Dummy example: need to implement better selection*/
-		if (m_intVetoHit->Q>m_q_thr[component]){
+		if (1){ /*Actually, we already have a threshold here, when making the intVeto hit!*/
 			m_intVetoSummary->nHits++;     //increment number of hits
 			m_intVetoSummary->hits.push_back(m_intVetoHit->m_channel);  //add this hit channel to the list of channels
 			m_intVetoSummary->AddAssociatedObject(m_intVetoHit); //add the hit to the associated objects.

@@ -14,13 +14,15 @@
 
 
 #include <Calorimeter/CalorimeterHit.h>
+#include <IntVeto/IntVetoSiPMHit.h>
 #include <IntVeto/IntVetoHit.h>
+#include <IntVeto/IntVetoDigiHit.h>
 #include <IntVeto/IntVetoSummary.h>
 #include <ExtVeto/ExtVetoPMTHit.h>
 #include <ExtVeto/ExtVetoDigiHit.h>
 #include <ExtVeto/ExtVetoHit.h>
 #include <ExtVeto/ExtVetoSummary.h>
-
+#include <DAQ/fa250Mode1CalibHit.h>
 
 #include <system/JROOTOutput.h>
 
@@ -84,8 +86,10 @@ jerror_t JEventProcessor_Calorimeter_rate::init(void)
 	t->Branch("nHitsIntVeto",&nHitsIntVeto);
 	t->Branch("nHitsExtVeto",&nHitsExtVeto);
 
-	for (int iwave=0;iwave<100;iwave++){
-		hwaves.push_back(NULL);
+	for (int iwave=0;iwave<50;iwave++){
+		hwavesIntVeto.push_back(NULL);
+		hwavesExtVeto.push_back(NULL);
+		hwavesCalo.push_back(NULL);
 	}
 
 	japp->RootUnLock();
@@ -153,13 +157,11 @@ jerror_t JEventProcessor_Calorimeter_rate::evnt(JEventLoop *loop, uint64_t event
 	vector<const CalorimeterHit*> chits;
 	vector<const CalorimeterHit*>::iterator chits_it;
 
-	vector<const IntVetoHit*> ivhits;
-	vector<const IntVetoHit*>::iterator ivhits_it;
+	vector<const IntVetoDigiHit*> ivhits;
+	vector<const IntVetoDigiHit*>::iterator ivhits_it;
 
-
-
-	vector<const ExtVetoHit*> evhits;
-	vector<const ExtVetoHit*>::iterator evhits_it;
+	vector<const ExtVetoDigiHit*> evhits;
+	vector<const ExtVetoDigiHit*>::iterator evhits_it;
 
 
 	vector <const IntVetoSummary*> IntVetoSum;
@@ -168,8 +170,15 @@ jerror_t JEventProcessor_Calorimeter_rate::evnt(JEventLoop *loop, uint64_t event
 	vector <const ExtVetoSummary*> ExtVetoSum;
 	vector <const ExtVetoSummary*>::iterator ExtVetoSum_it;
 
-	vector <const fa250Mode1CalibPedSubHit*> waves;
-	vector <const fa250Mode1CalibPedSubHit*>::iterator waves_it;
+	vector <const fa250Mode1CalibPedSubHit*> cwaves;
+	vector <const fa250Mode1CalibPedSubHit*>::iterator cwaves_it;
+
+	vector <const fa250Mode1CalibPedSubHit*> ivwaves;
+	vector <const fa250Mode1CalibPedSubHit*>::iterator ivwaves_it;
+
+	vector <const fa250Mode1CalibHit*> evwaves;
+	vector <const fa250Mode1CalibHit*>::iterator evwaves_it;
+
 
 	const eventData* evdata;
 
@@ -177,14 +186,14 @@ jerror_t JEventProcessor_Calorimeter_rate::evnt(JEventLoop *loop, uint64_t event
 	const ExtVetoSummary* ExtVetoSum0;
 
 	int sector,layer,component;
-	int crate,slot,channel;
+	int crate,slot,channel,channelTmp;
 	int N;
 	bool flag;
 
+	double Q,Qtot;
 	loop->Get(chits);
 	loop->Get(ivhits);
 	loop->Get(evhits);
-	loop->Get(waves);
 
 	loop->Get(IntVetoSum);
 	loop->Get(ExtVetoSum);
@@ -229,11 +238,11 @@ jerror_t JEventProcessor_Calorimeter_rate::evnt(JEventLoop *loop, uint64_t event
 	for (int ihit=0;ihit<chits[0]->m_data.size();ihit++){
 		switch (chits[0]->m_data[ihit].readout){
 		case (1):
-				Ec1=chits[0]->m_data[ihit].E;
-				break;
+												Ec1=chits[0]->m_data[ihit].E;
+		break;
 		case (2):
-				Ec2=chits[0]->m_data[ihit].E;
-				break;
+												Ec2=chits[0]->m_data[ihit].E;
+		break;
 		}
 	}
 
@@ -241,25 +250,99 @@ jerror_t JEventProcessor_Calorimeter_rate::evnt(JEventLoop *loop, uint64_t event
 	if ((Ec1>50)&&(nHitsExtVeto==0)&&(nHitsIntVeto==0)) flag=true;
 
 	if (flag){
-		for (int iwave=0;iwave<waves.size();iwave++){
-			hwave=hwaves[iwave];
-			int N=waves[iwave]->samples.size();
-			if (hwave==0){
-				hwaves[iwave]=new TH1D(Form("h_%i",iwave),Form("h_%i",iwave),N,-0.5,N-0.5);
-				m_ROOTOutput->AddObject(hwaves[iwave]);
-			}
+		int iwave=0;
+		int N;
+		for (chits_it=chits.begin();chits_it!=chits.end();chits_it++){
+			cwaves.clear();
+			(*chits_it)->Get(cwaves);
 
-			/*Title*/
-			hwave=hwaves[iwave];
-			hwave->Reset();
-			hwave->SetName(Form("h_%i_%i__%i__%f",waves[iwave]->m_channel.slot,waves[iwave]->m_channel.channel,eventnumber,Ec1));
-			hwave->SetTitle(Form("h_%i_%i__%i__%f",waves[iwave]->m_channel.slot,waves[iwave]->m_channel.channel,eventnumber,Ec1));
-			for (int isample=0;isample<N;isample++){
-				hwave->Fill(isample,waves[iwave]->samples[isample]);
+			for (cwaves_it=cwaves.begin();cwaves_it!=cwaves.end();cwaves_it++){
+				hwave=hwavesCalo[iwave];
+				N=(*cwaves_it)->samples.size();
+
+				if (hwave==0){
+					hwavesCalo[iwave]=new TH1D(Form("hCalo_%i",iwave),Form("hCalo_%i",iwave),N,-0.5,N-0.5);
+					m_ROOTOutput->AddObject(hwavesCalo[iwave]);
+				}
+				hwave=hwavesCalo[iwave];
+				hwave->Reset();
+				hwave->SetName(Form("h_%i_%i__%i__%f",cwaves[iwave]->m_channel.slot,cwaves[iwave]->m_channel.channel,eventnumber,Ec1));
+				hwave->SetTitle(Form("h_%i_%i__%i__%f",cwaves[iwave]->m_channel.slot,cwaves[iwave]->m_channel.channel,eventnumber,Ec1));
+
+				for (int isample=0;isample<N;isample++){
+					hwave->Fill(isample,(*cwaves_it)->samples[isample]);
+				}
+				hwave->Write();
+				iwave++;
 			}
-			hwave->Write();
 		}
-	}
+
+		iwave=0;
+		for (ivhits_it=ivhits.begin();ivhits_it!=ivhits.end();ivhits_it++){
+			ivwaves.clear();
+			(*ivhits_it)->Get(ivwaves);
+			for (ivwaves_it=ivwaves.begin();ivwaves_it!=ivwaves.end();ivwaves_it++){
+				hwave=hwavesIntVeto[iwave];
+				N=(*ivwaves_it)->samples.size();
+
+				if (hwave==0){
+					hwavesIntVeto[iwave]=new TH1D(Form("hIntVeto_%i",iwave),Form("hIntVeto_%i",iwave),N,-0.5,N-0.5);
+					m_ROOTOutput->AddObject(hwavesIntVeto[iwave]);
+				}
+				Qtot=(*ivhits_it)->Qtot;
+				slot=(*ivwaves_it)->m_channel.slot;
+				channel=(*ivwaves_it)->m_channel.channel;
+				Q=0;
+				if (slot==7) Q=Qtot;
+				if (slot==6){
+					channelTmp=channel%4+1;
+					for (int itmp=0;itmp<(*ivhits_it)->m_data.size();itmp++){
+						if ((*ivhits_it)->m_data[itmp].readout==channelTmp){
+							Q=(*ivhits_it)->m_data[itmp].Q;
+							break;
+						}
+					}
+				}
+				hwave=hwavesIntVeto[iwave];
+				hwave->Reset();
+				hwave->SetName(Form("hIntVeto_%i_%i__%i__%f_%f",slot,channel,eventnumber,Qtot,Q));
+				hwave->SetTitle(Form("hIntVeto_%i_%i__%i__%f_%f",slot,channel,eventnumber,Qtot,Q));
+
+				for (int isample=0;isample<N;isample++){
+					hwave->Fill(isample,(*ivwaves_it)->samples[isample]);
+				}
+				hwave->Write();
+				iwave++;
+			}
+		}
+
+		iwave=0;
+		for (evhits_it=evhits.begin();evhits_it!=evhits.end();evhits_it++){
+			evwaves.clear();
+			(*evhits_it)->Get(evwaves);
+			for (evwaves_it=evwaves.begin();evwaves_it!=evwaves.end();evwaves_it++){
+				hwave=hwavesExtVeto[iwave];
+				N=(*evwaves_it)->samples.size();
+
+				if (hwave==0){
+					hwavesExtVeto[iwave]=new TH1D(Form("hExtVeto_%i",iwave),Form("hExtVeto_%i",iwave),N,-0.5,N-0.5);
+					m_ROOTOutput->AddObject(hwavesExtVeto[iwave]);
+				}
+				hwave=hwavesExtVeto[iwave];
+				hwave->Reset();
+				hwave->SetName(Form("hExtVeto_%i_%i__%i__%f",(*evwaves_it)->m_channel.slot,(*evwaves_it)->m_channel.channel,eventnumber,(*evhits_it)->Q));
+				hwave->SetTitle(Form("hExtVeto_%i_%i__%i__%f",(*evwaves_it)->m_channel.slot,(*evwaves_it)->m_channel.channel,eventnumber,(*evhits_it)->Q));
+
+				for (int isample=0;isample<N;isample++){
+					hwave->Fill(isample,(*evwaves_it)->samples[isample]);
+				}
+				hwave->Write();
+				iwave++;
+			}
+		}
+
+
+	}/*end if flag*/
 
 
 	t->Fill();

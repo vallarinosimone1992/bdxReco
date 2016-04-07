@@ -3,7 +3,10 @@
 #include <DAQ/fa250Mode1CalibPedSubHit.h>
 #include <DAQ/fa250Mode7Hit.h>
 
-
+#include "TFile.h"
+#include "TH1D.h"
+#include "TCanvas.h"
+#include "TApplication.h"
 IntVetoSiPMHit* IntVetofa250Converter::convertHit(const fa250Hit *hit,const TranslationTable::ChannelInfo &m_channel) const{
 	IntVetoSiPMHit *m_IntVetoSiPMHit=new IntVetoSiPMHit;
 	m_IntVetoSiPMHit->m_channel=m_channel;
@@ -28,8 +31,10 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 	// not have to change this code.
 
 	int N,n,idx,imax;
+	int istart;
 	double min,max,xmin,xmax,prev_xmin,prev_xmax,rms,Tmax;
-	double ped;
+	double ped,pedRMS,thr;
+	bool found;
 	std::pair<int,int> m_thisCrossingTime;
 
 	std::vector<std::pair<int,int> > m_crossingTimes;
@@ -47,17 +52,39 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 
 	//0: refine pedestal, should be ~0 already
 	//0a: check if we can use this waveform as pedestal
-	ped=0;
-	/*
-	 * for (int ii=0;ii<NPED;ii++){
-		ped+=input->samples.at(ii);
+	found=false;
+	for (istart=0;istart<(input->samples.size()-m_NPED);istart++){
+		/*Compute pedestal and rms starting at this point*/
+		ped=0;
+		pedRMS=0;
+		for (int ii=0;ii<m_NPED;ii++){
+			ped+=input->samples.at(ii+istart);
+			pedRMS+=input->samples.at(ii+istart)*input->samples.at(ii+istart);
+
+		}
+		ped/=m_NPED;
+		pedRMS/=m_NPED;
+		pedRMS=sqrt(pedRMS-ped*ped);
+		if (pedRMS<=m_PEDRMS){
+			found=true;
+			break;
+		}
 	}
-	ped /= NPED;
-	 */
+	if (found==false){/*It means we were not able to correct the pedestal here!*/
+		ped=0;
+	}
+	TFile *f=new TFile("out11.root","update");
+	TH1D *h=new TH1D(Form("h_%i_%i_%f_%f",found,istart,ped,pedRMS),Form("h_%i_%i_%f_%f",found,istart,ped,pedRMS),size,-0.5,size-0.5);
+
+
 	//0b produced the waveform
 	for (int ii=0;ii<size;ii++){
-		m_waveform.push_back(input->samples.at(ii)-ped);
+		h->Fill(ii,input->samples[ii]-ped);
+		m_waveform.push_back(input->samples[ii]-ped);
 	}
+	h->Write();
+	f->Close();
+
 
 	//1: compute the average
 	for (int ii=0;ii<size;ii++){
@@ -66,8 +93,8 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 	output->average/=m_waveform.size();
 
 
-	///TODO NOT HARDCODED!
-	double thr;
+
+
 
 
 	thr=m_thrCalib->getCalibSingle(*output->m_channel.int_veto); //this is the 1 phe ampl FROM DB
