@@ -53,7 +53,7 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 	//0: refine pedestal, should be ~0 already
 	//0a: check if we can use this waveform as pedestal
 	found=false;
-	/*pedRMSmin=9999;
+	pedRMSmin=9999;
 	for (istart=0;istart<(input->samples.size()-m_NPED);istart++){
 		//Compute pedestal and rms starting at this point
 		ped=0;
@@ -77,7 +77,7 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 		ped=pedmin;
 		pedRMS=pedRMSmin;
 		istart=istartmin;
-	}*/
+	}
 	if (found==false){/*It means we were not able to correct the pedestal here!*/
 		ped=0;
 	}
