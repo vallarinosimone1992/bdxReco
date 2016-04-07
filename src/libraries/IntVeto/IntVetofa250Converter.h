@@ -31,8 +31,8 @@ public:
 
 	CalibrationHandler<TranslationTable::INT_VETO_Index_t> *m_thrCalib;
 
-	int m_minTot;
-	int m_thr;
+	double m_minTot;
+	double m_thr;
 	int m_NSB,m_NSA,m_NPED;
 };
 

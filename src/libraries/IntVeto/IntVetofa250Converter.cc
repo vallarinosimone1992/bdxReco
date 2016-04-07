@@ -53,9 +53,9 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 	//0: refine pedestal, should be ~0 already
 	//0a: check if we can use this waveform as pedestal
 	found=false;
-	pedRMSmin=9999;
+	/*pedRMSmin=9999;
 	for (istart=0;istart<(input->samples.size()-m_NPED);istart++){
-		/*Compute pedestal and rms starting at this point*/
+		//Compute pedestal and rms starting at this point
 		ped=0;
 		pedRMS=0;
 		for (int ii=0;ii<m_NPED;ii++){
@@ -77,7 +77,7 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 		ped=pedmin;
 		pedRMS=pedRMSmin;
 		istart=istartmin;
-	}
+	}*/
 	if (found==false){/*It means we were not able to correct the pedestal here!*/
 		ped=0;
 	}
@@ -155,7 +155,7 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 	else {
 		output->m_type=IntVetoSiPMHit::real_signal;
 		output->A=-9999;
-		/*Loop over the thr crossings and select the higher pulse*/
+		/*Loop over the thr crossings and select the highest pulse*/
 		for (int iphe=0;iphe<output->nSingles;iphe++){
 			idx=m_singleCrossingIndexes.at(iphe);
 			xmin=m_crossingTimes.at(idx).first;
