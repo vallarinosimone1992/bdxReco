@@ -26,8 +26,8 @@ if (cur_fold != bdx_fold):
 
 
 parser = argparse.ArgumentParser(description='Load data in CCDB for given variation / runs')
-parser.add_argument('--variation', type=str, default="default", help='If set, set the variation to use. The variation should correspond to a folder with the txt files to upload')
-parser.add_argument('--connection', type=str,required=true,"Connection string to use")
+parser.add_argument('--variation',type=str, default="default", help='If set, set the variation to use. The variation should correspond to a folder with the txt files to upload')
+parser.add_argument('--connection',type=str,required=True,help="Connection string to use")
 args = parser.parse_args()
 
 variation = args.variation
