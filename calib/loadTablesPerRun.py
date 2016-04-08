@@ -29,13 +29,13 @@ if (cur_fold != bdx_fold):
 parser = argparse.ArgumentParser(description='Load data in CCDB for given variation / runs')
 parser.add_argument('--variation', type=str, default="default", help='If set, set the variation to use. The variation should correspond to a folder with the txt files to upload')
 parser.add_argument('--connection', type=str, required=True, help='Connection string')
-
+parser.add_argument('--table', type=str,default="all", help='Table to add, absolute path. If "all" is used - default - , all are added')
 
 args = parser.parse_args()
 
 variation = args.variation
 connection_string = args.connection
-
+requestTable = args.table
 
 
 #check if variation folder exists
@@ -48,53 +48,58 @@ if (os.path.isdir(variation)==False):
 commandBase = "ccdb -c "+connection_string+" add -v "+variation+" "
 
 #Calorimeter
-table = "/Calorimeter/Ene "
-filen = variation+"/Calorimeter.Ene"
-files = glob.glob(filen+".*")
-for file in files:
-    run=file.split("/")[1].split(".")[2]
-    print file+" ",run
-    command = commandBase+table+"-r "+str(run)+"-"+str(run)+" "+file
-    subprocess.call(command,shell=True)
+table = "/Calorimeter/Ene"
+if ((requestTable=="all")or(requestTable==table)):
+    filen = variation+"/Calorimeter.Ene"
+    files = glob.glob(filen+".*")
+    for file in files:
+        run=file.split("/")[1].split(".")[2]
+        print file+" ",run
+        command = commandBase+table+" -r "+str(run)+"-"+str(run)+" "+file
+        subprocess.call(command,shell=True)
 
 
 #InnerVeto
-table = "/InnerVeto/sipm_gain "
-filen = variation+"/InnerVeto.sipm_gain"
-files = glob.glob(filen+".*")
-for file in files:
-    run=file.split("/")[1].split(".")[2]
-    print file+" ",run
-    command = commandBase+table+"-r "+str(run)+"-"+str(run)+" "+file
-    subprocess.call(command,shell=True)
+table = "/InnerVeto/sipm_gain"
+if ((requestTable=="all")or(requestTable==table)):
+    filen = variation+"/InnerVeto.sipm_gain"
+    files = glob.glob(filen+".*")
+    for file in files:
+        run=file.split("/")[1].split(".")[2]
+        print file+" ",run
+        command = commandBase+table+" -r "+str(run)+"-"+str(run)+" "+file
+        subprocess.call(command,shell=True)
 
-table = "/InnerVeto/sipm_ampl "
-filen = variation+"/InnerVeto.sipm_ampl"
-files = glob.glob(filen+".*")
-for file in files:
-    run=file.split("/")[1].split(".")[2]
-    print file+" ",run
-    command = commandBase+table+"-r "+str(run)+"-"+str(run)+" "+file
-    subprocess.call(command,shell=True)
+table = "/InnerVeto/sipm_ampl"
+if ((requestTable=="all")or(requestTable==table)):
+    filen = variation+"/InnerVeto.sipm_ampl"
+    files = glob.glob(filen+".*")
+    for file in files:
+        run=file.split("/")[1].split(".")[2]
+        print file+" ",run
+        command = commandBase+table+" -r "+str(run)+"-"+str(run)+" "+file
+        subprocess.call(command,shell=True)
 
 
 #ExtVeto
-table = "/ExtVeto/Ene "
-filen = variation+"/ExtVeto.Ene"
-files = glob.glob(filen+".*")
-for file in files:
-    run=file.split("/")[1].split(".")[2]
-    print file+" ",run
-    command = commandBase+table+"-r "+str(run)+"-"+str(run)+" "+file
-    subprocess.call(command,shell=True)
+table = "/ExtVeto/Ene"
+if ((requestTable=="all")or(requestTable==table)):
+    filen = variation+"/ExtVeto.Ene"
+    files = glob.glob(filen+".*")
+    for file in files:
+        run=file.split("/")[1].split(".")[2]
+        print file+" ",run
+        command = commandBase+table+" -r "+str(run)+"-"+str(run)+" "+file
+        subprocess.call(command,shell=True)
 
 #Paddles
-table = "/Paddles/Ene "
-filen = variation+"/Paddles.Ene"
-files = glob.glob(filen+".*")
-for file in files:
-    run=file.split("/")[1].split(".")[2]
-    print file+" ",run
-    command = commandBase+table+"-r "+str(run)+"-"+str(run)+" "+file
-    subprocess.call(command,shell=True)
+table = "/Paddles/Ene"
+if ((requestTable=="all")or(requestTable==table)):
+    filen = variation+"/Paddles.Ene"
+    files = glob.glob(filen+".*")
+    for file in files:
+        run=file.split("/")[1].split(".")[2]
+        print file+" ",run
+        command = commandBase+table+" -r "+str(run)+"-"+str(run)+" "+file
+        subprocess.call(command,shell=True)
 
