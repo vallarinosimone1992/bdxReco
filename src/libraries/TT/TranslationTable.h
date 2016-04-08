@@ -34,7 +34,7 @@ public:
 	// indexes. These are then used below in the DChannelInfo
 	// class to relate them to the DAQ indexing scheme of
 	// crate, slot, channel.
-	struct csc_t {
+	struct csc_t : public TObject{
 		uint32_t rocid;
 		uint32_t slot;
 		uint32_t channel;
@@ -44,6 +44,9 @@ public:
 					&& (channel == rhs.channel);
 		}
 
+		csc_t(){};
+		virtual ~csc_t(){};
+		void setCrateSlotChannel(uint32_t cr,uint32_t sl,uint32_t ch){rocid=cr;slot=sl;channel=ch;}
 		//...................................
 		// Less than operator for csc_t data types. This is used by
 		// the map<csc_t, XX> to order the entires by key
@@ -56,6 +59,7 @@ public:
 			if (channel > b.channel) return false;
 			return false;
 		}
+		ClassDef(csc_t,1);
 	};
 
 	enum Detector_t {

@@ -213,7 +213,8 @@ TranslationTable::ChannelInfo TranslationTable::getChannelInfo(const csc_t &csc)
 
 
 TranslationTable::ChannelInfo TranslationTable::getChannelInfo(int crate,int slot,int channel) const{
-	TranslationTable::csc_t csc = {crate,slot,channel};
+	TranslationTable::csc_t csc;
+	csc.setCrateSlotChannel(crate,slot,channel);
 	return this->getChannelInfo(csc);
 }
 
@@ -335,7 +336,8 @@ void StartElement(void *userData, const char *xmlname, const char **atts)
 		}
 
 
-		TranslationTable::csc_t csc = {(uint32_t)crate,(uint32_t)slot,(uint32_t)channel};
+		TranslationTable::csc_t csc;
+		csc.setCrateSlotChannel((uint32_t)crate,(uint32_t)slot,(uint32_t)channel);
 		string detector = Detector;
 		std::transform(detector.begin(), detector.end(), detector.begin(), (int(*)(int)) tolower);
 

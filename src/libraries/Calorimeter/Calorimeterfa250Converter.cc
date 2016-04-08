@@ -118,6 +118,12 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 
 
 
+	if (output->pedSigma<=input->m_RMS){
+		output->good_ped_RMS=true;
+	}
+	else output->good_ped_RMS=false;
+
+
 	//2: find m_THR crossings
 	m_thisCrossingTime.first=-1;
 	m_thisCrossingTime.second=-1;

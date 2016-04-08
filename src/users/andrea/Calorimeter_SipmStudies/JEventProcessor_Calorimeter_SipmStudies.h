@@ -11,6 +11,7 @@
 #include <JANA/JEventProcessor.h>
 class TTree;
 class JROOTOutput;
+class CalorimeterSiPMHit;
 
 class JEventProcessor_Calorimeter_SipmStudies:public jana::JEventProcessor{
 public:
@@ -29,14 +30,18 @@ private:
 
 	int eventNumber;
 	int m_isFirstCallToBrun;
-	int m_type1,m_type2;
 
+/*	int m_type1,m_type2;
 	double m_Q1,m_Q2;
 	double m_A1,m_A2;
 	double m_Q1s,m_Q2s;
 	double m_T1,m_T2;
 	double m_ped1,m_ped2;
-	double m_pedSigma1,m_pedSigma2;
+	double m_pedSigma1,m_pedSigma2;*/
+
+	double Ec1,Ec2,Ec;
+
+	const CalorimeterSiPMHit *hit1,*hit2;
 
 	JROOTOutput *m_ROOTOutput;
 

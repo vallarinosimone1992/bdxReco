@@ -13,6 +13,12 @@
 #include <DAQ/fa250ConvertedHit.h>
 #include <TT/TranslationTable.h>
 
+#ifdef __ROOTCINT__
+#pragma link off all globals;
+#pragma link off all classes;
+#pragma link off all functions;
+#pragma link C++ class IntVetoSiPMHit+;
+#endif
 
 class IntVetoSiPMHit:public fa250ConvertedHit{
 public:
@@ -39,7 +45,8 @@ public:
 
 
 	//A.C. do not touch these
-	TranslationTable::ChannelInfo m_channel; //both crate-slot channel and detector-specific ID. Since this is a sensor-based object, the readout field will be !=0
+	//both crate-slot channel and detector-specific ID. Since this is a sensor-based object, the readout field will be !=0
+	TranslationTable::ChannelInfo m_channel;
 
 	double Qraw,Qphe,T,A;
 	double average;

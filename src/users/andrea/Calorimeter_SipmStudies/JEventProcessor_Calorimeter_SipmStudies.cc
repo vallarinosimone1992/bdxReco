@@ -26,6 +26,7 @@ using namespace jana;
 
 
 #include <Calorimeter/CalorimeterSiPMHit.h>
+#include <Calorimeter/CalorimeterHit.h>
 
 
 
@@ -51,7 +52,9 @@ void InitPlugin(JApplication *app){
 JEventProcessor_Calorimeter_SipmStudies::JEventProcessor_Calorimeter_SipmStudies():
 		m_ROOTOutput(0)
 {
-
+	hit1=0;
+	hit2=0;
+	m_isFirstCallToBrun=1;
 }
 
 //------------------
@@ -71,7 +74,15 @@ jerror_t JEventProcessor_Calorimeter_SipmStudies::init(void)
 	t=new TTree("CaloSipm","CaloSipm");
 
 	t->Branch("evnt",&eventNumber);
-	t->Branch("type1",&m_type1);
+	//t->SetMakeClass(0);
+	t->Branch("hit1",&hit1);
+	t->Branch("hit2",&hit2);
+
+	t->Branch("Ec1",&Ec1);
+	t->Branch("Ec2",&Ec2);
+	t->Branch("Ec",&Ec);
+
+/*	t->Branch("type1",&m_type1);
 	t->Branch("type2",&m_type2);
 
 
@@ -89,6 +100,9 @@ jerror_t JEventProcessor_Calorimeter_SipmStudies::init(void)
 	t->Branch("pedSigma",&m_pedSigma1);
 	t->Branch("ped",&m_ped2);
 	t->Branch("pedSigma",&m_pedSigma2);
+
+	t->Branch("goodRMS1",&m_goodRMS1);
+	t->Branch("goodRMS2",&m_goodRMS2);*/
 
 
 
@@ -152,42 +166,41 @@ jerror_t JEventProcessor_Calorimeter_SipmStudies::evnt(JEventLoop *loop, uint64_
 {
 	vector <const CalorimeterSiPMHit*> cdata;
 	vector <const CalorimeterSiPMHit*>::const_iterator cdata_it;
+
+	vector <const CalorimeterHit*> cdata2;
+	vector <const CalorimeterHit*>::const_iterator cdata2_it;
 	loop->Get(cdata);
+	loop->Get(cdata2);
+
+
 	japp->RootWriteLock();
 	eventNumber=eventnumber;
-	m_Q1=0;
-	m_Q2=0;
-	m_Q1s=0;
-	m_Q2s=0;
-	m_T1=0;
-	m_T2=0;
-	m_A1=0;
-	m_A2=0;
-	m_ped1=0;
-	m_ped2=0;
-	m_pedSigma1=0;
-	m_pedSigma2=0;
+
+
+
+	for (cdata2_it=cdata2.begin();cdata2_it!=cdata2.end();cdata2_it++){
+		const CalorimeterHit *hit= *cdata2_it;
+		Ec=hit->E;
+		for (int idata=0;idata<hit->m_data.size();idata++){
+			switch (hit->m_data[idata].readout){
+			case 1:
+				Ec1=hit->m_data[idata].E;
+				break;
+			case 2:
+				Ec2=hit->m_data[idata].E;
+				break;
+			}
+		}
+	}
 
 	for (cdata_it=cdata.begin();cdata_it!=cdata.end();cdata_it++){
 		const CalorimeterSiPMHit *sipmhit= *cdata_it;
 		switch (sipmhit->m_channel.int_veto->readout){
 		case (1):
-			m_Q1 = sipmhit->Qphe;
-			m_Q1s= sipmhit->QpheS;
-			m_T1= sipmhit->T;
-			m_A1= sipmhit->A;
-			m_ped1= sipmhit->ped;
-			m_pedSigma1=sipmhit->pedSigma;
-			m_type1=sipmhit->m_type;
+			hit1=sipmhit;
 		break;
 		case (2):
-			m_Q2 = sipmhit->Qphe;
-			m_Q2s= sipmhit->QpheS;
-			m_T2= sipmhit->T;
-			m_A2= sipmhit->A;
-			m_ped2= sipmhit->ped;
-			m_pedSigma2=sipmhit->pedSigma;
-			m_type2=sipmhit->m_type;
+			hit2=sipmhit;
 		break;
 		default:
 			break;
