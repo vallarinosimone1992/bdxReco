@@ -37,21 +37,21 @@ def AddROOTdict(env,reldir,absdir):
 	elif os.path.exists(rootcintpath):
 			bldNoLinkDef = SCons.Script.Builder(action = rootcintactionNoLinkDef, suffix='_Dict.cc', src_suffix='.h')
 	else:
+
 			print 'Neither rootcint nor rootcling exists. Unable to create ROOT dictionaries if any encountered.'
 			return
 
-
 	if env['SHOWBUILD']==0:
-			rootcintactionLinkDef  = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCE %s" % (rootcintpath," -I".join(env['CPPPATH']),reldir+"/LinkDef.h"), 'ROOTCINT   [$SOURCE]')
-			rootclingactionLinkDef = SCons.Script.Action("%s  -f $TARGET -c -p -I%s $SOURCE %s" % (rootclingpath," -I".join(env['CPPPATH']),reldir+"/LinkDef.h"), 'ROOTCLING  [$SOURCE]')
+			rootcintactionLinkDef  = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCE %s/$SOURCE_LinkDef.h" % (rootcintpath," -I".join(env['CPPPATH']),reldir), 'ROOTCINT   [$SOURCE]')
+			rootclingactionLinkDef = SCons.Script.Action("%s  -f $TARGET -c -p -I%s $SOURCE %s/$SOURCE_LinkDef.h" % (rootclingpath," -I".join(env['CPPPATH']),reldir), 'ROOTCLING  [$SOURCE]')
 	else:
-			rootcintactionLinkDef  = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCE %s" % (rootcintpath," -I".join(env['CPPPATH']),reldir+"/LinkDef.h"))
-			rootclingactionLinkDef = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCE %s" % (rootclingpath," -I".join(env['CPPPATH']),reldir+"/LinkDef.h"))
+			rootcintactionLinkDef  = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCES" % (rootcintpath," -I".join(env['CPPPATH'])))
+			rootclingactionLinkDef = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCES" % (rootclingpath," -I".join(env['CPPPATH'])))
 
 	if os.path.exists(rootclingpath) :
-			bldLinkDef = SCons.Script.Builder(action = rootclingactionLinkDef, suffix='_Dict.cc', src_suffix='.h')
+			bldLinkDef = SCons.Script.Builder(action = rootclingactionLinkDef)
 	elif os.path.exists(rootcintpath):
-			bldLinkDef = SCons.Script.Builder(action = rootcintactionLinkDef, suffix='_Dict.cc', src_suffix='.h')
+			bldLinkDef = SCons.Script.Builder(action = rootcintactionLinkDef)
 	else:
 			print 'Neither rootcint nor rootcling exists. Unable to create ROOT dictionaries if any encountered.'
 			return	
@@ -79,12 +79,13 @@ def AddROOTdict(env,reldir,absdir):
 	retVal="";
 	for f in glob.glob('*.[h|hh|hpp]'):
 		if 'ClassDef' in open(f).read():
+			filename, file_extension = os.path.splitext(f)	
 			if(int(env['SHOWBUILD'])>=1):
 				print "  ----->  ROOT dictionary for %s" % f
-			if os.path.isfile("LinkDef.h"):
+			if os.path.isfile(filename+"_LinkDef.h"):
 				if(int(env['SHOWBUILD'])>=1):
-					print " -----> Using LinkDef.h file found" 
-				retVal=env.ROOTDictLinkDef(reldir+"/"+f)
+					print "  -----> Using "+filename+"_LinkDef.h for dictionary" 
+				retVal=env.ROOTDictLinkDef(reldir+"/"+filename+"_Dict.cc",[reldir+"/"+f,reldir+"/"+filename+"_LinkDef.h"])
 			else:
 				retVal=env.ROOTDictNoLinkDef(reldir+"/"+f)
 	os.chdir(curpath)
