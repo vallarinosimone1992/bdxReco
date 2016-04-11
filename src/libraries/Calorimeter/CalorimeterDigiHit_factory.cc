@@ -96,9 +96,12 @@ jerror_t CalorimeterDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 		for (int ihit=0;ihit<m_CalorimeterSiPMHit_tmp.size();ihit++){
 
 			CalorimeterDigiHit::CalorimeterSiPMDigiHit hit;
-			hit.Q=m_CalorimeterSiPMHit_tmp.at(ihit)->Qphe;
-			hit.T=m_CalorimeterSiPMHit_tmp.at(ihit)->T;
-			hit.readout=m_CalorimeterSiPMHit_tmp.at(ihit)->m_channel.calorimeter->readout;
+			hit.Q=m_CalorimeterSiPMHit_tmp[ihit]->Qphe;
+			hit.T=m_CalorimeterSiPMHit_tmp[ihit]->T;
+			hit.readout=m_CalorimeterSiPMHit_tmp[ihit]->m_channel.calorimeter->readout;
+			hit.good_ped_RMS=m_CalorimeterSiPMHit_tmp[ihit]->good_ped_RMS;
+			hit.type=m_CalorimeterSiPMHit_tmp[ihit]->m_type;
+
 			m_CalorimeterDigiHit_tmp->m_data.push_back(hit);
 		}
 		_data.push_back(m_CalorimeterDigiHit_tmp); //publish it

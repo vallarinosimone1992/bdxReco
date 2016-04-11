@@ -42,8 +42,8 @@ def AddROOTdict(env,reldir,absdir):
 			return
 
 	if env['SHOWBUILD']==0:
-			rootcintactionLinkDef  = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCE %s/$SOURCE_LinkDef.h" % (rootcintpath," -I".join(env['CPPPATH']),reldir), 'ROOTCINT   [$SOURCE]')
-			rootclingactionLinkDef = SCons.Script.Action("%s  -f $TARGET -c -p -I%s $SOURCE %s/$SOURCE_LinkDef.h" % (rootclingpath," -I".join(env['CPPPATH']),reldir), 'ROOTCLING  [$SOURCE]')
+			rootcintactionLinkDef  = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCES" % (rootcintpath," -I".join(env['CPPPATH'])), 'ROOTCINT   [$SOURCE]')
+			rootclingactionLinkDef = SCons.Script.Action("%s  -f $TARGET -c -p -I%s $SOURCES" % (rootclingpath," -I".join(env['CPPPATH'])), 'ROOTCLING  [$SOURCE]')
 	else:
 			rootcintactionLinkDef  = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCES" % (rootcintpath," -I".join(env['CPPPATH'])))
 			rootclingactionLinkDef = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCES" % (rootclingpath," -I".join(env['CPPPATH'])))

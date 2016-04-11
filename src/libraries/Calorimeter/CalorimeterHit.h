@@ -12,41 +12,48 @@
 #include <JANA/JFactory.h>
 #include <TT/TranslationTable.h>
 #include <system/BDXObject.h>
+#include <Calorimeter/CalorimeterSiPMHit.h>
+#include <TH1D.h>
+#include <TCanvas.h>
 
-class TCanvas;
-class TH1D;
+
 class CalorimeterHit:public BDXObject{
 
-	public:
+public:
 	struct CalorimeterComponentHit{
-			int readout;
-			double E;
-			double Q;
-			double T;
+	public:
+		int readout;
+		double E;
+		double Q;
+		double T;
+		bool good_ped_RMS;
+		CalorimeterSiPMHit::hit_type type;
 	};
 
-		JOBJECT_PUBLIC(CalorimeterHit);
-		
-		// Add data members here. For example:
-		// int id;
-		// double E;
-		
-		// This method is used primarily for pretty printing
-		// the second argument to AddString is printf style format
-		void toStrings(vector<pair<string,string> > &items)const{
-			// AddString(items, "id", "%4d", id);
-			// AddString(items, "E", "%f", E);
-		}
-		vector<CalorimeterComponentHit> m_data;
-		double E,Q,T;
-		int N; //how many counters associated with this object were above thr (i.e. how many entries in m_data?
+	JOBJECT_PUBLIC(CalorimeterHit);
 
-		virtual TCanvas* Draw(int id)const;
+	// Add data members here. For example:
+	// int id;
+	// double E;
 
-		TranslationTable::CALO_Index_t m_channel; //Detector-specific ID. Since this is a detector-based object, the readout field will be ==0
+	// This method is used primarily for pretty printing
+	// the second argument to AddString is printf style format
+	void toStrings(vector<pair<string,string> > &items)const{
+		// AddString(items, "id", "%4d", id);
+		// AddString(items, "E", "%f", E);
+	}
+	vector<CalorimeterComponentHit> m_data;
+	double E,Q,T;
+	int N; //how many counters associated with this object were above thr (i.e. how many entries in m_data?
 
-	private:
-		mutable vector<TH1D*> hWaves;
+	virtual TCanvas* Draw(int id)const;
+
+	TranslationTable::CALO_Index_t m_channel; //Detector-specific ID. Since this is a detector-based object, the readout field will be ==0
+
+private:
+	mutable vector<TH1D*> hWaves; //!
+
+	ClassDef(CalorimeterHit,1);
 };
 
 #endif // _CalorimeterHit_

@@ -184,7 +184,10 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 						hit.readout=m_CalorimeterDigiHit->m_data[idigi].readout;
 						hit.Q=Q;
 						hit.T=T;
+						hit.good_ped_RMS=m_CalorimeterDigiHit->m_data[idigi].good_ped_RMS;
+						hit.type=m_CalorimeterDigiHit->m_data[idigi].type;
 						hit.E=0;
+
 						/*Try to calibrate in energy and ped-sub*/
 						m_index=m_CalorimeterHit->m_channel;
 						m_index.readout=m_CalorimeterDigiHit->m_data[idigi].readout;

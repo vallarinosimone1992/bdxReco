@@ -68,11 +68,13 @@ jerror_t CalorimeterDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnum
 		digi_hit.readout=1;  ///TODO: ask Marco
 		digi_hit.Q=m_CalorimeterMCHit->adcl;
 		digi_hit.T=m_CalorimeterMCHit->tdcl;
+		digi_hit.good_ped_RMS=true; /*by default!*/
 		m_CalorimeterDigiHit->m_data.push_back(digi_hit);
 
 		digi_hit.readout=2;  ///TODO: ask Marco
 		digi_hit.Q=m_CalorimeterMCHit->adcr;
 		digi_hit.T=m_CalorimeterMCHit->tdcr;
+		digi_hit.good_ped_RMS=true;/*by default!*/
 		m_CalorimeterDigiHit->m_data.push_back(digi_hit);
 
 

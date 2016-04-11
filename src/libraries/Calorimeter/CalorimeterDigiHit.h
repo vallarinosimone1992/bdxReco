@@ -11,7 +11,7 @@
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
 #include <TT/TranslationTable.h>
-
+#include <Calorimeter/CalorimeterSiPMHit.h>
 
 class CalorimeterDigiHit:public jana::JObject{
 public:
@@ -19,6 +19,8 @@ public:
 		int readout;
 		double Q;
 		double T;
+		bool good_ped_RMS;
+		CalorimeterSiPMHit::hit_type type;
 	};
 	JOBJECT_PUBLIC(CalorimeterDigiHit);
 

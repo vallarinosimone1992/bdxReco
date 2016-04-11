@@ -60,6 +60,5 @@ double a;
 	ClassDef(CalorimeterSiPMHit,1);
 
 };
-
 #endif // _CalorimeterSiPMHit_
 

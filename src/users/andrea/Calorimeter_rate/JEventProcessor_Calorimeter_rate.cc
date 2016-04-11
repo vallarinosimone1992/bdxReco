@@ -53,7 +53,7 @@ void InitPlugin(JApplication *app){
 //------------------
 JEventProcessor_Calorimeter_rate::JEventProcessor_Calorimeter_rate()
 {
-
+	caloHit=0;
 }
 
 //------------------
@@ -80,9 +80,7 @@ jerror_t JEventProcessor_Calorimeter_rate::init(void)
 	japp->RootWriteLock();
 	t=new TTree("CaloRate","CaloRate");
 	t->Branch("eventN",&eventNumber);
-	t->Branch("Ec",&Ec);
-	t->Branch("Ec1",&Ec1);
-	t->Branch("Ec2",&Ec2);
+	t->Branch("CalorimeterHit",&caloHit);
 	t->Branch("nHitsIntVeto",&nHitsIntVeto);
 	t->Branch("nHitsExtVeto",&nHitsExtVeto);
 
@@ -235,6 +233,9 @@ jerror_t JEventProcessor_Calorimeter_rate::evnt(JEventLoop *loop, uint64_t event
 		nHitsExtVeto=0;
 	}
 	Ec=chits[0]->E;
+	caloHit=chits[0];
+
+
 	for (int ihit=0;ihit<chits[0]->m_data.size();ihit++){
 		switch (chits[0]->m_data[ihit].readout){
 		case (1):
@@ -247,7 +248,7 @@ jerror_t JEventProcessor_Calorimeter_rate::evnt(JEventLoop *loop, uint64_t event
 	}
 
 
-	if ((Ec1>10)&&(nHitsExtVeto==0)&&(nHitsIntVeto==0)) flag=true;
+	if ((Ec1>100)&&(nHitsExtVeto==0)&&(nHitsIntVeto==0)) flag=true;
 
 	if (flag){
 		int iwave=0;
