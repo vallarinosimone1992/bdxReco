@@ -248,7 +248,7 @@ jerror_t JEventProcessor_Calorimeter_rate::evnt(JEventLoop *loop, uint64_t event
 	}
 
 
-	if ((Ec1>100)&&(nHitsExtVeto==0)&&(nHitsIntVeto==0)) flag=true;
+//	if ((Ec1>10)&&(nHitsExtVeto==0)&&(nHitsIntVeto==0)&&(caloHit->m_data[0].good_ped_RMS==true)&&(caloHit->m_data[1].good_ped_RMS==true)) flag=true;
 
 	if (flag){
 		int iwave=0;

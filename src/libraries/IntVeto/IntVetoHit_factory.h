@@ -30,7 +30,7 @@ class IntVetoHit_factory:public jana::JFactory<IntVetoHit>{
 
 		double m_THR_singleReadout;
 		double m_THR_multipleReadout;
-		double m_N_multipleReadout;
+		int m_N_multipleReadout;
 		int m_hit_bottom_workAround;
 };
 

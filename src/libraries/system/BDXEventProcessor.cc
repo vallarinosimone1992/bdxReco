@@ -46,14 +46,13 @@ jerror_t BDXEventProcessor::init(void)
 {
 
 	bout<<"BDXEventProcessor::init"<<endl;
-	gPARMS->GetParameter("MC", isMC);
+	gPARMS->GetParameter("MC",isMC);
 
 
 
 
 	gPARMS->SetDefaultParameter("SYSTEM:OUTPUT",optf,
-			"Set OUTPUT file type and name, using the form \"TYPE,FILENAME\". Type can be ROOT, EVIO, TXT.\n"
-			"Example: -PSYSTEM:OUTPUT=\"ROOT,out.root\" ");
+			"Set OUTPUT file type and name, using the form \"TYPE,FILENAME\". Type can be ROOT, EVIO, TXT. Example: -PSYSTEM:OUTPUT=\"ROOT,out.root\" ");
 
 	outType.assign(optf, 0, optf.find(",")) ;
 	outFile.assign(optf,    optf.find(",") + 1, optf.size()) ;

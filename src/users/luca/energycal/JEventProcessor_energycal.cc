@@ -13,6 +13,7 @@ using namespace jana;
 #include <Calorimeter/CalorimeterDigiHit.h>
 #include <Calorimeter/CalorimeterHit.h>
 
+#include <Paddles/PaddlesDigiHit.h>
 #include <Paddles/PaddlesHit.h>
 
 #include <MC/CalorimeterMCHit.h>
@@ -89,6 +90,8 @@ jerror_t JEventProcessor_energycal::init(void)
 	t->Branch("Tc2",&Tc2);
 	t->Branch("Ep1",&Ep1);
 	t->Branch("Ep2",&Ep2);
+	t->Branch("Qp1",&Qp1);
+	t->Branch("Qp2",&Qp2);
 	t->Branch("Tp1",&Tp1);
 	t->Branch("Tp2",&Tp2);
 	t->Branch("Tpdiff",&Tpdiff);
@@ -208,17 +211,23 @@ jerror_t JEventProcessor_energycal::evnt(JEventLoop *loop, uint64_t eventnumber)
 	for (data_it=data.begin();data_it<data.end();data_it++){
 
 		const PaddlesHit *evhit = *data_it;
+		vector<const PaddlesDigiHit*> digiphits;
+		evhit->Get(digiphits);
 		//jout << evhit->m_channel.id<<endl;
 		E = evhit->E;
 		T = evhit->T;
 		if(evhit->m_channel.id==0){
 			Ep1=E;
 			Tp1=T;
+			Qp1=digiphits[0]->Q;
 		}
 		if(evhit->m_channel.id==1){
 			Ep2=E;
 			Tp2=T;
+			Qp2=digiphits[0]->Q;
+
 		}
+
 	}
 
 	for (cdata_it=cdata.begin();cdata_it<cdata.end();cdata_it++){

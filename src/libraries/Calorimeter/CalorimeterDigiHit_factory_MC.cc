@@ -65,17 +65,19 @@ jerror_t CalorimeterDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnum
 		m_CalorimeterDigiHit->m_channel.readout=0;  //this is an active-volume object
 		m_CalorimeterDigiHit->AddAssociatedObject(m_CalorimeterMCHit);
 
-		digi_hit.readout=1;  ///TODO: ask Marco
+		digi_hit.readout=1; ///THIS IS CORRECT ---> in MC "right" is the first MPPC, i.e. readout=1
+		digi_hit.Q=m_CalorimeterMCHit->adcr;
+		digi_hit.T=m_CalorimeterMCHit->tdcr;
+		digi_hit.good_ped_RMS=true;/*by default!*/
+		m_CalorimeterDigiHit->m_data.push_back(digi_hit);
+
+		digi_hit.readout=2;  ///THIS IS CORRECT ---> in MC "left" is the second MPPC, i.e. readout=2
 		digi_hit.Q=m_CalorimeterMCHit->adcl;
 		digi_hit.T=m_CalorimeterMCHit->tdcl;
 		digi_hit.good_ped_RMS=true; /*by default!*/
 		m_CalorimeterDigiHit->m_data.push_back(digi_hit);
 
-		digi_hit.readout=2;  ///TODO: ask Marco
-		digi_hit.Q=m_CalorimeterMCHit->adcr;
-		digi_hit.T=m_CalorimeterMCHit->tdcr;
-		digi_hit.good_ped_RMS=true;/*by default!*/
-		m_CalorimeterDigiHit->m_data.push_back(digi_hit);
+
 
 
 		_data.push_back(m_CalorimeterDigiHit);
