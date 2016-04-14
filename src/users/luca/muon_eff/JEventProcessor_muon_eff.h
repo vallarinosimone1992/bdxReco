@@ -39,9 +39,11 @@ class JEventProcessor_muon_eff:public jana::JEventProcessor{
 
 		//data variables
 		double Qc1,Qc2,Ep1,Ep2,Qctot,Tp1,Tp2,Tpdiff,Tc1,Tc2;
+		int good_ped_RMS;
 
 		double  IntVetoTopDigiHitQ;
 		const IntVetoDigiHit* IntVetoTopDigiHit;
+		const IntVetoDigiHit* IntVetoBotDigiHit;
 		//MC variables
 		double Ec_MC;
 
