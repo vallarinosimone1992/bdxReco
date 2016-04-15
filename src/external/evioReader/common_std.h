@@ -14,7 +14,7 @@
 #if (defined(__APPLE__))
 
 #ifndef uint8_t
-typedef unsigned __INT8_TYPE__ uint8_t;
+typedef unsigned char uint8_t;
 #endif
 
 #ifndef uint32_t
