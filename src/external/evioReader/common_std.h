@@ -18,7 +18,7 @@ typedef unsigned char uint8_t;
 #endif
 
 #ifndef int8_t
-typedef char uint8_t;
+typedef char int8_t;
 #endif
 
 #ifndef uint32_t
