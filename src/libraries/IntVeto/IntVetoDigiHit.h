@@ -47,9 +47,9 @@ public:
 	vector <IntVetoSiPMDigiHit> m_data; //keep in this way to be MC-compatible!
 
 	double Qtot;
-
+#if (!defined(__APPLE__))
 	ClassDef(IntVetoDigiHit,1);
-
+#endif
 };
 #endif // _IntVetoDigiHit_
 

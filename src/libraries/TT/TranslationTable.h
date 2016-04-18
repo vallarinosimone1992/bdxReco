@@ -154,7 +154,9 @@ public:
 			return false;
 		}
 		string name()const{return "EXT_Veto";}
+#if (!defined(__APPLE__))
 		ClassDef(EXT_VETO_Index_t,1);
+#endif
 	};
 
 	class INT_VETO_Index_t : public TObject{
@@ -213,7 +215,9 @@ public:
 			return false;
 		}
 		string name()const{return "INT_Veto";}
+#if (!defined(__APPLE__))
 		ClassDef(INT_VETO_Index_t,1);
+#endif
 	};
 
 	class CALO_Index_t : public TObject{
@@ -270,7 +274,9 @@ public:
 			return false;
 		}
 		string name()const{return "CALO";}
+#if (!defined(__APPLE__))
 		ClassDef(CALO_Index_t,1);
+#endif
 	};
 
 	class PADDLES_Index_t : public TObject{
@@ -306,7 +312,9 @@ public:
 			return false;
 		}
 		string name() const{return "PADDLES";}
+#if (!defined(__APPLE__))
 		ClassDef(PADDLES_Index_t,1);
+#endif
 	};
 
 	/*A single class that handles ALL the possible indexes trough a C++ union*/
@@ -321,7 +329,9 @@ public:
 			CALO_Index_t *calorimeter;
 			PADDLES_Index_t *paddles;
 		};
+#if (!defined(__APPLE__))
 		ClassDef(ChannelInfo,1);
+#endif
 	};
 
 	// This method is used primarily for pretty printing
@@ -373,8 +383,9 @@ private:
 	map<TranslationTable::csc_t, TranslationTable::ChannelInfo>& Get_TT(
 			void) const;
 
-
+#if (!defined(__APPLE__))
 	ClassDef(TranslationTable,1);
+#endif
 };
 
 #endif // _TranslationTable_
