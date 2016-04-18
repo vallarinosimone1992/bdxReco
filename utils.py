@@ -81,18 +81,15 @@ def AddROOTdict(env,reldir,absdir):
 	for f in glob.glob('*.[h|hh|hpp]'):
 		if 'ClassDef' in open(f).read():
 			filename, file_extension = os.path.splitext(f)	
-			if(int(env['SHOWBUILD'])>=1):
-				print "  ----->  ROOT dictionary for %s" % f
-			if os.path.isfile(filename+"_LinkDef.h"):
-                            if(int(env['SHOWBUILD'])>=1):
-                                print "  -----> Using "+filename+"_LinkDef.h for dictionary" 
-                            if (platform.system()=="Darwin"): 
+                        if (platform.system()=="Darwin"): 
                                 print "ON MAC no ROOT dictionary generation is (yet) supported"
-                            else:
-                                retVal=env.ROOTDictLinkDef(reldir+"/"+filename+"_Dict.cc",[reldir+"/"+f,reldir+"/"+filename+"_LinkDef.h"])
                         else:
-                            if (platform.system()=="Darwin"): 
-                                print "ON MAC no ROOT dictionary generation is not (yet) supported. Not generating dictionary for "+filename
+                            if(int(env['SHOWBUILD'])>=1):
+				print "  ----->  ROOT dictionary for %s" % f
+                            if os.path.isfile(filename+"_LinkDef.h"):
+                                if(int(env['SHOWBUILD'])>=1):
+                                    print "  -----> Using "+filename+"_LinkDef.h for dictionary" 
+                                retVal=env.ROOTDictLinkDef(reldir+"/"+filename+"_Dict.cc",[reldir+"/"+f,reldir+"/"+filename+"_LinkDef.h"])
                             else:
                                 retVal=env.ROOTDictNoLinkDef(reldir+"/"+f)
         os.chdir(curpath)
