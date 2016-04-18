@@ -11,7 +11,8 @@
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
 #include <TT/TranslationTable.h>
-class ExtVetoHit:public jana::JObject{
+#include "TObject.h"
+class ExtVetoHit:public jana::JObject,public TObject{
 	public:
 		JOBJECT_PUBLIC(ExtVetoHit);
 		
@@ -27,6 +28,8 @@ class ExtVetoHit:public jana::JObject{
 		}
 		TranslationTable::EXT_VETO_Index_t m_channel; //Detector-specific ID. Since this is a detector-based object, the readout field will be ==0
 		oid_t ExtVetoDigiHit_id;
+
+		ClassDef(ExtVetoHit,1);
 };
 
 #endif // _ExtVetoHit_

@@ -13,8 +13,8 @@ using namespace jana;
 #include <Calorimeter/CalorimeterDigiHit.h>
 #include <Calorimeter/CalorimeterHit.h>
 
+#include <ExtVeto/ExtVetoHit.h>
 #include <IntVeto/IntVetoDigiHit.h>
-
 #include <Paddles/PaddlesHit.h>
 
 #include <MC/CalorimeterMCHit.h>
@@ -49,6 +49,10 @@ JEventProcessor_muon_eff::JEventProcessor_muon_eff():m_ROOTOutput(0)
 	isMC=0;
 	IntVetoTopDigiHit=0;
 	IntVetoBotDigiHit=0;
+	ExtVetoTopHit6=0;
+	ExtVetoTopHit7=0;
+	ExtVetoBotHit8=0;
+	ExtVetoBotHit9=0;
 }
 
 //------------------
@@ -96,6 +100,12 @@ jerror_t JEventProcessor_muon_eff::init(void)
 
 	t->Branch("IntVetoTopHit",&IntVetoTopDigiHit);
 	t->Branch("IntVetoBotHit",&IntVetoBotDigiHit);
+	t->Branch("ExtVetoTopHit6",&ExtVetoTopHit6);
+	t->Branch("ExtVetoTopHit7",&ExtVetoTopHit7);
+	t->Branch("ExtVetoBotHit8",&ExtVetoBotHit8);
+	t->Branch("ExtVetoBotHit9",&ExtVetoBotHit9);
+
+
 
 
 	//Create always MC branch
@@ -183,6 +193,10 @@ jerror_t JEventProcessor_muon_eff::evnt(JEventLoop *loop, uint64_t eventnumber)
 	int sector,layer,component;
 	double E,T;
 
+	vector <const ExtVetoHit*> evdata;
+	vector <const ExtVetoHit*>::const_iterator evdata_it;
+	loop->Get(evdata);
+
 	vector <const IntVetoDigiHit*> ivdata;
 	vector <const IntVetoDigiHit*>::const_iterator ivdata_it;
 	loop->Get(ivdata);
@@ -201,6 +215,29 @@ jerror_t JEventProcessor_muon_eff::evnt(JEventLoop *loop, uint64_t eventnumber)
 	japp->RootWriteLock();
 
 	good_ped_RMS=1;
+
+
+	for (evdata_it=evdata.begin();evdata_it!=evdata.end();evdata_it++){
+		sector=(*evdata_it)->m_channel.sector;
+		layer=(*evdata_it)->m_channel.layer;
+		component=(*evdata_it)->m_channel.component;
+		if (component==6){
+		ExtVetoTopHit6= (*evdata_it);
+		}
+		if (component==7){
+			ExtVetoTopHit7= (*evdata_it);
+		}
+		if (component==8){
+			ExtVetoBotHit8= (*evdata_it);
+		}
+		if (component==9){
+			ExtVetoBotHit9= (*evdata_it);
+		}
+
+	}
+
+
+
 	for (ivdata_it=ivdata.begin();ivdata_it!=ivdata.end();ivdata_it++){
 		sector=(*ivdata_it)->m_channel.sector;
 		layer=(*ivdata_it)->m_channel.layer;

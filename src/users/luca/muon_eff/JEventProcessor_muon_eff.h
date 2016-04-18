@@ -15,6 +15,7 @@ class TF1;
 class TTree;
 class JROOTOutput;
 class IntVetoDigiHit;
+class ExtVetoHit;
 class JEventProcessor_muon_eff:public jana::JEventProcessor{
 	public:
 		JEventProcessor_muon_eff();
@@ -44,6 +45,11 @@ class JEventProcessor_muon_eff:public jana::JEventProcessor{
 		double  IntVetoTopDigiHitQ;
 		const IntVetoDigiHit* IntVetoTopDigiHit;
 		const IntVetoDigiHit* IntVetoBotDigiHit;
+		const ExtVetoHit* ExtVetoTopHit6;
+		const ExtVetoHit* ExtVetoTopHit7;
+		const ExtVetoHit* ExtVetoBotHit8;
+		const ExtVetoHit* ExtVetoBotHit9;
+
 		//MC variables
 		double Ec_MC;
 
