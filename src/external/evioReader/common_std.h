@@ -17,6 +17,10 @@
 typedef unsigned char uint8_t;
 #endif
 
+#ifndef int8_t
+typedef char uint8_t;
+#endif
+
 #ifndef uint32_t
 typedef unsigned __INT32_TYPE__ uint32_t;
 #endif
@@ -43,24 +47,6 @@ typedef long long int64_t;
 #include <string.h>
 
 #endif
-/*
-typedef struct CompositeADCRaw {
-  int slot;
-  int triger;
-  int time;
-  int channel;
-  //std::vector<int16_t> samples;
-  };*/
-
-/*
-#ifndef uint8_t
-typedef unsigned __INT8_TYPE__ uint8_t;
-#endif
-
-#ifndef int8_t
-typedef __INT8_TYPE__ int8_t;
-#endif
-*/
 
 #endif
 /**
