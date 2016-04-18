@@ -92,7 +92,7 @@ def AddROOTdict(env,reldir,absdir):
                                 retVal=env.ROOTDictLinkDef(reldir+"/"+filename+"_Dict.cc",[reldir+"/"+f,reldir+"/"+filename+"_LinkDef.h"])
                         else:
                             if (platform.system()=="Darwin"): 
-                                print "ON MAC no ROOT dictionary generation is (yet) supported"
+                                print "ON MAC no ROOT dictionary generation is not (yet) supported. Not generating dictionary for "+filename
                             else:
                                 retVal=env.ROOTDictNoLinkDef(reldir+"/"+f)
         os.chdir(curpath)
