@@ -112,16 +112,16 @@ jerror_t PaddlesPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 
 		if (m_channel.det_sys==TranslationTable::PADDLES){
-//			jout<<"Nevent="<<eventnumber<<endl;
+			//			jout<<"Nevent="<<eventnumber<<endl;
 			m_PaddlesPMTHit=m_Paddlesfa250Converter->convertHit((fa250Hit*)*it_fa250Mode1CalibHit,m_channel);
 			m_PaddlesPMTHit->AddAssociatedObject(*it_fa250Mode1CalibHit);
 
 
 			/*Apply phe conversion */
 			m_q_calib=m_PMT_gain->getCalibSingle(*m_channel.paddles);
-			//															jout<<"**********"<<endl;
-			//															jout<<m_q_calib.size()<<endl;
-			//															jout<<m_q_calib.at(0)<<" "<<endl;
+			jout<<"**********"<<endl;
+			jout<<m_q_calib<<endl;
+
 			if (m_q_calib>0){
 				m_PaddlesPMTHit->Q/=((1.602*1E-19)*1E9);	// number of electrons at the exit of the PMT
 				m_PaddlesPMTHit->Q/=m_q_calib;		// number of phe

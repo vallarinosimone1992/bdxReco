@@ -197,6 +197,7 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 						if (gain!=0){
 							hit.E/=gain;
 						}
+
 						m_CalorimeterHit->E+=hit.E;
 						m_CalorimeterHit->m_data.push_back(hit);
 					}

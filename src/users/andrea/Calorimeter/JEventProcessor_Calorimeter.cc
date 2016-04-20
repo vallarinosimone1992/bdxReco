@@ -5,15 +5,17 @@
 // Creator: celentan (on Linux apcx4 2.6.32-504.30.3.el6.x86_64 x86_64)
 //
 
-#include "JEventProcessor_Calorimeter_rate.h"
+#include "JEventProcessor_Calorimeter.h"
 #include <system/BDXEventProcessor.h>
 
 #include <DAQ/eventData.h>
+#include <DAQ/fa250Mode1CalibHit.h>
 #include <DAQ/fa250Mode1CalibPedSubHit.h>
 #include <TT/TranslationTable.h>
 
 
 #include <Calorimeter/CalorimeterHit.h>
+#include <Calorimeter/CalorimeterSiPMHit.h>
 #include <IntVeto/IntVetoSiPMHit.h>
 #include <IntVeto/IntVetoHit.h>
 #include <IntVeto/IntVetoDigiHit.h>
@@ -22,8 +24,9 @@
 #include <ExtVeto/ExtVetoDigiHit.h>
 #include <ExtVeto/ExtVetoHit.h>
 #include <ExtVeto/ExtVetoSummary.h>
-#include <DAQ/fa250Mode1CalibHit.h>
+#include <Paddles/PaddlesHit.h>
 
+#include <MC/CalorimeterMCHit.h>
 #include <system/JROOTOutput.h>
 
 #include "TH1D.h"
@@ -43,7 +46,7 @@ using namespace std;
 extern "C"{
 void InitPlugin(JApplication *app){
 	InitJANAPlugin(app);
-	app->AddProcessor(new JEventProcessor_Calorimeter_rate());
+	app->AddProcessor(new JEventProcessor_Calorimeter());
 }
 } // "C"
 
@@ -51,23 +54,25 @@ void InitPlugin(JApplication *app){
 //------------------
 // JEventProcessor_Calorimeter_rate (Constructor)
 //------------------
-JEventProcessor_Calorimeter_rate::JEventProcessor_Calorimeter_rate()
+JEventProcessor_Calorimeter::JEventProcessor_Calorimeter()
 {
 	caloHit=0;
+	hit1=0;
+	hit2=0;
 }
 
 //------------------
 // ~JEventProcessor_Calorimeter_rate (Destructor)
 //------------------
-JEventProcessor_Calorimeter_rate::~JEventProcessor_Calorimeter_rate()
+JEventProcessor_Calorimeter::~JEventProcessor_Calorimeter()
 {
-
+	m_isMC=0;
 }
 
 //------------------
 // init
 //------------------
-jerror_t JEventProcessor_Calorimeter_rate::init(void)
+jerror_t JEventProcessor_Calorimeter::init(void)
 {
 	// This is called once at program startup. If you are creating
 	// and filling historgrams in this plugin, you should lock the
@@ -77,12 +82,31 @@ jerror_t JEventProcessor_Calorimeter_rate::init(void)
 	//  ... fill historgrams or trees ...
 	// japp->RootUnLock();
 	//
+	gPARMS->GetParameter("MC", m_isMC);
+
+
 	japp->RootWriteLock();
 	t=new TTree("CaloRate","CaloRate");
 	t->Branch("eventN",&eventNumber);
+
+	/*Calorimeter hit; Ec1 and Ec2; sipm1 and sipm2*/
 	t->Branch("CalorimeterHit",&caloHit);
+	t->Branch("hit1",&hit1);
+	//t->Branch("hit2",&hit2);
+	t->Branch("Ec1",&Ec1);
+	t->Branch("Ec2",&Ec2);
+	t->Branch("Ec",&Ec);
+
+	t->Branch("EcMC",&EcMC);
+
+	/*Ext veto and int veto summaries*/
 	t->Branch("nHitsIntVeto",&nHitsIntVeto);
 	t->Branch("nHitsExtVeto",&nHitsExtVeto);
+
+	/*Paddles*/
+	t->Branch("Ep1",&Ep1);
+	t->Branch("Ep2",&Ep2);
+
 
 	for (int iwave=0;iwave<50;iwave++){
 		hwavesIntVeto.push_back(NULL);
@@ -98,7 +122,7 @@ jerror_t JEventProcessor_Calorimeter_rate::init(void)
 //------------------
 // brun
 //------------------
-jerror_t JEventProcessor_Calorimeter_rate::brun(JEventLoop *eventLoop, int32_t runnumber)
+jerror_t JEventProcessor_Calorimeter::brun(JEventLoop *eventLoop, int32_t runnumber)
 {
 	// This is called whenever the run number changes
 
@@ -149,8 +173,11 @@ jerror_t JEventProcessor_Calorimeter_rate::brun(JEventLoop *eventLoop, int32_t r
 //------------------
 // evnt
 //------------------
-jerror_t JEventProcessor_Calorimeter_rate::evnt(JEventLoop *loop, uint64_t eventnumber)
+jerror_t JEventProcessor_Calorimeter::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
+
+	vector<const CalorimeterSiPMHit*> mppchits;
+	vector<const CalorimeterSiPMHit*>::iterator mppchits_it;
 
 	vector<const CalorimeterHit*> chits;
 	vector<const CalorimeterHit*>::iterator chits_it;
@@ -161,6 +188,8 @@ jerror_t JEventProcessor_Calorimeter_rate::evnt(JEventLoop *loop, uint64_t event
 	vector<const ExtVetoDigiHit*> evhits;
 	vector<const ExtVetoDigiHit*>::iterator evhits_it;
 
+	vector<const PaddlesHit*> phits;
+	vector<const PaddlesHit*>::iterator phits_it;
 
 	vector <const IntVetoSummary*> IntVetoSum;
 	vector <const IntVetoSummary*>::iterator IntVetoSum_it;
@@ -178,6 +207,8 @@ jerror_t JEventProcessor_Calorimeter_rate::evnt(JEventLoop *loop, uint64_t event
 	vector <const fa250Mode1CalibHit*>::iterator evwaves_it;
 
 
+	vector<const CalorimeterMCHit*> mc_data;
+
 	const eventData* evdata;
 
 	const IntVetoSummary* IntVetoSum0;
@@ -190,29 +221,46 @@ jerror_t JEventProcessor_Calorimeter_rate::evnt(JEventLoop *loop, uint64_t event
 
 	double Q,Qtot;
 	loop->Get(chits);
-	loop->Get(ivhits);
-	loop->Get(evhits);
+	loop->Get(phits);
+	if (m_isMC==0){
+		loop->Get(ivhits);
+		loop->Get(evhits);
+	}
+	else{
+		loop->Get(ivhits,"MC");
+		loop->Get(evhits,"MC");
+	}
+	if (m_isMC==0){
+		loop->Get(mppchits);
+	}
 
 	loop->Get(IntVetoSum);
 	loop->Get(ExtVetoSum);
 
-	try{
-		loop->GetSingle(evdata);
+
+	if (m_isMC==0){
+		try{
+			loop->GetSingle(evdata);
+		}
+		catch(unsigned long e){
+			jout<<"No trig bank this event"<<endl;
+			return NOERROR;
+		}
+
+		int tWord=evdata->triggerWords[0];
+		if ((tWord&0x1)==0) return NOERROR;
 	}
-	catch(unsigned long e){
-		jout<<"No trig bank this event"<<endl;
+
+	if (chits.size()!=1){
+		//	if (m_isMC==1) jout<<"Here cut: "<<chits.size()<<endl;
 		return NOERROR;
 	}
-
-	int tWord=evdata->triggerWords[0];
-	if ((tWord&0x1)==0) return NOERROR;
-	if (chits.size()!=1) return NOERROR;
-
 
 	japp->RootWriteLock();
 
 
 	flag=false;
+
 	nHitsIntVeto=0;
 	nHitsExtVeto=0;
 
@@ -235,22 +283,61 @@ jerror_t JEventProcessor_Calorimeter_rate::evnt(JEventLoop *loop, uint64_t event
 	Ec=chits[0]->E;
 	caloHit=chits[0];
 
-
+	Ec1=Ec2=-1;
 	for (int ihit=0;ihit<chits[0]->m_data.size();ihit++){
 		switch (chits[0]->m_data[ihit].readout){
 		case (1):
-												Ec1=chits[0]->m_data[ihit].E;
+								Ec1=chits[0]->m_data[ihit].E;
 		break;
 		case (2):
-												Ec2=chits[0]->m_data[ihit].E;
+								Ec2=chits[0]->m_data[ihit].E;
 		break;
 		}
 	}
 
+	EcMC=-1;
+	if (m_isMC){
+		caloHit->Get(mc_data); //use a vector since it is re-iterating!
+		if (mc_data.size()!=1){
+			cout<<"luca_EnergyCal error, no associated CalorimeterMCHit : got "<<mc_data.size()<<endl;
+			EcMC=-1;
+		}
+		else{
+			EcMC=mc_data[0]->totEdep;
+		}
+	}
 
-//	if ((Ec1>10)&&(nHitsExtVeto==0)&&(nHitsIntVeto==0)&&(caloHit->m_data[0].good_ped_RMS==true)&&(caloHit->m_data[1].good_ped_RMS==true)) flag=true;
 
-	if (flag){
+	for (mppchits_it=mppchits.begin();mppchits_it!=mppchits.end();mppchits_it++){
+		const CalorimeterSiPMHit *sipmhit= *mppchits_it;
+		switch (sipmhit->m_channel.calorimeter->readout){
+		case (1):
+														hit1=sipmhit;
+		break;
+		case (2):
+														hit2=sipmhit;
+		break;
+		default:
+			break;
+
+		}
+	}
+	Ep1=Ep2=-1;
+	for (phits_it=phits.begin();phits_it!=phits.end();phits_it++){
+		const PaddlesHit *phit=(*phits_it);
+		switch (phit->m_channel.id){
+		case (0):
+											Ep1=phit->E;
+		break;
+		case (1):
+											Ep2=phit->E;
+		break;
+		}
+	}
+
+	//	if ((Ec1>10)&&(nHitsExtVeto==0)&&(nHitsIntVeto==0)&&(caloHit->m_data[0].good_ped_RMS==true)&&(caloHit->m_data[1].good_ped_RMS==true)) flag=true;
+	flag=false;
+	if ((flag)&&(m_isMC==false)){
 		int iwave=0;
 		int N;
 		for (chits_it=chits.begin();chits_it!=chits.end();chits_it++){
@@ -356,7 +443,7 @@ jerror_t JEventProcessor_Calorimeter_rate::evnt(JEventLoop *loop, uint64_t event
 //------------------
 // erun
 //------------------
-jerror_t JEventProcessor_Calorimeter_rate::erun(void)
+jerror_t JEventProcessor_Calorimeter::erun(void)
 {
 	// This is called whenever the run number changes, before it is
 	// changed to give you a chance to clean up before processing
@@ -367,7 +454,7 @@ jerror_t JEventProcessor_Calorimeter_rate::erun(void)
 //------------------
 // fini
 //------------------
-jerror_t JEventProcessor_Calorimeter_rate::fini(void)
+jerror_t JEventProcessor_Calorimeter::fini(void)
 {
 	// Called before program exit after event processing is finished.
 	return NOERROR;

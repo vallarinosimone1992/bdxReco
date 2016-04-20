@@ -14,10 +14,13 @@ class TTree;
 class JROOTOutput;
 class TH1D;
 class CalorimeterHit;
-class JEventProcessor_Calorimeter_rate:public jana::JEventProcessor{
+class CalorimeterSiPMHit;
+class PaddlesHit;
+
+class JEventProcessor_Calorimeter:public jana::JEventProcessor{
 	public:
-		JEventProcessor_Calorimeter_rate();
-		~JEventProcessor_Calorimeter_rate();
+		JEventProcessor_Calorimeter();
+		~JEventProcessor_Calorimeter();
 		const char* className(void){return "JEventProcessor_Calorimeter_rate";}
 
 	private:
@@ -29,10 +32,16 @@ class JEventProcessor_Calorimeter_rate:public jana::JEventProcessor{
 
 		int eventNumber;
 		int m_isFirstCallToBrun;
-
+		int m_isMC;
+		const CalorimeterSiPMHit *hit1,*hit2;
 		const CalorimeterHit *caloHit;
-		double Ec,Ec1,Ec2;
+		double Ec,Ec1,Ec2,EcMC;
+
+		double Ep1,Ep2;
+
+
 		int nHitsIntVeto,nHitsExtVeto;
+
 
 		TTree *t;
 		vector<TH1D *> hwavesCalo;

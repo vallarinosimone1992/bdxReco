@@ -59,9 +59,9 @@ jerror_t CalorimeterDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnum
 	for (it=m_CalorimeterMCHits.begin();it!=m_CalorimeterMCHits.end();it++){
 		m_CalorimeterMCHit = (*it);
 		m_CalorimeterDigiHit=new CalorimeterDigiHit;
-		m_CalorimeterDigiHit->m_channel.sector=m_CalorimeterMCHit->sector;
-		m_CalorimeterDigiHit->m_channel.x=m_CalorimeterMCHit->x;
-		m_CalorimeterDigiHit->m_channel.y=m_CalorimeterMCHit->y;
+		m_CalorimeterDigiHit->m_channel.sector=m_CalorimeterMCHit->sector-1;
+		m_CalorimeterDigiHit->m_channel.x=m_CalorimeterMCHit->x-1;
+		m_CalorimeterDigiHit->m_channel.y=m_CalorimeterMCHit->y-1;
 		m_CalorimeterDigiHit->m_channel.readout=0;  //this is an active-volume object
 		m_CalorimeterDigiHit->AddAssociatedObject(m_CalorimeterMCHit);
 
@@ -69,6 +69,7 @@ jerror_t CalorimeterDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnum
 		digi_hit.Q=m_CalorimeterMCHit->adcr;
 		digi_hit.T=m_CalorimeterMCHit->tdcr;
 		digi_hit.good_ped_RMS=true;/*by default!*/
+
 		m_CalorimeterDigiHit->m_data.push_back(digi_hit);
 
 		digi_hit.readout=2;  ///THIS IS CORRECT ---> in MC "left" is the second MPPC, i.e. readout=2

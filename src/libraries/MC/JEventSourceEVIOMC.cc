@@ -37,8 +37,8 @@ JEventSourceEvioMC::JEventSourceEvioMC(const char* source_name):JEventSource(sou
 	jout << " Opening MC input file " << source_name << "." << endl;
 
 	try{
-		//		chan = new evioFileChannel(source_name, "r", 300000);
-		chan = new evioFileChannel(source_name, "r", 10804);
+		 chan = new evioFileChannel(source_name, "r", 300000);
+		//chan = new evioFileChannel(source_name, "r");
 		chan->open();
 	}
 	catch(evioException *e){
@@ -47,11 +47,10 @@ JEventSourceEvioMC::JEventSourceEvioMC(const char* source_name):JEventSource(sou
 	}
 }
 
-
 // Destructor
 JEventSourceEvioMC::~JEventSourceEvioMC()
 {
-	cout << " Closing input file " << source_name << "." << endl;
+	cout << "JEventSourceEvioMC closing input file " << source_name << "." << endl;
 	chan->close();
 	delete chan;
 }

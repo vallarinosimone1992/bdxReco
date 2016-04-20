@@ -43,7 +43,7 @@ public:
 
 	//A.C. do not touch these
 	 //both crate-slot channel and detector-specific ID. Since this is a sensor-based object, the readout field will be !=0
-	TranslationTable::ChannelInfo m_channel;
+	TranslationTable::ChannelInfo m_channel; //!
 	/*These 3 variables are: hit charge (u.a.), hit time (in ns), hit amplitude (in mV)*/
 	double Qraw,Qphe;
 	double QrawS,QpheS;
