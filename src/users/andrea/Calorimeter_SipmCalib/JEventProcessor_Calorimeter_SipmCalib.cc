@@ -77,7 +77,7 @@ jerror_t JEventProcessor_Calorimeter_SipmCalib::init(void)
 	//
 	japp->RootWriteLock();
 	h=new TH1D("h","h",500,-0.5,499.5);
-	t=new TTree("tout","tout");
+	t=new TTree("Calorimeter_SipmCalib","Calorimeter_SipmCalib");
 
 	t->Branch("evnt",&eventNumber);
 	t->Branch("sector",&m_sector);

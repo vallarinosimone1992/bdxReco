@@ -10,7 +10,7 @@ fa250Mode1Hit::~fa250Mode1Hit(){
 	if (hWave!=0) delete hWave;
 }
 
-TCanvas* fa250Mode1Hit::Draw(int id){
+TCanvas* fa250Mode1Hit::Draw(int id) const{
 
 
 	if (m_canvas==0){

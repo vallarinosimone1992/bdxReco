@@ -119,8 +119,8 @@ jerror_t PaddlesPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 			/*Apply phe conversion */
 			m_q_calib=m_PMT_gain->getCalibSingle(*m_channel.paddles);
-			jout<<"**********"<<endl;
-			jout<<m_q_calib<<endl;
+		//	jout<<"**********"<<endl;
+		//	jout<<m_q_calib<<endl;
 
 			if (m_q_calib>0){
 				m_PaddlesPMTHit->Q/=((1.602*1E-19)*1E9);	// number of electrons at the exit of the PMT
