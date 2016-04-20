@@ -28,8 +28,9 @@ class ExtVetoHit:public jana::JObject,public TObject{
 		}
 		TranslationTable::EXT_VETO_Index_t m_channel; //Detector-specific ID. Since this is a detector-based object, the readout field will be ==0
 		oid_t ExtVetoDigiHit_id;
-
+#if (!defined(__APPLE__))
 		ClassDef(ExtVetoHit,1);
+#endif
 };
 
 #endif // _ExtVetoHit_

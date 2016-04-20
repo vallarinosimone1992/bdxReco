@@ -82,7 +82,7 @@ def AddROOTdict(env,reldir,absdir):
 		if 'ClassDef' in open(f).read():
 			filename, file_extension = os.path.splitext(f)	
                         if (platform.system()=="Darwin"): 
-                                print "ON MAC no ROOT dictionary generation is (yet) supported"
+                                print "ON MAC no ROOT dictionary generation is NOT (yet) supported"
                         else:
                             if(int(env['SHOWBUILD'])>=1):
 				print "  ----->  ROOT dictionary for %s" % f

@@ -59,7 +59,9 @@ public:
 			if (channel > b.channel) return false;
 			return false;
 		}
+#if (!defined(__APPLE__))
 		ClassDef(csc_t,1);
+#endif
 	};
 
 	enum Detector_t {
