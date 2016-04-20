@@ -28,10 +28,12 @@ if (cur_fold != bdx_fold):
 parser = argparse.ArgumentParser(description='Load data in CCDB for given variation / runs')
 parser.add_argument('--variation',type=str, default="default", help='If set, set the variation to use. The variation should correspond to a folder with the txt files to upload')
 parser.add_argument('--connection',type=str,required=True,help="Connection string to use")
+parser.add_argument('--firstRun',type=int,default=1000,help="minimum run to consider in the folder")
 args = parser.parse_args()
 
 variation = args.variation
 connection_string = args.connection
+firstRun = args.firstRun
 #check if DAQ_pedestals folder exists
 if (os.path.isdir("DAQ_pedestals")==False):
     print "Error, folder DAQ_pedestals does not exists"
@@ -45,8 +47,8 @@ for fn in os.listdir("DAQ_pedestals"):
     if os.path.isfile("DAQ_pedestals/"+fn):
         #fn is in the form: runxxxxx.ped
         run=fn[3:].split('.')[0]
-        if (int(run)<1000):
-            continue #since before are irrelevant
+        if (int(run)<firstRun):
+            continue
         print("Run number: "+run)
         outF=open("DAQ_pedestals/tables/run_"+run+".dat","w")
         #write the first crate up to slot #3
