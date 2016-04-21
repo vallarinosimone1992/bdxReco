@@ -39,7 +39,6 @@ jerror_t IntVetoDigiHit_factory_MC::brun(jana::JEventLoop *eventLoop, int32_t ru
 //------------------
 jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
-
 	// Code to generate factory data goes here. Add it like:
 	//
 	// IntVetoDigiHit *myIntVetoDigiHit = new IntVetoDigiHit;
@@ -72,7 +71,8 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 		m_IntVetoDigiHit->m_channel.sector=m_IntVetoMCHit->sector;
 		m_IntVetoDigiHit->m_channel.layer=0;
 		m_IntVetoDigiHit->m_channel.readout=0;  //this is an active-volume object
-
+		m_IntVetoDigiHit->m_channel.component=0;
+		m_IntVetoDigiHit->m_data.clear();
 		/*Here comes the annoying routine that, given the geometry Marco used in the MC, in particular the indexing scheme,
 		 * returns it to the scheme I am using in the reconstruction. This was chacked by Andrea and Luca*/
 
@@ -185,14 +185,8 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 		for (int ii=0;ii<m_IntVetoDigiHit->m_data.size();ii++){
 			m_IntVetoDigiHit->Qtot+=m_IntVetoDigiHit->m_data[ii].Q;
 		}
-
 		_data.push_back(m_IntVetoDigiHit);
 	}
-
-
-
-
-
 	return NOERROR;
 }
 

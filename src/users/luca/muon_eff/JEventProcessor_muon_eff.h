@@ -53,6 +53,7 @@ class JEventProcessor_muon_eff:public jana::JEventProcessor{
 		//MC variables
 		double Ec_MC;
 
+
 		int eventN;
 };
 

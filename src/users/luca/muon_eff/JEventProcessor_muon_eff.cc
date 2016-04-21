@@ -53,6 +53,8 @@ JEventProcessor_muon_eff::JEventProcessor_muon_eff():m_ROOTOutput(0)
 	ExtVetoTopHit7=0;
 	ExtVetoBotHit8=0;
 	ExtVetoBotHit9=0;
+
+
 }
 
 //------------------
@@ -153,7 +155,7 @@ jerror_t JEventProcessor_muon_eff::brun(JEventLoop *eventLoop, int32_t runnumber
 		}
 		/*For ALL objects you want to add to ROOT file, use the following:*/
 		if (m_ROOTOutput){
-		/*	m_ROOTOutput->AddObject(hp2);
+			/*	m_ROOTOutput->AddObject(hp2);
 			m_ROOTOutput->AddObject(hp1);
 			m_ROOTOutput->AddObject(hp1_2);
 			m_ROOTOutput->AddObject(hc1);
@@ -199,7 +201,12 @@ jerror_t JEventProcessor_muon_eff::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	vector <const IntVetoDigiHit*> ivdata;
 	vector <const IntVetoDigiHit*>::const_iterator ivdata_it;
-	loop->Get(ivdata);
+	if (isMC==1){
+		loop->Get(ivdata,"MC");
+	}
+	else{
+		loop->Get(ivdata);
+	}
 
 	vector<const PaddlesHit*> data;
 	vector<const PaddlesHit*>::const_iterator data_it;
@@ -214,6 +221,13 @@ jerror_t JEventProcessor_muon_eff::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	japp->RootWriteLock();
 
+	IntVetoTopDigiHit=0;
+	IntVetoBotDigiHit=0;
+	ExtVetoTopHit6=0;
+	ExtVetoTopHit7=0;
+	ExtVetoBotHit8=0;
+	ExtVetoBotHit9=0;
+
 	good_ped_RMS=1;
 
 
@@ -222,7 +236,7 @@ jerror_t JEventProcessor_muon_eff::evnt(JEventLoop *loop, uint64_t eventnumber)
 		layer=(*evdata_it)->m_channel.layer;
 		component=(*evdata_it)->m_channel.component;
 		if (component==6){
-		ExtVetoTopHit6= (*evdata_it);
+			ExtVetoTopHit6= (*evdata_it);
 		}
 		if (component==7){
 			ExtVetoTopHit7= (*evdata_it);
@@ -238,7 +252,10 @@ jerror_t JEventProcessor_muon_eff::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 
 
+
+
 	for (ivdata_it=ivdata.begin();ivdata_it!=ivdata.end();ivdata_it++){
+
 		sector=(*ivdata_it)->m_channel.sector;
 		layer=(*ivdata_it)->m_channel.layer;
 		component=(*ivdata_it)->m_channel.component;
@@ -252,64 +269,67 @@ jerror_t JEventProcessor_muon_eff::evnt(JEventLoop *loop, uint64_t eventnumber)
 		}
 
 	}
-
+	Ep1=Ep2=-1;
 	for (data_it=data.begin();data_it<data.end();data_it++){
 
-			const PaddlesHit *evhit = *data_it;
-			//jout << evhit->m_channel.id<<endl;
-			E = evhit->E;
-			T = evhit->T;
-			if(evhit->m_channel.id==0){
-				Ep1=E;
-				Tp1=T;
-			}
-			if(evhit->m_channel.id==1){
-				Ep2=E;
-				Tp2=T;
-			}
+		const PaddlesHit *evhit = *data_it;
+		//jout << evhit->m_channel.id<<endl;
+		E = evhit->E;
+		T = evhit->T;
+		if(evhit->m_channel.id==0){
+			Ep1=E;
+			Tp1=T;
 		}
+		if(evhit->m_channel.id==1){
+			Ep2=E;
+			Tp2=T;
+		}
+	}
 
 	for (cdata_it=cdata.begin();cdata_it<cdata.end();cdata_it++){
-			const CalorimeterHit *evchit= *cdata_it;
-			Qc1=0;
-			Qc2=0;
-			for (int idata=0;idata<evchit->m_data.size();idata++){
-				if (evchit->m_data[idata].good_ped_RMS==false) good_ped_RMS=0;
-				switch (evchit->m_data[idata].readout){
-				case (1):
-									Qc1 = evchit->m_data[idata].Q;
-									Tc1 = evchit->m_data[idata].T;
+		const CalorimeterHit *evchit= *cdata_it;
+		Qc1=0;
+		Qc2=0;
+		for (int idata=0;idata<evchit->m_data.size();idata++){
+			if (evchit->m_data[idata].good_ped_RMS==false) good_ped_RMS=0;
+			switch (evchit->m_data[idata].readout){
+			case (1):
+											Qc1 = evchit->m_data[idata].Q;
+			Tc1 = evchit->m_data[idata].T;
+			break;
+			case (2):
+											Qc2 = evchit->m_data[idata].Q;
+			Tc2 = evchit->m_data[idata].T;
+			break;
+			default:
 				break;
-				case (2):
-									Qc2 = evchit->m_data[idata].Q;
-									Tc2 = evchit->m_data[idata].T;
-				break;
-				default:
-					break;
 
-				}
 			}
-
-			if (isMC){
-				evchit->Get(mc_data); //use a vector since it is re-iterating!
-				if (mc_data.size()!=1){
-					cout<<"luca_muon_eff error, no associated CalorimeterMCHit : got "<<mc_data.size()<<endl;
-				}
-				else{
-					Ec_MC=mc_data[0]->totEdep;
-				}
-			}
-			else{
-				Ec_MC=-1;
-			}
-
 		}
 
+		if (isMC){
+			evchit->Get(mc_data); //use a vector since it is re-iterating!
+			if (mc_data.size()!=1){
+				cout<<"luca_muon_eff error, no associated CalorimeterMCHit : got "<<mc_data.size()<<endl;
+			}
+			else{
+				Ec_MC=mc_data[0]->totEdep;
+			}
+		}
+		else{
+			Ec_MC=-1;
+		}
+
+	}
+
 	eventN=eventnumber;
-	if((Ep1 > 0.5) && (Ep2 > 0.5)) t->Fill();
+	if((Ep1 > 0.5) && (Ep2 > 0.5)){
+		t->Fill();
+	}
 
 
 	japp->RootUnLock();
+
 	return NOERROR;
 }
 
