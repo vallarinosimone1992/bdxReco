@@ -41,6 +41,7 @@ if (os.path.isdir("DAQ_pedestals")==False):
 
 commandBase = "ccdb -c "+connection_string+" add -v "+variation
 
+print "Loading pedestals for variation ",variation," and run_min: ",firstRun
 
 #now need to loop over ALL the files there
 for fn in os.listdir("DAQ_pedestals"):
