@@ -40,11 +40,13 @@ private:
 	double Q4,Q5; //plates
 
 	double Qc1,Qc2,Ep1,Ep2; //crystal and paddles
+	double Emc;
 
 	int tWord;
 
 	JROOTOutput *m_ROOTOutput;
 
+	int m_isMC;
 };
 
 #endif // _JEventProcessor_intVeto_digi_

@@ -54,57 +54,31 @@ jerror_t ExtVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 	//1b: retrieve ExtVetoSiPMHit objects
 	loop->Get(m_ExtVetoMCHits);
 
+	m_map.clear();
 	for (it=m_ExtVetoMCHits.begin();it!=m_ExtVetoMCHits.end();it++){
 		m_ExtVetoMCHit = (*it);
-		m_ExtVetoDigiHit=new ExtVetoDigiHit;
-		m_ExtVetoDigiHit->m_channel.sector=m_ExtVetoMCHit->sector;
-		m_ExtVetoDigiHit->m_channel.layer=0;
-		m_ExtVetoDigiHit->m_channel.readout=0;  //this is an active-volume object
-		/*Here comes the annoying routine that, given the geometry Marco used in the MC, in particular the indexing scheme,
-		 * returns it to the scheme I am using in the reconstruction. This was chacked by Andrea and Luca*/
-
-		switch (m_ExtVetoMCHit->channel){
-		case(1):
-							m_ExtVetoDigiHit->m_channel.component=7;
-		break;
-		case(2):
-							m_ExtVetoDigiHit->m_channel.component=6;
-		break;
-		case(3):
-							m_ExtVetoDigiHit->m_channel.component=8;
-		break;
-		case(4):
-							m_ExtVetoDigiHit->m_channel.component=9;
-		break;
-		case(5):
-							m_ExtVetoDigiHit->m_channel.component=11;
-		break;
-		case(6):
-							m_ExtVetoDigiHit->m_channel.component=10;
-		break;
-		case(7):
-							m_ExtVetoDigiHit->m_channel.component=2;
-		break;
-		case(8):
-							m_ExtVetoDigiHit->m_channel.component=1;
-		break;
-		case(9):
-							m_ExtVetoDigiHit->m_channel.component=0;
-		break;
-		case(10):
-							m_ExtVetoDigiHit->m_channel.component=3;
-		break;
-		case(11):
-							m_ExtVetoDigiHit->m_channel.component=4;
-		break;
-		case(12):
-							m_ExtVetoDigiHit->m_channel.component=5;
-		break;
-		default:
-					break;
+		m_map_it=m_map.find(std::make_pair(m_ExtVetoMCHit->sector,m_ExtVetoMCHit->channel));
+		if (m_map_it==m_map.end()){ //ExtVetoDigiHit was not created yet
+			m_ExtVetoDigiHit=new ExtVetoDigiHit;
+			m_ExtVetoDigiHit->AddAssociatedObject(m_ExtVetoMCHit);
+			m_ExtVetoDigiHit->m_channel.sector=m_ExtVetoMCHit->sector;
+			m_ExtVetoDigiHit->m_channel.layer=0;
+			m_ExtVetoDigiHit->m_channel.readout=0;  //this is an active-volume object
+			m_ExtVetoDigiHit->m_channel.component=this->getComponent(m_ExtVetoMCHit->channel);
+			m_ExtVetoDigiHit->Q=m_ExtVetoMCHit->adc;
+			m_ExtVetoDigiHit->T=m_ExtVetoMCHit->tdc;
+			m_map[std::make_pair(m_ExtVetoMCHit->sector,m_ExtVetoMCHit->channel)]=m_ExtVetoDigiHit;
 		}
-		m_ExtVetoDigiHit->Q=m_ExtVetoMCHit->adc;
-		m_ExtVetoDigiHit->T=m_ExtVetoMCHit->tdc;
+		else{ /*object already there*/
+			m_ExtVetoDigiHit=m_map_it->second;
+			m_ExtVetoDigiHit->Q+=m_ExtVetoMCHit->adc;
+			m_ExtVetoDigiHit->AddAssociatedObject(m_ExtVetoMCHit);
+			//m_ExtVetoDigiHit->T=m_ExtVetoMCHit->tdc;
+		}
+	}
+
+	for (m_map_it=m_map.begin();m_map_it!=m_map.end();m_map_it++){
+		m_ExtVetoDigiHit=m_map_it->second;
 		_data.push_back(m_ExtVetoDigiHit);
 	}
 
@@ -129,3 +103,47 @@ jerror_t ExtVetoDigiHit_factory_MC::fini(void)
 	return NOERROR;
 }
 
+int ExtVetoDigiHit_factory_MC::getComponent(int channel){
+	int component;
+	switch (channel){
+	case(1):
+												component=7;
+	break;
+	case(2):
+												component=6;
+	break;
+	case(3):
+												component=8;
+	break;
+	case(4):
+												component=9;
+	break;
+	case(5):
+												component=11;
+	break;
+	case(6):
+												component=10;
+	break;
+	case(7):
+												component=2;
+	break;
+	case(8):
+												component=1;
+	break;
+	case(9):
+												component=0;
+	break;
+	case(10):
+												component=3;
+	break;
+	case(11):
+												component=4;
+	break;
+	case(12):
+												component=5;
+	break;
+	default:
+		break;
+	}
+	return component;
+}

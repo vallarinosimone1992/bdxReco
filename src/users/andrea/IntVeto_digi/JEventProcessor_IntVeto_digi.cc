@@ -33,7 +33,7 @@ using namespace jana;
 #include <Calorimeter/CalorimeterHit.h>
 #include <Paddles/PaddlesHit.h>
 
-
+#include <MC/IntVetoMCHit.h>
 
 #include "TH1D.h"
 #include "TH2D.h"
@@ -55,9 +55,9 @@ void InitPlugin(JApplication *app){
 // JEventProcessor_intVeto_digi (Constructor)
 //------------------
 JEventProcessor_IntVeto_digi::JEventProcessor_IntVeto_digi():
-		m_ROOTOutput(0)
+								m_ROOTOutput(0)
 {
-
+	m_isMC=0;
 }
 
 //------------------
@@ -76,6 +76,10 @@ jerror_t JEventProcessor_IntVeto_digi::init(void)
 
 	//
 	japp->RootWriteLock();
+
+
+	gPARMS->GetParameter("MC", m_isMC);
+
 	t=new TTree("IntVeto_digi","IntVeto_digi");
 
 	t->Branch("sector",&m_sector);
@@ -114,6 +118,8 @@ jerror_t JEventProcessor_IntVeto_digi::init(void)
 	t->Branch("Qc2",&Qc2);
 	t->Branch("Ep1",&Ep1);
 	t->Branch("Ep2",&Ep2);
+
+	t->Branch("Emc",&Emc);
 
 	t->Branch("tWord",&tWord);
 
@@ -176,31 +182,67 @@ jerror_t JEventProcessor_IntVeto_digi::brun(JEventLoop *eventLoop, int32_t runnu
 jerror_t JEventProcessor_IntVeto_digi::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 	vector<const IntVetoDigiHit*> data;
-	vector<const IntVetoSiPMHit*> associated_data;
 	vector<const IntVetoDigiHit*>::const_iterator data_it;
 
 	vector<const CalorimeterHit*> cdata;
 	vector<const CalorimeterHit*>::const_iterator cdata_it;
+
 	vector<const PaddlesHit*> pdata;
 	vector<const PaddlesHit*>::const_iterator pdata_it;
 
 
+	vector<const IntVetoMCHit*> mcdata;
+
 	const eventData* tData;
-	try{
-		loop->GetSingle(tData);
+	if (m_isMC==0){
+		try{
+			loop->GetSingle(tData);
+		}
+		catch(unsigned long e){
+			jout<<"No trig bank this event"<<endl;
+			return 	OBJECT_NOT_AVAILABLE;
+		}
 	}
-	catch(unsigned long e){
-		jout<<"No trig bank this event"<<endl;
-		return 	OBJECT_NOT_AVAILABLE;
+
+	if (m_isMC==1){
+		loop->Get(data,"MC");
 	}
-
-
-
-	loop->Get(data);
+	else{
+		loop->Get(data);
+	}
 	loop->Get(cdata);
 	loop->Get(pdata);
 
 	japp->RootWriteLock();
+	if (m_isMC==0){
+		tWord=tData->triggerWords.at(0);
+	}
+	Q0_1=-1;
+	Q0_2=-1;
+	Q0_3=-1;
+	Q0_4=-1;
+	Q0=-1;
+
+	Q1_1=-1;
+	Q1_2=-1;
+	Q1_3=-1;
+	Q1_4=-1;
+	Q1=-1;
+
+	Q2_1=-1;
+	Q2_2=-1;
+	Q2_3=-1;
+	Q2_4=-1;
+	Q2=-1;
+
+	Q3_1=-1;
+	Q3_2=-1;
+	Q3_3=-1;
+	Q3_4=-1;
+	Q3=-1;
+
+	Q4=-1;
+	Q5=-1;
 
 	for (data_it=data.begin();data_it<data.end();data_it++){
 		m_sector=(*data_it)->m_channel.sector;
@@ -214,57 +256,65 @@ jerror_t JEventProcessor_IntVeto_digi::evnt(JEventLoop *loop, uint64_t eventnumb
 		//(*data_it)->Get(associated_data,"",1);
 		switch(m_component){
 		case (0):
-							Q0_1=(*data_it)->m_data[0].Q;
+		Q0_1=(*data_it)->m_data[0].Q;
 		Q0_2=(*data_it)->m_data[1].Q;
 		Q0_3=(*data_it)->m_data[2].Q;
 		Q0_4=(*data_it)->m_data[3].Q;
 		Q0=Q0_1+Q0_2+Q0_3+Q0_4;
+		if (m_isMC){
+			Emc=0;
+			(*data_it)->Get(mcdata);
+			for (int imc=0;imc<mcdata.size();imc++){
+				Emc+=mcdata[imc]->totEdep;
+			}
+		}
 		break;
 		case (1):
-							Q1_1=(*data_it)->m_data[0].Q;
+													Q1_1=(*data_it)->m_data[0].Q;
 		Q1_2=(*data_it)->m_data[1].Q;
 		Q1_3=(*data_it)->m_data[2].Q;
 		Q1_4=(*data_it)->m_data[3].Q;
 		Q1=Q1_1+Q1_2+Q1_3+Q1_4;
 		break;
 		case (2):
-							Q2_1=(*data_it)->m_data[0].Q;
+													Q2_1=(*data_it)->m_data[0].Q;
 		Q2_2=(*data_it)->m_data[1].Q;
 		Q2_3=(*data_it)->m_data[2].Q;
 		Q2_4=(*data_it)->m_data[3].Q;
 		Q2=Q2_1+Q2_2+Q2_3+Q2_4;
 		break;
 		case (3):
-							Q3_1=(*data_it)->m_data[0].Q;
+													Q3_1=(*data_it)->m_data[0].Q;
 		Q3_2=(*data_it)->m_data[1].Q;
 		Q3_3=(*data_it)->m_data[2].Q;
 		Q3_4=(*data_it)->m_data[3].Q;
 		Q3=Q3_1+Q3_2+Q3_3+Q3_4;
 		break;
 		case (4):
-							Q4=(*data_it)->m_data[0].Q;
+													Q4=(*data_it)->m_data[0].Q;
 		break;
 		case (5):
-							Q5=(*data_it)->m_data[0].Q;
+													Q5=(*data_it)->m_data[0].Q;
 		break;
 		}
 
 	}
 
-	tWord=tData->triggerWords.at(0);
+
 
 	/*Calorimeter*/
+	Qc1=-1;
+	Qc2=-1;
 	for (cdata_it=cdata.begin();cdata_it!=cdata.end();cdata_it++){
 		const CalorimeterHit *evchit= *cdata_it;
-		Qc1=0;
-		Qc2=0;
+
 		for (int idata=0;idata<evchit->m_data.size();idata++){
 			switch (evchit->m_data[idata].readout){
 			case (1):
-			Qc1 = evchit->m_data[idata].Q;
+									Qc1 = evchit->m_data[idata].Q;
 			break;
 			case (2):
-			Qc2 = evchit->m_data[idata].Q;
+									Qc2 = evchit->m_data[idata].Q;
 			break;
 			default:
 				break;
@@ -274,6 +324,7 @@ jerror_t JEventProcessor_IntVeto_digi::evnt(JEventLoop *loop, uint64_t eventnumb
 	}
 
 	/*Paddles*/
+	Ep1=-1;Ep2=-1;
 	for (pdata_it=pdata.begin();pdata_it!=pdata.end();pdata_it++){
 
 		const PaddlesHit *evhit = *pdata_it;

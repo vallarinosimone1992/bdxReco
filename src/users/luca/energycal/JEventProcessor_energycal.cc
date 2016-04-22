@@ -250,19 +250,16 @@ jerror_t JEventProcessor_energycal::evnt(JEventLoop *loop, uint64_t eventnumber)
 			}
 		}
 
+		Ec_MC=0;
 		if (isMC){
-			evchit->Get(mc_data); //use a vector since it is re-iterating!
-			if (mc_data.size()!=1){
-				cout<<"luca_EnergyCal error, no associated CalorimeterMCHit : got "<<mc_data.size()<<endl;
+				evchit->Get(mc_data); //use a vector since it is re-iterating!
+				for (int imc=0;imc<mc_data.size();imc++){
+					Ec_MC+=mc_data[imc]->totEdep;
+				}
 			}
 			else{
-				Ec_MC=mc_data[0]->totEdep;
+				Ec_MC=-1;
 			}
-		}
-		else{
-			Ec_MC=-1;
-		}
-
 	}
 
 

@@ -65,122 +65,76 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 	//1b: retrieve IntVetoSiPMHit objects
 	loop->Get(m_IntVetoMCHits);
 
+	m_map.clear();
 	for (it=m_IntVetoMCHits.begin();it!=m_IntVetoMCHits.end();it++){
 		m_IntVetoMCHit = (*it);
-		m_IntVetoDigiHit=new IntVetoDigiHit;
-		m_IntVetoDigiHit->m_channel.sector=m_IntVetoMCHit->sector;
-		m_IntVetoDigiHit->m_channel.layer=0;
-		m_IntVetoDigiHit->m_channel.readout=0;  //this is an active-volume object
-		m_IntVetoDigiHit->m_channel.component=0;
-		m_IntVetoDigiHit->m_data.clear();
-		/*Here comes the annoying routine that, given the geometry Marco used in the MC, in particular the indexing scheme,
-		 * returns it to the scheme I am using in the reconstruction. This was chacked by Andrea and Luca*/
-
-		switch (m_IntVetoMCHit->channel){
-		case(1): //top
-		m_IntVetoDigiHit->m_channel.component=0;
-		//Now add the 4 sipm hits
-		digi_hit.readout=1;
-		digi_hit.Q=m_IntVetoMCHit->adc1;
-		digi_hit.T=m_IntVetoMCHit->tdc1;
-		m_IntVetoDigiHit->m_data.push_back(digi_hit);
-		digi_hit.readout=2;
-		digi_hit.Q=m_IntVetoMCHit->adc2;
-		digi_hit.T=m_IntVetoMCHit->tdc2;
-		m_IntVetoDigiHit->m_data.push_back(digi_hit);
-		digi_hit.readout=3;
-		digi_hit.Q=m_IntVetoMCHit->adc3;
-		digi_hit.T=m_IntVetoMCHit->tdc3;
-		m_IntVetoDigiHit->m_data.push_back(digi_hit);
-		digi_hit.readout=4;
-		digi_hit.Q=m_IntVetoMCHit->adc4;
-		digi_hit.T=m_IntVetoMCHit->tdc4;
-		m_IntVetoDigiHit->m_data.push_back(digi_hit);
-		break;
-
-		case(2): //bottom     ///The inversion 2 <-> 4 is correct!
-		m_IntVetoDigiHit->m_channel.component=3;
-		digi_hit.readout=1;
-		digi_hit.Q=m_IntVetoMCHit->adc1;
-		digi_hit.T=m_IntVetoMCHit->tdc1;
-		m_IntVetoDigiHit->m_data.push_back(digi_hit);
-		digi_hit.readout=2;
-		digi_hit.Q=m_IntVetoMCHit->adc4;
-		digi_hit.T=m_IntVetoMCHit->tdc4;
-		m_IntVetoDigiHit->m_data.push_back(digi_hit);
-		digi_hit.readout=3;
-		digi_hit.Q=m_IntVetoMCHit->adc3;
-		digi_hit.T=m_IntVetoMCHit->tdc3;
-		m_IntVetoDigiHit->m_data.push_back(digi_hit);
-		digi_hit.readout=4;
-		digi_hit.Q=m_IntVetoMCHit->adc2;
-		digi_hit.T=m_IntVetoMCHit->tdc2;
-		m_IntVetoDigiHit->m_data.push_back(digi_hit);
-		break;
-
-
-		case(3): //upstream
-		m_IntVetoDigiHit->m_channel.component=4;
-		digi_hit.readout=1;
-		digi_hit.Q=m_IntVetoMCHit->adc1;
-		digi_hit.T=m_IntVetoMCHit->tdc1;
-		m_IntVetoDigiHit->m_data.push_back(digi_hit);
-		break;
-
-
-		case(4): //downstream
-		m_IntVetoDigiHit->m_channel.component=5;
-		digi_hit.readout=1;
-		digi_hit.Q=m_IntVetoMCHit->adc1;
-		digi_hit.T=m_IntVetoMCHit->tdc1;
-		m_IntVetoDigiHit->m_data.push_back(digi_hit);
-		break;
-
-		case(5): //right
-		m_IntVetoDigiHit->m_channel.component=2;
-		digi_hit.readout=1;
-		digi_hit.Q=m_IntVetoMCHit->adc1;
-		digi_hit.T=m_IntVetoMCHit->tdc1;
-		m_IntVetoDigiHit->m_data.push_back(digi_hit);
-		digi_hit.readout=2;
-		digi_hit.Q=m_IntVetoMCHit->adc2;
-		digi_hit.T=m_IntVetoMCHit->tdc2;
-		m_IntVetoDigiHit->m_data.push_back(digi_hit);
-		digi_hit.readout=3;
-		digi_hit.Q=m_IntVetoMCHit->adc3;
-		digi_hit.T=m_IntVetoMCHit->tdc3;
-		m_IntVetoDigiHit->m_data.push_back(digi_hit);
-		digi_hit.readout=4;
-		digi_hit.Q=m_IntVetoMCHit->adc4;
-		digi_hit.T=m_IntVetoMCHit->tdc4;
-		m_IntVetoDigiHit->m_data.push_back(digi_hit);
-		break;
-
-		case(6): //left
-		m_IntVetoDigiHit->m_channel.component=1;
-		digi_hit.readout=1;
-		digi_hit.Q=m_IntVetoMCHit->adc1;
-		digi_hit.T=m_IntVetoMCHit->tdc1;
-		m_IntVetoDigiHit->m_data.push_back(digi_hit);
-		digi_hit.readout=2;
-		digi_hit.Q=m_IntVetoMCHit->adc2;
-		digi_hit.T=m_IntVetoMCHit->tdc2;
-		m_IntVetoDigiHit->m_data.push_back(digi_hit);
-		digi_hit.readout=3;
-		digi_hit.Q=m_IntVetoMCHit->adc3;
-		digi_hit.T=m_IntVetoMCHit->tdc3;
-		m_IntVetoDigiHit->m_data.push_back(digi_hit);
-		digi_hit.readout=4;
-		digi_hit.Q=m_IntVetoMCHit->adc4;
-		digi_hit.T=m_IntVetoMCHit->tdc4;
-		m_IntVetoDigiHit->m_data.push_back(digi_hit);
-		break;
-
-		default:
+		m_map_it=m_map.find(std::make_pair(m_IntVetoMCHit->sector,m_IntVetoMCHit->channel));
+		if (m_map_it==m_map.end()){ /*IntVetoDigiHit was not here. Create a new hit*/
+			m_IntVetoDigiHit=new IntVetoDigiHit;
+			m_IntVetoDigiHit->m_channel.sector=m_IntVetoMCHit->sector;
+			m_IntVetoDigiHit->m_channel.layer=0;
+			m_IntVetoDigiHit->m_channel.readout=0;  //this is an active-volume object
+			m_IntVetoDigiHit->m_channel.component=this->getComponent(m_IntVetoMCHit->channel);
+			m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+			/*create the component sipm-hits*/
+			switch (m_IntVetoMCHit->channel){
+			case(1):
+			case(5):
+			case(6):
+			case(2): //bottom     ///The inversion 2 <-> 4 is olny in the data
+			digi_hit.readout=1;
+			digi_hit.Q=m_IntVetoMCHit->adc1;
+			digi_hit.T=m_IntVetoMCHit->tdc1;
+			m_IntVetoDigiHit->m_data.push_back(digi_hit);
+			digi_hit.readout=2;
+			digi_hit.Q=m_IntVetoMCHit->adc2;
+			digi_hit.T=m_IntVetoMCHit->tdc2;
+			m_IntVetoDigiHit->m_data.push_back(digi_hit);
+			digi_hit.readout=3;
+			digi_hit.Q=m_IntVetoMCHit->adc3;
+			digi_hit.T=m_IntVetoMCHit->tdc3;
+			m_IntVetoDigiHit->m_data.push_back(digi_hit);
+			digi_hit.readout=4;
+			digi_hit.Q=m_IntVetoMCHit->adc4;
+			digi_hit.T=m_IntVetoMCHit->tdc4;
+			m_IntVetoDigiHit->m_data.push_back(digi_hit);
 			break;
-		}
 
-		/*total charge*/
+			case(3): //upstream
+			case(4): //downstream
+			digi_hit.readout=1;
+			digi_hit.Q=m_IntVetoMCHit->adc1;
+			digi_hit.T=m_IntVetoMCHit->tdc1;
+			m_IntVetoDigiHit->m_data.push_back(digi_hit);
+			break;
+
+			}
+			m_map[std::make_pair(m_IntVetoMCHit->sector,m_IntVetoMCHit->channel)]=m_IntVetoDigiHit; /*Add to the map*/
+		}
+		else{ /*There is already the hit. Sum the charges*/
+			m_IntVetoDigiHit=m_map_it->second;
+			m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+			switch (m_IntVetoMCHit->channel){
+					case(1):
+					case(5):
+					case(6):
+					case(2): //bottom     ///The inversion is only in the data
+					m_IntVetoDigiHit->m_data[0].Q+=m_IntVetoMCHit->adc1;
+					m_IntVetoDigiHit->m_data[1].Q+=m_IntVetoMCHit->adc2;
+					m_IntVetoDigiHit->m_data[2].Q+=m_IntVetoMCHit->adc3;
+					m_IntVetoDigiHit->m_data[3].Q+=m_IntVetoMCHit->adc4;
+					break;
+
+					case(3): //upstream
+					case(4): //upstream
+					m_IntVetoDigiHit->m_data[0].Q+=m_IntVetoMCHit->adc1;
+					break;
+			}
+		}
+	}/*End loop on MC hits*/
+
+	for (m_map_it=m_map.begin();m_map_it!=m_map.end();m_map_it++){
+		m_IntVetoDigiHit=m_map_it->second;
 		m_IntVetoDigiHit->Qtot=0;
 		for (int ii=0;ii<m_IntVetoDigiHit->m_data.size();ii++){
 			m_IntVetoDigiHit->Qtot+=m_IntVetoDigiHit->m_data[ii].Q;
@@ -204,5 +158,25 @@ jerror_t IntVetoDigiHit_factory_MC::erun(void)
 jerror_t IntVetoDigiHit_factory_MC::fini(void)
 {
 	return NOERROR;
+}
+
+
+int IntVetoDigiHit_factory_MC::getComponent(int MCchannel){
+	int component=-1;
+	switch (MCchannel){
+	case(1): //top
+					component=0;break;
+	case(2): //bottom
+					component=3;break;
+	case(3):  //upstream
+					component=4;break;
+	case(4): //downstream
+					component=5;break;
+	case(5): //right
+					component=2;break;
+	case(6):
+					component=1;break;
+	}
+	return component;
 }
 

@@ -59,6 +59,7 @@ JEventProcessor_Calorimeter::JEventProcessor_Calorimeter()
 	caloHit=0;
 	hit1=0;
 	hit2=0;
+	m_isMC=0;
 }
 
 //------------------
@@ -66,7 +67,7 @@ JEventProcessor_Calorimeter::JEventProcessor_Calorimeter()
 //------------------
 JEventProcessor_Calorimeter::~JEventProcessor_Calorimeter()
 {
-	m_isMC=0;
+
 }
 
 //------------------
@@ -287,24 +288,23 @@ jerror_t JEventProcessor_Calorimeter::evnt(JEventLoop *loop, uint64_t eventnumbe
 	for (int ihit=0;ihit<chits[0]->m_data.size();ihit++){
 		switch (chits[0]->m_data[ihit].readout){
 		case (1):
-								Ec1=chits[0]->m_data[ihit].E;
+										Ec1=chits[0]->m_data[ihit].E;
 		break;
 		case (2):
-								Ec2=chits[0]->m_data[ihit].E;
+										Ec2=chits[0]->m_data[ihit].E;
 		break;
 		}
 	}
 
-	EcMC=-1;
+	EcMC=0;
 	if (m_isMC){
 		caloHit->Get(mc_data); //use a vector since it is re-iterating!
-		if (mc_data.size()!=1){
-			cout<<"luca_EnergyCal error, no associated CalorimeterMCHit : got "<<mc_data.size()<<endl;
-			EcMC=-1;
+		for (int imc=0;imc<mc_data.size();imc++){
+			EcMC+=mc_data[imc]->totEdep;
 		}
-		else{
-			EcMC=mc_data[0]->totEdep;
-		}
+	}
+	else{
+		EcMC=-1;
 	}
 
 
@@ -312,10 +312,10 @@ jerror_t JEventProcessor_Calorimeter::evnt(JEventLoop *loop, uint64_t eventnumbe
 		const CalorimeterSiPMHit *sipmhit= *mppchits_it;
 		switch (sipmhit->m_channel.calorimeter->readout){
 		case (1):
-														hit1=sipmhit;
+																hit1=sipmhit;
 		break;
 		case (2):
-														hit2=sipmhit;
+																hit2=sipmhit;
 		break;
 		default:
 			break;
@@ -327,10 +327,10 @@ jerror_t JEventProcessor_Calorimeter::evnt(JEventLoop *loop, uint64_t eventnumbe
 		const PaddlesHit *phit=(*phits_it);
 		switch (phit->m_channel.id){
 		case (0):
-											Ep1=phit->E;
+													Ep1=phit->E;
 		break;
 		case (1):
-											Ep2=phit->E;
+													Ep2=phit->E;
 		break;
 		}
 	}

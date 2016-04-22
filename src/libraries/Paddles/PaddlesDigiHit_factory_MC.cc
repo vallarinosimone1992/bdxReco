@@ -53,17 +53,32 @@ jerror_t PaddlesDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 	//1b: retrieve PaddlesSiPMHit objects
 	loop->Get(m_PaddlesMCHits);
 
+	m_map.clear();
+
 	for (it=m_PaddlesMCHits.begin();it!=m_PaddlesMCHits.end();it++){
 		m_PaddlesMCHit = (*it);
-		m_PaddlesDigiHit=new PaddlesDigiHit;
+		m_map_it=m_map.find(std::make_pair(m_PaddlesMCHit->sector,m_PaddlesMCHit->channel));
+		if (m_map_it==m_map.end()){
+			m_PaddlesDigiHit=new PaddlesDigiHit;
+			/*Here comes the annoying routine that, given the geometry Marco used in the MC, in particular the indexing scheme,
+			 * returns it to the scheme I am using in the reconstruction. This was chacked by Andrea and Luca*/
+			if (m_PaddlesMCHit->channel==1) m_PaddlesDigiHit->m_channel.id=1;
+			else if (m_PaddlesMCHit->channel==2) m_PaddlesDigiHit->m_channel.id=0;
+			m_PaddlesDigiHit->Q=m_PaddlesMCHit->adc;
+			m_PaddlesDigiHit->T=m_PaddlesMCHit->tdc;
+			m_PaddlesDigiHit->AddAssociatedObject(m_PaddlesMCHit);
+			m_map[std::make_pair(m_PaddlesMCHit->sector,m_PaddlesMCHit->channel)]=m_PaddlesDigiHit;
+		}
+		else{
+			m_PaddlesDigiHit=m_map_it->second;
+			m_PaddlesDigiHit->AddAssociatedObject(m_PaddlesMCHit);
+			m_PaddlesDigiHit->Q+=m_PaddlesMCHit->adc;
+		}
+	}
 
-		/*Here comes the annoying routine that, given the geometry Marco used in the MC, in particular the indexing scheme,
-		 * returns it to the scheme I am using in the reconstruction. This was chacked by Andrea and Luca*/
-		if (m_PaddlesMCHit->channel==1) m_PaddlesDigiHit->m_channel.id=1;
-		else if (m_PaddlesMCHit->channel==2) m_PaddlesDigiHit->m_channel.id=0;
 
-		m_PaddlesDigiHit->Q=m_PaddlesMCHit->adc;
-		m_PaddlesDigiHit->T=m_PaddlesMCHit->tdc;
+	for (m_map_it=m_map.begin();m_map_it!=m_map.end();m_map_it++){
+		m_PaddlesDigiHit=m_map_it->second;
 		_data.push_back(m_PaddlesDigiHit);
 	}
 	return NOERROR;

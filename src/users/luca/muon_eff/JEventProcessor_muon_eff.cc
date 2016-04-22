@@ -306,22 +306,17 @@ jerror_t JEventProcessor_muon_eff::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 			}
 		}
-
+		Ec_MC=0;
 		if (isMC){
 			evchit->Get(mc_data); //use a vector since it is re-iterating!
-			if (mc_data.size()!=1){
-				cout<<"luca_muon_eff error, no associated CalorimeterMCHit : got "<<mc_data.size()<<endl;
-			}
-			else{
-				Ec_MC=mc_data[0]->totEdep;
+			for (int imc=0;imc<mc_data.size();imc++){
+				Ec_MC+=mc_data[imc]->totEdep;
 			}
 		}
 		else{
 			Ec_MC=-1;
 		}
-
 	}
-
 	eventN=eventnumber;
 	if((Ep1 > 0.5) && (Ep2 > 0.5)){
 		t->Fill();
