@@ -219,18 +219,25 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 	}
 	else if (output->nSignals>=1){
 		output->m_type=CalorimeterSiPMHit::real_signal;
-		output->Qraw=this->sumSamples(input->samples.size(),&(input->samples[0]));
 
+
+		idx=m_signalCrossingIndexes[0];
+		xmax=m_crossingTimes[idx].first;  //this is the time of the sample OVER m_THR
+		xmin=xmax-m_NSB;
+		xmax=xmax-m_NSB+m_NSAMPLES;
+		if (xmin<0) xmin=0;
+		if (xmax>=size) xmax=size-1;
+
+		output->Qraw=this->sumSamples((int)xmin,(int)xmax,&(input->samples[0]));
 		output->A=this->getMaximum(input->samples.size(),&(input->samples[0]),Tmax);
-		xmin=Tmax-m_NSB;
-		xmax=Tmax+m_NSA;
+
 
 		if (xmin<0) xmin=0;
 		if (xmax>=size) xmax=(size-1);
 		output->QrawS=this->sumSamples((int)xmin,(int)xmax,&(input->samples[0]));
 
 
-		idx=m_signalCrossingIndexes[0];
+
 		xmax=m_crossingTimes[idx].first;  //this is the time of the sample OVER m_THR
 		xmin=m_crossingTimes[idx].first-1;
 		if (xmin==0) output->T=0;

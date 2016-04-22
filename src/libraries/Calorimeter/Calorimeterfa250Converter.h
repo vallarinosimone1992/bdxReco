@@ -42,7 +42,7 @@ class Calorimeterfa250Converter:public fa250Converter<CalorimeterSiPMHit>{
 
 		int m_NSB,m_NSA;
 		int m_NPED;
-
+		int m_NSAMPLES;
 
 
 

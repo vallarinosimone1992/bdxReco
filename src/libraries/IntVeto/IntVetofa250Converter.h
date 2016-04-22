@@ -34,6 +34,8 @@ public:
 	double m_minTot;
 	double m_thr;
 	int m_NSB,m_NSA,m_NPED;
+
+	static const int NRMSCHECKS=10;
 };
 
 #endif // _IntVetofa250Converter_

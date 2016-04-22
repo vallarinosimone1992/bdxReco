@@ -29,6 +29,7 @@ CALORIMETER:MIN_TOT        12
 CALORIMETER:NPED	       20	#num of samples to include in pedestal
 CALORIMETER:NSB		       10	#num of samples before the maximum
 CALORIMETER:NSA		       20 	#num of samples after  the maximum 
+#CALORIMETER:NSAMPLES	   250  #num of samples in the integration window
 CALORIMETER:SINGLE_SIGNAL_TOT  120
 CALORIMETER:HIT_THR_SINGLE  5  #thr in phe charge for a detector with single readout
 CALORIMETER:HIT_THR_MULTI   3  #thr in phe charge for a detector with multiple readout

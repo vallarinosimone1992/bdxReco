@@ -157,7 +157,7 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 //				cout<<ii<<" Signal= "<<input->samples.at(ii)<<" Att_inv= "<<Att_inv_pulse[ii]<<" Delay= "<<Delay_pulse[ii]<<" Sum= "<<Sum[ii]<<endl;
 			}
 
-			jout<<max_index<<" "<<delay<<" "<<max_index+delay<<endl;
+//			jout<<max_index<<" "<<delay<<" "<<max_index+delay<<endl;
 			for (int ii=(max_index+delay);ii>0;ii--) {
 					if(Sum[ii]<0){
 						Tinf=(ii)*4;
@@ -178,7 +178,7 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 	output->Q=Q;
 	output->T=T;
 
-	jout<<"DONE"<<endl;
+
 	return NOERROR;
 }
 

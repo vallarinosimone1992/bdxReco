@@ -31,7 +31,7 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 	// not have to change this code.
 
 	int N,n,idx,imax;
-	int istart,istartmin;
+	int istart,istartmin,icheck;
 	double min,max,xmin,xmax,prev_xmin,prev_xmax,rms,Tmax;
 	double ped,pedRMS,thr,pedRMSmin,pedmin;
 	bool found;
@@ -54,8 +54,11 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 	//0a: check if we can use this waveform as pedestal
 	found=false;
 	pedRMSmin=9999;
-	for (istart=0;istart<(input->samples.size()-m_NPED);istart++){
+	/*Just do few checks!!!*/
+	for (icheck=0;icheck<NRMSCHECKS;icheck++){
 		//Compute pedestal and rms starting at this point
+		istart=icheck*(size/NRMSCHECKS);
+		if ((istart+m_NPED)>=size) istart=size-m_NPED-1;
 		ped=0;
 		pedRMS=0;
 		for (int ii=0;ii<m_NPED;ii++){
