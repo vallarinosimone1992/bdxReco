@@ -56,7 +56,7 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 
 
 //	jout<<"****************"<<std::endl;
-//	jout<<"Channel= "<<m_channel.paddles.id<<" Thr= "<<Thr<<" "<<" Ped_prev_id_0= "<<Ped_prev_id0<<" Ped_prev_id_1= "<<Ped_prev_id1<<std::endl;
+//	jout<<"Channel= "<<m_channel.paddles->id<<" Thr= "<<Thr<<" "<<" Ped_prev_id_0= "<<Ped_prev_id0<<" Ped_prev_id_1= "<<Ped_prev_id1<<std::endl;
 
 	/////////	 Leading-edge Timing  //////////
 	for (int ii=0;ii<size;ii++){
@@ -102,7 +102,8 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 							if(m_channel.paddles->id==0)Ped_prev_id0=Ped;
 							if(m_channel.paddles->id==1)Ped_prev_id1=Ped;
 	}
-//		jout<<"Ped= "<<Ped<<" Ped_prev_id0= "<<Ped_prev_id0<<" Ped_prev_id1= "<<Ped_prev_id1<<std::endl;
+
+	//jout<<"Ped= "<<Ped<<" Ped_prev_id0= "<<Ped_prev_id0<<" Ped_prev_id1= "<<Ped_prev_id1<<std::endl;
 
     /********************************************************************************************************************/
 
@@ -119,13 +120,13 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 								if (sup_index>size-1)sup_index=size-1;
 													}
 		}
-//				jout<<"Max= "<<max<<" max_index= "<<max_index<<" inf_index= "<<inf_index<<" sup_index= "<<sup_index<<std::endl;
+			//	jout<<"Max= "<<max<<" max_index= "<<max_index<<" inf_index= "<<inf_index<<" sup_index= "<<sup_index<<std::endl;
 
 		if(T>0&&Q<0) {					// to recover most of the (few) "strange" signals (small and very fast (2-3 bins))
-//				jout<<"Q_before= "<<Q<<std::endl;
+				//jout<<"Q_before= "<<Q<<std::endl;
 				Q=0;		// reset Q for new calculation
 				for (int ii=inf_index;ii<sup_index+1;ii++)Q+=(input->samples.at(ii)-Ped);
-//     			jout<<"Q_after= "<<Q<<std::endl;
+     			//jout<<"Q_after= "<<Q<<std::endl;
 		}
 
 		Q=2*Q*(0.001*4)/50 ;        // from Wb to nCoulomb , 4 [nsec], 50 [Ohm], Q [Volts], 2 splitter
@@ -138,9 +139,10 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 
 			double f=0.5;
 			int delay=2;	// binning. 1 bin = 4 nsec
-			double Att_inv_pulse[100];
-			double Delay_pulse[100];
-			double Sum[100];
+			double *Att_inv_pulse=new double[size];
+			double *Delay_pulse=new double[size];
+			double *Sum=new double[size];
+
 
 			for (int ii=0;ii<size;ii++) {
 				Att_inv_pulse[ii]=0;
@@ -155,6 +157,7 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 //				cout<<ii<<" Signal= "<<input->samples.at(ii)<<" Att_inv= "<<Att_inv_pulse[ii]<<" Delay= "<<Delay_pulse[ii]<<" Sum= "<<Sum[ii]<<endl;
 			}
 
+			jout<<max_index<<" "<<delay<<" "<<max_index+delay<<endl;
 			for (int ii=(max_index+delay);ii>0;ii--) {
 					if(Sum[ii]<0){
 						Tinf=(ii)*4;
@@ -168,10 +171,14 @@ jerror_t Paddlesfa250Converter::convertMode1Hit(PaddlesPMTHit* output,const fa25
 
 						T=((((Tsup-Tinf)/(Amp2-Amp1))*(0-Amp1))+Tinf)-delay*4;		// linear interpolation with Threshold = 0
 //						jout<<"\e[1mCFD= \e[0m "<<T<<endl;
+			delete Att_inv_pulse;
+			delete Delay_pulse;
+			delete Sum;
 			}
 	output->Q=Q;
 	output->T=T;
 
+	jout<<"DONE"<<endl;
 	return NOERROR;
 }
 
