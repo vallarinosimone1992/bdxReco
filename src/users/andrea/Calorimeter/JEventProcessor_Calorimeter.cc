@@ -335,7 +335,7 @@ jerror_t JEventProcessor_Calorimeter::evnt(JEventLoop *loop, uint64_t eventnumbe
 		}
 	}
 	flag=false;
-	if ((Ec1>20)&&(nHitsExtVeto==0)&&(caloHit->m_data[0].good_ped_RMS==true)&&(caloHit->m_data[1].good_ped_RMS==true)) flag=true;
+	//if ((Ec1>10)&&(nHitsExtVeto==0)&&(nHitsIntVeto==0)&&(caloHit->m_data[0].good_ped_RMS==true)&&(caloHit->m_data[1].good_ped_RMS==true)) flag=true;
 	if ((flag)&&(m_isMC==false)){
 		int iwave=0;
 		int N;
