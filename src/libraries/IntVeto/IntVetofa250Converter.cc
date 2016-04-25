@@ -86,10 +86,8 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 	}
 
 
-
 	//0b produced the waveform
 	for (int ii=0;ii<size;ii++){
-
 		m_waveform.push_back(input->samples[ii]-ped);
 	}
 
@@ -108,7 +106,9 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 
 	thr=m_thrCalib->getCalibSingle(*output->m_channel.int_veto); //this is the 1 phe ampl FROM DB
 
-	thr=thr*m_thr;   //put a very low thr at this level, 1.5 phe.
+	thr=thr*m_thr;   //put a very low thr at this level
+
+	//jout<<thr<<" "<<m_thr<<endl;
 
 	//2: find thr crossings
 	m_thisCrossingTime.first=-1;
@@ -140,7 +140,7 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 	/*Verify the ToT for each pulse*/
 	for (int itime=0;itime<m_crossingTimes.size();itime++){
 		if (m_crossingTimesDelta.at(itime)<0){
-			jerr<<"Calorimeterfa20Converter::convertMode1Hit error, negative ToT?"<<std::endl;
+			jerr<<"IntVetofa20Converter::convertMode1Hit error, negative ToT?"<<std::endl;
 		}
 		else if((m_crossingTimesDelta.at(itime)>(m_minTot/4.))||(m_crossingTimes.at(itime).second)==(size)||(m_crossingTimes.at(itime).first)==(0)){
 			m_singleCrossingIndexes.push_back(itime);
@@ -149,7 +149,7 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 	output->nSingles=m_singleCrossingIndexes.size();
 	if ((output->nSingles)==0){
 		output->m_type=IntVetoSiPMHit::noise;
-		output->Qraw=this->sumSamples(m_waveform.size(),&(m_waveform.at(0)));
+		output->Qraw=this->sumSamples(m_NSA+m_NSB,&(m_waveform.at(0)));  //for compatibility with case 1
 		output->A=this->getMaximum(m_waveform.size(),&(input->samples.at(0)),output->T);
 		output->T*=4; //in NS!!!
 		return NOERROR;

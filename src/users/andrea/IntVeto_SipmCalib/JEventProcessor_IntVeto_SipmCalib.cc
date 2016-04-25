@@ -57,7 +57,7 @@ JEventProcessor_IntVeto_SipmCalib::JEventProcessor_IntVeto_SipmCalib():
 		m_ROOTOutput(0)
 {
 	m_isFirstCallToBrun=1;
-	h=new TH1D("h","h",100,-0.5,99.5);
+	h=new TH1D("h","h",500,-0.5,499.5);
 }
 
 //------------------
@@ -157,7 +157,7 @@ jerror_t JEventProcessor_IntVeto_SipmCalib::evnt(JEventLoop *loop, uint64_t even
 	vector<const IntVetoSiPMHit*>::const_iterator data_it;
 	loop->Get(data);
 
-	const fa250Mode1CalibHit *m_waveform;
+	const fa250Mode1CalibPedSubHit *m_waveform;
 
 
 	japp->RootWriteLock();
@@ -168,15 +168,15 @@ jerror_t JEventProcessor_IntVeto_SipmCalib::evnt(JEventLoop *loop, uint64_t even
 		m_component=(*data_it)->m_channel.int_veto->component;
 		m_readout=(*data_it)->m_channel.int_veto->readout;
 
-		(*data_it)->GetSingle(m_waveform);
-	/*	h->Reset();
-		h->SetName(Form("h_%lld_%i_%i",eventnumber,(*data_it)->m_channel.int_veto.component,(*data_it)->m_channel.int_veto.readout));
+		/*(*data_it)->GetSingle(m_waveform);
+		h->Reset();
+		h->SetName(Form("h_%lld_%i_%i_%f",eventnumber,(*data_it)->m_channel.int_veto->component,(*data_it)->m_channel.int_veto->readout,(*data_it)->Qphe));
 
 		for (int ii=0;ii<m_waveform->samples.size();ii++){
-			h->Fill(ii,m_waveform->samples.at(ii));
+			h->Fill(ii,m_waveform->samples[ii]);
 		}
 		h->Write();
-*/
+		*/
 		m_type=(*data_it)->m_type;
 		T=(*data_it)->T;
 		A=(*data_it)->A;
