@@ -30,6 +30,9 @@ class IntVetoHit:public BDXObject{
 			 AddString(items, "sector", "%4d", m_channel.sector);
 			 AddString(items, "layer", "%4d", m_channel.layer);
 			 AddString(items, "component", "%4d", m_channel.component);
+			 AddString(items, "Q","%4f",Q);
+			 AddString(items, "T","%4f",T);
+
 
 		}
 		TranslationTable::INT_VETO_Index_t m_channel; //Detector-specific ID. Since this is a detector-based object, the readout field will be ==0

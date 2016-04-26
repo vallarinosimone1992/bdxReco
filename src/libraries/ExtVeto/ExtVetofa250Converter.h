@@ -25,7 +25,7 @@ class ExtVetofa250Converter:public fa250Converter<ExtVetoPMTHit>{
 		JOBJECT_PUBLIC(ExtVetofa250Converter);
 		
 
-		virtual ExtVetoPMTHit* convertHit(const fa250Hit *hit,const TranslationTable::ChannelInfo &m_channel) const;
+		virtual ExtVetoPMTHit* convertHit(const fa250Hit *hit,const TranslationTable::ChannelInfo &m_channel,int eventN=0) const;
 		jerror_t convertMode1Hit(ExtVetoPMTHit* output,const fa250Mode1CalibHit *input) const;
 		jerror_t convertMode7Hit(ExtVetoPMTHit* output,const fa250Mode7Hit *input) const;
 

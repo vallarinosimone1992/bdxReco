@@ -100,11 +100,11 @@ jerror_t IntVetoDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		m_IntVetoDigiHit_tmp->Get(m_IntVetoSiPMHit_tmp,"",0);  //0 means "associated only with this object
 
 		m_IntVetoDigiHit_tmp->Qtot=0;
-
+		Qmax=-9999;
 		for (int ihit=0;ihit<m_IntVetoSiPMHit_tmp.size();ihit++){
 			IntVetoDigiHit::IntVetoSiPMDigiHit hit;
-			hit.Q=m_IntVetoSiPMHit_tmp.at(ihit)->Qphe;
-			hit.T=m_IntVetoSiPMHit_tmp.at(ihit)->T;
+			hit.Q=m_IntVetoSiPMHit_tmp[ihit]->Qphe;
+			hit.T=m_IntVetoSiPMHit_tmp[ihit]->T;
 			hit.readout=m_IntVetoSiPMHit_tmp.at(ihit)->m_channel.int_veto->readout;
 			m_IntVetoDigiHit_tmp->m_data.push_back(hit);
 			m_IntVetoDigiHit_tmp->Qtot+=hit.Q;

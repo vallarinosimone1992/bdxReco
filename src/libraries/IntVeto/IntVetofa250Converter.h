@@ -24,9 +24,9 @@ class IntVetofa250Converter:public fa250Converter<IntVetoSiPMHit>{
 public:
 	JOBJECT_PUBLIC(IntVetofa250Converter);// Add data members here. For example:
 
-	virtual IntVetoSiPMHit* convertHit(const fa250Hit *hit,const TranslationTable::ChannelInfo &m_channel) const;
-	jerror_t convertMode1Hit(IntVetoSiPMHit* output,const fa250Mode1CalibPedSubHit *input) const;
-	jerror_t convertMode7Hit(IntVetoSiPMHit* output,const fa250Mode7Hit *input) const;
+	virtual IntVetoSiPMHit* convertHit(const fa250Hit *hit,const TranslationTable::ChannelInfo &m_channel,int eventN=0) const;
+	jerror_t convertMode1Hit(IntVetoSiPMHit* output,const fa250Mode1CalibPedSubHit *input,int eventN) const;
+	jerror_t convertMode7Hit(IntVetoSiPMHit* output,const fa250Mode7Hit *input,int eventN) const;
 
 
 	CalibrationHandler<TranslationTable::INT_VETO_Index_t> *m_thrCalib;

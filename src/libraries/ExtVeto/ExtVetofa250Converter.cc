@@ -6,7 +6,7 @@
 
 
 
-ExtVetoPMTHit* ExtVetofa250Converter::convertHit(const fa250Hit *hit,const TranslationTable::ChannelInfo &m_channel)const{
+ExtVetoPMTHit* ExtVetofa250Converter::convertHit(const fa250Hit *hit,const TranslationTable::ChannelInfo &m_channel,int eventN)const{
 	ExtVetoPMTHit *m_ExtVetoPMTHit=new ExtVetoPMTHit;
 	m_ExtVetoPMTHit->m_channel=m_channel;
 

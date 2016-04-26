@@ -6,7 +6,7 @@
 #include <math.h>
 #include <vector>
 
-PaddlesPMTHit* Paddlesfa250Converter::convertHit(const fa250Hit *hit,const TranslationTable::ChannelInfo &m_channel) const{
+PaddlesPMTHit* Paddlesfa250Converter::convertHit(const fa250Hit *hit,const TranslationTable::ChannelInfo &m_channel,int eventN) const{
 	PaddlesPMTHit *m_PaddlesPMTHit=new PaddlesPMTHit;
 	m_PaddlesPMTHit->m_channel=m_channel;
 

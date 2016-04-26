@@ -7,15 +7,18 @@
 #include "TH1D.h"
 #include "TCanvas.h"
 #include "TApplication.h"
-IntVetoSiPMHit* IntVetofa250Converter::convertHit(const fa250Hit *hit,const TranslationTable::ChannelInfo &m_channel) const{
+
+			TApplication *gui=new TApplication("gui",0,NULL);
+
+IntVetoSiPMHit* IntVetofa250Converter::convertHit(const fa250Hit *hit,const TranslationTable::ChannelInfo &m_channel,int eventN) const{
 	IntVetoSiPMHit *m_IntVetoSiPMHit=new IntVetoSiPMHit;
 	m_IntVetoSiPMHit->m_channel=m_channel;
 
 	if (strcmp(hit->className(),"fa250Mode1CalibPedSubHit")==0){
-		this->convertMode1Hit(m_IntVetoSiPMHit,(const fa250Mode1CalibPedSubHit*)hit);
+		this->convertMode1Hit(m_IntVetoSiPMHit,(const fa250Mode1CalibPedSubHit*)hit,eventN);
 	}
 	else if (strcmp(hit->className(),"fa250Mode7Hit")==0){
-		this->convertMode7Hit(m_IntVetoSiPMHit,(const fa250Mode7Hit*)hit);
+		this->convertMode7Hit(m_IntVetoSiPMHit,(const fa250Mode7Hit*)hit,eventN);
 	}
 	else{
 		jerr<<"IntVetofa250Converter::convertHit unsupported class name: "<<hit->className()<<std::endl;
@@ -24,7 +27,7 @@ IntVetoSiPMHit* IntVetofa250Converter::convertHit(const fa250Hit *hit,const Tran
 	return m_IntVetoSiPMHit;
 }
 
-jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa250Mode1CalibPedSubHit *input) const{
+jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa250Mode1CalibPedSubHit *input,int eventN) const{
 	int size=input->samples.size();
 	// Copy the fa250Hit part (crate, slot, channel, ...)
 	// doing it this way allow one to modify fa250 later and
@@ -107,7 +110,7 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 	m_thisCrossingTime.second=-1;
 	if (m_waveform[0]>thr) m_thisCrossingTime.first=0;
 	for (int ii=0;ii<size;ii++){
-		if ((	m_waveform[ii]>thr)&&(	m_waveform[ii-1]<thr)) m_thisCrossingTime.first=ii;
+		if ((m_waveform[ii]>thr)&&(	m_waveform[ii-1]<thr)) m_thisCrossingTime.first=ii;
 		else if ((	m_waveform[ii]<thr)&&(	m_waveform[ii-1]>thr) && (m_thisCrossingTime.first!=-1)) {
 			m_thisCrossingTime.second=ii;
 			m_crossingTimes.push_back(m_thisCrossingTime);
@@ -142,7 +145,7 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 	if ((output->nSingles)==0){
 		output->m_type=IntVetoSiPMHit::noise;
 		output->Qraw=this->sumSamples(m_NSA+m_NSB,&(m_waveform.at(0)));  //for compatibility with case 1
-		output->A=this->getMaximum(m_waveform.size(),&(input->samples.at(0)),output->T);
+		output->A=this->getMaximum(m_waveform.size(),&(m_waveform[0]),output->T);
 		output->T=-1;
 		return NOERROR;
 	}
@@ -155,7 +158,7 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 			idx=m_singleCrossingIndexes.at(iphe);
 			xmin=m_crossingTimes.at(idx).first;
 			xmax=m_crossingTimes.at(idx).second;
-			max=this->getMaximum((int)xmin,(int)xmax,&(input->samples.at(0)),Tmax);
+			max=this->getMaximum((int)xmin,(int)xmax,&(m_waveform[0]),Tmax);
 			if ((output->A) < max){
 				output->A=max;
 				imax=idx;
@@ -163,31 +166,38 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 		}
 		xmin=m_crossingTimes.at(imax).first;
 		xmax=m_crossingTimes.at(imax).second;
-		max=this->getMaximum((int)xmin,(int)xmax,&(m_waveform.at(0)),Tmax);
+		max=this->getMaximum((int)xmin,(int)xmax,&(m_waveform[0]),Tmax);
 
 		xmin=Tmax-m_NSA;
 		if (xmin<0) xmin=0;
 		xmax=Tmax+m_NSB;
 		if (xmax>=size) (xmax=size-1);
-		output->Qraw=this->sumSamples(xmin,xmax,&(m_waveform.at(0)));
+		output->Qraw=this->sumSamples(xmin,xmax,&(m_waveform[0]));
 
 
-		/*Now do timing*/
-		//y=min+(t-xmin)*(max-min)/(xmax-xmin) , xmin <= t <= xmax
-		//y=THR
-		//(THR-min)*(xmax-xmin)/(max-min)+xmin=t
-		xmax=m_crossingTimes.at(imax).first;  //this is the time of the sample OVER thr
-		xmin=m_crossingTimes.at(imax).first-1;  //this is the time of the sample UNDER thr
-		if (xmax==0) output->T=0;
-		else{
-			max=m_waveform.at(xmax);
-			min=m_waveform.at(xmin);
-		}
-
-		output->T=(thr-min)*(xmax-xmin)/(max-min)+xmin;
+		/*Now do timing. Keep it simple: 4 ns resolution is enough for what we need*/
+		max=this->getMaximum(m_waveform.size(),&(m_waveform[0]),Tmax);
+		output->T=Tmax;
 		output->T*=4; //in NS!!!
 
+		/*if ((eventN==3093)){
+			jout<<"AA "<<eventN<<endl;
+			jout<<Tmax<<endl;
+			jout<<imax<<endl;
+			jout<<m_crossingTimes.size()<<" "<<output->nSingles<<endl;
+			for (int im=0;im<m_crossingTimes.size();im++) jout<<im<<" "<<m_crossingTimes[im].first<<" "<<m_crossingTimes[im].second<<endl;
+			jout<<output->m_channel.CSC.slot<<" "<<output->m_channel.CSC.channel<<endl;
+			jout<<thr<<" "<<min<<" "<<max<<" "<<xmin<<" "<<xmax<<endl;
 
+			TH1D *h=new TH1D("h","h",m_waveform.size(),-0.5,m_waveform.size()-0.5);
+			for (int iii=0;iii<m_waveform.size();iii++) h->Fill(iii,m_waveform[iii]);
+			jout<<"Draw"<<endl;
+			TCanvas *c=new TCanvas("c","c");
+			h->Draw();
+
+			gui->Run(1);
+		}
+		 */
 		return NOERROR;
 	}
 	//
@@ -196,7 +206,7 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 	return NOERROR;
 }
 
-jerror_t IntVetofa250Converter::convertMode7Hit(IntVetoSiPMHit* output,const fa250Mode7Hit *input) const{
+jerror_t IntVetofa250Converter::convertMode7Hit(IntVetoSiPMHit* output,const fa250Mode7Hit *input,int eventN) const{
 	output->AddAssociatedObject(input);
 
 

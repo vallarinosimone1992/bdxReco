@@ -35,6 +35,9 @@ public:
 		AddString(items, "layer", "%4d", m_channel.int_veto->layer);
 		AddString(items, "component", "%4d", m_channel.int_veto->component);
 		AddString(items, "readout", "%4d", m_channel.int_veto->readout);
+		AddString(items,"Qphe","%4f",Qphe);
+		AddString(items,"T","%4f",T);
+
 	}
 	typedef enum{
 		noise=0,

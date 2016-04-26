@@ -52,7 +52,7 @@ double fSinglePhe1Pole(double *x,double *par){
 
 
 
-CalorimeterSiPMHit* Calorimeterfa250Converter::convertHit(const fa250Hit *hit,const TranslationTable::ChannelInfo &m_channel) const{
+CalorimeterSiPMHit* Calorimeterfa250Converter::convertHit(const fa250Hit *hit,const TranslationTable::ChannelInfo &m_channel,int eventN) const{
 	CalorimeterSiPMHit *m_CalorimeterSiPMHit=new CalorimeterSiPMHit;
 	m_CalorimeterSiPMHit->m_channel=m_channel;
 

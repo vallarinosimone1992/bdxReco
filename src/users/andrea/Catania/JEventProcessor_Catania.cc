@@ -342,8 +342,10 @@ jerror_t JEventProcessor_Catania::evnt(JEventLoop *loop, uint64_t eventnumber)
 	}
 	flag=false;
 	//	if ((Ec1>10)&&(nHitsExtVeto==0)&&(nHitsIntVeto==0)&&(caloHit->m_data[0].good_ped_RMS==true)&&(caloHit->m_data[1].good_ped_RMS==true)) flag=true;
-	//if ((Ec2<20)&&(nHitsIntVetoCoincidence<nHitsIntVeto)&&(nHitsIntVeto>0)&&(event->flag_RMS==true)) flag=true;
+	//if ((Ec1>20)&&(Ec1<40)&&(nHitsIntVetoCoincidence==0)&&(nHitsIntVeto>0)&&(event->flag_RMS==true)) flag=true;
 	if ((flag)&&(m_isMC==false)){
+	//	jout<<"QUI "<<eventnumber<<endl;
+	//	cin.get();
 		int iwave=0;
 		int N;
 		for (chits_it=chits.begin();chits_it!=chits.end();chits_it++){

@@ -92,7 +92,6 @@ jerror_t IntVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		if (nReadout==1){
 			Q=m_IntVetoDigiHit->m_data[0].Q;
 			T=m_IntVetoDigiHit->m_data[0].T;
-
 			if (Q>m_THR_singleReadout){
 				m_IntVetoHit=new IntVetoHit();
 				m_IntVetoHit->m_channel = m_IntVetoDigiHit->m_channel;
@@ -108,6 +107,7 @@ jerror_t IntVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 			Qmax=-9999;
 			for (int idigi=0;idigi<m_IntVetoDigiHit->m_data.size();idigi++){
 				Q=m_IntVetoDigiHit->m_data[idigi].Q;
+				T=m_IntVetoDigiHit->m_data[idigi].T;
 				if (Q>Qmax){
 					Qmax=Q;
 					Tmax=T;
