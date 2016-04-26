@@ -215,9 +215,9 @@ jerror_t JEventProcessor_Catania::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 
 	vector<const CalorimeterMCHit*> mc_data;
+	vector<const CataniaEvent*> events;
 
-
-	const eventData* evdata;
+	const eventData* evdata=0;
 
 
 	int sector,layer,component;
@@ -226,6 +226,7 @@ jerror_t JEventProcessor_Catania::evnt(JEventLoop *loop, uint64_t eventnumber)
 	bool flag;
 
 	double Q,Qtot,T;
+	loop->Get(events);
 	loop->Get(chits);
 	loop->Get(phits);
 	if (m_isMC==0){
@@ -236,17 +237,18 @@ jerror_t JEventProcessor_Catania::evnt(JEventLoop *loop, uint64_t eventnumber)
 		loop->Get(ivhits,"MC");
 		loop->Get(evhits,"MC");
 	}
+
+
 	if (m_isMC==0){
 		loop->Get(mppchits);
 	}
 
-	try{
-		loop->GetSingle(event);
+	if (events.size()!=1){
+		jout<<"Not a single event in this event "<<events.size()<<endl;
+		return RESOURCE_UNAVAILABLE;
 	}
-	catch(unsigned long e){
-		jout<<"No event object this event"<<endl;
-		return NOERROR;
-	}
+
+
 
 	if (m_isMC==0){
 		try{
@@ -267,7 +269,7 @@ jerror_t JEventProcessor_Catania::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	japp->RootWriteLock();
 
-
+	event=events[0];
 	flag=false;
 
 	nHitsIntVeto=0;

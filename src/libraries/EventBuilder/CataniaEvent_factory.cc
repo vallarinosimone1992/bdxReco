@@ -74,7 +74,7 @@ jerror_t CataniaEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	loop->Get(phits);
 
 
-	CataniaEvent *m_event=new CataniaEvent;
+	CataniaEvent *m_event=new CataniaEvent();
 	m_event->E=0;
 	m_event->T=0;
 	m_event->flag_RMS=false;
