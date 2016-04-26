@@ -169,7 +169,7 @@ jerror_t JEventProcessor_Catania::brun(JEventLoop *eventLoop, int32_t runnumber)
 		}
 		/*For ALL objects you want to add to ROOT file, use the following:*/
 		if (m_ROOTOutput){
-			//m_ROOTOutput->AddObject(t);
+			m_ROOTOutput->AddObject(t);
 		}
 	}
 
@@ -239,18 +239,15 @@ jerror_t JEventProcessor_Catania::evnt(JEventLoop *loop, uint64_t eventnumber)
 		loop->Get(mppchits);
 	}
 
-
-
+	try{
+		loop->GetSingle(event);
+	}
+	catch(unsigned long e){
+		jout<<"No event object this event"<<endl;
+		return NOERROR;
+	}
 
 	if (m_isMC==0){
-		try{
-			loop->GetSingle(event);
-		}
-		catch(unsigned long e){
-			jout<<"No event object this event"<<endl;
-			return NOERROR;
-		}
-
 		try{
 			loop->GetSingle(evdata);
 		}
@@ -294,10 +291,10 @@ jerror_t JEventProcessor_Catania::evnt(JEventLoop *loop, uint64_t eventnumber)
 	for (int ihit=0;ihit<chits[0]->m_data.size();ihit++){
 		switch (chits[0]->m_data[ihit].readout){
 		case (1):
-												Ec1=chits[0]->m_data[ihit].E;
+														Ec1=chits[0]->m_data[ihit].E;
 		break;
 		case (2):
-												Ec2=chits[0]->m_data[ihit].E;
+														Ec2=chits[0]->m_data[ihit].E;
 		break;
 		}
 	}
@@ -318,10 +315,10 @@ jerror_t JEventProcessor_Catania::evnt(JEventLoop *loop, uint64_t eventnumber)
 		const CalorimeterSiPMHit *sipmhit= *mppchits_it;
 		switch (sipmhit->m_channel.calorimeter->readout){
 		case (1):
-																		hit1=sipmhit;
+																				hit1=sipmhit;
 		break;
 		case (2):
-																		hit2=sipmhit;
+																				hit2=sipmhit;
 		break;
 		default:
 			break;
@@ -333,10 +330,10 @@ jerror_t JEventProcessor_Catania::evnt(JEventLoop *loop, uint64_t eventnumber)
 		const PaddlesHit *phit=(*phits_it);
 		switch (phit->m_channel.id){
 		case (0):
-															Ep1=phit->E;
+																	Ep1=phit->E;
 		break;
 		case (1):
-															Ep2=phit->E;
+																	Ep2=phit->E;
 		break;
 		}
 	}
@@ -344,8 +341,8 @@ jerror_t JEventProcessor_Catania::evnt(JEventLoop *loop, uint64_t eventnumber)
 	//	if ((Ec1>10)&&(nHitsExtVeto==0)&&(nHitsIntVeto==0)&&(caloHit->m_data[0].good_ped_RMS==true)&&(caloHit->m_data[1].good_ped_RMS==true)) flag=true;
 	//if ((Ec1>20)&&(Ec1<40)&&(nHitsIntVetoCoincidence==0)&&(nHitsIntVeto>0)&&(event->flag_RMS==true)) flag=true;
 	if ((flag)&&(m_isMC==false)){
-	//	jout<<"QUI "<<eventnumber<<endl;
-	//	cin.get();
+		//	jout<<"QUI "<<eventnumber<<endl;
+		//	cin.get();
 		int iwave=0;
 		int N;
 		for (chits_it=chits.begin();chits_it!=chits.end();chits_it++){

@@ -81,7 +81,10 @@ jerror_t CataniaEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	double E1,E2,T1,T2,dT;
 	bool flag1,flag2;
 
-
+	E1=E2=0;
+	T1=T2=0;
+	flag1=false;
+	flag2=false;
 	for (chits_it=chits.begin();chits_it!=chits.end();chits_it++){
 		const CalorimeterHit *hit=(*chits_it);
 		for (int ihit=0;ihit<hit->m_data.size();ihit++){
@@ -142,6 +145,8 @@ jerror_t CataniaEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	}
 
 	/*Now loop on paddles*/
+	m_event->Ep1=0;
+	m_event->Ep2=0;
 	for (phits_it=phits.begin();phits_it!=phits.end();phits_it++){
 		const PaddlesHit *phit=(*phits_it);
 		switch (phit->m_channel.id){

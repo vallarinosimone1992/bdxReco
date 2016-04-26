@@ -8,7 +8,7 @@
 #include "TCanvas.h"
 #include "TApplication.h"
 
-			TApplication *gui=new TApplication("gui",0,NULL);
+
 
 IntVetoSiPMHit* IntVetofa250Converter::convertHit(const fa250Hit *hit,const TranslationTable::ChannelInfo &m_channel,int eventN) const{
 	IntVetoSiPMHit *m_IntVetoSiPMHit=new IntVetoSiPMHit;
