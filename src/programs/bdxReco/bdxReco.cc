@@ -18,7 +18,7 @@ using namespace jana;
 #include <ExtVeto/JFactoryGenerator_ExtVeto.h>
 #include <Calorimeter/JFactoryGenerator_Calorimeter.h>
 #include <Paddles/JFactoryGenerator_Paddles.h>
-
+#include <EventBuilder/JFactoryGenerator_EventBuilder.h>
 #include "TH1D.h"
 #include "TMinuitMinimizer.h"
 // C++ headers
@@ -64,7 +64,7 @@ int main(int narg, char *argv[])
 	app.AddFactoryGenerator(new JFactoryGenerator_IntVeto());
 	app.AddFactoryGenerator(new JFactoryGenerator_Calorimeter());
 	app.AddFactoryGenerator(new JFactoryGenerator_Paddles());
-
+	app.AddFactoryGenerator(new JFactoryGenerator_EventBuilder());
 	app.AddProcessor(new BDXEventProcessor());
 
 	app.Run();

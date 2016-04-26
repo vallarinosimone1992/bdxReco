@@ -57,9 +57,8 @@ int JROOTOutput::SaveAll(){
 int JROOTOutput::AddObject(TObject *obj){
 	if (!m_objects){
 		jerr<<"no m_objects, doing nothing"<<endl;
-			return -1;
+		return -1;
 	}
 	m_objects->Add(obj);
-	
 	return 0; // prevent compiler warnings
 }

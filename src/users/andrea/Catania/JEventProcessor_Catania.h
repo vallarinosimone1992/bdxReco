@@ -5,8 +5,8 @@
 // Creator: celentan (on Linux apcx4 2.6.32-504.30.3.el6.x86_64 x86_64)
 //
 
-#ifndef _JEventProcessor_Calorimeter_rate_
-#define _JEventProcessor_Calorimeter_rate_
+#ifndef _JEventProcessor_Catania
+#define _JEventProcessor_Catania
 
 #include <JANA/JEventProcessor.h>
 
@@ -16,12 +16,13 @@ class TH1D;
 class CalorimeterHit;
 class CalorimeterSiPMHit;
 class PaddlesHit;
+class CataniaEvent;
 
-class JEventProcessor_Calorimeter:public jana::JEventProcessor{
+class JEventProcessor_Catania:public jana::JEventProcessor{
 	public:
-		JEventProcessor_Calorimeter();
-		~JEventProcessor_Calorimeter();
-		const char* className(void){return "JEventProcessor_Calorimeter_rate";}
+		JEventProcessor_Catania();
+		~JEventProcessor_Catania();
+		const char* className(void){return "JEventProcessor_Catania";}
 
 	private:
 		jerror_t init(void);						///< Called once at program start.
@@ -35,12 +36,14 @@ class JEventProcessor_Calorimeter:public jana::JEventProcessor{
 		int m_isMC;
 		const CalorimeterSiPMHit *hit1,*hit2;
 		const CalorimeterHit *caloHit;
-		double Ec,Ec1,Ec2,EcMC;
+		const CataniaEvent* event;
+		double Ec,Ec1,Ec2,EcMC,Tc;
 
 		double Ep1,Ep2;
 
 
 		int nHitsIntVeto,nHitsExtVeto;
+		int nHitsIntVetoCoincidence,nHitsExtVetoCoincidence;
 
 
 		TTree *t;

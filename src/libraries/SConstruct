@@ -3,7 +3,7 @@ from utils import *
 Import('env')
 
 # Loop over libraries, building each
-libs=['IntVeto','ExtVeto','Calorimeter','Paddles','TT','system','DAQ','MC']
+libs=['EventBuilder','IntVeto','ExtVeto','Calorimeter','Paddles','TT','system','DAQ','MC']
 src = []
 for lib in libs:
 	reldir = str(lib)

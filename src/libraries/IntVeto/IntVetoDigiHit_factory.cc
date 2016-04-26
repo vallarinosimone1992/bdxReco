@@ -91,6 +91,7 @@ jerror_t IntVetoDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	vector <const IntVetoSiPMHit*> m_IntVetoSiPMHit_tmp;
 	IntVetoDigiHit* m_IntVetoDigiHit_tmp;
 	double Qmax=-99999;
+
 	for (m_map_it=m_map.begin();m_map_it!=m_map.end();m_map_it++){
 		//do here further elaborations!
 		//Compute the charge as the sum of the charges
@@ -107,6 +108,10 @@ jerror_t IntVetoDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 			hit.readout=m_IntVetoSiPMHit_tmp.at(ihit)->m_channel.int_veto->readout;
 			m_IntVetoDigiHit_tmp->m_data.push_back(hit);
 			m_IntVetoDigiHit_tmp->Qtot+=hit.Q;
+			if (hit.Q>Qmax){
+				Qmax=hit.Q;
+				m_IntVetoDigiHit_tmp->T=hit.T;
+			}
 		}
 		_data.push_back(m_IntVetoDigiHit_tmp); //publish it
 	}

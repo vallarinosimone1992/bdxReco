@@ -46,6 +46,7 @@ public:
 	vector <IntVetoSiPMDigiHit> m_data;               //keep in this way to be MC-compatible!
 
 	double Qtot;
+	double T; //time of the maximum hit
 #if (!defined(__APPLE__))
 	ClassDef(IntVetoDigiHit,1);
 #endif

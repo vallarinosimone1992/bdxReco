@@ -69,17 +69,10 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 		ped/=m_NPED;
 		pedRMS/=m_NPED;
 		pedRMS=sqrt(pedRMS-ped*ped);
-		if (pedRMS <= pedRMSmin ){
-			pedRMSmin = pedRMS;
-			pedmin=ped;
-			istartmin=istart;
+		if (pedRMS <=  input->m_RMS ){//input->m_RMS is read from DB. This is the DAQ-measured RMS, equal for all hits in the same channel and the same run)
+			found=true;
+			break;
 		}
-	}
-	if (pedRMSmin < input->m_RMS){  //input->m_RMS is read from DB. This is the DAQ-measured RMS, equal for all hits in the same channel and the same run)
-		found=true;
-		ped=pedmin;
-		pedRMS=pedRMSmin;
-		istart=istartmin;
 	}
 	if (found==false){/*It means we were not able to correct the pedestal here!*/
 		ped=0;
@@ -108,7 +101,6 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 
 	thr=thr*m_thr;   //put a very low thr at this level
 
-	//jout<<thr<<" "<<m_thr<<endl;
 
 	//2: find thr crossings
 	m_thisCrossingTime.first=-1;
@@ -151,7 +143,7 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 		output->m_type=IntVetoSiPMHit::noise;
 		output->Qraw=this->sumSamples(m_NSA+m_NSB,&(m_waveform.at(0)));  //for compatibility with case 1
 		output->A=this->getMaximum(m_waveform.size(),&(input->samples.at(0)),output->T);
-		output->T*=4; //in NS!!!
+		output->T=-1;
 		return NOERROR;
 	}
 
