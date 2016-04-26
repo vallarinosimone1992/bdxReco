@@ -5,6 +5,10 @@ MC		0
 JANA_CALIB_CONTEXT "variation=Catania1"
 THREAD_TIMEOUT 120
 THREAD_TIMEOUT_FIRST_EVENT 120
+
+#Event builder
+CATANIAEVENT:EC2_CUT  10  #MeV
+
 #IntVeto parameters
 INTVETO:MIN_TOT  12    #min tot in ns to consider a pulse
 INTVETO:THR	 0.5   #min amplitude of a pulse -in phe units
