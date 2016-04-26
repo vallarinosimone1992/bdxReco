@@ -109,12 +109,10 @@ jerror_t ExtVetoPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 		if (m_channel.det_sys==TranslationTable::EXT_VETO){
 			//A.C. do not touch these
-			m_ExtVetoPMTHit=new ExtVetoPMTHit;
-			m_ExtVetoPMTHit->m_channel=m_channel;
 			m_ExtVetoPMTHit=m_extVetofa250Converter->convertHit((fa250Hit*)*it_fa250Mode1CalibHit,m_channel);
 			m_ExtVetoPMTHit->AddAssociatedObject(*it_fa250Mode1CalibHit);
 
-			/*Apply phe conversion */
+			//Apply phe conversion
 			m_q_calib=m_PMT_gain->getCalibSingle(*(m_channel.ext_veto));
 			if (m_q_calib>0){
 				m_ExtVetoPMTHit->Q/=((1.602*1E-19)*1E9);	// number of electrons at the exit of the PMT
@@ -136,8 +134,6 @@ jerror_t ExtVetoPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		m_channel=m_tt->getChannelInfo((*it_fa250Mode7Hit)->m_channel);
 		if (m_channel.det_sys==TranslationTable::EXT_VETO){
 			//A.C. do not touch these
-			m_ExtVetoPMTHit=new ExtVetoPMTHit;
-			m_ExtVetoPMTHit->m_channel=m_channel;
 			m_ExtVetoPMTHit=m_extVetofa250Converter->convertHit((fa250Hit*)*it_fa250Mode7Hit,m_channel);
 			m_ExtVetoPMTHit->AddAssociatedObject(*it_fa250Mode7Hit);
 			/*Apply phe conversion */

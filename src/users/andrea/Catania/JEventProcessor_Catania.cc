@@ -198,6 +198,7 @@ jerror_t JEventProcessor_Catania::evnt(JEventLoop *loop, uint64_t eventnumber)
 	vector<const ExtVetoDigiHit*> evhits;
 	vector<const ExtVetoDigiHit*>::iterator evhits_it;
 
+
 	vector<const PaddlesHit*> phits;
 	vector<const PaddlesHit*>::iterator phits_it;
 
