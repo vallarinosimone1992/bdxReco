@@ -62,7 +62,7 @@ jerror_t ExtVetoDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		m_ExtVetoDigiHit->m_channel=*((*m_it)->m_channel.ext_veto);
 		m_ExtVetoDigiHit->m_channel.readout=0;  //since this is detector-based!
 		m_ExtVetoDigiHit->Q=(*m_it)->Q;
-		m_ExtVetoDigiHit->T=(*m_it)->T;
+		m_ExtVetoDigiHit->T=(*m_it)->T/1000.;
 		m_ExtVetoDigiHit->ExtVetoPMTHit_id=(*m_it)->id;
 
 

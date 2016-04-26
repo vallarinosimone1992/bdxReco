@@ -84,19 +84,19 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 			case(2): //bottom     ///The inversion 2 <-> 4 is olny in the data
 			digi_hit.readout=1;
 			digi_hit.Q=m_IntVetoMCHit->adc1;
-			digi_hit.T=m_IntVetoMCHit->tdc1;
+			digi_hit.T=m_IntVetoMCHit->tdc1/1000.;  //MC is in ps
 			m_IntVetoDigiHit->m_data.push_back(digi_hit);
 			digi_hit.readout=2;
 			digi_hit.Q=m_IntVetoMCHit->adc2;
-			digi_hit.T=m_IntVetoMCHit->tdc2;
+			digi_hit.T=m_IntVetoMCHit->tdc2/1000.;
 			m_IntVetoDigiHit->m_data.push_back(digi_hit);
 			digi_hit.readout=3;
 			digi_hit.Q=m_IntVetoMCHit->adc3;
-			digi_hit.T=m_IntVetoMCHit->tdc3;
+			digi_hit.T=m_IntVetoMCHit->tdc3/1000.;
 			m_IntVetoDigiHit->m_data.push_back(digi_hit);
 			digi_hit.readout=4;
 			digi_hit.Q=m_IntVetoMCHit->adc4;
-			digi_hit.T=m_IntVetoMCHit->tdc4;
+			digi_hit.T=m_IntVetoMCHit->tdc4/1000.;
 			m_IntVetoDigiHit->m_data.push_back(digi_hit);
 			break;
 
@@ -104,7 +104,7 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 			case(4): //downstream
 			digi_hit.readout=1;
 			digi_hit.Q=m_IntVetoMCHit->adc1;
-			digi_hit.T=m_IntVetoMCHit->tdc1;
+			digi_hit.T=m_IntVetoMCHit->tdc1/1000.;
 			m_IntVetoDigiHit->m_data.push_back(digi_hit);
 			break;
 

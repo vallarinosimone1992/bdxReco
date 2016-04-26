@@ -133,6 +133,7 @@ jerror_t CataniaEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	m_event->nIntVetoHitsCoincidence=0;
 	for (ivhits_it=ivhits.begin();ivhits_it!=ivhits.end();ivhits_it++){
 		const IntVetoHit *hit=(*ivhits_it);
+		//jout<<" AAAA "<<hit->T<<" "<<m_event->T<<endl;
 		if (hit->T<0) continue; //The IntVeto condition for a "good" hit
 		else{
 			m_event->nIntVetoHits++;

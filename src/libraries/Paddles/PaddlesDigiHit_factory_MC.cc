@@ -65,7 +65,7 @@ jerror_t PaddlesDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 			if (m_PaddlesMCHit->channel==1) m_PaddlesDigiHit->m_channel.id=1;
 			else if (m_PaddlesMCHit->channel==2) m_PaddlesDigiHit->m_channel.id=0;
 			m_PaddlesDigiHit->Q=m_PaddlesMCHit->adc;
-			m_PaddlesDigiHit->T=m_PaddlesMCHit->tdc;
+			m_PaddlesDigiHit->T=m_PaddlesMCHit->tdc/1000.;  //MC is in ps
 			m_PaddlesDigiHit->AddAssociatedObject(m_PaddlesMCHit);
 			m_map[std::make_pair(m_PaddlesMCHit->sector,m_PaddlesMCHit->channel)]=m_PaddlesDigiHit;
 		}
