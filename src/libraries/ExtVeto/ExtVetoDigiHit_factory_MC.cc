@@ -66,7 +66,7 @@ jerror_t ExtVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 			m_ExtVetoDigiHit->m_channel.readout=0;  //this is an active-volume object
 			m_ExtVetoDigiHit->m_channel.component=this->getComponent(m_ExtVetoMCHit->channel);
 			m_ExtVetoDigiHit->Q=m_ExtVetoMCHit->adc;
-			m_ExtVetoDigiHit->T=m_ExtVetoMCHit->tdc;
+			m_ExtVetoDigiHit->T=m_ExtVetoMCHit->tdc/1000.;  //MC is in ps
 			m_map[std::make_pair(m_ExtVetoMCHit->sector,m_ExtVetoMCHit->channel)]=m_ExtVetoDigiHit;
 		}
 		else{ /*object already there*/
