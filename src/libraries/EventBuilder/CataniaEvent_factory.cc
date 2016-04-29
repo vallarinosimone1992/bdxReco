@@ -90,11 +90,13 @@ jerror_t CataniaEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		for (int ihit=0;ihit<hit->m_data.size();ihit++){
 			switch (hit->m_data[ihit].readout){
 			case 1:
+				m_event->Ec1=hit->m_data[ihit].E;
 				T1=hit->m_data[ihit].T;
 				E1=hit->m_data[ihit].E;
 				flag1=hit->m_data[ihit].good_ped_RMS;
 				break;
 			case 2:
+				m_event->Ec2=hit->m_data[ihit].E;
 				T2=hit->m_data[ihit].T;
 				E2=hit->m_data[ihit].E;
 				flag2=hit->m_data[ihit].good_ped_RMS;

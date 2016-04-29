@@ -7,7 +7,7 @@ THREAD_TIMEOUT 120
 THREAD_TIMEOUT_FIRST_EVENT 120
 
 #Event builder
-CATANIAEVENT:EC2_CUT  10  #MeV
+CATANIAEVENT:EC2_CUT  2  #MeV
 
 #IntVeto parameters
 INTVETO:MIN_TOT  12    #min tot in ns to consider a pulse

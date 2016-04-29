@@ -26,12 +26,13 @@ class CataniaEvent:public jana::JObject,public TObject{
 			// AddString(items, "id", "%4d", id);
 			// AddString(items, "E", "%f", E);
 		}
-		
+		double Ec1,Ec2;
 		double E,T;
 		bool flag_RMS;
 
 		int nExtVetoHits;
 		int nExtVetoHitsCoincidence;
+
 
 		int nIntVetoHits;
 		int nIntVetoHitsCoincidence;
