@@ -12,6 +12,8 @@
 #include <JANA/JFactory.h>
 #include "TObject.h"
 
+#include <TT/TranslationTable.h>
+
 class CataniaEvent:public jana::JObject,public TObject{
 	public:
 		JOBJECT_PUBLIC(CataniaEvent);
@@ -32,10 +34,13 @@ class CataniaEvent:public jana::JObject,public TObject{
 
 		int nExtVetoHits;
 		int nExtVetoHitsCoincidence;
-
+		vector <TranslationTable::EXT_VETO_Index_t> vExtVetoHits;
+		vector <TranslationTable::EXT_VETO_Index_t> vExtVetoHitsCoincidence;
 
 		int nIntVetoHits;
 		int nIntVetoHitsCoincidence;
+		vector <TranslationTable::INT_VETO_Index_t> vIntVetoHits;
+		vector <TranslationTable::INT_VETO_Index_t> vIntVetoHitsCoincidence;
 
 		double Ep1,Ep2;
 
