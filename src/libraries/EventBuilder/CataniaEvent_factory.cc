@@ -123,9 +123,11 @@ jerror_t CataniaEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		if (hit->T<0) continue; //The ExtVeto condition for a "good" hit
 		else{
 			m_event->nExtVetoHits++;
+			m_event->vExtVetoHits.push_back(hit->m_channel);
 			dT=fabs(hit->T-m_event->T);
 			if (dT<m_ExtVeto_timeWindows){
 				m_event->nExtVetoHitsCoincidence++;
+				m_event->vExtVetoHitsCoincidence.push_back(hit->m_channel);
 				m_event->AddAssociatedObject(hit);
 			}
 		}
@@ -139,9 +141,11 @@ jerror_t CataniaEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		if (hit->T<0) continue; //The IntVeto condition for a "good" hit
 		else{
 			m_event->nIntVetoHits++;
+			m_event->vIntVetoHits.push_back(hit->m_channel);
 			dT=fabs(hit->T-m_event->T);
 			if (dT<m_IntVeto_timeWindows){
 				m_event->nIntVetoHitsCoincidence++;
+				m_event->vIntVetoHitsCoincidence.push_back(hit->m_channel);
 				m_event->AddAssociatedObject(hit);
 			}
 		}
