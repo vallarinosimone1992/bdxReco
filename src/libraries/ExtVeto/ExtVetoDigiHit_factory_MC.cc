@@ -40,7 +40,6 @@ jerror_t ExtVetoDigiHit_factory_MC::brun(jana::JEventLoop *eventLoop, int32_t ru
 jerror_t ExtVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 
-
 	ExtVetoDigiHit *m_ExtVetoDigiHit=0;
 
 

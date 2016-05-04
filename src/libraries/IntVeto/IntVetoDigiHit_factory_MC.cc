@@ -39,17 +39,6 @@ jerror_t IntVetoDigiHit_factory_MC::brun(jana::JEventLoop *eventLoop, int32_t ru
 //------------------
 jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
-	// Code to generate factory data goes here. Add it like:
-	//
-	// IntVetoDigiHit *myIntVetoDigiHit = new IntVetoDigiHit;
-	// myIntVetoDigiHit->x = x;
-	// myIntVetoDigiHit->y = y;
-	// ...
-	// _data.push_back(myIntVetoDigiHit);
-	//
-	// Note that the objects you create here will be deleted later
-	// by the system and the _data vector will be cleared automatically.
-
 
 	IntVetoDigiHit *m_IntVetoDigiHit=0;
 	IntVetoDigiHit::IntVetoSiPMDigiHit digi_hit;
@@ -81,7 +70,7 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 			case(1):
 			case(5):
 			case(6):
-			case(2): //bottom     ///The inversion 2 <-> 4 is olny in the data
+			case(2): //bottom     ///The inversion 2 <-> 4 is only in the data
 			digi_hit.readout=1;
 			digi_hit.Q=m_IntVetoMCHit->adc1;
 			digi_hit.T=m_IntVetoMCHit->tdc1/1000.;  //MC is in ps
@@ -174,7 +163,7 @@ int IntVetoDigiHit_factory_MC::getComponent(int MCchannel){
 					component=5;break;
 	case(5): //right
 					component=2;break;
-	case(6):
+	case(6): //left
 					component=1;break;
 	}
 	return component;
