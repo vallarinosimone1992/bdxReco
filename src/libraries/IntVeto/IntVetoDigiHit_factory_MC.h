@@ -22,7 +22,7 @@ class IntVetoDigiHit_factory_MC:public jana::JFactory<IntVetoDigiHit>{
 		~IntVetoDigiHit_factory_MC(){};
 		const char* Tag(void){return "MC";}
 
-		int getComponent(int MCchannel);
+		int getCataniaComponent(int MCchannel);
 	private:
 		jerror_t init(void);						///< Called once at program start.
 		jerror_t brun(jana::JEventLoop *eventLoop, int32_t runnumber);	///< Called everytime a new run number is detected.

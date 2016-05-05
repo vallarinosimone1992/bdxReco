@@ -23,8 +23,8 @@ class CalorimeterCluster_factory:public jana::JFactory<CalorimeterCluster>{
 		~CalorimeterCluster_factory(){};
 
 
-		bool areNeighbors(const CalorimeterHit *hit1,const CalorimeterHit *hit2) const;
-		void computePosition(CalorimeterCluster *cluster,const std::vector<std::pair<const CalorimeterHit*,double> > &whits)const;
+
+		void setCluster(CalorimeterCluster *cluster,const std::vector<std::pair<const CalorimeterHit*,double> > &whits)const;
 
 
 	private:

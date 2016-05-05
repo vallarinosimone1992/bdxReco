@@ -18,6 +18,7 @@ using namespace std;
 #include "IntVetoMCHit.h"
 #include "ExtVetoMCHit.h"
 #include "PaddlesMCHit.h"
+#include "VetoMCHit.h"
 //GEMC stuff to read simulation
 #include <MC/options.h>
 #include <gbank.h>
@@ -237,14 +238,14 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory)
 		vector<IntVetoMCHit*> intVetoMChits;
 		for(unsigned int ih=0; ih<bankDgt.size(); ih++)
 		{
-			if (bankDgt[ih].getIntDgtVar("veto")!=1) continue;  //since Marco used the same bank for all the vetos.. blah~!!
+			if ((bankDgt[ih].getIntDgtVar("veto")!=VetoMCHit::CATANIA_INTVETO)&&(bankDgt[ih].getIntDgtVar("veto")!=VetoMCHit::FULL_INTVETO)) continue;
 
 
 			IntVetoMCHit *hit = new IntVetoMCHit;
 
 			hit->sector=bankDgt[ih].getIntDgtVar("sector");
 			hit->channel=bankDgt[ih].getIntDgtVar("channel");
-
+			hit->system=bankDgt[ih].getIntDgtVar("veto");
 
 			/*dgtz banks*/
 			hit->adc1=bankDgt[ih].getIntDgtVar("adc1");
@@ -288,14 +289,14 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory)
 		vector<ExtVetoMCHit*> extVetoMChits;
 		for(unsigned int ih=0; ih<bankDgt.size(); ih++)
 		{
-			if (bankDgt[ih].getIntDgtVar("veto")!=2) continue;  //since Marco used the same bank for all the vetos.. blah~!!
+			if ((bankDgt[ih].getIntDgtVar("veto")!=VetoMCHit::CATANIA_EXTVETO)&&(bankDgt[ih].getIntDgtVar("veto")!=VetoMCHit::FULL_EXTVETO)) continue;  //since Marco used the same bank for all the vetos.. blah~!!
 
 
 			ExtVetoMCHit *hit = new ExtVetoMCHit;
 
 			hit->sector=bankDgt[ih].getIntDgtVar("sector");
 			hit->channel=bankDgt[ih].getIntDgtVar("channel");
-
+			hit->system=bankDgt[ih].getIntDgtVar("veto");
 
 			/*dgtz banks*/
 			hit->adc=bankDgt[ih].getIntDgtVar("adc1");
@@ -332,7 +333,7 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory)
 		vector<PaddlesMCHit*> paddlesMChits;
 		for(unsigned int ih=0; ih<bankDgt.size(); ih++)
 		{
-			if (bankDgt[ih].getIntDgtVar("veto")!=3) continue;  //since Marco used the same bank for all the vetos.. blah~!!
+			if (bankDgt[ih].getIntDgtVar("veto")!=VetoMCHit::CATANIA_PADDLES) continue;  //since Marco used the same bank for all the vetos.. blah~!!
 
 
 			PaddlesMCHit *hit = new PaddlesMCHit;

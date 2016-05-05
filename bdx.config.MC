@@ -1,9 +1,9 @@
 #Configuration file for BDX MC run.
 
 #System parameters
-JANA_CALIB_CONTEXT "variation=Catania1"
 MC		1
 MC:RUN_NUMBER 1138
+JANA_CALIB_CONTEXT "variation=Catania1"
 THREAD_TIMEOUT 120
 THREAD_TIMEOUT_FIRST_EVENT 120
 #IntVeto parameters

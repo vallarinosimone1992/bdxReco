@@ -63,8 +63,15 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 			m_IntVetoDigiHit->m_channel.sector=m_IntVetoMCHit->sector;
 			m_IntVetoDigiHit->m_channel.layer=0;
 			m_IntVetoDigiHit->m_channel.readout=0;  //this is an active-volume object
-			m_IntVetoDigiHit->m_channel.component=this->getComponent(m_IntVetoMCHit->channel);
+
 			m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+
+			if (m_IntVetoMCHit->system==VetoMCHit::CATANIA_INTVETO){
+				m_IntVetoDigiHit->m_channel.component=this->getCataniaComponent(m_IntVetoMCHit->channel);
+			}
+			else{
+				m_IntVetoDigiHit->m_channel.component=m_IntVetoMCHit->channel; /*Keep this as in MC. There's no data to compare with!*/
+			}
 			/*create the component sipm-hits*/
 			switch (m_IntVetoMCHit->channel){
 			case(1):
@@ -104,20 +111,20 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 			m_IntVetoDigiHit=m_map_it->second;
 			m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 			switch (m_IntVetoMCHit->channel){
-					case(1):
-					case(5):
-					case(6):
-					case(2): //bottom     ///The inversion is only in the data
-					m_IntVetoDigiHit->m_data[0].Q+=m_IntVetoMCHit->adc1;
-					m_IntVetoDigiHit->m_data[1].Q+=m_IntVetoMCHit->adc2;
-					m_IntVetoDigiHit->m_data[2].Q+=m_IntVetoMCHit->adc3;
-					m_IntVetoDigiHit->m_data[3].Q+=m_IntVetoMCHit->adc4;
-					break;
+			case(1):
+			case(5):
+			case(6):
+			case(2): //bottom     ///The inversion is only in the data
+			m_IntVetoDigiHit->m_data[0].Q+=m_IntVetoMCHit->adc1;
+			m_IntVetoDigiHit->m_data[1].Q+=m_IntVetoMCHit->adc2;
+			m_IntVetoDigiHit->m_data[2].Q+=m_IntVetoMCHit->adc3;
+			m_IntVetoDigiHit->m_data[3].Q+=m_IntVetoMCHit->adc4;
+			break;
 
-					case(3): //upstream
-					case(4): //upstream
-					m_IntVetoDigiHit->m_data[0].Q+=m_IntVetoMCHit->adc1;
-					break;
+			case(3): //upstream
+			case(4): //upstream
+			m_IntVetoDigiHit->m_data[0].Q+=m_IntVetoMCHit->adc1;
+			break;
 			}
 		}
 	}/*End loop on MC hits*/
@@ -150,21 +157,21 @@ jerror_t IntVetoDigiHit_factory_MC::fini(void)
 }
 
 
-int IntVetoDigiHit_factory_MC::getComponent(int MCchannel){
+int IntVetoDigiHit_factory_MC::getCataniaComponent(int MCchannel){
 	int component=-1;
 	switch (MCchannel){
 	case(1): //top
-					component=0;break;
+									component=0;break;
 	case(2): //bottom
-					component=3;break;
+									component=3;break;
 	case(3):  //upstream
-					component=4;break;
+									component=4;break;
 	case(4): //downstream
-					component=5;break;
+									component=5;break;
 	case(5): //right
-					component=2;break;
+									component=2;break;
 	case(6): //left
-					component=1;break;
+									component=1;break;
 	}
 	return component;
 }

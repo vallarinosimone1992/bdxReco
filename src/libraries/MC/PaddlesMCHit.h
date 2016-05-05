@@ -10,12 +10,12 @@
 
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
-
+#include <MC/VetoMCHit.h>
 
 /*This class is basically a place-holder for the data coming from EVIO file,
- * for the calorimeter raw and digitized banks
+ * for the raw and digitized banks
  */
-class PaddlesMCHit:public jana::JObject{
+class PaddlesMCHit:public VetoMCHit{
 	public:
 		JOBJECT_PUBLIC(PaddlesMCHit);
 		
@@ -28,7 +28,6 @@ class PaddlesMCHit:public jana::JObject{
 		void toStrings(vector<pair<string,string> > &items)const{
 			 AddString(items, "id", "%4d", id);
 		}
-		int sector,channel;
 
 		//dgtz banks
 		int adc,tdc;

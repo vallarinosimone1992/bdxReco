@@ -18,7 +18,7 @@ public:
 	ExtVetoDigiHit_factory_MC(){};
 	~ExtVetoDigiHit_factory_MC(){};
 	const char* Tag(void){return "MC";}
-	int getComponent(int MCchannel);
+	int getCataniaComponent(int MCchannel);
 
 private:
 	jerror_t init(void);						///< Called once at program start.

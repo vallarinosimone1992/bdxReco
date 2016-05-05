@@ -63,7 +63,14 @@ jerror_t ExtVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 			m_ExtVetoDigiHit->m_channel.sector=m_ExtVetoMCHit->sector;
 			m_ExtVetoDigiHit->m_channel.layer=0;
 			m_ExtVetoDigiHit->m_channel.readout=0;  //this is an active-volume object
-			m_ExtVetoDigiHit->m_channel.component=this->getComponent(m_ExtVetoMCHit->channel);
+			if (m_IntVetoMCHit->system==VetoMCHit::CATANIA_EXTVETO){
+				m_ExtVetoDigiHit->m_channel.component=this->getCataniaComponent(m_ExtVetoMCHit->channel);
+			}
+			else{
+				m_ExtVetoDigiHit->m_channel.component=m_IntVetoMCHit->channel; /*Keep this as in MC. There's no data to compare with!*/
+			}
+
+
 			m_ExtVetoDigiHit->Q=m_ExtVetoMCHit->adc;
 			m_ExtVetoDigiHit->T=m_ExtVetoMCHit->tdc/1000.;  //MC is in ps
 			m_map[std::make_pair(m_ExtVetoMCHit->sector,m_ExtVetoMCHit->channel)]=m_ExtVetoDigiHit;
@@ -102,44 +109,44 @@ jerror_t ExtVetoDigiHit_factory_MC::fini(void)
 	return NOERROR;
 }
 
-int ExtVetoDigiHit_factory_MC::getComponent(int channel){
+int ExtVetoDigiHit_factory_MC::getCataniaComponent(int channel){
 	int component;
 	switch (channel){
 	case(1):
-												component=7;
+														component=7;
 	break;
 	case(2):
-												component=6;
+														component=6;
 	break;
 	case(3):
-												component=8;
+														component=8;
 	break;
 	case(4):
-												component=9;
+														component=9;
 	break;
 	case(5):
-												component=11;
+														component=11;
 	break;
 	case(6):
-												component=10;
+														component=10;
 	break;
 	case(7):
-												component=2;
+														component=2;
 	break;
 	case(8):
-												component=1;
+														component=1;
 	break;
 	case(9):
-												component=0;
+														component=0;
 	break;
 	case(10):
-												component=3;
+														component=3;
 	break;
 	case(11):
-												component=4;
+														component=4;
 	break;
 	case(12):
-												component=5;
+														component=5;
 	break;
 	default:
 		break;
