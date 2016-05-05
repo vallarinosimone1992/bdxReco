@@ -63,11 +63,11 @@ jerror_t ExtVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 			m_ExtVetoDigiHit->m_channel.sector=m_ExtVetoMCHit->sector;
 			m_ExtVetoDigiHit->m_channel.layer=0;
 			m_ExtVetoDigiHit->m_channel.readout=0;  //this is an active-volume object
-			if (m_IntVetoMCHit->system==VetoMCHit::CATANIA_EXTVETO){
+			if (m_ExtVetoMCHit->system==VetoMCHit::CATANIA_EXTVETO){
 				m_ExtVetoDigiHit->m_channel.component=this->getCataniaComponent(m_ExtVetoMCHit->channel);
 			}
 			else{
-				m_ExtVetoDigiHit->m_channel.component=m_IntVetoMCHit->channel; /*Keep this as in MC. There's no data to compare with!*/
+				m_ExtVetoDigiHit->m_channel.component=m_ExtVetoMCHit->channel; /*Keep this as in MC. There's no data to compare with!*/
 			}
 
 

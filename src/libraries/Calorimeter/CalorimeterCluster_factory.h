@@ -24,7 +24,7 @@ class CalorimeterCluster_factory:public jana::JFactory<CalorimeterCluster>{
 
 
 
-		void setCluster(CalorimeterCluster *cluster,const std::vector<std::pair<const CalorimeterHit*,double> > &whits)const;
+		void setCluster(CalorimeterCluster *cluster,const CalorimeterHit *seed,const std::vector<const CalorimeterHit*> &hits)const;
 
 
 	private:

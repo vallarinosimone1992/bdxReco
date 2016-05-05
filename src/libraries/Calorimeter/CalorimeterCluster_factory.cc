@@ -97,6 +97,7 @@ jerror_t CalorimeterCluster_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 				this_sector_seed=(*this_sector_hits_it);
 			}
 		}
+		hasSeed=false;
 		//At the end of this loop, this_sector_seed MAY be a seed, if the energy is higher than the CLUSTER_SEED_THR
 		if (this_sector_seed->E>m_CLUSTER_SEED_THR){
 			hasSeed=true;
@@ -136,7 +137,7 @@ jerror_t CalorimeterCluster_factory::fini(void)
 	return NOERROR;
 }
 
-void CalorimeterCluster_factory::setCluster(CalorimeterCluster* cluster,const CalorimeterHit *seed,std::vector<const CalorimeterHit* >& hits) const {
+void CalorimeterCluster_factory::setCluster(CalorimeterCluster *cluster,const CalorimeterHit *seed,const std::vector<const CalorimeterHit*> &hits)const{
 	std::vector<const CalorimeterHit*>::const_iterator hits_it;
 	double Etot;
 	double E,f;
@@ -147,21 +148,27 @@ void CalorimeterCluster_factory::setCluster(CalorimeterCluster* cluster,const Ca
 	Xnum=0;
 	Ynum=0;
 
+	cluster->Nhits = 0;
 	cluster->E = 0;             			 //Set the cluster total energy
 	cluster->Eseed = (seed)->E;              //Set the seed energy to the cluster
 
-	for (hits_it=hits.begin();hits_it!=hits.end();hits_it++){ //set the cluster total energy
+	for (hits_it=hits.begin();hits_it!=hits.end();hits_it++){ //set the cluster total energy. Add the hits to the cluster
 		E=(*hits_it)->E;
 		cluster->E += E;
+		cluster->Nhits++;
+		cluster->AddAssociatedObject(*hits_it);
+
 	}
+	Etot=cluster->E;
 	for (hits_it=hits.begin();hits_it!=hits.end();hits_it++){ //weighted x-y
+		E=(*hits_it)->E;
 		pos_weight=std::max(0.,(m_CLUSTER_POS_W0+log(E/Etot)));
 		den+=E*pos_weight;
 		Xnum+=((*hits_it)->m_channel.x)*pos_weight;
 		Ynum+=((*hits_it)->m_channel.y)*pos_weight;
 	}
-	cluster->x=Xnum/=den;
-	cluster->y=Ynum/=den;
+	cluster->x=(Xnum/den);
+	cluster->y=(Ynum/den);
 }
 
 
