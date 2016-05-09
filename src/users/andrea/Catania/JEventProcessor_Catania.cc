@@ -252,9 +252,12 @@ jerror_t JEventProcessor_Catania::evnt(JEventLoop *loop, uint64_t eventnumber)
 	flag=false;
 	EcMC=0;
 	if (m_isMC){
-		caloHit->Get(mc_data); //use a vector since it is re-iterating!
-		for (int imc=0;imc<mc_data.size();imc++){
-			EcMC+=mc_data[imc]->totEdep;
+		if (chits.size()==1){
+			caloHit=chits[0];
+			caloHit->Get(mc_data); //use a vector since it is re-iterating!
+			for (int imc=0;imc<mc_data.size();imc++){
+				EcMC+=mc_data[imc]->totEdep;
+			}
 		}
 	}
 	else{

@@ -63,6 +63,7 @@ jerror_t CalorimeterDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnum
 		index.x=m_CalorimeterMCHit->x-1;
 		index.y=m_CalorimeterMCHit->y-1;
 		index.readout=0;
+
 		m_map_it=m_map.find(index);
 		if (m_map_it==m_map.end()){
 			m_CalorimeterDigiHit=new CalorimeterDigiHit;
