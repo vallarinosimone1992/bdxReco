@@ -61,8 +61,8 @@ void    EvioCompositeDecoder::decode(vector<uint32_t> *vec, int dataSize){
 		bankTrigger       = getInt32( data, offset + 1);
 		bankTimeTMP       = getInt64( data, offset + 1 + 4);
 		bankTime          = 0;
-		bankTime          = (bankTimeTMP&0xfffff00000)>>24;
-		bankTime          = bankTime | (bankTimeTMP&0xffffff)<<24;
+		bankTime          = (bankTimeTMP&0xffffff00000)>>24;
+		bankTime          = bankTime | (bankTimeTMP&0x000000ffffff)<<24;
 		bankNChannels     = getInt32( data, offset + 1 + 4 + 8);
 		offset = offset + 1 + 4 + 8 + 4;
 
