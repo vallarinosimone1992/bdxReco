@@ -192,9 +192,10 @@ jerror_t JEventSourceEvioDAQ::GetObjects(JEvent &event, JFactory_base *factory)
 									for (int isample=0;isample<decdata[loop].samples.size();isample++){
 										hit->samples.push_back(decdata[loop].samples.at(isample));
 									}
-									//		jout<<hit->crate<<" "<<hit->slot<<" "<<hit->channel<<" "<<hit->samples.size()<<endl;
+
 									hit->trigger=decdata[loop].trigger;
-									hit->time=decdata[loop].time;
+									hit->timestamp=decdata[loop].time;
+									jout<<hit->m_channel.rocid<<" "<<hit->m_channel.slot<<" "<<hit->m_channel.channel<<" "<<hit->samples.size()<<" "<<hit->trigger<<" "<<hit->timestamp<<endl;
 									data.push_back(hit);
 								}
 							} catch (exception e){
@@ -250,7 +251,7 @@ jerror_t JEventSourceEvioDAQ::GetObjects(JEvent &event, JFactory_base *factory)
 									hit->m_channel.slot=decdata[loop].slot;
 									hit->m_channel.channel=decdata[loop].channel;
 									hit->trigger=decdata[loop].trigger;
-									hit->time=decdata[loop].time;
+									hit->timestamp=decdata[loop].time;
 									for (int ipulse=0;ipulse<decdata[loop].pulses.size();ipulse++){
 										fa250Mode7Hit::pulse_t pulse;
 										pulse.tdc=decdata[loop].pulses[ipulse].tdc;

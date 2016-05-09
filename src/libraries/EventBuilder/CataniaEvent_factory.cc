@@ -16,7 +16,7 @@ using namespace std;
 #include <IntVeto/IntVetoHit.h>
 #include <ExtVeto/ExtVetoHit.h>
 #include <Paddles/PaddlesHit.h>
-
+#include <DAQ/eventData.h>
 
 using namespace jana;
 
@@ -68,16 +68,36 @@ jerror_t CataniaEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	vector <const PaddlesHit*> phits;
 	vector <const PaddlesHit*>::const_iterator phits_it;
 
+	const eventData *evData;
+
 	loop->Get(chits);
 	loop->Get(ivhits);
 	loop->Get(evhits);
 	loop->Get(phits);
 
+	try{
+		loop->GetSingle(evData);
+	}
+	catch (unsigned long e){
+		jout<<"CataniaEvent_factor no eventData this event: "<<eventnumber<<endl;
+		return NOERROR;
+	}
 
 	CataniaEvent *m_event=new CataniaEvent();
+	m_event->timestamp=0;
 	m_event->E=0;
 	m_event->T=0;
 	m_event->flag_RMS=false;
+
+	m_event->time=evData->time;
+	m_event->tWord=evData->triggerWords[0];
+
+	m_event->eventN=evData->eventN;
+	if (m_event->eventN!=eventnumber){
+		jerr<<"CataniaEvent_factor::Something wrong with event number!"<<endl;
+	}
+	m_event->runN=evData->runN;
+
 	double E1,E2,T1,T2,dT;
 	bool flag1,flag2;
 
@@ -90,6 +110,7 @@ jerror_t CataniaEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		for (int ihit=0;ihit<hit->m_data.size();ihit++){
 			switch (hit->m_data[ihit].readout){
 			case 1:
+				m_event->timestamp=hit->timestamp; //it is irrelevant to take timestamp from this or from #2, they're the same!
 				m_event->Ec1=hit->m_data[ihit].E;
 				T1=hit->m_data[ihit].T;
 				E1=hit->m_data[ihit].E;

@@ -67,6 +67,7 @@ jerror_t CalorimeterDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnum
 		if (m_map_it==m_map.end()){
 			m_CalorimeterDigiHit=new CalorimeterDigiHit;
 			m_CalorimeterDigiHit->m_channel=index;
+			m_CalorimeterDigiHit->timestamp=0;
 			m_CalorimeterDigiHit->AddAssociatedObject(m_CalorimeterMCHit);
 			digi_hit.readout=1; ///THIS IS CORRECT ---> in MC "right" is the first MPPC, i.e. readout=1
 			digi_hit.Q=m_CalorimeterMCHit->adcr;

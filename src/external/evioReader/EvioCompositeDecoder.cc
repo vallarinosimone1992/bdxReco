@@ -51,7 +51,7 @@ void    EvioCompositeDecoder::decode(vector<uint32_t> *vec, int dataSize){
 	uint8_t bankSlot,chan;
 	uint32_t samples;
 	int bankNChannels,bankTrigger;
-	unsigned long long bankTime;
+	unsigned long long bankTime,bankTimeTMP;
 	int nchannels;
 	adcSamples.clear();
 
@@ -59,7 +59,10 @@ void    EvioCompositeDecoder::decode(vector<uint32_t> *vec, int dataSize){
 
 		bankSlot          = getInt8 ( data, offset);
 		bankTrigger       = getInt32( data, offset + 1);
-		bankTime          = getInt64( data, offset + 1 + 4);
+		bankTimeTMP       = getInt64( data, offset + 1 + 4);
+		bankTime          = 0;
+		bankTime          = (bankTimeTMP&0xfffff00000)>>24;
+		bankTime          = bankTime | (bankTimeTMP&0xffffff)<<24;
 		bankNChannels     = getInt32( data, offset + 1 + 4 + 8);
 		offset = offset + 1 + 4 + 8 + 4;
 
@@ -88,8 +91,8 @@ void    EvioCompositeDecoder::decode(vector<uint32_t> *vec, int dataSize){
 			//cout << " scanning channels" << endl;
 			CompositeADCRaw_t  adc;
 			adc.slot = bankSlot;
-			adc.time = bankTime;
 			adc.trigger = bankTrigger;
+			adc.time = bankTime;
 			adc.channel = chan;
 			adc.samples.clear();
 			for(int loop = 0; loop < samples; loop++){

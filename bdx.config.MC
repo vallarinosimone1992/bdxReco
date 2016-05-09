@@ -8,10 +8,10 @@ THREAD_TIMEOUT 120
 THREAD_TIMEOUT_FIRST_EVENT 120
 #IntVeto parameters
 INTVETO:MIN_TOT  12    #min tot in ns to consider a pulse
-INTVETO:THR	 0.5   #min amplitude of a pulse -in phe units
-INTVETO:NPED 20    #num of samples in pedestal determination event by event
-INTVETO:NSB	 20    #num of samples before the maximum
-INTVETO:NSA	 30    #num of samples after  the maximum
+INTVETO:THR	 0.5   	   #min amplitude of a pulse -in phe units
+INTVETO:NPED 20   	   #num of samples in pedestal determination event by event
+INTVETO:NSB	 20        #num of samples before the maximum
+INTVETO:NSA	 30        #num of samples after  the maximum
 
 
 INTVETO:HIT_THR_SINGLE  4.5   #thr in phe charge for a detector with single readout

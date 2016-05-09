@@ -44,6 +44,14 @@ class CataniaEvent:public jana::JObject,public TObject{
 
 		double Ep1,Ep2;
 
+		int time; //in s
+		int tWord;
+
+		int eventN,runN;
+
+		uint64_t timestamp;
+
+
 #if (!defined(__APPLE__))
 		ClassDef(CataniaEvent,1);
 #endif
