@@ -195,7 +195,7 @@ jerror_t JEventSourceEvioDAQ::GetObjects(JEvent &event, JFactory_base *factory)
 
 									hit->trigger=decdata[loop].trigger;
 									hit->timestamp=decdata[loop].time;
-									jout<<hit->m_channel.rocid<<" "<<hit->m_channel.slot<<" "<<hit->m_channel.channel<<" "<<hit->samples.size()<<" "<<hit->trigger<<" "<<hit->timestamp<<endl;
+								//	jout<<hit->m_channel.rocid<<" "<<hit->m_channel.slot<<" "<<hit->m_channel.channel<<" "<<hit->samples.size()<<" "<<hit->trigger<<" "<<hit->timestamp<<endl;
 									data.push_back(hit);
 								}
 							} catch (exception e){
