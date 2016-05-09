@@ -30,7 +30,7 @@ class CataniaEvent_factory:public jana::JFactory<CataniaEvent>{
 		double m_ExtVeto_timeWindows;          //cut on the ExtVeto time - coincidence with the crystal
 		double m_IntVeto_timeWindows;          //cut on the IntVeto time - coincidence with the crystal
 
-
+		int m_isMC;
 };
 
 #endif // _CataniaEvent_factory_

@@ -36,6 +36,7 @@ jerror_t CataniaEvent_factory::init(void)
 
 
 
+
 	return NOERROR;
 }
 
@@ -44,6 +45,7 @@ jerror_t CataniaEvent_factory::init(void)
 //------------------
 jerror_t CataniaEvent_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber)
 {
+	gPARMS->GetParameter("MC",m_isMC);
 	return NOERROR;
 }
 
@@ -75,28 +77,35 @@ jerror_t CataniaEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	loop->Get(evhits);
 	loop->Get(phits);
 
-	try{
-		loop->GetSingle(evData);
+	if (m_isMC==0){
+		try{
+			loop->GetSingle(evData);
+		}
+		catch (unsigned long e){
+			jout<<"CataniaEvent_factor no eventData this event: "<<eventnumber<<endl;
+			return NOERROR;
+		}
 	}
-	catch (unsigned long e){
-		jout<<"CataniaEvent_factor no eventData this event: "<<eventnumber<<endl;
-		return NOERROR;
-	}
-
 	CataniaEvent *m_event=new CataniaEvent();
 	m_event->timestamp=0;
 	m_event->E=0;
 	m_event->T=0;
 	m_event->flag_RMS=false;
-
-	m_event->time=evData->time;
-	m_event->tWord=evData->triggerWords[0];
-
-	m_event->eventN=evData->eventN;
-	if (m_event->eventN!=eventnumber){
-		jerr<<"CataniaEvent_factor::Something wrong with event number!"<<endl;
+	if (m_isMC==0){
+		m_event->time=evData->time;
+		m_event->tWord=evData->triggerWords[0];
+		m_event->eventN=evData->eventN;
+		if (m_event->eventN!=eventnumber){
+			jerr<<"CataniaEvent_factor::Something wrong with event number!"<<endl;
+		}
+		m_event->runN=evData->runN;
 	}
-	m_event->runN=evData->runN;
+	else{
+		m_event->time=0;
+		m_event->tWord=0;
+		m_event->eventN=eventnumber;
+		m_event->runN=0;
+	}
 
 	double E1,E2,T1,T2,dT;
 	bool flag1,flag2;
@@ -158,7 +167,6 @@ jerror_t CataniaEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	m_event->nIntVetoHitsCoincidence=0;
 	for (ivhits_it=ivhits.begin();ivhits_it!=ivhits.end();ivhits_it++){
 		const IntVetoHit *hit=(*ivhits_it);
-		//jout<<" AAAA "<<hit->T<<" "<<m_event->T<<endl;
 		if (hit->T<0) continue; //The IntVeto condition for a "good" hit
 		else{
 			m_event->nIntVetoHits++;
@@ -179,10 +187,10 @@ jerror_t CataniaEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		const PaddlesHit *phit=(*phits_it);
 		switch (phit->m_channel.id){
 		case (0):
-				m_event->Ep1=phit->E;
+										m_event->Ep1=phit->E;
 		break;
 		case (1):
-				m_event->Ep2=phit->E;
+										m_event->Ep2=phit->E;
 		break;
 		}
 	}
