@@ -181,7 +181,7 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 				for (int idigi=0;idigi<m_CalorimeterDigiHit->m_data.size();idigi++){
 					Q=m_CalorimeterDigiHit->m_data[idigi].Q;
 					T=m_CalorimeterDigiHit->m_data[idigi].T;
-					jout<<m_CalorimeterDigiHit->m_channel.sector<<" "<<m_CalorimeterDigiHit->m_channel.x<<" "<<m_CalorimeterDigiHit->m_channel.y<<" "<<Q<<endl;
+				//	jout<<m_CalorimeterDigiHit->m_channel.sector<<" "<<m_CalorimeterDigiHit->m_channel.x<<" "<<m_CalorimeterDigiHit->m_channel.y<<" "<<Q<<endl;
 					if (Q>m_THR_multipleReadout){						/*Clearly this is now enough as condition!*/
 						CalorimeterHit::CalorimeterComponentHit hit;
 						hit.readout=m_CalorimeterDigiHit->m_data[idigi].readout;

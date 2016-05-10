@@ -110,16 +110,18 @@ jerror_t MCEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 				case 1:
 				//	m_event->Ec1=hit->m_data[ihit].E;
 				//	T1=hit->m_data[ihit].T;
-					m_event->phe1 +=(hit->m_data[ihit].E);
-					m_event->E1=(hit->m_data[ihit].E)/7.3;
+					m_event->phe1 +=(hit->m_data[ihit].E);   // try Q
+			//		m_event->E1=(hit->m_data[ihit].E)/7.3; // energy calibration from 20 MeV simulated protons
 				//	jout << "E1= " <<hit->m_data[ihit].E<<endl;
 			//		flag1=hit->m_data[ihit].good_ped_RMS;
 					break;
 				case 2:
 				//	m_event->Ec2=hit->m_data[ihit].E;
 			//		T2=hit->m_data[ihit].T;
-					m_event->phe2 +=(hit->m_data[ihit].E);
-					m_event->E2=(hit->m_data[ihit].E)/14.6;
+					m_event->phe2 +=(hit->m_data[ihit].Q);  // try Q
+
+				//	 jout << "* "<< m_event->phe2 <<endl;
+					//	m_event->E2=(hit->m_data[ihit].E)/14.6; // energy calibration from 20 MeV simulated protons
 					//jout << "E2= " <<E2<<endl;
 				//	flag2=hit->m_data[ihit].good_ped_RMS;
 					break;
