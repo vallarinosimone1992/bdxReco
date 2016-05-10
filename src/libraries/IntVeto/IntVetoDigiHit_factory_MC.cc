@@ -77,7 +77,6 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 			case(1):
 			case(5):
 			case(6):
-			case(2): //bottom     ///The inversion 2 <-> 4 is only in the data
 			digi_hit.readout=1;
 			digi_hit.Q=m_IntVetoMCHit->adc1;
 			digi_hit.T=m_IntVetoMCHit->tdc1/1000.;  //MC is in ps
@@ -93,6 +92,24 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 			digi_hit.readout=4;
 			digi_hit.Q=m_IntVetoMCHit->adc4;
 			digi_hit.T=m_IntVetoMCHit->tdc4/1000.;
+			m_IntVetoDigiHit->m_data.push_back(digi_hit);
+			break;
+			case(2): //bottom
+			digi_hit.readout=1;
+			digi_hit.Q=m_IntVetoMCHit->adc1;
+			digi_hit.T=m_IntVetoMCHit->tdc1/1000.;  //MC is in ps
+			m_IntVetoDigiHit->m_data.push_back(digi_hit);
+			digi_hit.readout=2;
+			digi_hit.Q=m_IntVetoMCHit->adc4;
+			digi_hit.T=m_IntVetoMCHit->tdc4/1000.;
+			m_IntVetoDigiHit->m_data.push_back(digi_hit);
+			digi_hit.readout=3;
+			digi_hit.Q=m_IntVetoMCHit->adc3;
+			digi_hit.T=m_IntVetoMCHit->tdc3/1000.;
+			m_IntVetoDigiHit->m_data.push_back(digi_hit);
+			digi_hit.readout=4;
+			digi_hit.Q=m_IntVetoMCHit->adc2;
+			digi_hit.T=m_IntVetoMCHit->tdc2/1000.;
 			m_IntVetoDigiHit->m_data.push_back(digi_hit);
 			break;
 
@@ -114,11 +131,16 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 			case(1):
 			case(5):
 			case(6):
-			case(2): //bottom     ///The inversion is only in the data
 			m_IntVetoDigiHit->m_data[0].Q+=m_IntVetoMCHit->adc1;
 			m_IntVetoDigiHit->m_data[1].Q+=m_IntVetoMCHit->adc2;
 			m_IntVetoDigiHit->m_data[2].Q+=m_IntVetoMCHit->adc3;
 			m_IntVetoDigiHit->m_data[3].Q+=m_IntVetoMCHit->adc4;
+			break;
+			case(2): //bottom     ///The inversion is only in the data
+			m_IntVetoDigiHit->m_data[0].Q+=m_IntVetoMCHit->adc1;
+			m_IntVetoDigiHit->m_data[1].Q+=m_IntVetoMCHit->adc4;
+			m_IntVetoDigiHit->m_data[2].Q+=m_IntVetoMCHit->adc3;
+			m_IntVetoDigiHit->m_data[3].Q+=m_IntVetoMCHit->adc2;
 			break;
 
 			case(3): //upstream
