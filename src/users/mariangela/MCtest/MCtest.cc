@@ -114,7 +114,7 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	   jout << "start event"<< std::endl;
 	   eventN=eventnumber;
-	   				jout << eventN<<std::endl;
+
 
 		for (data_it=data.begin();data_it<data.end();data_it++){
 
@@ -152,9 +152,13 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 		//		T = (*data_it)->T;
 		// jout << sector << " "<< component <<std::endl;
+
+			if ((Tl==0)||(Tr==0)){
+				jout << eventN<<std::endl;
 		 jout << sector << " "<<x<<" " <<y <<std::endl;
 		jout <<"l= "<< El <<" "<<Tl<<" "<<"r = "<< Er << " "<<Tr<<std::endl;
-		jout <<"f= "<< Ef <<" "<<Tf<<" "<<"b = "<< Eb << " "<<Tb<<std::endl;
+			}
+		//	jout <<"f= "<< Ef <<" "<<Tf<<" "<<"b = "<< Eb << " "<<Tb<<std::endl;
 
 		}
 

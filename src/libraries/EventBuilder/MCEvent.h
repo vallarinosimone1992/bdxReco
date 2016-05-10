@@ -24,8 +24,9 @@ class MCEvent:public jana::JObject,public TObject{
 			// AddString(items, "E", "%f", E);
 		}
 	//	double Ec1,Ec2;
-		double E,T;
+		double E,T, E1, E2, phe1, phe2;
 		int nCalorimeterHits;  //mr
+		vector <TranslationTable::CALO_Index_t> vCalorimeterHits;
 		bool flag_RMS;
 
 		int nExtVetoHits;

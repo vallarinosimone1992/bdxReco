@@ -68,10 +68,26 @@ jerror_t MCtest::init(void)
 	t=new TTree("t","t");
 
 
+	t->Branch("E1",&E1);
+	t->Branch("E2",&E2);
+
+	t->Branch("phe1",&phe1);
+	t->Branch("phe2",&phe2);
+
+
 	t->Branch("E",&E);
- 	t->Branch("multi_cal",&multi_cal);
- 	t->Branch("multi_ev",&multi_iv);
- 	t->Branch("multi_iv",&multi_ev);
+	t->Branch("sector_cal",sector_cal,"sector_cal[800]/I");
+	t->Branch("x_cal",x_cal,"x_cal[800]/I");
+	t->Branch("y_cal",x_cal,"y_cal[800]/I");
+	t->Branch("multi_cal",&multi_cal);
+
+	t->Branch("multi_ev",&multi_ev);
+ 	t->Branch("sector_ev",sector_ev,"sector_ev[800]/I");
+ 	t->Branch("channel_ev",channel_ev,"channel_ev[800]/I");
+
+	t->Branch("multi_iv",&multi_iv);
+ 	t->Branch("sector_iv",sector_iv,"sector_iv[800]/I");
+ 	t->Branch("channel_iv",channel_iv,"channel_iv[800]/I");
 
 
 
@@ -117,28 +133,85 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	vector<const MCEvent*> data;
 	vector<const MCEvent*>::const_iterator data_it;
+
+
+
+//	loop->Get(data_hit);
 	loop->Get(data);
+
 
 
 		japp->RootWriteLock();
 
 
-	//   jout << "start event"<< std::endl;
-	 //  eventN=eventnumber;
-	   //				jout << eventN<<std::endl;
+		for(int i=0; i<800; i++){
 
-
-		for (data_it=data.begin();data_it<data.end();data_it++){
-
-			const MCEvent *evhit = *data_it;
-
-
-			E = evhit->E;
-            multi_cal = evhit->nCalorimeterHits;
-            multi_iv = evhit->nIntVetoHits;
-            multi_ev = evhit->nExtVetoHits;
-
+			sector_cal[i]= 99;
+			x_cal[i] = 99;
+			y_cal[i] = 99;
+		   sector_iv[i]= 99;
+		   channel_iv[i]= 99;
+		   sector_ev[i] = 99;
+		   channel_ev[i]= 99;
 		}
+
+	//  jout << "start event"<< std::endl;
+	   eventN=eventnumber;
+
+
+
+	for (data_it=data.begin();data_it<data.end();data_it++){
+
+			const MCEvent *clhit = *data_it;
+
+
+			E1 = clhit->E1;
+			E2 = clhit->E2;
+			phe1 = clhit->phe1;
+			phe2 = clhit->phe2;
+            E = clhit->E;
+			multi_cal = clhit->nCalorimeterHits;
+
+
+         for (int i=0; i<multi_cal;i++){
+
+			sector_cal[i] = clhit->vCalorimeterHits.at(i).sector;
+              x_cal[i] = clhit->vCalorimeterHits.at(i).x;
+              y_cal[i] = clhit->vCalorimeterHits.at(i).y;
+         //      jout << sector_cal[i]<<" "<< x_cal[i] << " "<< y_cal[i]<<endl;
+         }
+
+/*
+          if(multi_cal==35){
+        	  jout << "*******"<<endl;
+        	  jout << eventN<<endl;
+        	  for (int i=0; i<multi_cal;i++){
+            jout << sector_cal[i]<<" "<< x_cal[i] << " "<< y_cal[i]<<endl;
+                                            }
+        	  jout <<"E-tot= " <<E<<endl;
+        	  }
+
+*/
+      //    jout << sector_cal << endl;
+            multi_iv = clhit->nIntVetoHits;
+
+            for (int i=0; i<multi_iv;i++){
+         			sector_iv[i] = clhit->vIntVetoHits.at(i).sector;
+                    channel_iv[i] = clhit->vIntVetoHits.at(i).component;
+
+                  }
+
+            multi_ev = clhit->nExtVetoHits;
+        //    jout << "plug"<<endl;
+            for (int i=0; i<multi_ev;i++){
+                     			sector_ev[i] = clhit->vExtVetoHits.at(i).sector;
+                                channel_ev[i] = clhit->vExtVetoHits.at(i).component;
+
+
+            }
+
+
+	}
 
 
 

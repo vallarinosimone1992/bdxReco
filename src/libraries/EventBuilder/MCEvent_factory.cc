@@ -72,25 +72,68 @@ jerror_t MCEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	MCEvent *m_event=new MCEvent();
 	m_event->E=0;
+	m_event->E1=0;
+	m_event->E2=0;
+	m_event->phe1=0;
+	m_event->phe2=0;
 	m_event->T=0;
 	m_event->nCalorimeterHits=0;
 
+
 	m_event->flag_RMS=false;
-	double E1,E2,T1,T2,dT;
+	double T1,T2,dT;
 	bool flag1,flag2;
 
-	E1=E2=0;
+//	E1=E2=0;
 	T1=T2=0;
 	flag1=false;
 	flag2=false;
 	for (chits_it=chits.begin();chits_it!=chits.end();chits_it++){
 		const CalorimeterHit *hit=(*chits_it);
-	    if(hit->T>0){
 
-		m_event->E +=hit->E;
+		/*
+	     if (hit->E>0 && hit->T<=0 ){
+
+	        	jout << "sono un evento"<<endl;
+
+	        	jout << hit->m_channel.sector << " "<< hit->m_channel.x << " "<<hit->m_channel.y<<endl;
+                jout << "Sipm1: "<< hit->m_data[0].E << " "<< hit->m_data[0].T<<endl;
+                jout << "Sipm2: "<< hit->m_data[1].E << " "<< hit->m_data[1].T<<endl;
+
+	        }
+		if(hit->T>0){
+*/
+		if(hit->T<0) continue;
+		else{
+		for (int ihit=0;ihit<hit->m_data.size();ihit++){
+				switch (hit->m_data[ihit].readout){
+				case 1:
+				//	m_event->Ec1=hit->m_data[ihit].E;
+				//	T1=hit->m_data[ihit].T;
+					m_event->phe1 +=(hit->m_data[ihit].E);
+					m_event->E1=(hit->m_data[ihit].E)/7.3;
+				//	jout << "E1= " <<hit->m_data[ihit].E<<endl;
+			//		flag1=hit->m_data[ihit].good_ped_RMS;
+					break;
+				case 2:
+				//	m_event->Ec2=hit->m_data[ihit].E;
+			//		T2=hit->m_data[ihit].T;
+					m_event->phe2 +=(hit->m_data[ihit].E);
+					m_event->E2=(hit->m_data[ihit].E)/14.6;
+					//jout << "E2= " <<E2<<endl;
+				//	flag2=hit->m_data[ihit].good_ped_RMS;
+					break;
+				}
+			}
+
+
+       // jout << "E= "<< hit->E<<endl;
+		m_event->E += (m_event->E1 +m_event->E2)/2;
 	    m_event->nCalorimeterHits++;
-	               }
+	    m_event->vCalorimeterHits.push_back(hit->m_channel);
 	              }
+	              }
+	//jout << "***********"<<endl;
 //	    jout << m_event->E << " "<<m_event->nCalorimeterHits<<endl;
 
 
@@ -99,18 +142,18 @@ jerror_t MCEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	m_event->nExtVetoHitsCoincidence=0;
 	for (evhits_it=evhits.begin();evhits_it!=evhits.end();evhits_it++){
 		const ExtVetoHit *hit=(*evhits_it);
+
 		if (hit->T<0) continue; //The ExtVeto condition for a "good" hit
+
 		else{
 			m_event->nExtVetoHits++;
 			m_event->vExtVetoHits.push_back(hit->m_channel);
-		/*
-			dT=fabs(hit->T-m_event->T);
-			if (dT<m_ExtVeto_timeWindows){
-				m_event->nExtVetoHitsCoincidence++;
-				m_event->vExtVetoHitsCoincidence.push_back(hit->m_channel);
-				m_event->AddAssociatedObject(hit);
-			}
-	*/
+			 // if (hit->m_channel.component>6){
+				//		jout << hit->m_channel.sector<< " "<<hit->m_channel.component<<endl;
+				//		}
+
+
+
 		}
 	}
 	/*Now loop on inner veto hits*/
@@ -118,19 +161,12 @@ jerror_t MCEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	m_event->nIntVetoHitsCoincidence=0;
 	for (ivhits_it=ivhits.begin();ivhits_it!=ivhits.end();ivhits_it++){
 		const IntVetoHit *hit=(*ivhits_it);
-		//jout<<" AAAA "<<hit->T<<" "<<m_event->T<<endl;
+
 		if (hit->T<0) continue; //The IntVeto condition for a "good" hit
 		else{
 			m_event->nIntVetoHits++;
 			m_event->vIntVetoHits.push_back(hit->m_channel);
-	/*
-			dT=fabs(hit->T-m_event->T);
-			if (dT<m_IntVeto_timeWindows){
-				m_event->nIntVetoHitsCoincidence++;
-				m_event->vIntVetoHitsCoincidence.push_back(hit->m_channel);
-				m_event->AddAssociatedObject(hit);
-			}
-	   */
+
 		}
 	}
 
