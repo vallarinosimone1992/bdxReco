@@ -27,7 +27,7 @@ using namespace std;
 
 typedef struct {
   int slot;
-  int time;
+  uint64_t time;
   int trigger;
   int channel;
   vector<short> samples;

@@ -58,8 +58,6 @@ void InitPlugin(JApplication *app){
 JEventProcessor_Catania::JEventProcessor_Catania()
 {
 	caloHit=0;
-	hit1=0;
-	hit2=0;
 	m_isMC=0;
 	m_ROOTOutput=0;
 	m_isFirstCallToBrun=1;
@@ -93,29 +91,10 @@ jerror_t JEventProcessor_Catania::init(void)
 	japp->RootWriteLock();
 	t=new TTree("CaloRate","CaloRate");
 	t->Branch("eventN",&eventNumber);
-
 	/*Calorimeter hit; Ec1 and Ec2; sipm1 and sipm2*/
 	t->Branch("CataniaEvent",&event);
-	t->Branch("CalorimeterHit",&caloHit);
-	t->Branch("hit1",&hit1);
-	t->Branch("hit2",&hit2);
-	t->Branch("Ec1",&Ec1);
-	t->Branch("Ec2",&Ec2);
-	t->Branch("Ec",&Ec);
-	t->Branch("Tc",&Tc);
-
-
 	t->Branch("EcMC",&EcMC);
 
-	/*Ext veto and int veto summaries*/
-	t->Branch("nHitsIntVeto",&nHitsIntVeto);
-	t->Branch("nHitsExtVeto",&nHitsExtVeto);
-	t->Branch("nHitsIntVetoCoincidence",&nHitsIntVetoCoincidence);
-	t->Branch("nHitsExtVetoCoincidence",&nHitsExtVetoCoincidence);
-
-	/*Paddles*/
-	t->Branch("Ep1",&Ep1);
-	t->Branch("Ep2",&Ep2);
 
 
 	for (int iwave=0;iwave<50;iwave++){
@@ -271,42 +250,14 @@ jerror_t JEventProcessor_Catania::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	event=events[0];
 	flag=false;
-
-	nHitsIntVeto=0;
-	nHitsExtVeto=0;
-	nHitsIntVetoCoincidence=0;
-	nHitsExtVetoCoincidence=0;
-
-	eventNumber=eventnumber;
-
-
-	nHitsIntVeto=event->nIntVetoHits;
-	nHitsIntVetoCoincidence=event->nIntVetoHitsCoincidence;
-	nHitsExtVeto=event->nExtVetoHits;
-	nHitsExtVetoCoincidence=event->nExtVetoHitsCoincidence;
-
-
-	Ec=event->E;
-	Tc=event->T;
-	caloHit=chits[0];
-
-	Ec1=Ec2=-1;
-	for (int ihit=0;ihit<chits[0]->m_data.size();ihit++){
-		switch (chits[0]->m_data[ihit].readout){
-		case (1):
-														Ec1=chits[0]->m_data[ihit].E;
-		break;
-		case (2):
-														Ec2=chits[0]->m_data[ihit].E;
-		break;
-		}
-	}
-
 	EcMC=0;
 	if (m_isMC){
-		caloHit->Get(mc_data); //use a vector since it is re-iterating!
-		for (int imc=0;imc<mc_data.size();imc++){
-			EcMC+=mc_data[imc]->totEdep;
+		if (chits.size()==1){
+			caloHit=chits[0];
+			caloHit->Get(mc_data); //use a vector since it is re-iterating!
+			for (int imc=0;imc<mc_data.size();imc++){
+				EcMC+=mc_data[imc]->totEdep;
+			}
 		}
 	}
 	else{
@@ -314,36 +265,10 @@ jerror_t JEventProcessor_Catania::evnt(JEventLoop *loop, uint64_t eventnumber)
 	}
 
 
-	for (mppchits_it=mppchits.begin();mppchits_it!=mppchits.end();mppchits_it++){
-		const CalorimeterSiPMHit *sipmhit= *mppchits_it;
-		switch (sipmhit->m_channel.calorimeter->readout){
-		case (1):
-																				hit1=sipmhit;
-		break;
-		case (2):
-																				hit2=sipmhit;
-		break;
-		default:
-			break;
-
-		}
-	}
-	Ep1=Ep2=-1;
-	for (phits_it=phits.begin();phits_it!=phits.end();phits_it++){
-		const PaddlesHit *phit=(*phits_it);
-		switch (phit->m_channel.id){
-		case (0):
-																	Ep1=phit->E;
-		break;
-		case (1):
-																	Ep2=phit->E;
-		break;
-		}
-	}
 	flag=false;
 	//if (1){
 	//	if ((Ec1>10)&&(nHitsExtVeto==0)&&(nHitsIntVeto==0)&&(caloHit->m_data[0].good_ped_RMS==true)&&(caloHit->m_data[1].good_ped_RMS==true)) flag=true;
-	//if ((Ec1>20)&&(Ec1<40)&&(nHitsIntVetoCoincidence==0)&&(nHitsIntVeto>0)&&(event->flag_RMS==true)) flag=true;
+	if ((event->E>400)&&(event->nExtVetoHitsCoincidence==0)) flag=true;
 	if ((flag)&&(m_isMC==false)){
 		//	jout<<"QUI "<<eventnumber<<endl;
 		//	cin.get();
@@ -363,8 +288,8 @@ jerror_t JEventProcessor_Catania::evnt(JEventLoop *loop, uint64_t eventnumber)
 				}
 				hwave=hwavesCalo[iwave];
 				hwave->Reset();
-				hwave->SetName(Form("h_%i_%i__%f_%f_%f_%f",cwaves[iwave]->m_channel.channel,eventnumber,event->Ec1,event->Ec2,event->E,event->T));
-				hwave->SetTitle(Form("h_%i_%i__%f_%f_%f_%f",cwaves[iwave]->m_channel.channel,eventnumber,event->Ec1,event->Ec2,event->E,event->T));
+				hwave->SetName(Form("h_%i_%i__%f_%f_%f_%f",cwaves[iwave]->m_channel.channel,event->eventN,event->Ec1,event->Ec2,event->E,event->T));
+				hwave->SetTitle(Form("h_%i_%i__%f_%f_%f_%f",cwaves[iwave]->m_channel.channel,event->eventN,event->Ec1,event->Ec2,event->E,event->T));
 
 				for (int isample=0;isample<N;isample++){
 					hwave->Fill(isample,(*cwaves_it)->samples[isample]);
@@ -404,8 +329,8 @@ jerror_t JEventProcessor_Catania::evnt(JEventLoop *loop, uint64_t eventnumber)
 				}
 				hwave=hwavesIntVeto[iwave];
 				hwave->Reset();
-				hwave->SetName(Form("hIntVeto_%i_%i__%i__%f_%f_%f",slot,channel,eventnumber,Q,Qtot,T));
-				hwave->SetTitle(Form("hIntVeto_%i_%i__%i__%f_%f_%f",slot,channel,eventnumber,Q,Qtot,T));
+				hwave->SetName(Form("hIntVeto_%i_%i__%i__%f_%f_%f",slot,channel,event->eventN,Q,Qtot,T));
+				hwave->SetTitle(Form("hIntVeto_%i_%i__%i__%f_%f_%f",slot,channel,event->eventN,Q,Qtot,T));
 
 				for (int isample=0;isample<N;isample++){
 					hwave->Fill(isample,(*ivwaves_it)->samples[isample]);
@@ -429,8 +354,8 @@ jerror_t JEventProcessor_Catania::evnt(JEventLoop *loop, uint64_t eventnumber)
 				}
 				hwave=hwavesExtVeto[iwave];
 				hwave->Reset();
-				hwave->SetName(Form("hExtVeto_%i_%i__%i__%f_%f",(*evwaves_it)->m_channel.slot,(*evwaves_it)->m_channel.channel,eventnumber,(*evhits_it)->Q,(*evhits_it)->T));
-				hwave->SetTitle(Form("hExtVeto_%i_%i__%i__%f_%f",(*evwaves_it)->m_channel.slot,(*evwaves_it)->m_channel.channel,eventnumber,(*evhits_it)->Q,(*evhits_it)->T));
+				hwave->SetName(Form("hExtVeto_%i_%i__%i__%f_%f",(*evwaves_it)->m_channel.slot,(*evwaves_it)->m_channel.channel,event->eventN,(*evhits_it)->Q,(*evhits_it)->T));
+				hwave->SetTitle(Form("hExtVeto_%i_%i__%i__%f_%f",(*evwaves_it)->m_channel.slot,(*evwaves_it)->m_channel.channel,event->eventN,(*evhits_it)->Q,(*evhits_it)->T));
 
 				for (int isample=0;isample<N;isample++){
 					hwave->Fill(isample,(*evwaves_it)->samples[isample]);

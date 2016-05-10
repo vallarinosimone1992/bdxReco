@@ -34,16 +34,12 @@ class JEventProcessor_Catania:public jana::JEventProcessor{
 		int eventNumber;
 		int m_isFirstCallToBrun;
 		int m_isMC;
-		const CalorimeterSiPMHit *hit1,*hit2;
-		const CalorimeterHit *caloHit;
+
 		const CataniaEvent* event;
-		double Ec,Ec1,Ec2,EcMC,Tc;
+		const CalorimeterHit* caloHit;
+		double EcMC;
 
-		double Ep1,Ep2;
 
-
-		int nHitsIntVeto,nHitsExtVeto;
-		int nHitsIntVetoCoincidence,nHitsExtVetoCoincidence;
 
 
 		TTree *t;

@@ -55,7 +55,7 @@ double fSinglePhe1Pole(double *x,double *par){
 CalorimeterSiPMHit* Calorimeterfa250Converter::convertHit(const fa250Hit *hit,const TranslationTable::ChannelInfo &m_channel,int eventN) const{
 	CalorimeterSiPMHit *m_CalorimeterSiPMHit=new CalorimeterSiPMHit;
 	m_CalorimeterSiPMHit->m_channel=m_channel;
-
+	m_CalorimeterSiPMHit->timestamp=hit->timestamp;
 
 
 	if (strcmp(hit->className(),"fa250Mode1CalibPedSubHit")==0){
@@ -175,7 +175,7 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 		output->m_type=CalorimeterSiPMHit::noise;
 		output->T=0;
 		output->Qraw=this->sumSamples(0,m_NSB+m_NSA,&(input->samples[0])); //to be uniform with the case below
-		output->A=0;
+		output->A=00;
 		return NOERROR;
 	}
 	else if ((output->nSignals==0)&&(output->nSingles==1)){

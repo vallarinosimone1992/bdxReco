@@ -74,6 +74,7 @@ jerror_t CalorimeterDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 		m_map_it=m_map.find(m_channel);
 		if (m_map_it == m_map.end()){ //not here. Create a new CalorimeterDigiHit object, and associate the id of this SiPM hit with it
 			m_CalorimeterDigiHit=new CalorimeterDigiHit;
+			m_CalorimeterDigiHit->timestamp=(*it)->timestamp;
 			m_CalorimeterDigiHit->m_channel=m_channel;
 			m_CalorimeterDigiHit->AddAssociatedObject((*it));
 			m_map.insert(std::make_pair(m_channel,m_CalorimeterDigiHit));
@@ -84,7 +85,7 @@ jerror_t CalorimeterDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 		}
 	}
 
-	/*Now the map is full of all the hits in different active elements of active veto, i.e. with different identifiers, BUT readout, that maps the sipm hits.
+	/*Now the map is full of all the hits in different active elements of calorimeter, i.e. with different identifiers, BUT readout, that maps the sipm hits.
 	 * Each hit has a reference to the SiPM hits that made it
 	 */
 	vector <const CalorimeterSiPMHit*> m_CalorimeterSiPMHit_tmp;

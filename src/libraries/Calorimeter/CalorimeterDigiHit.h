@@ -37,6 +37,7 @@ public:
 	TranslationTable::CALO_Index_t m_channel; //Detector-specific ID. Since this is a detector-based object, the readout field will be ==0
 	vector <CalorimeterSiPMDigiHit> m_data; //keep in this way to be MC-compatible!
 
+	uint64_t timestamp;
 };
 
 #endif // _CalorimeterDigiHit_

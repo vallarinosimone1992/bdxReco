@@ -21,13 +21,13 @@ public:
 	JOBJECT_PUBLIC(CalorimeterSiPMHit);
 
 	typedef enum{
-			noise=0,
-			one_phe=1,
-			good_one_phe=2,
-			many_phe=3,
-			real_signal=4,
-			num_hit_type
-		}hit_type;
+		noise=0,
+		one_phe=1,
+		good_one_phe=2,
+		many_phe=3,
+		real_signal=4,
+		num_hit_type
+	}hit_type;
 
 
 	// Add data members here. For example:
@@ -42,7 +42,7 @@ public:
 	}
 
 	//A.C. do not touch these
-	 //both crate-slot channel and detector-specific ID. Since this is a sensor-based object, the readout field will be !=0
+	//both crate-slot channel and detector-specific ID. Since this is a sensor-based object, the readout field will be !=0
 	TranslationTable::ChannelInfo m_channel; //!
 	/*These 3 variables are: hit charge (u.a.), hit time (in ns), hit amplitude (in mV)*/
 	double Qraw,Qphe;
@@ -50,10 +50,10 @@ public:
 	double T,A;
 	double average;
 	double ped,pedSigma;
-
 	bool good_ped_RMS;
-double a;
 	hit_type m_type;
+
+	uint64_t timestamp;
 
 	int nSingles,nSignals;
 #if (!defined(__APPLE__))

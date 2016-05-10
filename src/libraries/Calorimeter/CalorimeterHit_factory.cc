@@ -125,6 +125,7 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 			if (Q	> m_THR_singleReadout){
 				m_CalorimeterHit=new CalorimeterHit();
+				m_CalorimeterHit->timestamp=m_CalorimeterDigiHit->timestamp;
 				m_CalorimeterHit->E=0;
 				m_CalorimeterHit->m_channel=m_CalorimeterDigiHit->m_channel;
 				m_CalorimeterHit->AddAssociatedObject(m_CalorimeterDigiHit);
@@ -170,6 +171,7 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 				m_CalorimeterHit=new CalorimeterHit();
 				m_CalorimeterHit->E=0;
 				m_CalorimeterHit->m_channel=m_CalorimeterDigiHit->m_channel;
+				m_CalorimeterHit->timestamp=m_CalorimeterDigiHit->timestamp;
 				m_CalorimeterHit->AddAssociatedObject(m_CalorimeterDigiHit);
 				m_CalorimeterHit->Q=Qtot;
 				m_CalorimeterHit->T=Tmax;
@@ -179,6 +181,7 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 				for (int idigi=0;idigi<m_CalorimeterDigiHit->m_data.size();idigi++){
 					Q=m_CalorimeterDigiHit->m_data[idigi].Q;
 					T=m_CalorimeterDigiHit->m_data[idigi].T;
+					jout<<m_CalorimeterDigiHit->m_channel.sector<<" "<<m_CalorimeterDigiHit->m_channel.x<<" "<<m_CalorimeterDigiHit->m_channel.y<<" "<<Q<<endl;
 					if (Q>m_THR_multipleReadout){						/*Clearly this is now enough as condition!*/
 						CalorimeterHit::CalorimeterComponentHit hit;
 						hit.readout=m_CalorimeterDigiHit->m_data[idigi].readout;
@@ -197,7 +200,7 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 						if (gain!=0){
 							hit.E/=gain;
 						}
-
+						//jout<<m_CalorimeterDigiHit->m_channel.sector<<" "<<m_CalorimeterDigiHit->m_channel.x<<" "<<m_CalorimeterDigiHit->m_channel.y<<" "<<Q<<" "<<gain<<" "<<ped<<endl;
 						m_CalorimeterHit->E+=hit.E;
 						m_CalorimeterHit->m_data.push_back(hit);
 					}
