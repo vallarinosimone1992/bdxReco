@@ -13,6 +13,7 @@
 
 #include "CataniaEvent_factory.h"
 #include "MCEvent_factory.h"
+#include "MCEvent_EM_factory.h"
 
 class JFactoryGenerator_EventBuilder: public jana::JFactoryGenerator{
 	public:
@@ -24,6 +25,7 @@ class JFactoryGenerator_EventBuilder: public jana::JFactoryGenerator{
 		jerror_t GenerateFactories(jana::JEventLoop *loop){
 			loop->AddFactory(new CataniaEvent_factory());
 			loop->AddFactory(new MCEvent_factory());
+			loop->AddFactory(new MCEvent_EM_factory());
 			return NOERROR;
 		}
 

@@ -81,13 +81,14 @@ jerror_t CalorimeterCluster_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 		this_sector=(sector_hits_it)->first;
 		this_sector_hits=(sector_hits_it)->second;
 
-		/*2A: apply minimum energy cut*/
+	/*	commented for the full detector MC data
+		//2A: apply minimum energy cut
 		for (this_sector_hits_it=this_sector_hits.begin();this_sector_hits_it!=this_sector_hits.end();this_sector_hits_it++){
 			if ((*this_sector_hits_it)->E <= m_CLUSTER_HIT_THR){
 				this_sector_hits.erase(this_sector_hits_it);
 			}
 		}//end 2A loop
-
+*/
 		/*2B: search the seed in this sector*/
 		Emax=-99999;
 		for (this_sector_hits_it=this_sector_hits.begin();this_sector_hits_it!=this_sector_hits.end();this_sector_hits_it++){
@@ -163,7 +164,9 @@ void CalorimeterCluster_factory::setCluster(CalorimeterCluster *cluster,const Ca
 	for (hits_it=hits.begin();hits_it!=hits.end();hits_it++){ //weighted x-y
 		E=(*hits_it)->E;
 		pos_weight=std::max(0.,(m_CLUSTER_POS_W0+log(E/Etot)));
-		den+=E*pos_weight;
+	//	den+=E*pos_weight;
+		den+=pos_weight;  // from HPS note 2014-002
+
 		Xnum+=((*hits_it)->m_channel.x)*pos_weight;
 		Ynum+=((*hits_it)->m_channel.y)*pos_weight;
 	}
