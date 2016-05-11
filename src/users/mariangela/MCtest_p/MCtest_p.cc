@@ -198,7 +198,7 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 			phe2_tot = clhit->phe2;
             E_tot = clhit->E;
 			multi_cal = clhit->nCalorimeterHits;
-			jout<<" phe1_tot= "<<phe1_tot<<" phe2_tot= "<<phe2_tot<<" E_tot= "<<E_tot<<" muliti_cal= "<<multi_cal<<endl;
+			jout<<" phe1_tot= "<<phe1_tot<<" phe2_tot= "<<phe2_tot<<" E_tot= "<<E_tot<<" Mult Cal= "<<multi_cal<<endl;
 
 
          for (int i=0; i<multi_cal;i++){
@@ -268,6 +268,8 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 					jout<<"E_tot= "<<iv_hit->totEdep<<endl;
 					jout<<"adc1= "<<iv_hit->adc1<<" adc2= "<<iv_hit->adc2<<endl;
 					jout<<"adc3= "<<iv_hit->adc3<<" adc4= "<<iv_hit->adc4<<endl;
+					jout<<"tdc1= "<<iv_hit->tdc1<<" tdc2= "<<iv_hit->tdc2<<endl;
+					jout<<"tdc3= "<<iv_hit->tdc3<<" tdc4= "<<iv_hit->tdc4<<endl;
 
 					         }
 	    jout <<"////////////"<<endl;
