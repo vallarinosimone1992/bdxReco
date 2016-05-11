@@ -107,7 +107,8 @@ jerror_t MCEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 				switch (hit->m_data[ihit].readout){
 				case 1:
 					m_event->phe1 +=(hit->m_data[ihit].Q);   // Q-> number of p.e.
-					m_event->E1=(hit->m_data[ihit].Q)/7.3; // energy calibration from 20 MeV simulated protons
+//					m_event->E1=(hit->m_data[ihit].Q)/7.3; // energy calibration from 20 MeV simulated protons
+					m_event->E1=(hit->m_data[ihit].E); // energy calibration for muons
 
 				//	m_event->Ec1=hit->m_data[ihit].E;
 				//	T1=hit->m_data[ihit].T;
@@ -118,7 +119,8 @@ jerror_t MCEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 					break;
 				case 2:
 					m_event->phe2 +=(hit->m_data[ihit].Q);  // Q-> number of p.e.
-					m_event->E2=(hit->m_data[ihit].Q)/14.6; // energy calibration from 20 MeV simulated protons
+//					m_event->E2=(hit->m_data[ihit].Q)/14.6; // energy calibration from 20 MeV simulated protons
+					m_event->E2=(hit->m_data[ihit].E); // energy calibration for muons
 
 
 				//	m_event->Ec2=hit->m_data[ihit].E;
@@ -150,7 +152,7 @@ jerror_t MCEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	for (evhits_it=evhits.begin();evhits_it!=evhits.end();evhits_it++){			// loop over the fired EV
 		const ExtVetoHit *hit=(*evhits_it);
 
-		jout << "Sector= "<<hit->m_channel.sector<< "Component  "<<hit->m_channel.component<<endl;
+//		jout << "Sector= "<<hit->m_channel.sector<< "Component  "<<hit->m_channel.component<<endl;
 
 		if (hit->T<0) continue; //The ExtVeto condition for a "good" hit
 
