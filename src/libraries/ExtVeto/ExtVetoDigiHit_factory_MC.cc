@@ -68,7 +68,7 @@ jerror_t ExtVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 				m_ExtVetoDigiHit->m_channel.component=this->getCataniaComponent(m_ExtVetoMCHit->channel);
 			}
 			else{
-				m_ExtVetoDigiHit->m_channel.component=m_ExtVetoMCHit->channel; /*Keep this as in MC. There's no data to compare with!*/
+				m_ExtVetoDigiHit->m_channel.component=this->getFullComponent(m_ExtVetoMCHit->channel);; /*Keep this as in MC. There's no data to compare with!*/
 			}
 
 
@@ -112,6 +112,33 @@ jerror_t ExtVetoDigiHit_factory_MC::fini(void)
 }
 
 int ExtVetoDigiHit_factory_MC::getCataniaComponent(int channel){
+	int component;
+	switch (channel){
+	case(1):
+														component=0;
+	break;
+	case(2):
+														component=3;
+	break;
+	case(3):
+														component=2;
+	break;
+	case(4):
+														component=1;
+	break;
+	case(5):
+														component=4;
+	break;
+	case(6):
+														component=5;
+	break;
+	default:
+		break;
+	}
+	return component;
+}
+
+int ExtVetoDigiHit_factory_MC::getFullComponent(int channel){
 	int component;
 	switch (channel){
 	case(1):
