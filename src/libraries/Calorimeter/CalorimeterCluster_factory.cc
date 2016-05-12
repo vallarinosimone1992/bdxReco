@@ -76,23 +76,37 @@ jerror_t CalorimeterCluster_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 		int this_sector;
 		vector<const CalorimeterHit*> this_sector_hits;
 		vector<const CalorimeterHit*>::iterator this_sector_hits_it;
+
+		vector<const CalorimeterHit*> this_sector_hits_temp;      // mr
+	    vector<const CalorimeterHit*>::iterator this_sector_hits_temp_it; //mr
+
 		const CalorimeterHit* this_sector_seed;
 
 		this_sector=(sector_hits_it)->first;
-		this_sector_hits=(sector_hits_it)->second;
+	//	this_sector_hits=(sector_hits_it)->second;
+		this_sector_hits_temp=(sector_hits_it)->second;
 
-	/*	commented for the full detector MC data
+		/*    command erease no match with const vector
 		//2A: apply minimum energy cut
-		for (this_sector_hits_it=this_sector_hits.begin();this_sector_hits_it!=this_sector_hits.end();this_sector_hits_it++){
-			if ((*this_sector_hits_it)->E <= m_CLUSTER_HIT_THR){
-				this_sector_hits.erase(this_sector_hits_it);
-			}
-		}//end 2A loop
+				for (this_sector_hits_it=this_sector_hits.begin();this_sector_hits_it!=this_sector_hits.end();this_sector_hits_it++){
+					if ((*this_sector_hits_it)->E <= m_CLUSTER_HIT_THR){
+						this_sector_hits.erase(this_sector_hits_it);
+					}
+				}//end 2A loop
 */
+
+		//2A: apply minimum energy cut
+		for (this_sector_hits_temp_it=this_sector_hits_temp.begin();this_sector_hits_temp_it!=this_sector_hits_temp.end();this_sector_hits_temp_it++){
+			if ((*this_sector_hits_temp_it)->E > m_CLUSTER_HIT_THR){
+				this_sector_hits.push_back(*this_sector_hits_temp_it);
+		                                                        	}
+		}//end 2A loop
+
 		/*2B: search the seed in this sector*/
 		Emax=-99999;
 		for (this_sector_hits_it=this_sector_hits.begin();this_sector_hits_it!=this_sector_hits.end();this_sector_hits_it++){
 			//Check if the energy of this hit is higher than the maximum. If so, make this as the (temporary) maximum
+
 			if ((*this_sector_hits_it)->E>Emax){
 				Emax=(*this_sector_hits_it)->E;
 				this_sector_seed=(*this_sector_hits_it);

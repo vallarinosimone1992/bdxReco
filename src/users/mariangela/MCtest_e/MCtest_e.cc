@@ -84,6 +84,13 @@ jerror_t MCtest::init(void)
 	t->Branch("multi_sect6",&multi_sect6);
 	t->Branch("multi_sect7",&multi_sect7);
 
+	t->Branch("multi_cl",&multi_cl);
+	t->Branch("Eseed",&Eseed);
+	t->Branch("Ecluster",&Ecluster);
+	t->Branch("sector_seed",&sector_seed);
+    t->Branch("x_seed",&x_seed);
+    t->Branch("y_seed",&y_seed);
+
 
 	t->Branch("multi_ev",&multi_ev);
  	t->Branch("sector_ev",sector_ev,"sector_ev[800]/I");
@@ -143,9 +150,14 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 	vector<const CalorimeterMCHit*> data_calo;
 	vector<const CalorimeterMCHit*>::const_iterator data_calo_it;
 
+	vector<const CalorimeterHit*> data_calohit;
+	vector<const CalorimeterHit*>::const_iterator data_calohit_it;
+
+
 
 	loop->Get(data);
 	loop->Get(data_calo);
+	loop->Get(data_calohit);
 
 		japp->RootWriteLock();
 
@@ -163,7 +175,7 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	   eventN=eventnumber;
 
-	//   jout << "start event= "<< eventN<< endl;
+//	   jout << "start event= "<< eventN<< endl;
 
 
 	for (data_it=data.begin();data_it<data.end();data_it++){		// loop over MC events
@@ -186,7 +198,7 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 			multi_sect5 = clhit->nCalorimeterHits_S5;
 			multi_sect6 = clhit->nCalorimeterHits_S6;
 			multi_sect7 = clhit->nCalorimeterHits_S7;
-
+/*
 			jout<<"multi_sect0= "<<multi_sect0<<endl;
 			jout<<"multi_sect1= "<<multi_sect1<<endl;
 			jout<<"multi_sect2= "<<multi_sect2<<endl;
@@ -199,10 +211,7 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 			jout<<"Eseed= "<<clhit->Eseed<<" Xseed= "<<clhit->xseed<<" Yseed= "<<clhit->yseed<<endl;
 			jout<<"Nhit_cluster= "<<clhit->Nhit_cluster<<" E_cluster= "<<clhit->E_cluster<<endl;
-
-		//	jout<<clhit->E1<< " "<<clhit->E2<<endl;
-		//	jout<<" phe1_tot= "<<phe1_tot<<" phe2_tot= "<<phe2_tot<<" E_tot= "<<E_tot<<" muliti_cal= "<<multi_cal<<endl;
-
+*/
 
          for (int i=0; i<multi_cal;i++){
 			sector_cal[i] = clhit->vCalorimeterHits.at(i).sector;
@@ -211,18 +220,16 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
          //    jout << "sector= "<<sector_cal[i]<<" X= "<< x_cal[i] << " Y= "<< y_cal[i]<<endl;
          }
 
-/*
-          if(multi_cal==35){
-        	  jout << "*******"<<endl;
-        	  jout << eventN<<endl;
-        	  for (int i=0; i<multi_cal;i++){
-            jout << sector_cal[i]<<" "<< x_cal[i] << " "<< y_cal[i]<<endl;
-                                            }
-        	  jout <<"E-tot= " <<E<<endl;
-        	  }
 
-*/
-      //    jout << sector_cal << endl;
+         multi_cl = clhit->Nhit_cluster;
+         Eseed = clhit->Eseed;
+         Ecluster = clhit->E_cluster;
+       //  sector_seed = clhit->sector_seed;
+         x_seed = clhit->xseed;
+         y_seed = clhit->yseed;
+
+
+
             multi_iv = clhit->nIntVetoHits;
 
             for (int i=0; i<multi_iv;i++){
@@ -243,22 +250,42 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	}
 
+/*
 
 
-
+                        jout << "sono caloMChit"<<endl;
 	int i=0;
 	for (data_calo_it=data_calo.begin();data_calo_it<data_calo.end();data_calo_it++){	// loop over CaloMC hits
 		i++;
 				const CalorimeterMCHit *calo_hit = *data_calo_it;
-				jout<<"adcr= "<<calo_hit->adcr<<" adcl= "<<calo_hit->adcl<<endl;				// adcr == SiPM1  , adcl=SiPM2
+
+				jout<<" Sector= "<<calo_hit->sector<<endl;
 				jout<<" X= "<<calo_hit->x<<" Y= "<<calo_hit->y<<endl;
-				E1[i] = calo_hit->adcr/7.3;
-				E2[i] = calo_hit->adcl/14.6;
+				jout<<"adcr= "<<calo_hit->adcr<<" adcl= "<<calo_hit->adcl<<endl;				// adcr == SiPM1  , adcl=SiPM2
+
+				E1[i] = calo_hit->adcr/10;
+				E2[i] = calo_hit->adcl/20;
 				jout << "E1= "<<E1[i]<<" E2= "<< E2[i] <<endl;
 
 				         }
 
+	int pr=0;
+	                       jout << "***********sono calohit**********"<<endl;
+	for (data_calohit_it=data_calohit.begin();data_calohit_it<data_calohit.end();data_calohit_it++){	// loop over CaloMC hits
+		pr++;
+				const CalorimeterHit *calo_hit = *data_calohit_it;
 
+				jout<<" Sector= "<<calo_hit->m_channel.sector<<endl;
+				jout<<" X= "<<calo_hit->m_channel.x<<" Y= "<<calo_hit->m_channel.y<<endl;
+
+
+
+				         }
+
+	               jout << i << " "<<pr<<endl;
+         jout << "*************end event***********"<<endl;
+
+*/
 
 
 

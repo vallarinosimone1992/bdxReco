@@ -124,6 +124,7 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 			T=m_CalorimeterDigiHit->m_data[0].T;
 
 			if (Q	> m_THR_singleReadout){
+
 				m_CalorimeterHit=new CalorimeterHit();
 				m_CalorimeterHit->timestamp=m_CalorimeterDigiHit->timestamp;
 				m_CalorimeterHit->E=0;
@@ -217,6 +218,8 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		}
 
 	}
+
+
 
 	return NOERROR;
 }
