@@ -144,14 +144,17 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 	vector<const MCEvent*> data;
 	vector<const MCEvent*>::const_iterator data_hit;
 
-	vector<const CalorimeterMCHit*> data_calo;
-	vector<const CalorimeterMCHit*>::const_iterator data_calo_hit;
+	vector<const CalorimeterMCHit*> data_calo_mc;
+	vector<const CalorimeterMCHit*>::const_iterator data_calo_mc_hit;
 
 	vector<const IntVetoMCHit*> data_iv_mc;
 	vector<const IntVetoMCHit*>::const_iterator data_iv_mc_hit;
 
 	vector<const ExtVetoMCHit*> data_ev_mc;
 	vector<const ExtVetoMCHit*>::const_iterator data_ev_mc_hit;
+
+	vector<const CalorimeterHit*> data_calo;
+	vector<const CalorimeterHit*>::const_iterator data_calo_hit;
 
 	vector<const IntVetoHit*> data_iv;
 	vector<const IntVetoHit*>::const_iterator data_iv_hit;
@@ -161,9 +164,10 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 
 	loop->Get(data);
-	loop->Get(data_calo);
+	loop->Get(data_calo_mc);
 	loop->Get(data_iv_mc);
 	loop->Get(data_ev_mc);
+	loop->Get(data_calo);
 	loop->Get(data_iv);
 	loop->Get(data_ev);
 
@@ -248,9 +252,9 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
     jout << "/// Calorimeter /// "<<endl;
 
 	int i=0;
-	for (data_calo_hit=data_calo.begin();data_calo_hit<data_calo.end();data_calo_hit++){	// loop over CaloMC hits
+	for (data_calo_mc_hit=data_calo_mc.begin();data_calo_mc_hit<data_calo_mc.end();data_calo_mc_hit++){	// loop over CaloMC hits
 		i++;
-				const CalorimeterMCHit *calo_hit = *data_calo_hit;
+				const CalorimeterMCHit *calo_hit = *data_calo_mc_hit;
 				jout<<"adcr= "<<calo_hit->adcr<<" adcl= "<<calo_hit->adcl<<endl;				// adcr == SiPM1  , adcl=SiPM2
 				jout<<" X= "<<calo_hit->x<<" Y= "<<calo_hit->y<<endl;
 				E1[i] = calo_hit->adcr/7.3;

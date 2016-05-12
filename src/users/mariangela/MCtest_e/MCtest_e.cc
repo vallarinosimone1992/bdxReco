@@ -9,6 +9,8 @@
 
 
 #include <MC/CalorimeterMCHit.h>
+#include <Calorimeter/CalorimeterHit.h>
+
 #include <EventBuilder/MCEvent_EM.h>
 #include <EventBuilder/MCEvent.h>
 
@@ -241,16 +243,22 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	}
 
+
+
+
 	int i=0;
 	for (data_calo_it=data_calo.begin();data_calo_it<data_calo.end();data_calo_it++){	// loop over CaloMC hits
 		i++;
 				const CalorimeterMCHit *calo_hit = *data_calo_it;
-		//		jout<<"adcr= "<<calo_hit->adcr<<" adcl= "<<calo_hit->adcl<<endl;				// adcr == SiPM1  , adcl=SiPM2
-		//		jout<<" X= "<<calo_hit->x<<" Y= "<<calo_hit->y<<endl;
+				jout<<"adcr= "<<calo_hit->adcr<<" adcl= "<<calo_hit->adcl<<endl;				// adcr == SiPM1  , adcl=SiPM2
+				jout<<" X= "<<calo_hit->x<<" Y= "<<calo_hit->y<<endl;
 				E1[i] = calo_hit->adcr/7.3;
 				E2[i] = calo_hit->adcl/14.6;
-		//		jout << "E1= "<<E1[i]<<" E2= "<< E2[i] <<endl;
+				jout << "E1= "<<E1[i]<<" E2= "<< E2[i] <<endl;
+
 				         }
+
+
 
 
 
