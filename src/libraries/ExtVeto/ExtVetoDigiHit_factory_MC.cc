@@ -111,26 +111,26 @@ jerror_t ExtVetoDigiHit_factory_MC::fini(void)
 	return NOERROR;
 }
 
-int ExtVetoDigiHit_factory_MC::getCataniaComponent(int channel){
+int ExtVetoDigiHit_factory_MC::getFullComponent(int channel){
 	int component;
 	switch (channel){
-	case(1):
+	case(1)://top
 														component=0;
 	break;
-	case(2):
+	case(2)://bottom
 														component=3;
 	break;
-	case(3):
+	case(3)://right
 														component=2;
 	break;
-	case(4):
+	case(4)://left
 														component=1;
 	break;
-	case(5):
-														component=4;
-	break;
-	case(6):
+	case(5)://downstream
 														component=5;
+	break;
+	case(6)://upstream
+														component=4;
 	break;
 	default:
 		break;
@@ -138,7 +138,7 @@ int ExtVetoDigiHit_factory_MC::getCataniaComponent(int channel){
 	return component;
 }
 
-int ExtVetoDigiHit_factory_MC::getFullComponent(int channel){
+int ExtVetoDigiHit_factory_MC::getCataniaComponent(int channel){
 	int component;
 	switch (channel){
 	case(1):
