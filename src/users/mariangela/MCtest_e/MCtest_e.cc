@@ -7,17 +7,10 @@
 
 #include "MCtest_e.h"
 
-#include <MC/ExtVetoMCHit.h>
-
-#include <ExtVeto/ExtVetoDigiHit.h>
-#include <ExtVeto/ExtVetoHit.h>
-#include <ExtVeto/ExtVetoSummary.h>
 
 #include <MC/CalorimeterMCHit.h>
-
-#include <Calorimeter/CalorimeterDigiHit.h>
-#include <Calorimeter/CalorimeterHit.h>
 #include <EventBuilder/MCEvent_EM.h>
+#include <EventBuilder/MCEvent.h>
 
 #include <system/JROOTOutput.h>
 #include "TTree.h"
@@ -145,11 +138,12 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 	vector<const MCEvent_EM*> data;
 	vector<const MCEvent_EM*>::const_iterator data_it;
 
-	vector<const CalorimeterMCHit*> data_calo;		//mz
-	vector<const CalorimeterMCHit*>::const_iterator data_calo_it;	//mz
+	vector<const CalorimeterMCHit*> data_calo;
+	vector<const CalorimeterMCHit*>::const_iterator data_calo_it;
+
 
 	loop->Get(data);
-	loop->Get(data_calo);	//mz
+	loop->Get(data_calo);
 
 		japp->RootWriteLock();
 
@@ -191,6 +185,18 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 			multi_sect6 = clhit->nCalorimeterHits_S6;
 			multi_sect7 = clhit->nCalorimeterHits_S7;
 
+			jout<<"multi_sect0= "<<multi_sect0<<endl;
+			jout<<"multi_sect1= "<<multi_sect1<<endl;
+			jout<<"multi_sect2= "<<multi_sect2<<endl;
+			jout<<"multi_sect3= "<<multi_sect3<<endl;
+			jout<<"multi_sect4= "<<multi_sect4<<endl;
+			jout<<"multi_sect5= "<<multi_sect5<<endl;
+			jout<<"multi_sect6= "<<multi_sect6<<endl;
+			jout<<"multi_sect7= "<<multi_sect7<<endl;
+
+
+			jout<<"Eseed= "<<clhit->Eseed<<" Xseed= "<<clhit->xseed<<" Yseed= "<<clhit->yseed<<endl;
+			jout<<"Nhit_cluster= "<<clhit->Nhit_cluster<<" E_cluster= "<<clhit->E_cluster<<endl;
 
 		//	jout<<clhit->E1<< " "<<clhit->E2<<endl;
 		//	jout<<" phe1_tot= "<<phe1_tot<<" phe2_tot= "<<phe2_tot<<" E_tot= "<<E_tot<<" muliti_cal= "<<multi_cal<<endl;

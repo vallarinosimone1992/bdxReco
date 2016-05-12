@@ -6,7 +6,7 @@ using namespace std;
 #include "MCEvent_EM_factory.h"
 
 #include <Calorimeter/CalorimeterHit.h>
-#include <Calorimeter/CalorimeterCluster.h>			// mz
+#include <Calorimeter/CalorimeterCluster.h>
 #include <IntVeto/IntVetoHit.h>
 #include <ExtVeto/ExtVetoHit.h>
 #include <Paddles/PaddlesHit.h>
@@ -52,8 +52,8 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	vector <const CalorimeterHit*> chits;
 	vector <const CalorimeterHit*>::const_iterator chits_it;
 
-	vector <const CalorimeterCluster*> cclusters;						//mz
-	vector <const CalorimeterCluster*>::const_iterator cclusters_it;	//mz
+	vector <const CalorimeterCluster*> cclusters;
+	vector <const CalorimeterCluster*>::const_iterator cclusters_it;
 
 	vector <const IntVetoHit*> ivhits;
 	vector <const IntVetoHit*>::const_iterator ivhits_it;
@@ -64,7 +64,7 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 
 	loop->Get(chits);
-	loop->Get(cclusters);	//mz
+	loop->Get(cclusters);
 	loop->Get(ivhits);
 	loop->Get(evhits);
 
@@ -88,7 +88,12 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	m_event->nCalorimeterHits_S6=0;
 	m_event->nCalorimeterHits_S7=0;
 
-
+	m_event->Eseed=0;
+	m_event->xseed=0;
+	m_event->yseed=0;
+	m_event->Nhit_cluster=0;
+	m_event->E_cluster=0;
+	m_event->T_cluster=0;
 
 
 	m_event->flag_RMS=false;
@@ -107,21 +112,22 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		for (int ihit=0;ihit<hit->m_data.size();ihit++){			// loop over the 2 SiPMs
 				switch (hit->m_data[ihit].readout){
 				case 1:
-					m_event->phe1 +=(hit->m_data[ihit].Q);   // Q-> number of p.e.
-					m_event->E1=(hit->m_data[ihit].Q)/7.3; // energy calibration from 20 MeV simulated protons
+					m_event->phe1 +=(hit->m_data[ihit].Q);   	// Q-> number of p.e.
+					m_event->E1=(hit->m_data[ihit].Q)/7.3; 		// energy calibration from 20 MeV simulated protons
 					break;
 				case 2:
-					m_event->phe2 +=(hit->m_data[ihit].Q);  // Q-> number of p.e.
-					m_event->E2=(hit->m_data[ihit].Q)/14.6; // energy calibration from 20 MeV simulated protons
+					m_event->phe2 +=(hit->m_data[ihit].Q);  	// Q-> number of p.e.
+					m_event->E2=(hit->m_data[ihit].Q)/14.6; 	// energy calibration from 20 MeV simulated protons
 					break;
 				}
 			}
 
 
-		m_event->E += (m_event->E1 +m_event->E2)/2;			// sum the energies of all the crystals fired
+		m_event->E += (m_event->E1 +m_event->E2)/2;				// sum the energies of all the crystals fired
 	    m_event->nCalorimeterHits++;
 	    m_event->vCalorimeterHits.push_back(hit->m_channel);
-	     switch (hit->m_channel.sector){
+
+	    switch (hit->m_channel.sector){
 	     case 0:
 	    	 m_event->nCalorimeterHits_S0++;
 	    	 break;
@@ -161,44 +167,34 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 
 
-           jout << "S0= "<< m_event->nCalorimeterHits_S0<<endl;
-           jout << "S1= "<< m_event->nCalorimeterHits_S1<<endl;
-           jout << "S2= "<< m_event->nCalorimeterHits_S2<<endl;
-           jout << "S3= "<< m_event->nCalorimeterHits_S3<<endl;
-           jout << "S4= "<< m_event->nCalorimeterHits_S4<<endl;
-           jout << "S5= "<< m_event->nCalorimeterHits_S5<<endl;
-           jout << "S6= "<< m_event->nCalorimeterHits_S6<<endl;
-           jout << "S7= "<< m_event->nCalorimeterHits_S7<<endl;
+ //          jout << "S0= "<< m_event->nCalorimeterHits_S0<<endl;
+ //          jout << "S1= "<< m_event->nCalorimeterHits_S1<<endl;
+ //          jout << "S2= "<< m_event->nCalorimeterHits_S2<<endl;
+ //          jout << "S3= "<< m_event->nCalorimeterHits_S3<<endl;
+ //          jout << "S4= "<< m_event->nCalorimeterHits_S4<<endl;
+ //          jout << "S5= "<< m_event->nCalorimeterHits_S5<<endl;
+ //          jout << "S6= "<< m_event->nCalorimeterHits_S6<<endl;
+ //          jout << "S7= "<< m_event->nCalorimeterHits_S7<<endl;
 
 
 
-	for (cclusters_it=cclusters.begin();cclusters_it!=cclusters.end();cclusters_it++){			// loop over the fired crystals
+	for (cclusters_it=cclusters.begin();cclusters_it!=cclusters.end();cclusters_it++){			// loop over clusters
 			const CalorimeterCluster *hit=(*cclusters_it);
 
+//	       jout << "Eseed "<< hit->Eseed<<endl;
+//           jout << "x " << hit->x<<endl;
+//           jout << "y "<<hit->y<<endl;
+//           jout << "Nhit "<<hit->Nhits<<endl;
+//           jout << "E "<< hit->E<<endl;
 
-	       jout << "Eseed "<< hit->Eseed<<endl;
-           jout << "x " << hit->x<<endl;
-           jout << "y "<<hit->y<<endl;
-           jout << "Nhit "<<hit->Nhits<<endl;
-           jout << "E "<< hit->E<<endl;
-
-
-
+			m_event->Eseed=hit->Eseed;
+			m_event->xseed=hit->x;
+			m_event->yseed=hit->y;
+			m_event->Nhit_cluster=hit->Nhits;
+			m_event->E_cluster=hit->E;
+			m_event->T_cluster;
 
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
