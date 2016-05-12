@@ -52,8 +52,8 @@ jerror_t MCEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	vector <const CalorimeterHit*> chits;
 	vector <const CalorimeterHit*>::const_iterator chits_it;
 
-	vector <const CalorimeterCluster*> cclusters;						//mz
-	vector <const CalorimeterCluster*>::const_iterator cclusters_it;	//mz
+	vector <const CalorimeterCluster*> cclusters;
+	vector <const CalorimeterCluster*>::const_iterator cclusters_it;
 
 	vector <const IntVetoHit*> ivhits;
 	vector <const IntVetoHit*>::const_iterator ivhits_it;
@@ -64,7 +64,6 @@ jerror_t MCEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 
 	loop->Get(chits);
-//	loop->Get(cclusters);	//mz
 	loop->Get(ivhits);
 	loop->Get(evhits);
 
@@ -107,8 +106,8 @@ jerror_t MCEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 				switch (hit->m_data[ihit].readout){
 				case 1:
 					m_event->phe1 +=(hit->m_data[ihit].Q);   // Q-> number of p.e.
-//					m_event->E1=(hit->m_data[ihit].Q)/7.3; // energy calibration from 20 MeV simulated protons
-					m_event->E1=(hit->m_data[ihit].E); // energy calibration for muons
+					m_event->E1=(hit->m_data[ihit].Q)/9.87; // energy calibration from data : 16 MeV  protons at 12cm from the SiPM
+//					m_event->E1=(hit->m_data[ihit].E); // energy calibration for muons
 
 				//	m_event->Ec1=hit->m_data[ihit].E;
 				//	T1=hit->m_data[ihit].T;
@@ -119,8 +118,8 @@ jerror_t MCEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 					break;
 				case 2:
 					m_event->phe2 +=(hit->m_data[ihit].Q);  // Q-> number of p.e.
-//					m_event->E2=(hit->m_data[ihit].Q)/14.6; // energy calibration from 20 MeV simulated protons
-					m_event->E2=(hit->m_data[ihit].E); // energy calibration for muons
+					m_event->E2=(hit->m_data[ihit].Q)/18; // energy calibration from data : 16 MeV  protons at 12cm from the SiPM
+//					m_event->E2=(hit->m_data[ihit].E); // energy calibration for muons
 
 
 				//	m_event->Ec2=hit->m_data[ihit].E;
