@@ -268,6 +268,7 @@ jerror_t JEventProcessor_Catania::evnt(JEventLoop *loop, uint64_t eventnumber)
 	flag=false;
 	//if (1){
 	//	if ((Ec1>10)&&(nHitsExtVeto==0)&&(nHitsIntVeto==0)&&(caloHit->m_data[0].good_ped_RMS==true)&&(caloHit->m_data[1].good_ped_RMS==true)) flag=true;
+	//if ((event->E>400)&&(event->nExtVetoHitsCoincidence==0)) flag=true;
 	if ((event->E>400)&&(event->nExtVetoHitsCoincidence==0)) flag=true;
 	if ((flag)&&(m_isMC==false)){
 		//	jout<<"QUI "<<eventnumber<<endl;
@@ -288,8 +289,8 @@ jerror_t JEventProcessor_Catania::evnt(JEventLoop *loop, uint64_t eventnumber)
 				}
 				hwave=hwavesCalo[iwave];
 				hwave->Reset();
-				hwave->SetName(Form("h_%i_%i__%f_%f_%f_%f",cwaves[iwave]->m_channel.channel,event->eventN,event->Ec1,event->Ec2,event->E,event->T));
-				hwave->SetTitle(Form("h_%i_%i__%f_%f_%f_%f",cwaves[iwave]->m_channel.channel,event->eventN,event->Ec1,event->Ec2,event->E,event->T));
+				hwave->SetName(Form("h_%i_%i__%f_%f_%f_%f_%i_%x",cwaves[iwave]->m_channel.channel,event->eventN,event->Ec1,event->Ec2,event->E,event->T,1*(event->flag_RMS),event->tWord));
+				hwave->SetTitle(Form("h_%i_%i__%f_%f_%f_%f_%i_%x",cwaves[iwave]->m_channel.channel,event->eventN,event->Ec1,event->Ec2,event->E,event->T,1*(event->flag_RMS),event->tWord));
 
 				for (int isample=0;isample<N;isample++){
 					hwave->Fill(isample,(*cwaves_it)->samples[isample]);

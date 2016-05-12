@@ -69,14 +69,14 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 			if (m_IntVetoMCHit->system==VetoMCHit::CATANIA_INTVETO){
 				m_IntVetoDigiHit->m_channel.component=this->getCataniaComponent(m_IntVetoMCHit->channel);
 			}
-			else{
-				m_IntVetoDigiHit->m_channel.component=m_IntVetoMCHit->channel; /*Keep this as in MC. There's no data to compare with!*/
+			else{ //Case of full MC
+				m_IntVetoDigiHit->m_channel.component=this->getFullComponent(m_IntVetoMCHit->channel);
 			}
 			/*create the component sipm-hits*/
-			switch (m_IntVetoMCHit->channel){
-			case(1):
-			case(5):
-			case(6):
+			switch (m_IntVetoDigiHit->m_channel.component){
+			case(1): //top
+			case(2): //left
+			case(3): //right
 			digi_hit.readout=1;
 			digi_hit.Q=m_IntVetoMCHit->adc1;
 			digi_hit.T=m_IntVetoMCHit->tdc1/1000.;  //MC is in ps
@@ -94,27 +94,50 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 			digi_hit.T=m_IntVetoMCHit->tdc4/1000.;
 			m_IntVetoDigiHit->m_data.push_back(digi_hit);
 			break;
-			case(2): //bottom
-			digi_hit.readout=1;
-			digi_hit.Q=m_IntVetoMCHit->adc1;
-			digi_hit.T=m_IntVetoMCHit->tdc1/1000.;  //MC is in ps
-			m_IntVetoDigiHit->m_data.push_back(digi_hit);
-			digi_hit.readout=2;
-			digi_hit.Q=m_IntVetoMCHit->adc4;
-			digi_hit.T=m_IntVetoMCHit->tdc4/1000.;
-			m_IntVetoDigiHit->m_data.push_back(digi_hit);
-			digi_hit.readout=3;
-			digi_hit.Q=m_IntVetoMCHit->adc3;
-			digi_hit.T=m_IntVetoMCHit->tdc3/1000.;
-			m_IntVetoDigiHit->m_data.push_back(digi_hit);
-			digi_hit.readout=4;
-			digi_hit.Q=m_IntVetoMCHit->adc2;
-			digi_hit.T=m_IntVetoMCHit->tdc2/1000.;
-			m_IntVetoDigiHit->m_data.push_back(digi_hit);
+			case(4): //bottom
+										if (m_IntVetoMCHit->system==VetoMCHit::CATANIA_INTVETO){
+											digi_hit.readout=1;
+											digi_hit.Q=m_IntVetoMCHit->adc1;
+											digi_hit.T=m_IntVetoMCHit->tdc1/1000.;  //MC is in ps
+											m_IntVetoDigiHit->m_data.push_back(digi_hit);
+											digi_hit.readout=2;
+											digi_hit.Q=m_IntVetoMCHit->adc4;
+											digi_hit.T=m_IntVetoMCHit->tdc4/1000.;
+											m_IntVetoDigiHit->m_data.push_back(digi_hit);
+											digi_hit.readout=3;
+											digi_hit.Q=m_IntVetoMCHit->adc3;
+											digi_hit.T=m_IntVetoMCHit->tdc3/1000.;
+											m_IntVetoDigiHit->m_data.push_back(digi_hit);
+											digi_hit.readout=4;
+											digi_hit.Q=m_IntVetoMCHit->adc2;
+											digi_hit.T=m_IntVetoMCHit->tdc2/1000.;
+											m_IntVetoDigiHit->m_data.push_back(digi_hit);
+
+										}
+										else{
+											digi_hit.readout=1;
+											digi_hit.Q=m_IntVetoMCHit->adc1;
+											digi_hit.T=m_IntVetoMCHit->tdc1/1000.;  //MC is in ps
+											m_IntVetoDigiHit->m_data.push_back(digi_hit);
+											digi_hit.readout=2;
+											digi_hit.Q=m_IntVetoMCHit->adc2;
+											digi_hit.T=m_IntVetoMCHit->tdc3/1000.;
+											m_IntVetoDigiHit->m_data.push_back(digi_hit);
+											digi_hit.readout=3;
+											digi_hit.Q=m_IntVetoMCHit->adc3;
+											digi_hit.T=m_IntVetoMCHit->tdc3/1000.;
+											m_IntVetoDigiHit->m_data.push_back(digi_hit);
+											digi_hit.readout=4;
+											digi_hit.Q=m_IntVetoMCHit->adc4;
+											digi_hit.T=m_IntVetoMCHit->tdc4/1000.;
+											m_IntVetoDigiHit->m_data.push_back(digi_hit);
+										}
+
 			break;
 
-			case(3): //upstream
-			case(4): //downstream
+
+			case(5): //upstream
+			case(6): //downstream
 			digi_hit.readout=1;
 			digi_hit.Q=m_IntVetoMCHit->adc1;
 			digi_hit.T=m_IntVetoMCHit->tdc1/1000.;
@@ -127,24 +150,32 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 		else{ /*There is already the hit. Sum the charges*/
 			m_IntVetoDigiHit=m_map_it->second;
 			m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-			switch (m_IntVetoMCHit->channel){
+			switch (m_IntVetoDigiHit->m_channel.component){
 			case(1):
-			case(5):
-			case(6):
+			case(2):
+			case(3):
 			m_IntVetoDigiHit->m_data[0].Q+=m_IntVetoMCHit->adc1;
 			m_IntVetoDigiHit->m_data[1].Q+=m_IntVetoMCHit->adc2;
 			m_IntVetoDigiHit->m_data[2].Q+=m_IntVetoMCHit->adc3;
 			m_IntVetoDigiHit->m_data[3].Q+=m_IntVetoMCHit->adc4;
 			break;
-			case(2): //bottom     ///The inversion is only in the data
-			m_IntVetoDigiHit->m_data[0].Q+=m_IntVetoMCHit->adc1;
-			m_IntVetoDigiHit->m_data[1].Q+=m_IntVetoMCHit->adc4;
-			m_IntVetoDigiHit->m_data[2].Q+=m_IntVetoMCHit->adc3;
-			m_IntVetoDigiHit->m_data[3].Q+=m_IntVetoMCHit->adc2;
+			case(4):
+					if (m_IntVetoMCHit->system==VetoMCHit::CATANIA_INTVETO){
+							m_IntVetoDigiHit->m_data[0].Q+=m_IntVetoMCHit->adc1;
+							m_IntVetoDigiHit->m_data[1].Q+=m_IntVetoMCHit->adc4;
+							m_IntVetoDigiHit->m_data[2].Q+=m_IntVetoMCHit->adc3;
+							m_IntVetoDigiHit->m_data[3].Q+=m_IntVetoMCHit->adc2;
+					}
+					else{
+							m_IntVetoDigiHit->m_data[0].Q+=m_IntVetoMCHit->adc1;
+							m_IntVetoDigiHit->m_data[1].Q+=m_IntVetoMCHit->adc2;
+							m_IntVetoDigiHit->m_data[2].Q+=m_IntVetoMCHit->adc3;
+							m_IntVetoDigiHit->m_data[3].Q+=m_IntVetoMCHit->adc4;
+					}
 			break;
 
-			case(3): //upstream
-			case(4): //upstream
+			case(5): //upstream
+			case(6): //upstream
 			m_IntVetoDigiHit->m_data[0].Q+=m_IntVetoMCHit->adc1;
 			break;
 			}
@@ -183,18 +214,36 @@ int IntVetoDigiHit_factory_MC::getCataniaComponent(int MCchannel){
 	int component=-1;
 	switch (MCchannel){
 	case(1): //top
-									component=0;break;
+																	component=0;break;
 	case(2): //bottom
-									component=3;break;
+																	component=3;break;
 	case(3):  //upstream
-									component=4;break;
+																	component=4;break;
 	case(4): //downstream
-									component=5;break;
+																	component=5;break;
 	case(5): //right
-									component=2;break;
+																	component=2;break;
 	case(6): //left
-									component=1;break;
+																	component=1;break;
 	}
 	return component;
 }
 
+int IntVetoDigiHit_factory_MC::getFullComponent(int MCchannel){
+	int component=-1;
+	switch (MCchannel){
+	case(1): //top
+																	component=0;break;
+	case(2): //bottom
+																	component=3;break;
+	case(3):  //upstream
+																	component=4;break;
+	case(4): //downstream
+																	component=5;break;
+	case(5): //right
+																	component=2;break;
+	case(6): //left
+																	component=1;break;
+	}
+	return component;
+}

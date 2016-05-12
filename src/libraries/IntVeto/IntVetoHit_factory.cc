@@ -86,8 +86,6 @@ jerror_t IntVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	Qtot=0;
 	for (it=m_IntVetoDigiHits.begin();it!=m_IntVetoDigiHits.end();it++){
 		m_IntVetoDigiHit=(*it);
-
-
 		nReadout=m_IntVetoDigiHit->m_data.size();
 		if (nReadout==1){
 			Q=m_IntVetoDigiHit->m_data[0].Q;
@@ -102,7 +100,7 @@ jerror_t IntVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 				_data.push_back(m_IntVetoHit);
 			}
 		}
-		else if ((m_IntVetoDigiHit->m_channel.sector==0)&&(m_IntVetoDigiHit->m_channel.layer==0)&&(m_IntVetoDigiHit->m_channel.component==3)&&(m_hit_bottom_workAround)){ //this is the case of the bottom counter
+		else if ((m_IntVetoDigiHit->m_channel.component==3)&&(m_hit_bottom_workAround)){ //this is the case of the bottom counter (for Catania only)
 			flagOk=0;
 			Qmax=-9999;
 			for (int idigi=0;idigi<m_IntVetoDigiHit->m_data.size();idigi++){
