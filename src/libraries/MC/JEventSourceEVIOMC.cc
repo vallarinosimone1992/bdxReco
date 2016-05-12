@@ -247,7 +247,7 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory)
 			hit->sector=bankDgt[ih].getIntDgtVar("sector");
 			hit->channel=bankDgt[ih].getIntDgtVar("channel");
 
-     //      jout << "sector "<< hit->sector << " " << hit->channel<<endl;
+       //    jout << "sector "<< hit->sector << " " << hit->channel<<endl;
 
 			hit->system=bankDgt[ih].getIntDgtVar("veto");
 
@@ -261,10 +261,10 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory)
 			hit->tdc3=bankDgt[ih].getIntDgtVar("tdc3");
 			hit->tdc4=bankDgt[ih].getIntDgtVar("tdc4");
 
-		//	jout << hit->adc1 << " "<< hit->tdc1 << endl;
-		//	jout << hit->adc2 << " "<< hit->tdc2 << endl;
-		//	jout << hit->adc3 << " "<< hit->tdc3 << endl;
-		//	jout << hit->adc4 << " "<< hit->tdc4 << endl;
+	//		jout << hit->adc1 << " "<< hit->tdc1 << endl;
+	//		jout << hit->adc2 << " "<< hit->tdc2 << endl;
+	//		jout << hit->adc3 << " "<< hit->tdc3 << endl;
+	//		jout << hit->adc4 << " "<< hit->tdc4 << endl;
 
 
 
