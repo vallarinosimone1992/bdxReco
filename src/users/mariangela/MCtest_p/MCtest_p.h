@@ -31,7 +31,7 @@ class MCtest:public jana::JEventProcessor{
 
 		int m_isFirstCallToBrun;
 
-      double phe1_tot, phe2_tot, E_tot, multi_cal, multi_ev, multi_iv;
+      double phe1_tot, phe2_tot, E_tot, multi_cal, multi_iv, multi_ev, multi_cal_ext_layer;
       double totEdep;
 
       double E1[800],E2[800];

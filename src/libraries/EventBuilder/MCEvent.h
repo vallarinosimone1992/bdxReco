@@ -25,7 +25,8 @@ class MCEvent:public jana::JObject,public TObject{
 		}
 	//	double Ec1,Ec2;
 		double E,T, E1, E2, phe1, phe2;
-		int nCalorimeterHits;  //mr
+		int nCalorimeterHits;
+		int nCalorimeterHits_ext_layer;
 		vector <TranslationTable::CALO_Index_t> vCalorimeterHits;
 		bool flag_RMS;
 

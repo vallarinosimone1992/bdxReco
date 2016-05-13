@@ -101,6 +101,8 @@ jerror_t MCtest::init(void)
 	t->Branch("x_cal",x_cal,"x_cal[800]/I");
 	t->Branch("y_cal",y_cal,"y_cal[800]/I");
 	t->Branch("multi_cal",&multi_cal);
+	t->Branch("multi_cal_ext_layer",&multi_cal_ext_layer);
+
 
 	t->Branch("multi_ev",&multi_ev);
  	t->Branch("sector_ev",sector_ev,"sector_ev[800]/I");
@@ -215,8 +217,10 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 			phe2_tot = clhit->phe2;
             E_tot = clhit->E;
 			multi_cal = clhit->nCalorimeterHits;
-			jout<<" phe1_tot= "<<phe1_tot<<" phe2_tot= "<<phe2_tot<<" E_tot= "<<E_tot<<" Mult Cal= "<<multi_cal<<endl;
+			multi_cal_ext_layer = clhit->nCalorimeterHits_ext_layer;
 
+			jout<<" phe1_tot= "<<phe1_tot<<" phe2_tot= "<<phe2_tot<<" E_tot= "<<E_tot<<endl;
+            jout<<" Mult_Cal= "<<multi_cal<<" Multi_cal_ext_layer= "<<multi_cal_ext_layer<<endl;
 
          for (int i=0; i<multi_cal;i++){
 			sector_cal[i] = clhit->vCalorimeterHits.at(i).sector;
@@ -272,8 +276,8 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 				jout<<"Sector= "<<calo_hit->sector<<" X= "<<calo_hit->x<<" Y= "<<calo_hit->y<<endl;
 				jout<<" totEdep= "<<calo_hit->totEdep<<endl;
 				totEdep=calo_hit->totEdep;
-				E1[i] = calo_hit->adcr/9.87;			//7.3
-				E2[i] = calo_hit->adcl/18.;		//14.6
+				E1[i] = calo_hit->adcr/9.5;			//7.3
+				E2[i] = calo_hit->adcl/17.;		//14.6
 				jout << "(hardcoded calib) E1= "<<E1[i]<<" E2= "<< E2[i] <<endl;
 				         }
     jout <<"////////////"<<endl;
@@ -300,7 +304,7 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 					i++;
 							const ExtVetoMCHit *ev_hit = *data_ev_mc_hit;
 							jout<<"Sector= "<<ev_hit->sector<< " Channel= "<<ev_hit->channel<<" System= "<<ev_hit->system<<endl;
-							jout<<"E_tot= "<<ev_hit->totEdep<<endl;
+							jout<<"totEdep= "<<ev_hit->totEdep<<endl;
 							jout<<"adc= "<<ev_hit->adc<<" tdc= "<<ev_hit->tdc<<endl;
 							         }
 			    jout <<"////////////"<<endl;
@@ -329,7 +333,7 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 					    				const IntVetoHit *iv_hit = *data_iv_hit;
 
 					    			jout<<"Sector= "<<iv_hit->m_channel.sector<<" Layer= "<<iv_hit->m_channel.layer<<" Component= "<<iv_hit->m_channel.component<<endl;
-					    			jout<<"E= "<<iv_hit->Q<<endl;
+					    			jout<<"Q= "<<iv_hit->Q<<endl;
 					    		    jout<<"T= "<<iv_hit->T<<endl;
 					    							         }
 
