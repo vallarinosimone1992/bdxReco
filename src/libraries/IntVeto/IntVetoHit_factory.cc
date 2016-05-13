@@ -16,7 +16,7 @@ using namespace jana;
 
 
 IntVetoHit_factory::IntVetoHit_factory():
-										isMC(0){
+												isMC(0){
 
 	m_THR_singleReadout=5;
 	m_THR_multipleReadout=3;
@@ -129,6 +129,7 @@ jerror_t IntVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		else{ /*multiCounter case*/
 			flagOk=0;
 			Qmax=-9999;
+			Qtot=0;
 			for (int idigi=0;idigi<m_IntVetoDigiHit->m_data.size();idigi++){
 				Q=m_IntVetoDigiHit->m_data[idigi].Q;
 				T=m_IntVetoDigiHit->m_data[idigi].T;
