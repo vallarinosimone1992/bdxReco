@@ -52,8 +52,8 @@ jerror_t MCEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	vector <const CalorimeterHit*> chits;
 	vector <const CalorimeterHit*>::const_iterator chits_it;
 
-	vector <const CalorimeterCluster*> cclusters;						//mz
-	vector <const CalorimeterCluster*>::const_iterator cclusters_it;	//mz
+	vector <const CalorimeterCluster*> cclusters;
+	vector <const CalorimeterCluster*>::const_iterator cclusters_it;
 
 	vector <const IntVetoHit*> ivhits;
 	vector <const IntVetoHit*>::const_iterator ivhits_it;
@@ -64,7 +64,6 @@ jerror_t MCEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 
 	loop->Get(chits);
-//	loop->Get(cclusters);	//mz
 	loop->Get(ivhits);
 	loop->Get(evhits);
 
@@ -78,6 +77,7 @@ jerror_t MCEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	m_event->phe2=0;
 	m_event->T=0;
 	m_event->nCalorimeterHits=0;
+	m_event->nCalorimeterHits_ext_layer=0;
 
 
 	m_event->flag_RMS=false;
@@ -107,8 +107,8 @@ jerror_t MCEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 				switch (hit->m_data[ihit].readout){
 				case 1:
 					m_event->phe1 +=(hit->m_data[ihit].Q);   // Q-> number of p.e.
-//					m_event->E1=(hit->m_data[ihit].Q)/7.3; // energy calibration from 20 MeV simulated protons
-					m_event->E1=(hit->m_data[ihit].E); // energy calibration for muons
+					m_event->E1=(hit->m_data[ihit].Q)/9.5; // energy calibration from data : 16 MeV  protons at 12cm from the SiPM
+//					m_event->E1=(hit->m_data[ihit].E); // energy calibration for muons
 
 				//	m_event->Ec1=hit->m_data[ihit].E;
 				//	T1=hit->m_data[ihit].T;
@@ -119,8 +119,8 @@ jerror_t MCEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 					break;
 				case 2:
 					m_event->phe2 +=(hit->m_data[ihit].Q);  // Q-> number of p.e.
-//					m_event->E2=(hit->m_data[ihit].Q)/14.6; // energy calibration from 20 MeV simulated protons
-					m_event->E2=(hit->m_data[ihit].E); // energy calibration for muons
+					m_event->E2=(hit->m_data[ihit].Q)/17; // energy calibration from data : 16 MeV  protons at 12cm from the SiPM
+//					m_event->E2=(hit->m_data[ihit].E); // energy calibration for muons
 
 
 				//	m_event->Ec2=hit->m_data[ihit].E;
@@ -133,16 +133,31 @@ jerror_t MCEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 				}
 			}
 
-
        // jout << "E= "<< hit->E<<endl;
 		m_event->E += (m_event->E1 +m_event->E2)/2;			// sum the energies of all the crystals fired
 	    m_event->nCalorimeterHits++;
+	    if(hit->m_channel.x==0||hit->m_channel.x==9||hit->m_channel.y==0||hit->m_channel.y==9)m_event->nCalorimeterHits_ext_layer++;		// Multiplicity of the external crystals
 	    m_event->vCalorimeterHits.push_back(hit->m_channel);
 	              }
 	              }			// end loop over the fired crystals
 
 	//jout << "***********"<<endl;
 //	    jout << m_event->E << " "<<m_event->nCalorimeterHits<<endl;
+
+
+	/*Now loop on inner veto hits*/
+	m_event->nIntVetoHits=0;
+	m_event->nIntVetoHitsCoincidence=0;
+	for (ivhits_it=ivhits.begin();ivhits_it!=ivhits.end();ivhits_it++){
+		const IntVetoHit *hit=(*ivhits_it);
+
+		if (hit->T<0) continue; //The IntVeto condition for a "good" hit
+		else{
+			m_event->nIntVetoHits++;
+			m_event->vIntVetoHits.push_back(hit->m_channel);
+
+		}
+	}
 
 
 	/*Now loop on external veto hits*/
@@ -154,7 +169,7 @@ jerror_t MCEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 //		jout << "Sector= "<<hit->m_channel.sector<< "Component  "<<hit->m_channel.component<<endl;
 
-		if (hit->T<0) continue; //The ExtVeto condition for a "good" hit
+		if (hit->T<=0) continue; 		//The ExtVeto condition for a "bad" hit
 
 		else{
 			m_event->nExtVetoHits++;
@@ -165,19 +180,6 @@ jerror_t MCEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 				//		}
 
 
-
-		}
-	}
-	/*Now loop on inner veto hits*/
-	m_event->nIntVetoHits=0;
-	m_event->nIntVetoHitsCoincidence=0;
-	for (ivhits_it=ivhits.begin();ivhits_it!=ivhits.end();ivhits_it++){
-		const IntVetoHit *hit=(*ivhits_it);
-
-		if (hit->T<0) continue; //The IntVeto condition for a "good" hit
-		else{
-			m_event->nIntVetoHits++;
-			m_event->vIntVetoHits.push_back(hit->m_channel);
 
 		}
 	}

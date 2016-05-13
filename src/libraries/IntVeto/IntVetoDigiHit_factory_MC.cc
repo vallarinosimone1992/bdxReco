@@ -74,9 +74,9 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 			}
 			/*create the component sipm-hits*/
 			switch (m_IntVetoDigiHit->m_channel.component){
-			case(1): //top
-			case(2): //left
-			case(3): //right
+			case(0): //top
+			case(1): //left
+			case(2): //right
 			digi_hit.readout=1;
 			digi_hit.Q=m_IntVetoMCHit->adc1;
 			digi_hit.T=m_IntVetoMCHit->tdc1/1000.;  //MC is in ps
@@ -94,7 +94,7 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 			digi_hit.T=m_IntVetoMCHit->tdc4/1000.;
 			m_IntVetoDigiHit->m_data.push_back(digi_hit);
 			break;
-			case(4): //bottom
+			case(3): //bottom
 										if (m_IntVetoMCHit->system==VetoMCHit::CATANIA_INTVETO){
 											digi_hit.readout=1;
 											digi_hit.Q=m_IntVetoMCHit->adc1;
@@ -136,8 +136,8 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 			break;
 
 
-			case(5): //upstream
-			case(6): //downstream
+			case(4): //upstream
+			case(5): //downstream
 			digi_hit.readout=1;
 			digi_hit.Q=m_IntVetoMCHit->adc1;
 			digi_hit.T=m_IntVetoMCHit->tdc1/1000.;
@@ -151,15 +151,15 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 			m_IntVetoDigiHit=m_map_it->second;
 			m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 			switch (m_IntVetoDigiHit->m_channel.component){
+			case(0):
 			case(1):
 			case(2):
-			case(3):
 			m_IntVetoDigiHit->m_data[0].Q+=m_IntVetoMCHit->adc1;
 			m_IntVetoDigiHit->m_data[1].Q+=m_IntVetoMCHit->adc2;
 			m_IntVetoDigiHit->m_data[2].Q+=m_IntVetoMCHit->adc3;
 			m_IntVetoDigiHit->m_data[3].Q+=m_IntVetoMCHit->adc4;
 			break;
-			case(4):
+			case(3):
 					if (m_IntVetoMCHit->system==VetoMCHit::CATANIA_INTVETO){
 							m_IntVetoDigiHit->m_data[0].Q+=m_IntVetoMCHit->adc1;
 							m_IntVetoDigiHit->m_data[1].Q+=m_IntVetoMCHit->adc4;
@@ -174,8 +174,8 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 					}
 			break;
 
-			case(5): //upstream
-			case(6): //upstream
+			case(4): //upstream
+			case(5): //downstream
 			m_IntVetoDigiHit->m_data[0].Q+=m_IntVetoMCHit->adc1;
 			break;
 			}
@@ -185,9 +185,12 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 	for (m_map_it=m_map.begin();m_map_it!=m_map.end();m_map_it++){
 		m_IntVetoDigiHit=m_map_it->second;
 		m_IntVetoDigiHit->Qtot=0;
+//		jout<<"got it: "<<m_IntVetoDigiHit<<" ::: "<<m_IntVetoDigiHit->m_channel.sector<<" "<<m_IntVetoDigiHit->m_channel.component<<" "<<m_IntVetoDigiHit->m_data.size()<<" ";
 		for (int ii=0;ii<m_IntVetoDigiHit->m_data.size();ii++){
+		//	jout<<m_IntVetoDigiHit->m_data[ii].Q<<" ";
 			m_IntVetoDigiHit->Qtot+=m_IntVetoDigiHit->m_data[ii].Q;
 		}
+	//	jout<<" QTOT: "<<m_IntVetoDigiHit->Qtot<<endl;
 		_data.push_back(m_IntVetoDigiHit);
 	}
 	return NOERROR;
