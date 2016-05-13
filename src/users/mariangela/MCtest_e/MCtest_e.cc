@@ -224,7 +224,7 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
          multi_cl = clhit->Nhit_cluster;
          Eseed = clhit->Eseed;
          Ecluster = clhit->E_cluster;
-       //  sector_seed = clhit->sector_seed;
+         sector_seed = clhit->sectorseed;
          x_seed = clhit->xseed;
          y_seed = clhit->yseed;
 
