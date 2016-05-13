@@ -19,7 +19,7 @@ public:
 	~ExtVetoDigiHit_factory_MC(){};
 	const char* Tag(void){return "MC";}
 	int getCataniaComponent(int MCchannel);
-
+	int getFullComponent(int MCchannel);
 private:
 	jerror_t init(void);						///< Called once at program start.
 	jerror_t brun(jana::JEventLoop *eventLoop, int32_t runnumber);	///< Called everytime a new run number is detected.

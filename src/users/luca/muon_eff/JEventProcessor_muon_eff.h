@@ -35,6 +35,9 @@ class JEventProcessor_muon_eff:public jana::JEventProcessor{
 		TH2D *hp1_2,*hc1_2;
 		TTree *t;
 		JROOTOutput *m_ROOTOutput;
+		vector<TH1D *> hwavesCalo;
+		vector<TH1D *> hwavesIntVeto;
+		TH1D*		   hwave;
 
 		int isMC;
 

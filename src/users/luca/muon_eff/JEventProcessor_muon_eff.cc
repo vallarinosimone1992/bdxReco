@@ -9,6 +9,11 @@
 #include "system/BDXEventProcessor.h"
 using namespace jana;
 
+
+#include <DAQ/eventData.h>
+#include <DAQ/fa250Mode1CalibHit.h>
+#include <DAQ/fa250Mode1CalibPedSubHit.h>
+
 #include <Calorimeter/CalorimeterSiPMHit.h>
 #include <Calorimeter/CalorimeterDigiHit.h>
 #include <Calorimeter/CalorimeterHit.h>
@@ -113,6 +118,14 @@ jerror_t JEventProcessor_muon_eff::init(void)
 	//Create always MC branch
 	t->Branch("Ec_MC",&Ec_MC);
 
+
+	for (int iwave=0;iwave<50;iwave++){
+			hwavesIntVeto.push_back(NULL);
+			hwavesCalo.push_back(NULL);
+	}
+
+
+
 	app->RootUnLock();
 	return NOERROR;
 }
@@ -195,6 +208,10 @@ jerror_t JEventProcessor_muon_eff::evnt(JEventLoop *loop, uint64_t eventnumber)
 	int sector,layer,component;
 	double E,T;
 
+	bool flag;
+	double Ebar=0;
+
+
 	vector <const ExtVetoHit*> evdata;
 	vector <const ExtVetoHit*>::const_iterator evdata_it;
 	loop->Get(evdata);
@@ -218,6 +235,15 @@ jerror_t JEventProcessor_muon_eff::evnt(JEventLoop *loop, uint64_t eventnumber)
 	loop->Get(cdata);
 
 	vector<const CalorimeterMCHit*> mc_data;
+
+	vector <const fa250Mode1CalibPedSubHit*> cwaves;
+	vector <const fa250Mode1CalibPedSubHit*>::iterator cwaves_it;
+
+	vector <const fa250Mode1CalibPedSubHit*> ivwaves;
+	vector <const fa250Mode1CalibPedSubHit*>::iterator ivwaves_it;
+
+
+
 
 	japp->RootWriteLock();
 
@@ -259,6 +285,7 @@ jerror_t JEventProcessor_muon_eff::evnt(JEventLoop *loop, uint64_t eventnumber)
 		sector=(*ivdata_it)->m_channel.sector;
 		layer=(*ivdata_it)->m_channel.layer;
 		component=(*ivdata_it)->m_channel.component;
+		const IntVetoDigiHit *invhit = *ivdata_it;
 
 		if (component==0){  //Top inner veto
 			IntVetoTopDigiHit=(*ivdata_it);
@@ -266,9 +293,14 @@ jerror_t JEventProcessor_muon_eff::evnt(JEventLoop *loop, uint64_t eventnumber)
 		}
 		if (component==3){  //Bottom inner veto
 			IntVetoBotDigiHit=(*ivdata_it);
+			for(int i=0; i < (invhit->m_data.size()); i++){
+			     if(invhit->m_data[i].readout==3){
+			    	 Ebar=invhit->m_data[i].Q;
+			      	 }
+			 }
 		}
-
 	}
+
 	Ep1=Ep2=-1;
 	for (data_it=data.begin();data_it<data.end();data_it++){
 
@@ -318,6 +350,108 @@ jerror_t JEventProcessor_muon_eff::evnt(JEventLoop *loop, uint64_t eventnumber)
 		}
 	}
 	eventN=eventnumber;
+
+
+	//Saving Waveforms
+
+	flag = false;
+	if(Ebar>50 && Ebar<56 && Ep1>1 && Ep1<4 && Ep2>1 && Ep2<4) flag = true;
+	if ((flag)){
+
+		int iwave=0;
+		int N;
+		double Qtot_bot;
+
+		// Crystal Waveforms
+
+	/*	for (cdata_it=cdata.begin();cdata_it!=cdata.end();cdata_it++){
+			cwaves.clear();
+			(*cdata_it)->Get(cwaves);
+
+			for (cwaves_it=cwaves.begin();cwaves_it!=cwaves.end();cwaves_it++){
+				hwave=hwavesCalo[iwave];
+				N=(*cwaves_it)->samples.size();
+
+				if (hwave==0){
+					hwavesCalo[iwave]=new TH1D(Form("hCalo_%i",iwave),Form("hCalo_%i",iwave),N,-0.5,N-0.5);
+					m_ROOTOutput->AddObject(hwavesCalo[iwave]);
+				}
+				hwave=hwavesCalo[iwave];
+				hwave->Reset();
+			//	hwave->SetName(Form("h_%i_%i__%i__%f_%f",cwaves[iwave]->m_channel.slot,cwaves[iwave]->m_channel.channel,eventnumber,event->E,event->T));
+			//	hwave->SetTitle(Form("h_%i_%i__%i__%f_%f",cwaves[iwave]->m_channel.slot,cwaves[iwave]->m_channel.channel,eventnumber,event->E,event->T));
+
+				for (int isample=0;isample<N;isample++){
+					hwave->Fill(isample,(*cwaves_it)->samples[isample]);
+				}
+				hwave->Write();
+				iwave++;
+			}
+		}
+	 */
+
+		// Inner Veto Waveforms
+		iwave=0;
+			for (ivdata_it=ivdata.begin();ivdata_it!=ivdata.end();ivdata_it++){
+				ivwaves.clear();
+				if((*ivdata_it)->m_channel.component==3){
+				(*ivdata_it)->Get(ivwaves);
+				for (ivwaves_it=ivwaves.begin();ivwaves_it!=ivwaves.end();ivwaves_it++){
+
+					if ((*ivwaves_it)->m_channel.slot!=6) continue;
+					if ((*ivwaves_it)->m_channel.channel!=14) continue;
+
+					hwave=hwavesIntVeto[iwave];
+					N=(*ivwaves_it)->samples.size();
+
+					if (hwave==0){
+						hwavesIntVeto[iwave]=new TH1D(Form("hIntVeto_%i",iwave),Form("hIntVeto_%i",iwave),N,-0.5,N-0.5);
+						m_ROOTOutput->AddObject(hwavesIntVeto[iwave]);
+					}
+				/*	T=(*ivdata_it)->T;
+					Qtot_bot=(*ivdata_it)->Qtot;
+					slot=(*ivwaves_it)->m_channel.slot;
+					channel=(*ivwaves_it)->m_channel.channel;
+					Q=0;
+
+					if (slot==7) Q=Qtot;
+					if (slot==6){
+						channelTmp=channel%4+1;
+						for (int itmp=0;itmp<(*ivhits_it)->m_data.size();itmp++){
+							if ((*ivhits_it)->m_data[itmp].readout==channelTmp){
+								Q=(*ivhits_it)->m_data[itmp].Q;
+								break;
+							}
+						}
+					}
+					*/
+					hwave=hwavesIntVeto[iwave];
+					hwave->Reset();
+					//hwave->SetName(Form("hIntVeto_%i_%i__%i__%f_%f_%f",slot,channel,eventnumber,Q,Qtot,T));
+					//hwave->SetTitle(Form("hIntVeto_%i_%i__%i__%f_%f_%f",slot,channel,eventnumber,Q,Qtot,T));
+
+
+					for (int isample=0;isample<N;isample++){
+						hwave->Fill(isample,(*ivwaves_it)->samples[isample]);
+					}
+					hwave->Write();
+					iwave++;
+				}
+			}
+			}
+	}
+
+
+
+
+
+
+
+
+
+
+
+
 	if((Ep1 > 0.5) && (Ep2 > 0.5)){
 		t->Fill();
 	}

@@ -52,8 +52,8 @@ jerror_t MCEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	vector <const CalorimeterHit*> chits;
 	vector <const CalorimeterHit*>::const_iterator chits_it;
 
-	vector <const CalorimeterCluster*> cclusters;						//mz
-	vector <const CalorimeterCluster*>::const_iterator cclusters_it;	//mz
+	vector <const CalorimeterCluster*> cclusters;
+	vector <const CalorimeterCluster*>::const_iterator cclusters_it;
 
 	vector <const IntVetoHit*> ivhits;
 	vector <const IntVetoHit*>::const_iterator ivhits_it;
@@ -64,7 +64,6 @@ jerror_t MCEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 
 	loop->Get(chits);
-//	loop->Get(cclusters);	//mz
 	loop->Get(ivhits);
 	loop->Get(evhits);
 
@@ -72,65 +71,116 @@ jerror_t MCEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	MCEvent *m_event=new MCEvent();
 	m_event->E=0;
+	m_event->E1=0;
+	m_event->E2=0;
+	m_event->phe1=0;
+	m_event->phe2=0;
 	m_event->T=0;
 	m_event->nCalorimeterHits=0;
+	m_event->nCalorimeterHits_ext_layer=0;
+
 
 	m_event->flag_RMS=false;
-	double E1,E2,T1,T2,dT;
+	double T1,T2,dT;
 	bool flag1,flag2;
 
-	E1=E2=0;
 	T1=T2=0;
 	flag1=false;
 	flag2=false;
-	for (chits_it=chits.begin();chits_it!=chits.end();chits_it++){
-		const CalorimeterHit *hit=(*chits_it);
-	    if(hit->T>0){
 
-		m_event->E +=hit->E;
+	for (chits_it=chits.begin();chits_it!=chits.end();chits_it++){			// loop over the fired crystals
+		const CalorimeterHit *hit=(*chits_it);
+
+		/*
+	     if (hit->E>0 && hit->T<=0 ){
+	        	jout << "sono un evento"<<endl;
+	        	jout << hit->m_channel.sector << " "<< hit->m_channel.x << " "<<hit->m_channel.y<<endl;
+                jout << "Sipm1: "<< hit->m_data[0].E << " "<< hit->m_data[0].T<<endl;
+                jout << "Sipm2: "<< hit->m_data[1].E << " "<< hit->m_data[1].T<<endl;
+	        }
+		if(hit->T>0){
+*/
+
+		if(hit->T<0) continue;
+		else{
+		for (int ihit=0;ihit<hit->m_data.size();ihit++){			// loop over the 2 SiPMs
+				switch (hit->m_data[ihit].readout){
+				case 1:
+					m_event->phe1 +=(hit->m_data[ihit].Q);   // Q-> number of p.e.
+					m_event->E1=(hit->m_data[ihit].Q)/9.5; // energy calibration from data : 16 MeV  protons at 12cm from the SiPM
+//					m_event->E1=(hit->m_data[ihit].E); // energy calibration for muons
+
+				//	m_event->Ec1=hit->m_data[ihit].E;
+				//	T1=hit->m_data[ihit].T;
+			//		m_event->E1=(hit->m_data[ihit].E);
+				//	jout << "E1= " <<hit->m_data[ihit].E<<endl;
+			//		flag1=hit->m_data[ihit].good_ped_RMS;
+
+					break;
+				case 2:
+					m_event->phe2 +=(hit->m_data[ihit].Q);  // Q-> number of p.e.
+					m_event->E2=(hit->m_data[ihit].Q)/17; // energy calibration from data : 16 MeV  protons at 12cm from the SiPM
+//					m_event->E2=(hit->m_data[ihit].E); // energy calibration for muons
+
+
+				//	m_event->Ec2=hit->m_data[ihit].E;
+			//		T2=hit->m_data[ihit].T;
+		//		m_event->E2=(hit->m_data[ihit].E);
+					//jout << "E2= " <<E2<<endl;
+				//	 jout << "* "<< m_event->phe2 <<endl;
+				//	flag2=hit->m_data[ihit].good_ped_RMS;
+					break;
+				}
+			}
+
+       // jout << "E= "<< hit->E<<endl;
+		m_event->E += (m_event->E1 +m_event->E2)/2;			// sum the energies of all the crystals fired
 	    m_event->nCalorimeterHits++;
-	               }
+	    if(hit->m_channel.x==0||hit->m_channel.x==9||hit->m_channel.y==0||hit->m_channel.y==9)m_event->nCalorimeterHits_ext_layer++;		// Multiplicity of the external crystals
+	    m_event->vCalorimeterHits.push_back(hit->m_channel);
 	              }
+	              }			// end loop over the fired crystals
+
+	//jout << "***********"<<endl;
 //	    jout << m_event->E << " "<<m_event->nCalorimeterHits<<endl;
 
 
-	/*Now loop on external veto hits*/
-	m_event->nExtVetoHits=0;
-	m_event->nExtVetoHitsCoincidence=0;
-	for (evhits_it=evhits.begin();evhits_it!=evhits.end();evhits_it++){
-		const ExtVetoHit *hit=(*evhits_it);
-		if (hit->T<0) continue; //The ExtVeto condition for a "good" hit
-		else{
-			m_event->nExtVetoHits++;
-			m_event->vExtVetoHits.push_back(hit->m_channel);
-		/*
-			dT=fabs(hit->T-m_event->T);
-			if (dT<m_ExtVeto_timeWindows){
-				m_event->nExtVetoHitsCoincidence++;
-				m_event->vExtVetoHitsCoincidence.push_back(hit->m_channel);
-				m_event->AddAssociatedObject(hit);
-			}
-	*/
-		}
-	}
 	/*Now loop on inner veto hits*/
 	m_event->nIntVetoHits=0;
 	m_event->nIntVetoHitsCoincidence=0;
 	for (ivhits_it=ivhits.begin();ivhits_it!=ivhits.end();ivhits_it++){
 		const IntVetoHit *hit=(*ivhits_it);
-		//jout<<" AAAA "<<hit->T<<" "<<m_event->T<<endl;
+
 		if (hit->T<0) continue; //The IntVeto condition for a "good" hit
 		else{
 			m_event->nIntVetoHits++;
 			m_event->vIntVetoHits.push_back(hit->m_channel);
-	/*
-			dT=fabs(hit->T-m_event->T);
-			if (dT<m_IntVeto_timeWindows){
-				m_event->nIntVetoHitsCoincidence++;
-				m_event->vIntVetoHitsCoincidence.push_back(hit->m_channel);
-				m_event->AddAssociatedObject(hit);
-			}
-	   */
+
+		}
+	}
+
+
+	/*Now loop on external veto hits*/
+	m_event->nExtVetoHits=0;
+	m_event->nExtVetoHitsCoincidence=0;
+
+	for (evhits_it=evhits.begin();evhits_it!=evhits.end();evhits_it++){			// loop over the fired EV
+		const ExtVetoHit *hit=(*evhits_it);
+
+//		jout << "Sector= "<<hit->m_channel.sector<< "Component  "<<hit->m_channel.component<<endl;
+
+		if (hit->T<=0) continue; 		//The ExtVeto condition for a "bad" hit
+
+		else{
+			m_event->nExtVetoHits++;
+			m_event->vExtVetoHits.push_back(hit->m_channel);
+
+			 // if (hit->m_channel.component>6){
+				//		jout << hit->m_channel.sector<< " "<<hit->m_channel.component<<endl;
+				//		}
+
+
+
 		}
 	}
 
