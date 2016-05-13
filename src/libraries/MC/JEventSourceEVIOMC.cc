@@ -196,8 +196,8 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory)
 			hit->sector=bankDgt[ih].getIntDgtVar("sector");
 			hit->x=bankDgt[ih].getIntDgtVar("xch");
 			hit->y=bankDgt[ih].getIntDgtVar("ych");
-
-
+     //         jout << " sono in MC "<< endl;
+	//	    jout << "sector "<< hit->sector << " " << hit->x<<" "<<hit->y<<endl;
 
 			/*dgtz banks*/
 			hit->adcl=bankDgt[ih].getIntDgtVar("adcl");
@@ -208,6 +208,10 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory)
 			hit->adcf=bankDgt[ih].getIntDgtVar("adcf");
 			hit->tdcb=bankDgt[ih].getIntDgtVar("tdcb");
 			hit->tdcf=bankDgt[ih].getIntDgtVar("tdcf");
+
+
+		//				jout << hit->adcl << " "<< hit->tdcl << endl;
+			//			jout << hit->adcr << " "<< hit->tdcr << endl;
 
 
 			/*raw banks -> This check is needed BECAUSE it is not guaranteed they're ordered the same way*/

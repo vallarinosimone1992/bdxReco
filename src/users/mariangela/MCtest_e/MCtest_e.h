@@ -37,6 +37,11 @@ class MCtest:public jana::JEventProcessor{
 
       double E1[800],E2[800];
       int sector_cal[800], x_cal[800],y_cal[800];
+
+      double multi_cl, Eseed, Ecluster;
+
+      int sector_seed, x_seed, y_seed;
+
       int sector_ev[800], channel_ev[800];
       int sector_iv[800], channel_iv[800];
 

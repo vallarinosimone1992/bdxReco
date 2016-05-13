@@ -177,24 +177,41 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
  //          jout << "S7= "<< m_event->nCalorimeterHits_S7<<endl;
 
 
+	       double seed_temp=0;
+	       double seed = 0;
+	       double x_cl=0;
+	       double y_cl=0;
+	       double E_cl=0;
+	       int Nhits_cl=0;
 
 	for (cclusters_it=cclusters.begin();cclusters_it!=cclusters.end();cclusters_it++){			// loop over clusters
 			const CalorimeterCluster *hit=(*cclusters_it);
 
-//	       jout << "Eseed "<< hit->Eseed<<endl;
+			seed = hit->Eseed;
+			if (seed > seed_temp ){
+				seed_temp = seed;
+				x_cl = hit->x;
+				y_cl = hit->y;
+			                      }
+			E_cl += hit->E;
+			Nhits_cl += hit->Nhits;
+
+	                           }
+
+//	 jout << "Eseed "<< hit->Eseed<<endl;
+
 //           jout << "x " << hit->x<<endl;
 //           jout << "y "<<hit->y<<endl;
 //           jout << "Nhit "<<hit->Nhits<<endl;
 //           jout << "E "<< hit->E<<endl;
 
-			m_event->Eseed=hit->Eseed;
-			m_event->xseed=hit->x;
-			m_event->yseed=hit->y;
-			m_event->Nhit_cluster=hit->Nhits;
-			m_event->E_cluster=hit->E;
-			m_event->T_cluster;
+			m_event->Eseed=seed_temp;
+			m_event->xseed=x_cl;
+			m_event->yseed=y_cl;
+			m_event->Nhit_cluster=Nhits_cl;
+			m_event->E_cluster=E_cl;
+		//	m_event->T_cluster;
 
-	}
 
 
 
