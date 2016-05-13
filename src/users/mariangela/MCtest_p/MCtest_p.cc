@@ -272,8 +272,8 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 	for (data_calo_mc_hit=data_calo_mc.begin();data_calo_mc_hit<data_calo_mc.end();data_calo_mc_hit++){	// loop over CaloMC hits
 		i++;
 				const CalorimeterMCHit *calo_hit = *data_calo_mc_hit;
-				jout<<"adcr= "<<calo_hit->adcr<<" adcl= "<<calo_hit->adcl<<endl;				// adcr == SiPM1  , adcl=SiPM2
 				jout<<"Sector= "<<calo_hit->sector<<" X= "<<calo_hit->x<<" Y= "<<calo_hit->y<<endl;
+				jout<<"adcr= "<<calo_hit->adcr<<" adcl= "<<calo_hit->adcl<<endl;				// adcr == SiPM1  , adcl=SiPM2
 				jout<<" totEdep= "<<calo_hit->totEdep<<endl;
 				totEdep=calo_hit->totEdep;
 				E1[i] = calo_hit->adcr/9.5;			//7.3
@@ -346,7 +346,7 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 	    							const ExtVetoHit *ev_hit = *data_ev_hit;
 
 	    							jout<<"Sector= "<<ev_hit->m_channel.sector<<" Component= "<<ev_hit->m_channel.component<<endl;
-	    							jout<<"E= "<<ev_hit->E<<endl;
+	    							jout<<"Q= "<<ev_hit->E<<endl;
 	    							jout<<"T= "<<ev_hit->T<<endl;
 	    							         }
 
