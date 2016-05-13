@@ -183,13 +183,14 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 	}/*End loop on MC hits*/
 
 	for (m_map_it=m_map.begin();m_map_it!=m_map.end();m_map_it++){
-
 		m_IntVetoDigiHit=m_map_it->second;
 		m_IntVetoDigiHit->Qtot=0;
+//		jout<<"got it: "<<m_IntVetoDigiHit<<" ::: "<<m_IntVetoDigiHit->m_channel.sector<<" "<<m_IntVetoDigiHit->m_channel.component<<" "<<m_IntVetoDigiHit->m_data.size()<<" ";
 		for (int ii=0;ii<m_IntVetoDigiHit->m_data.size();ii++){
+		//	jout<<m_IntVetoDigiHit->m_data[ii].Q<<" ";
 			m_IntVetoDigiHit->Qtot+=m_IntVetoDigiHit->m_data[ii].Q;
 		}
-		jout<<endl;
+	//	jout<<" QTOT: "<<m_IntVetoDigiHit->Qtot<<endl;
 		_data.push_back(m_IntVetoDigiHit);
 	}
 	return NOERROR;
