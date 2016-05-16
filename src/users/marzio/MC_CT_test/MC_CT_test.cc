@@ -1,6 +1,6 @@
 // $Id$
 //
-//    File: JEventProcessor_MCtest.cc
+//    File: JEventProcessor_MC_CT_test.cc
 // Created: Mon Mar  7 11:23:10 CET 2016
 // Creator: celentan (on Linux apcx4 2.6.32-504.30.3.el6.x86_64 x86_64)
 //
@@ -14,20 +14,19 @@
 #include <MC/ExtVetoMCHit.h>
 #include <MC/IntVetoMCHit.h>
 
-#include <Calorimeter/CalorimeterDigiHit.h>
+
 #include <Calorimeter/CalorimeterHit.h>
 
-#include <ExtVeto/ExtVetoDigiHit.h>
 #include <ExtVeto/ExtVetoHit.h>
-#include <ExtVeto/ExtVetoSummary.h>
+#include <ExtVeto/ExtVetoPMTHit.h>
+
 
 #include <IntVeto/IntVetoHit.h>
 
-
-#include <EventBuilder/MCEvent.h>
+#include <EventBuilder/CataniaEvent.h>
 
 #include <system/JROOTOutput.h>
-#include "MCtest_p.h"
+#include "MC_CT_test.h"
 #include "TTree.h"
 
 
@@ -43,24 +42,24 @@ using namespace std;
 extern "C"{
 void InitPlugin(JApplication *app){
 	InitJANAPlugin(app);
-	app->AddProcessor(new MCtest());
+	app->AddProcessor(new MC_CT_test());
 }
 } // "C"
 
 
 //------------------
-// JEventProcessor_MCtest (Constructor)
+// JEventProcessor_MC_CT_test (Constructor)
 //------------------
-MCtest::MCtest()
+MC_CT_test::MC_CT_test()
 {
 
 
 }
 
 //------------------
-// ~JEventProcessor_MCtest (Destructor)
+// ~JEventProcessor_MC_CT_test (Destructor)
 //------------------
-MCtest::~MCtest()
+MC_CT_test::~MC_CT_test()
 {
 
 }
@@ -78,7 +77,7 @@ std::ostream& bold_off(std::ostream& os)
 {
     return os << "\e[0m";
 }
-jerror_t MCtest::init(void)
+jerror_t MC_CT_test::init(void)
 {
 
 	app->RootWriteLock();
@@ -91,33 +90,20 @@ jerror_t MCtest::init(void)
 	t->Branch("eventN",&eventN);
 
 
-	t->Branch("phe1_tot",&phe1_tot);
-	t->Branch("phe2_tot",&phe2_tot);
-	t->Branch("E_tot",&E_tot);
-	t->Branch("E_tot_MC",&E_tot_MC);
-	t->Branch("totEdep",&totEdep);
 
-
-	t->Branch("sector_cal",sector_cal,"sector_cal[800]/I");
-	t->Branch("x_cal",x_cal,"x_cal[800]/I");
-	t->Branch("y_cal",y_cal,"y_cal[800]/I");
-	t->Branch("multi_cal",&multi_cal);
-	t->Branch("multi_cal_ext_layer",&multi_cal_ext_layer);
-
+	t->Branch("Ecrys",&Ecrys);
 
 	t->Branch("multi_ev",&multi_ev);
- 	t->Branch("sector_ev",sector_ev,"sector_ev[800]/I");
- 	t->Branch("channel_ev",channel_ev,"channel_ev[800]/I");
-
+	t->Branch("multi_ev_coinc",&multi_ev_coinc);
 	t->Branch("multi_iv",&multi_iv);
- 	t->Branch("sector_iv",sector_iv,"sector_iv[800]/I");
- 	t->Branch("channel_iv",channel_iv,"channel_iv[800]/I");
-
-    t->Branch("E1",E1,"E1[800]/D");
-    t->Branch("E2",E2,"E2[800]/D");
+	t->Branch("multi_iv_coinc",&multi_iv_coinc);
 
 
-    //  t->Branch("h_wave",&h_wave);
+ 	t->Branch("channel_ev",channel_ev,"channel_ev[12]/I");
+ 	t->Branch("Ene_ev",Ene_ev,"Ene_ev[12]/D");
+ 	t->Branch("channel_ev_MC",channel_ev,"channel_ev_MC[12]/I");
+ 	t->Branch("Ene_ev_MC",Ene_ev,"Ene_ev_MC[12]/D");
+
 
 	app->RootUnLock();
 	return NOERROR;
@@ -127,7 +113,7 @@ jerror_t MCtest::init(void)
 //------------------
 // brun
 //------------------
-jerror_t MCtest::brun(JEventLoop *eventLoop, int32_t runnumber)
+jerror_t MC_CT_test::brun(JEventLoop *eventLoop, int32_t runnumber)
 {
 	// This is called whenever the run number changes
 	return NOERROR;
@@ -136,7 +122,7 @@ jerror_t MCtest::brun(JEventLoop *eventLoop, int32_t runnumber)
 //------------------
 // evnt
 //------------------
-jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
+jerror_t MC_CT_test::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 	// This is called for every event. Use of common resources like writing
 	// to a file or filling a histogram should be mutex protected. Using
@@ -157,8 +143,8 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 */
 
 
-	vector<const MCEvent*> data;
-	vector<const MCEvent*>::const_iterator data_hit;
+	vector<const CataniaEvent*> data;
+	vector<const CataniaEvent*>::const_iterator data_hit;
 
 	vector<const CalorimeterMCHit*> data_calo_mc;
 	vector<const CalorimeterMCHit*>::const_iterator data_calo_mc_hit;
@@ -178,6 +164,9 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 	vector<const ExtVetoHit*> data_ev;
 	vector<const ExtVetoHit*>::const_iterator data_ev_hit;
 
+	vector<const ExtVetoPMTHit*> data_ev_pmt;
+	vector<const ExtVetoPMTHit*>::const_iterator data_ev_pmt_hit;
+
 
 	loop->Get(data);
 	loop->Get(data_calo_mc);
@@ -186,22 +175,21 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 	loop->Get(data_calo);
 	loop->Get(data_iv);
 	loop->Get(data_ev);
+	loop->Get(data_ev_pmt);
+
 
 
 
 		japp->RootWriteLock();
 
-		for(int i=0; i<800; i++){
-		   sector_cal[i]= -99;
-		   x_cal[i] = -99;
-		   y_cal[i] = -99;
-		   sector_iv[i]= -99;
-		   channel_iv[i]= -99;
-		   sector_ev[i] = -99;
-		   channel_ev[i]= -99;
-		   E1[i]= -99;
-		   E2[i]= -99;
-		}
+		for(int i=0; i<11; i++){
+				   channel_ev[i]= -99;
+				   Ene_ev[i]=-99;
+				   channel_ev_MC[i]= -99;
+				   Ene_ev_MC[i]=-99;
+
+				}
+
 
 	   eventN=eventnumber;
 
@@ -210,57 +198,16 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	for (data_hit=data.begin();data_hit<data.end();data_hit++){		// loop over MC events
 
-			const MCEvent *clhit = *data_hit;
-
-//			E1 = clhit->E1;
-//			E2 = clhit->E2;
-			phe1_tot = clhit->phe1;
-			phe2_tot = clhit->phe2;
-            E_tot = clhit->E;
-			multi_cal = clhit->nCalorimeterHits;
-			multi_cal_ext_layer = clhit->nCalorimeterHits_ext_layer;
-
-			jout<<" phe1_tot= "<<phe1_tot<<" phe2_tot= "<<phe2_tot<<" E_tot= "<<E_tot<<endl;
-            jout<<" Mult_Cal= "<<multi_cal<<" Multi_cal_ext_layer= "<<multi_cal_ext_layer<<endl;
-
-         for (int i=0; i<multi_cal;i++){
-			sector_cal[i] = clhit->vCalorimeterHits.at(i).sector;
-              x_cal[i] = clhit->vCalorimeterHits.at(i).x;
-              y_cal[i] = clhit->vCalorimeterHits.at(i).y;
-             jout << "Sector Cal= "<<sector_cal[i]<<" X= "<< x_cal[i] << " Y= "<< y_cal[i]<<endl;
-         }
-
-/*
-          if(multi_cal==35){
-        	  jout << "*******"<<endl;
-        	  jout << eventN<<endl;
-        	  for (int i=0; i<multi_cal;i++){
-            jout << sector_cal[i]<<" "<< x_cal[i] << " "<< y_cal[i]<<endl;
-                                            }
-        	  jout <<"E-tot= " <<E<<endl;
-        	  }
-
-*/
+			const CataniaEvent *clhit = *data_hit;
             multi_iv = clhit->nIntVetoHits;
-
-            jout << "Mult IV="<<multi_iv << endl;
-
-            for (int i=0; i<multi_iv;i++){
-         			sector_iv[i] = clhit->vIntVetoHits.at(i).sector;
-                    channel_iv[i] = clhit->vIntVetoHits.at(i).component;
-                    jout<<"Sector IV = "<<sector_iv[i]<<" Component IV= "<<channel_iv[i]<<endl;
-                  }
+            multi_iv_coinc = clhit->nIntVetoHitsCoincidence;
+            jout << "Mult IV="<<multi_iv << " Mult EV time coinc= "<<multi_ev_coinc <<endl;
 
             multi_ev = clhit->nExtVetoHits;
-            jout << "Mult EV="<<multi_ev << endl;
+            multi_ev_coinc = clhit->nExtVetoHitsCoincidence;
+            jout << "Mult EV="<<multi_ev << " Mult EV time coinc= "<<multi_ev_coinc <<endl;
 
-            for (int i=0; i<multi_ev;i++){
-                     			sector_ev[i] = clhit->vExtVetoHits.at(i).sector;
-                                channel_ev[i] = clhit->vExtVetoHits.at(i).component;
-                                jout<<"Sector EV = "<<sector_ev[i]<<" Component EV= "<<channel_ev[i]<<endl;
-
-            }
-
+            Ecrys=clhit->E;
 
 	}
 
@@ -268,7 +215,6 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 	jout <<" $$$$$$$$$$$$$ Now MC HIT $$$$$$$$$$$$$$$"<<endl;
 
     jout << "/// Calorimeter ///"<<endl;
-    E_tot_MC=0;
 
 	int i=0;
 	for (data_calo_mc_hit=data_calo_mc.begin();data_calo_mc_hit<data_calo_mc.end();data_calo_mc_hit++){	// loop over CaloMC hits
@@ -277,14 +223,14 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 				jout<<"Sector= "<<calo_hit->sector<<" X= "<<calo_hit->x<<" Y= "<<calo_hit->y<<endl;
 				jout<<"adcr= "<<calo_hit->adcr<<" adcl= "<<calo_hit->adcl<<endl;				// adcr == SiPM1  , adcl=SiPM2
 				jout<<" totEdep= "<<calo_hit->totEdep<<endl;
-				totEdep=calo_hit->totEdep;
-				E1[i] = calo_hit->adcr/9.5;
-				E2[i] = calo_hit->adcl/17.;
-				jout << "(hardcoded calib) E1= "<<E1[i]<<" E2= "<< E2[i] <<endl;
-				E_tot_MC+=calo_hit->totEdep;
+//				totEdep=calo_hit->totEdep;
+//				E1[i] = calo_hit->adcr/9.5;
+//				E2[i] = calo_hit->adcl/17.;
+//				jout << "(hardcoded calib) E1= "<<E1[i]<<" E2= "<< E2[i] <<endl;
+//				E_tot_MC+=calo_hit->totEdep;
 				         }
     jout <<"////////////"<<endl;
-     jout<<"E_tot_MC= "<<E_tot_MC<<endl;
+ //    jout<<"E_tot_MC= "<<E_tot_MC<<endl;
 	jout << "/// IV /// "<<endl;
 	 i=0;
 		for (data_iv_mc_hit=data_iv_mc.begin();data_iv_mc_hit<data_iv_mc.end();data_iv_mc_hit++){	// loop over Interna Veto MC hits
@@ -296,7 +242,6 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 					jout<<"adc3= "<<iv_hit->adc3<<" adc4= "<<iv_hit->adc4<<endl;
 					jout<<"tdc1= "<<iv_hit->tdc1<<" tdc2= "<<iv_hit->tdc2<<endl;
 					jout<<"tdc3= "<<iv_hit->tdc3<<" tdc4= "<<iv_hit->tdc4<<endl;
-
 					         }
 	    jout <<"////////////"<<endl;
 
@@ -309,6 +254,9 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 							jout<<"Sector= "<<ev_hit->sector<< " Channel= "<<ev_hit->channel<<" System= "<<ev_hit->system<<endl;
 							jout<<"totEdep= "<<ev_hit->totEdep<<endl;
 							jout<<"adc= "<<ev_hit->adc<<" tdc= "<<ev_hit->tdc<<endl;
+							Ene_ev_MC[i]=ev_hit->adc;
+							channel_ev_MC[i]=ev_hit->channel;
+
 							         }
 			    jout <<"////////////"<<endl;
 
@@ -351,9 +299,17 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 	    							jout<<"Sector= "<<ev_hit->m_channel.sector<<" Component= "<<ev_hit->m_channel.component<<endl;
 	    							jout<<"Q= "<<ev_hit->E<<endl;
 	    							jout<<"T= "<<ev_hit->T<<endl;
+	    							Ene_ev[i]=ev_hit->E;
+	    							channel_ev[i]=ev_hit->m_channel.component;
 	    							         }
 
 	    			    jout <<"////////////"<<endl;
+
+
+
+
+
+
 
 		t->Fill();
 
@@ -369,7 +325,7 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 //------------------
 // erun
 //------------------
-jerror_t MCtest::erun(void)
+jerror_t MC_CT_test::erun(void)
 {
 	// This is called whenever the run number changes, before it is
 	// changed to give you a chance to clean up before processing
@@ -380,7 +336,7 @@ jerror_t MCtest::erun(void)
 //------------------
 // fini
 //------------------
-jerror_t MCtest::fini(void)
+jerror_t MC_CT_test::fini(void)
 {
 	// Called before program exit after event processing is finished.
 	return NOERROR;
