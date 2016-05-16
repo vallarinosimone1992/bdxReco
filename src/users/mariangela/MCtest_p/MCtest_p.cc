@@ -94,6 +94,7 @@ jerror_t MCtest::init(void)
 	t->Branch("phe1_tot",&phe1_tot);
 	t->Branch("phe2_tot",&phe2_tot);
 	t->Branch("E_tot",&E_tot);
+	t->Branch("E_tot_MC",&E_tot_MC);
 	t->Branch("totEdep",&totEdep);
 
 
@@ -267,6 +268,7 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 	jout <<" $$$$$$$$$$$$$ Now MC HIT $$$$$$$$$$$$$$$"<<endl;
 
     jout << "/// Calorimeter ///"<<endl;
+    E_tot_MC=0;
 
 	int i=0;
 	for (data_calo_mc_hit=data_calo_mc.begin();data_calo_mc_hit<data_calo_mc.end();data_calo_mc_hit++){	// loop over CaloMC hits
@@ -276,12 +278,13 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 				jout<<"adcr= "<<calo_hit->adcr<<" adcl= "<<calo_hit->adcl<<endl;				// adcr == SiPM1  , adcl=SiPM2
 				jout<<" totEdep= "<<calo_hit->totEdep<<endl;
 				totEdep=calo_hit->totEdep;
-				E1[i] = calo_hit->adcr/9.5;			//7.3
-				E2[i] = calo_hit->adcl/17.;		//14.6
+				E1[i] = calo_hit->adcr/9.5;
+				E2[i] = calo_hit->adcl/17.;
 				jout << "(hardcoded calib) E1= "<<E1[i]<<" E2= "<< E2[i] <<endl;
+				E_tot_MC=+calo_hit->totEdep;
 				         }
     jout <<"////////////"<<endl;
-
+     jout<<"E_tot_MC= "<<E_tot_MC<<endl;
 	jout << "/// IV /// "<<endl;
 	 i=0;
 		for (data_iv_mc_hit=data_iv_mc.begin();data_iv_mc_hit<data_iv_mc.end();data_iv_mc_hit++){	// loop over Interna Veto MC hits
