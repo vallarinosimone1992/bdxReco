@@ -25,8 +25,8 @@ class MCEvent_EM:public jana::JObject,public TObject{
 		}
 	//	double Ec1,Ec2;
 		double E,T, E1, E2, phe1, phe2;
-		int nCalorimeterHits;  //mr
-
+		int nCalorimeterHits;   //mr
+		int nCalorimeterHits_ext_layer;
 		int nCalorimeterHits_S0, nCalorimeterHits_S1, nCalorimeterHits_S2, nCalorimeterHits_S3, nCalorimeterHits_S4, nCalorimeterHits_S5, nCalorimeterHits_S6, nCalorimeterHits_S7;
 
 

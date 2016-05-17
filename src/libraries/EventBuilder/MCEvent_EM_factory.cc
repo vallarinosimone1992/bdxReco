@@ -78,6 +78,8 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	m_event->phe2=0;
 	m_event->T=0;
 	m_event->nCalorimeterHits=0;
+	m_event->nCalorimeterHits_ext_layer=0;
+
 
 	m_event->nCalorimeterHits_S0=0;
 	m_event->nCalorimeterHits_S1=0;
@@ -125,6 +127,7 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 		m_event->E += (m_event->E1 +m_event->E2)/2;				// sum the energies of all the crystals fired
 	    m_event->nCalorimeterHits++;
+	    if(hit->m_channel.x==0||hit->m_channel.x==9||hit->m_channel.y==0||hit->m_channel.y==9)m_event->nCalorimeterHits_ext_layer++;		// Multiplicity of the external crystals
 	    m_event->vCalorimeterHits.push_back(hit->m_channel);
 
 	    switch (hit->m_channel.sector){
