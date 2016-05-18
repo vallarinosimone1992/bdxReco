@@ -237,12 +237,12 @@ jerror_t JEventProcessor_Catania::evnt(JEventLoop *loop, uint64_t eventnumber)
 			jout<<"No trig bank this event"<<endl;
 			return NOERROR;
 		}
-
 		int tWord=evdata->triggerWords[0];
-		if ((tWord&0x1)==0) return NOERROR;
+		//if ((tWord&0x1)==0) return NOERROR;
 	}
 
 	if (chits.size()!=1){
+		jout<<"No calorimeter hit this event"<<endl;
 		return NOERROR;
 	}
 
@@ -269,7 +269,7 @@ jerror_t JEventProcessor_Catania::evnt(JEventLoop *loop, uint64_t eventnumber)
 	//if (1){
 	//	if ((Ec1>10)&&(nHitsExtVeto==0)&&(nHitsIntVeto==0)&&(caloHit->m_data[0].good_ped_RMS==true)&&(caloHit->m_data[1].good_ped_RMS==true)) flag=true;
 	//if ((event->E>400)&&(event->nExtVetoHitsCoincidence==0)) flag=true;
-	if ((event->E>400)&&(event->nExtVetoHitsCoincidence==0)) flag=true;
+	if ((event->E>-10)&&(event->nIntVetoHitsCoincidence>=1)&&(eventnumber%10==0)) flag=true;
 	if ((flag)&&(m_isMC==false)){
 		//	jout<<"QUI "<<eventnumber<<endl;
 		//	cin.get();

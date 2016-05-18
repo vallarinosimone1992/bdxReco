@@ -20,11 +20,13 @@ IntVetoHit_factory::IntVetoHit_factory():
 
 	m_THR_singleReadout=5;
 	m_THR_multipleReadout=3;
+	m_DT_multipleReadout=100; //ns
 	m_N_multipleReadout=2;
 	m_hit_bottom_workAround=0;
 
 	gPARMS->SetDefaultParameter("INTVETO:HIT_THR_SINGLE",m_THR_singleReadout,"Threshold in phe (charge) for a detector with single readout");
 	gPARMS->SetDefaultParameter("INTVETO:HIT_THR_MULTI",m_THR_multipleReadout,"Threshold in phe (charge) for a detector with multi readout");
+	gPARMS->SetDefaultParameter("INTVETO:HIT_DT_MULTI",m_DT_multipleReadout,"Time coincidence window (in ns) for hits in a detector with multi readout");
 	gPARMS->SetDefaultParameter("INTVETO:HIT_N_MULTI",m_N_multipleReadout,"Multiplicity for a detector with multi readout");
 	gPARMS->SetDefaultParameter("INTVETO:HIT_BOTTOM_WORKAROUND",m_hit_bottom_workAround,"Workaround for bottom (component==3) that is not a multi counter but 4 singles");
 }
@@ -133,17 +135,23 @@ jerror_t IntVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 			for (int idigi=0;idigi<m_IntVetoDigiHit->m_data.size();idigi++){
 				Q=m_IntVetoDigiHit->m_data[idigi].Q;
 				T=m_IntVetoDigiHit->m_data[idigi].T;
-
-				if (Q>m_THR_multipleReadout){
-					flagOk++;
-					Qtot+=Q;
-				}
 				if (Q>Qmax){
 					Qmax=Q;
 					Tmax=T;
 				}
 			}
 			/*At the end of this loop, flagOK is the number of counters above thr*/
+			/*Now use timing too: Tmax is the time of the hit with the highest charge. See if the other counters are in coincidence with this*/
+			if (Qmax<m_THR_multipleReadout) continue; //if the max charge is less than the treshold, by definition this hit is irrelevant.
+			for (int idigi=0;idigi<m_IntVetoDigiHit->m_data.size();idigi++){
+				Q=m_IntVetoDigiHit->m_data[idigi].Q;
+				T=m_IntVetoDigiHit->m_data[idigi].T;
+				if ((Q>m_THR_multipleReadout)&&(fabs(T-Tmax)<m_DT_multipleReadout)){
+					flagOk++;
+					Qtot+=Q;
+				}
+			}
+			/*Ok. From this point on, flagOK is the number of hits above thr, that are grouped together wrt the hit with the maximum charge*/
 			if (flagOk>=m_N_multipleReadout){
 				m_IntVetoHit=new IntVetoHit();
 				m_IntVetoHit->m_channel = m_IntVetoDigiHit->m_channel;
