@@ -1,6 +1,8 @@
 
 #include <iostream>
 #include <iomanip>
+#include <stdlib.h>
+#include <time.h>
 using namespace std;
 
 #include "MCEvent_EM_factory.h"
@@ -26,7 +28,7 @@ jerror_t MCEvent_EM_factory::init(void)
 	gPARMS->SetDefaultParameter("CATANIAEVENT:EC2_CUT",m_EC2_cut,"Cut on MPPC#2 energy in MeV");
 	gPARMS->SetDefaultParameter("CATANIAEVENT:EXTVETO_TIME_WINDOW",m_ExtVeto_timeWindows,"ExtVeto time window (ns)");
 	gPARMS->SetDefaultParameter("CATANIAEVENT:INTVETO_TIME_WINDOW",m_ExtVeto_timeWindows,"IntVeto time window (ns)");
-
+	srand((unsigned)time(NULL));
 
 
 
@@ -47,6 +49,8 @@ jerror_t MCEvent_EM_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber
 jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 
+	double inefficiency_iv=1;		// % on the single detector
+	double inefficiency_ev=0.5;	// % on the single detector
 
 
 	vector <const CalorimeterHit*> chits;
@@ -99,14 +103,14 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 
 	m_event->flag_RMS=false;
-	double T1,T2,dT;
+	double T1,T2;
 	bool flag1,flag2;
 
 	T1=T2=0;
 	flag1=false;
 	flag2=false;
 
-	for (chits_it=chits.begin();chits_it!=chits.end();chits_it++){			// loop over the fired crystals
+	for (chits_it=chits.begin();chits_it!=chits.end();chits_it++){				// loop over the fired crystals
 		const CalorimeterHit *hit=(*chits_it);
 
 		if(hit->T<0) continue;
@@ -115,17 +119,23 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 				switch (hit->m_data[ihit].readout){
 				case 1:
 					m_event->phe1 +=(hit->m_data[ihit].Q);   	// Q-> number of p.e.
-					m_event->E1=(hit->m_data[ihit].E); 		// energy calibration from 20 MeV simulated protons
+					m_event->E1=(hit->m_data[ihit].E); 		// energy calibration for muons
+//					m_event->E1=(hit->m_data[ihit].Q)/9.5; // energy calibration from data : 16 MeV  protons at 12cm from the SiPM
 					break;
 				case 2:
 					m_event->phe2 +=(hit->m_data[ihit].Q);  	// Q-> number of p.e.
-					m_event->E2=(hit->m_data[ihit].E); 	// energy calibration from 20 MeV simulated protons
+					m_event->E2=(hit->m_data[ihit].E); 	// energy calibration for muons
+//					m_event->E2=(hit->m_data[ihit].Q)/17; // energy calibration from data : 16 MeV  protons at 12cm from the SiPM
 					break;
 				}
 			}
-
-
+//		if( ((m_event->E1 +m_event->E2)/2)<10) continue;			// Threshold condition
+//		else {
+//		if(m_event->E1<10)m_event->E1=0;
+//		if(m_event->E2<10)m_event->E2=0;
+//		m_event->E += m_event->E1;
 		m_event->E += (m_event->E1 +m_event->E2)/2;				// sum the energies of all the crystals fired
+
 	    m_event->nCalorimeterHits++;
 	    if(hit->m_channel.x==0||hit->m_channel.x==9||hit->m_channel.y==0||hit->m_channel.y==9)m_event->nCalorimeterHits_ext_layer++;		// Multiplicity of the external crystals
 	    m_event->vCalorimeterHits.push_back(hit->m_channel);
@@ -165,7 +175,10 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	                                   }
 
-		            }   //end else
+//									}	// end else for Ene threshold
+
+							}   //end else on Time >0
+
 	              }			// end loop over the fired crystals
 
 
@@ -221,7 +234,19 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 			//	m_event->T_cluster;
 
 
+			/*Now loop on inner veto hits*/
+				m_event->nIntVetoHits=0;
+				m_event->nIntVetoHitsCoincidence=0;
+				for (ivhits_it=ivhits.begin();ivhits_it!=ivhits.end();ivhits_it++){
+					const IntVetoHit *hit=(*ivhits_it);
+					 random =((double)rand()/(double)RAND_MAX) * 100;
+					if (hit->T<0 || random<inefficiency_iv) continue; //The IntVeto condition for a "good" hit
+					else{
+						m_event->nIntVetoHits++;
+						m_event->vIntVetoHits.push_back(hit->m_channel);
 
+					}
+				}
 
 
 
@@ -231,36 +256,20 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	for (evhits_it=evhits.begin();evhits_it!=evhits.end();evhits_it++){			// loop over the fired EV
 		const ExtVetoHit *hit=(*evhits_it);
-
+		 random =((double)rand()/(double)RAND_MAX) * 100;
 //		jout << "Sector= "<<hit->m_channel.sector<< "Component  "<<hit->m_channel.component<<endl;
 
-		if (hit->T<0) continue; //The ExtVeto condition for a "good" hit
+		if (hit->T<0 || random<inefficiency_ev) continue; //The ExtVeto condition for a "good" hit
 
 		else{
 			m_event->nExtVetoHits++;
 			m_event->vExtVetoHits.push_back(hit->m_channel);
 
-			 // if (hit->m_channel.component>6){
-				//		jout << hit->m_channel.sector<< " "<<hit->m_channel.component<<endl;
-				//		}
-
 
 
 		}
 	}
-	/*Now loop on inner veto hits*/
-	m_event->nIntVetoHits=0;
-	m_event->nIntVetoHitsCoincidence=0;
-	for (ivhits_it=ivhits.begin();ivhits_it!=ivhits.end();ivhits_it++){
-		const IntVetoHit *hit=(*ivhits_it);
 
-		if (hit->T<0) continue; //The IntVeto condition for a "good" hit
-		else{
-			m_event->nIntVetoHits++;
-			m_event->vIntVetoHits.push_back(hit->m_channel);
-
-		}
-	}
 
 	_data.push_back(m_event);
 
