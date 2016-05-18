@@ -35,12 +35,18 @@ class CataniaEvent:public jana::JObject,public TObject{
 		int nExtVetoHits;
 		int nExtVetoHitsCoincidence;
 		vector <TranslationTable::EXT_VETO_Index_t> vExtVetoHits;
-		vector <TranslationTable::EXT_VETO_Index_t> vExtVetoHitsCoincidence;
+		vector <bool> vExtVetoHitsIsInCoincidence;
+		vector <double>	vExtVetoHitsT;
+		vector <double>	vExtVetoHitsE;
+
 
 		int nIntVetoHits;
 		int nIntVetoHitsCoincidence;
 		vector <TranslationTable::INT_VETO_Index_t> vIntVetoHits;
-		vector <TranslationTable::INT_VETO_Index_t> vIntVetoHitsCoincidence;
+		vector <bool> vIntVetoHitsIsInCoincidence;
+		vector <double>	vIntVetoHitsT;
+		vector <double>	vIntVetoHitsQ;
+
 
 		double Ep1,Ep2;
 

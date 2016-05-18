@@ -19,9 +19,8 @@ INTVETO:NPED 60    #num of samples in pedestal determination event by event
 INTVETO:NSB	 20    #num of samples before the maximum
 INTVETO:NSA	 30    #num of samples after  the maximum
 
-
-INTVETO:HIT_THR_SINGLE  1000   #thr in phe charge for a detector with single readout
-INTVETO:HIT_THR_MULTI   3.5   #thr in phe charge for a detector with multiple readout
+INTVETO:HIT_THR_SINGLE  12.5   #thr in phe charge for a detector with single readout
+INTVETO:HIT_THR_MULTI   2.5   #thr in phe charge for a detector with multiple readout
 INTVETO:HIT_DT_MULTI    100   #time-window coincidence for hits in a counter with multiple readout
 INTVETO:HIT_N_MULTI     2   #multiplicity for a detector with multi readout
 
@@ -39,8 +38,8 @@ CALORIMETER:NSB		       10	#num of samples before the maximum
 CALORIMETER:NSA		       20 	#num of samples after  the maximum 
 CALORIMETER:NSAMPLES	   250  #num of samples in the integration window
 CALORIMETER:SINGLE_SIGNAL_TOT  120
-CALORIMETER:HIT_THR_SINGLE  -9999      #5  #thr in phe charge for a detector with single readout
-CALORIMETER:HIT_THR_MULTI   -9999      #3  #thr in phe charge for a detector with multiple readout
+CALORIMETER:HIT_THR_SINGLE  5  #thr in phe charge for a detector with single readout
+CALORIMETER:HIT_THR_MULTI   3  #thr in phe charge for a detector with multiple readout
 CALORIMETER:HIT_N_MULTI     2  #multiplicity for a detector with multi readout
 
 CALORIMETER:CLUSTER_HIT_THR  20  #threshold on hits - in MeV

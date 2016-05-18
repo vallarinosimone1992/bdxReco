@@ -154,12 +154,18 @@ jerror_t CataniaEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		else{
 			m_event->nExtVetoHits++;
 			m_event->vExtVetoHits.push_back(hit->m_channel);
+			m_event->vExtVetoHitsT.push_back(hit->T);
+			m_event->vExtVetoHitsE.push_back(hit->E);
 			dT=fabs(hit->T-m_event->T);
 			if (dT<m_ExtVeto_timeWindows){
 				m_event->nExtVetoHitsCoincidence++;
-				m_event->vExtVetoHitsCoincidence.push_back(hit->m_channel);
-				m_event->AddAssociatedObject(hit);
+				m_event->vExtVetoHitsIsInCoincidence.push_back(true);
 			}
+			else{
+				m_event->vExtVetoHitsIsInCoincidence.push_back(false);
+			}
+			m_event->AddAssociatedObject(hit);
+
 		}
 	}
 	/*Now loop on inner veto hits*/
@@ -171,12 +177,17 @@ jerror_t CataniaEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		else{
 			m_event->nIntVetoHits++;
 			m_event->vIntVetoHits.push_back(hit->m_channel);
+			m_event->vIntVetoHitsT.push_back(hit->T);
+			m_event->vIntVetoHitsQ.push_back(hit->Q);
 			dT=fabs(hit->T-m_event->T);
 			if (dT<m_IntVeto_timeWindows){
 				m_event->nIntVetoHitsCoincidence++;
-				m_event->vIntVetoHitsCoincidence.push_back(hit->m_channel);
-				m_event->AddAssociatedObject(hit);
+				m_event->vIntVetoHitsIsInCoincidence.push_back(true);
+			}else{
+				m_event->vIntVetoHitsIsInCoincidence.push_back(false);
 			}
+			m_event->AddAssociatedObject(hit);
+
 		}
 	}
 
@@ -187,10 +198,10 @@ jerror_t CataniaEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		const PaddlesHit *phit=(*phits_it);
 		switch (phit->m_channel.id){
 		case (0):
-										m_event->Ep1=phit->E;
+														m_event->Ep1=phit->E;
 		break;
 		case (1):
-										m_event->Ep2=phit->E;
+														m_event->Ep2=phit->E;
 		break;
 		}
 	}
