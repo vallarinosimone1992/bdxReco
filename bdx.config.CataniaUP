@@ -22,6 +22,7 @@ INTVETO:NSA	 30    #num of samples after  the maximum
 
 INTVETO:HIT_THR_SINGLE  4.5   #thr in phe charge for a detector with single readout
 INTVETO:HIT_THR_MULTI   2.5   #thr in phe charge for a detector with multiple readout
+INTVETO:HIT_DT_MULTI    100   #time-window coincidence for hits in a counter with multiple readout
 INTVETO:HIT_N_MULTI     2   #multiplicity for a detector with multi readout
 
 INTVETO:HIT_BOTTOM_WORKAROUND 1 #the work-around for the bottom plate (sector=layer=0 component=3), that is seen as a single object but is separate
