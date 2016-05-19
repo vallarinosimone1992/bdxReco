@@ -49,8 +49,8 @@ jerror_t MCEvent_EM_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber
 jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 
-	double inefficiency_iv=1;		// % on the single detector
-	double inefficiency_ev=0.5;	// % on the single detector
+	double inefficiency_iv=1;		// % on single detector
+	double inefficiency_ev=0.5;		// % on single detector
 
 
 	vector <const CalorimeterHit*> chits;
@@ -76,6 +76,7 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	MCEvent_EM *m_event=new MCEvent_EM();
 	m_event->E=0;
+	m_event->E_single_crys=0;
 	m_event->E1=0;
 	m_event->E2=0;
 	m_event->phe1=0;
@@ -129,11 +130,8 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 					break;
 				}
 			}
-//		if( ((m_event->E1 +m_event->E2)/2)<10) continue;			// Threshold condition
-//		else {
-//		if(m_event->E1<10)m_event->E1=0;
-//		if(m_event->E2<10)m_event->E2=0;
-//		m_event->E += m_event->E1;
+
+		if(hit->m_channel.x==5&&hit->m_channel.y==5&&hit->m_channel.sector==3)m_event->E_single_crys = (m_event->E1 +m_event->E2)/2;			// energy of a single cryslal
 		m_event->E += (m_event->E1 +m_event->E2)/2;				// sum the energies of all the crystals fired
 
 	    m_event->nCalorimeterHits++;

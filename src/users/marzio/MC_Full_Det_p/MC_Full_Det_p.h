@@ -27,7 +27,7 @@ class MC_Full_Det_p:public jana::JEventProcessor{
 		int m_isFirstCallToBrun;
 
       double phe1_tot, phe2_tot, E_tot, E_tot_MC, multi_cal, multi_iv, multi_ev, multi_cal_ext_layer;
-      double totEdep;
+      double totEdep,E_single_crys;
   	  int nhit_cal,nhit_ev,nhit_iv;
 
       double E1[800],E2[800],E[800];

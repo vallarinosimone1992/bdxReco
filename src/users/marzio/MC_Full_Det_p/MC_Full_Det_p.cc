@@ -88,11 +88,9 @@ jerror_t MC_Full_Det_p::init(void)
 	t->Branch("E_tot",&E_tot);
 	t->Branch("E_tot_MC",&E_tot_MC);
 	t->Branch("totEdep",&totEdep);
+	t->Branch("E_single_crys",&E_single_crys);
 
 
-//	t->Branch("sector_cal",sector_cal,"sector_cal[800]/I");
-//	t->Branch("x_cal",x_cal,"x_cal[800]/I");
-//	t->Branch("y_cal",y_cal,"y_cal[800]/I");
 	t->Branch("multi_cal",&multi_cal);
 	t->Branch("multi_cal_ext_layer",&multi_cal_ext_layer);
 
@@ -102,19 +100,11 @@ jerror_t MC_Full_Det_p::init(void)
 	t->Branch("sector_ev",sector_ev,"sector_ev[nhit_ev]/I");
 	t->Branch("channel_ev",channel_ev,"channel_ev[nhit_ev]/I");
 
-// 	t->Branch("sector_ev",sector_ev,"sector_ev[800]/I");
-// 	t->Branch("channel_ev",channel_ev,"channel_ev[800]/I");
-
 	t->Branch("nhit_iv", &nhit_cal, "nhit_iv/I");
 	t->Branch("multi_iv",&multi_iv);
 	t->Branch("sector_iv",sector_iv,"sector_iv[nhit_iv]/I");
 	t->Branch("channel_iv",channel_iv,"channel_iv[nhit_iv]/I");
-// 	t->Branch("sector_iv",sector_iv,"sector_iv[800]/I");
-// 	t->Branch("channel_iv",channel_iv,"channel_iv[800]/I");
 
-//    t->Branch("E1",E1,"E1[800]/D");
-//    t->Branch("E2",E2,"E2[800]/D");
-//    t->Branch("E",E,"E[800]/D");
 
 	t->Branch("nhit_cal", &nhit_cal, "nhit_cal/I");
  	t->Branch("sector_cal",sector_cal,"sector_cal[nhit_cal]/I");
@@ -216,20 +206,7 @@ jerror_t MC_Full_Det_p::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 
 		japp->RootWriteLock();
-/*
-		for(int i=0; i<800; i++){
-		   sector_cal[i]= -99;
-		   x_cal[i] = -99;
-		   y_cal[i] = -99;
-		   sector_iv[i]= -99;
-		   channel_iv[i]= -99;
-		   sector_ev[i] = -99;
-		   channel_ev[i]= -99;
-		   E1[i]= -99;
-		   E2[i]= -99;
-		   E[i]=-99;
-		}
-*/
+
 	   eventN=eventnumber;
 
 	   jout << "start event= "<< eventN<< endl;
@@ -242,6 +219,7 @@ jerror_t MC_Full_Det_p::evnt(JEventLoop *loop, uint64_t eventnumber)
 			phe1_tot = clhit->phe1;
 			phe2_tot = clhit->phe2;
             E_tot = clhit->E;
+            E_single_crys=clhit->E_single_crys;
 			multi_cal = clhit->nCalorimeterHits;
 			multi_cal_ext_layer = clhit->nCalorimeterHits_ext_layer;
 			nhit_cal=multi_cal;
