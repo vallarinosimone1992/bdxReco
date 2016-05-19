@@ -174,6 +174,7 @@ void CalorimeterCluster_factory::setCluster(CalorimeterCluster *cluster,const Ca
 	Ynum=0;
 
 	cluster->Nhits = 0;
+	cluster->Nhits_near_seed = 0;
 	cluster->E = 0;             			 //Set the cluster total energy
 	cluster->Eseed = (seed)->E;              //Set the seed energy to the cluster
     cluster->sector= seed->m_channel.sector;
@@ -182,6 +183,7 @@ void CalorimeterCluster_factory::setCluster(CalorimeterCluster *cluster,const Ca
 		E=(*hits_it)->E;
 		cluster->E += E;
 		cluster->Nhits++;
+		if( ((*hits_it)->m_channel.sector==seed->m_channel.sector) && abs((*hits_it)->m_channel.x-seed->m_channel.x)<=1 && abs((*hits_it)->m_channel.y-seed->m_channel.y)<=1 )cluster->Nhits_near_seed++;
 		cluster->AddAssociatedObject(*hits_it);
 
 	}

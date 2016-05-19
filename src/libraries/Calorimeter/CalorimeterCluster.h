@@ -29,7 +29,7 @@ class CalorimeterCluster:public jana::JObject{
 		double Eseed;
 		double E,T;
 		double x,y;
-		int Nhits, sector;
+		int Nhits, Nhits_near_seed,sector;
 
 };
 
