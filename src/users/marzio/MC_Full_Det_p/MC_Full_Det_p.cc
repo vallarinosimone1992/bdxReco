@@ -125,6 +125,8 @@ jerror_t MC_Full_Det_p::init(void)
     t->Branch("multi_sect6",&multi_sect6);
     t->Branch("multi_sect7",&multi_sect7);
     t->Branch("multi_cl",&multi_cl);
+    t->Branch("multi_cl_near_seed",&multi_cl_near_seed);
+
     t->Branch("Eseed",&Eseed);
     t->Branch("Ecluster",&Ecluster);
     t->Branch("sector_seed",&sector_seed);
@@ -274,6 +276,8 @@ jerror_t MC_Full_Det_p::evnt(JEventLoop *loop, uint64_t eventnumber)
             */
 
             multi_cl = clhit->Nhit_cluster;
+            multi_cl_near_seed = clhit->Nhit_cluster_near_seed;
+
             Eseed = clhit->Eseed;
             Ecluster = clhit->E_cluster;
             sector_seed = clhit->sectorseed;
@@ -300,9 +304,9 @@ jerror_t MC_Full_Det_p::evnt(JEventLoop *loop, uint64_t eventnumber)
 				jout<<"adcr= "<<calo_hit->adcr<<" adcl= "<<calo_hit->adcl<<endl;				// adcr == SiPM1  , adcl=SiPM2
 				jout<<" totEdep= "<<calo_hit->totEdep<<endl;
 				totEdep=calo_hit->totEdep;
-				E1[i] = calo_hit->adcr/9.5;
-				E2[i] = calo_hit->adcl/17.;
-				jout << "(hardcoded calib) E1= "<<E1[i]<<" E2= "<< E2[i] <<endl;
+//				E1[i] = calo_hit->adcr/9.5;
+//				E2[i] = calo_hit->adcl/17.;
+				jout << "(hardcoded calib) E1= "<<calo_hit->adcr/9.5<<" E2= "<< calo_hit->adcl/17. <<endl;
 				E_tot_MC+=calo_hit->totEdep;
 				         }
     jout <<"////////////"<<endl;

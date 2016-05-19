@@ -52,6 +52,7 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	double inefficiency_iv=1;		// % on single detector
 	double inefficiency_ev=0.5;		// % on single detector
 
+	double Ene_thr=10;		// Energy threshold on single Crystal
 
 	vector <const CalorimeterHit*> chits;
 	vector <const CalorimeterHit*>::const_iterator chits_it;
@@ -120,18 +121,21 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 				switch (hit->m_data[ihit].readout){
 				case 1:
 					m_event->phe1 +=(hit->m_data[ihit].Q);   	// Q-> number of p.e.
-					m_event->E1=(hit->m_data[ihit].E); 		// energy calibration for muons
-//					m_event->E1=(hit->m_data[ihit].Q)/9.5; // energy calibration from data : 16 MeV  protons at 12cm from the SiPM
+//					m_event->E1=(hit->m_data[ihit].E); 		// energy calibration for muons
+					m_event->E1=(hit->m_data[ihit].Q)/9.5; // energy calibration from data : 16 MeV  protons at 12cm from the SiPM
 					break;
 				case 2:
 					m_event->phe2 +=(hit->m_data[ihit].Q);  	// Q-> number of p.e.
-					m_event->E2=(hit->m_data[ihit].E); 	// energy calibration for muons
-//					m_event->E2=(hit->m_data[ihit].Q)/17; // energy calibration from data : 16 MeV  protons at 12cm from the SiPM
+//					m_event->E2=(hit->m_data[ihit].E); 	// energy calibration for muons
+					m_event->E2=(hit->m_data[ihit].Q)/17; // energy calibration from data : 16 MeV  protons at 12cm from the SiPM
 					break;
 				}
 			}
 
-		if(hit->m_channel.x==5&&hit->m_channel.y==5&&hit->m_channel.sector==3)m_event->E_single_crys = (m_event->E1 +m_event->E2)/2;			// energy of a single cryslal
+		if(   ((m_event->E1 +m_event->E2)/2)<Ene_thr     ) continue;
+
+
+		if(hit->m_channel.x==0&&hit->m_channel.y==5&&hit->m_channel.sector==5)m_event->E_single_crys = (m_event->E1 +m_event->E2)/2;			// Energy of a single cryslal
 		m_event->E += (m_event->E1 +m_event->E2)/2;				// sum the energies of all the crystals fired
 
 	    m_event->nCalorimeterHits++;
@@ -198,6 +202,8 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	       double E_cl=0;
 	       double sector_cl = 0;
 	       int Nhits_cl=0;
+	       int Nhits_cl_near_seed=0;
+
 
 
 	for (cclusters_it=cclusters.begin();cclusters_it!=cclusters.end();cclusters_it++){			// loop over clusters
@@ -209,6 +215,7 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 				x_cl = hit->x;
 				y_cl = hit->y;
 				sector_cl = hit->sector;
+				Nhits_cl_near_seed=hit->Nhits_near_seed;
 			                      }
 			E_cl += hit->E;
 			Nhits_cl += hit->Nhits;
@@ -226,6 +233,7 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	        m_event->xseed=x_cl;
 			m_event->yseed=y_cl;
 			m_event->Nhit_cluster=Nhits_cl;
+			m_event->Nhit_cluster_near_seed=Nhits_cl_near_seed;
 			m_event->E_cluster=E_cl;
 			m_event->sectorseed=sector_cl;
 

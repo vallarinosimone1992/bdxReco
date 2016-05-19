@@ -46,7 +46,7 @@ class MCEvent_EM:public jana::JObject,public TObject{
 		double Ep1,Ep2;
 
 		// For clustering
-		double Eseed,Nhit_cluster,E_cluster,T_cluster;
+		double Eseed,Nhit_cluster,Nhit_cluster_near_seed,E_cluster,T_cluster;
 		double xseed,yseed, sectorseed;
 
 #if (!defined(__APPLE__))
