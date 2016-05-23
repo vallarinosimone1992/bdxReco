@@ -8,8 +8,8 @@ THREAD_TIMEOUT_FIRST_EVENT 120
 
 #Event builder
 CATANIAEVENT:EC2_CUT  2  #MeV
-CATANIAEVENT:INTVETO_TIME_WINDOW 500 #ns
-CATANIAEVENT:EXTVETO_TIME_WINDOW 500 #ns
+CATANIAEVENT:INTVETO_TIME_WINDOW 2000 #ns
+CATANIAEVENT:EXTVETO_TIME_WINDOW 2000 #ns
 
 
 #IntVeto parameters
@@ -19,8 +19,7 @@ INTVETO:NPED 20    #num of samples in pedestal determination event by event
 INTVETO:NSB	 20    #num of samples before the maximum
 INTVETO:NSA	 30    #num of samples after  the maximum
 
-
-INTVETO:HIT_THR_SINGLE  4.5   #thr in phe charge for a detector with single readout
+INTVETO:HIT_THR_SINGLE  12.5   #thr in phe charge for a detector with single readout
 INTVETO:HIT_THR_MULTI   2.5   #thr in phe charge for a detector with multiple readout
 INTVETO:HIT_DT_MULTI    100   #time-window coincidence for hits in a counter with multiple readout
 INTVETO:HIT_N_MULTI     2   #multiplicity for a detector with multi readout

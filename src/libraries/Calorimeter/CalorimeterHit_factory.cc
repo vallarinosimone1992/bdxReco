@@ -95,7 +95,7 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	TranslationTable::CALO_Index_t m_index;
 
 	int readout;
-	double Q,T,Qtot,Qmax,Tmax;
+	double Q,Qs,T,Qtot,Qmax,Tmax;
 	int flagOk;
 
 	double gain,ped;
@@ -121,6 +121,7 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		}
 		else if ((*it)->m_data.size()==1){   /*Single readout object*/
 			Q=m_CalorimeterDigiHit->m_data[0].Q;
+			Qs=m_CalorimeterDigiHit->m_data[0].Qs;
 			T=m_CalorimeterDigiHit->m_data[0].T;
 
 			if (Q	> m_THR_singleReadout){
@@ -135,6 +136,7 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 				CalorimeterHit::CalorimeterComponentHit hit;
 				hit.readout=m_CalorimeterDigiHit->m_data[0].readout;
 				hit.Q=Q;
+				hit.Qs=Qs;
 				hit.T=T;
 				/*Try to calibrate in energy and ped-sub*/
 				m_index=m_CalorimeterHit->m_channel;
@@ -155,6 +157,7 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 			for (int idigi=0;idigi<m_CalorimeterDigiHit->m_data.size();idigi++){
 				Q=m_CalorimeterDigiHit->m_data[idigi].Q;
+				Qs=m_CalorimeterDigiHit->m_data[idigi].Qs;
 				T=m_CalorimeterDigiHit->m_data[idigi].T;
 
 				if (Q>m_THR_multipleReadout){
@@ -181,12 +184,14 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 				/*Loop again*/
 				for (int idigi=0;idigi<m_CalorimeterDigiHit->m_data.size();idigi++){
 					Q=m_CalorimeterDigiHit->m_data[idigi].Q;
+					Qs=m_CalorimeterDigiHit->m_data[idigi].Qs;
 					T=m_CalorimeterDigiHit->m_data[idigi].T;
 				//	jout<<m_CalorimeterDigiHit->m_channel.sector<<" "<<m_CalorimeterDigiHit->m_channel.x<<" "<<m_CalorimeterDigiHit->m_channel.y<<" "<<Q<<endl;
 					if (Q>m_THR_multipleReadout){						/*Clearly this is now enough as condition!*/
 						CalorimeterHit::CalorimeterComponentHit hit;
 						hit.readout=m_CalorimeterDigiHit->m_data[idigi].readout;
 						hit.Q=Q;
+						hit.Qs=Qs;
 						hit.T=T;
 						hit.good_ped_RMS=m_CalorimeterDigiHit->m_data[idigi].good_ped_RMS;
 						hit.type=m_CalorimeterDigiHit->m_data[idigi].type;

@@ -25,9 +25,16 @@ class CataniaEvent:public jana::JObject,public TObject{
 		// This method is used primarily for pretty printing
 		// the second argument to AddString is printf style format
 		void toStrings(vector<pair<string,string> > &items)const{
-			// AddString(items, "id", "%4d", id);
-			// AddString(items, "E", "%f", E);
+			AddString(items,"runN","%i",runN);
+			AddString(items,"eventN","%i",eventN);
+			AddString(items,"time","%i",time);
+			AddString(items,"timestamp","%lld",(long long)timestamp);
+			AddString(items,"tWord","%i",tWord);
+			AddString(items,"RMSflag","%i",flag_RMS);
 		}
+
+		double Qc1,Qc2,Qcs1,Qcs2;
+
 		double Ec1,Ec2;
 		double E,T;
 		bool flag_RMS;

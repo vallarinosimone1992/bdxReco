@@ -18,6 +18,7 @@ public:
 	struct CalorimeterSiPMDigiHit{
 		int readout;
 		double Q;
+		double Qs;
 		double T;
 		bool good_ped_RMS;
 		CalorimeterSiPMHit::hit_type type;

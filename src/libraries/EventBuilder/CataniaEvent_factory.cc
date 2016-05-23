@@ -12,6 +12,7 @@ using namespace std;
 
 #include "CataniaEvent_factory.h"
 
+#include <Calorimeter/CalorimeterDigiHit.h>
 #include <Calorimeter/CalorimeterHit.h>
 #include <IntVeto/IntVetoHit.h>
 #include <ExtVeto/ExtVetoHit.h>
@@ -55,6 +56,8 @@ jerror_t CataniaEvent_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumb
 jerror_t CataniaEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 
+	vector <const CalorimeterDigiHit*> cdigihits;
+	vector <const CalorimeterDigiHit*>::const_iterator cdigihits_it;
 
 
 	vector <const CalorimeterHit*> chits;
@@ -72,6 +75,7 @@ jerror_t CataniaEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	const eventData *evData;
 
+	loop->Get(cdigihits);
 	loop->Get(chits);
 	loop->Get(ivhits);
 	loop->Get(evhits);
@@ -114,25 +118,39 @@ jerror_t CataniaEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	T1=T2=0;
 	flag1=false;
 	flag2=false;
+
+	/*Use digihits just for timestamp*/
+	for (cdigihits_it=cdigihits.begin();cdigihits_it!=cdigihits.end();cdigihits_it++){
+		const CalorimeterDigiHit *hit=(*cdigihits_it);
+		m_event->timestamp=hit->timestamp; //it is irrelevant to take timestamp from this or from #2, they're the same!
+	}
+
+
 	for (chits_it=chits.begin();chits_it!=chits.end();chits_it++){
 		const CalorimeterHit *hit=(*chits_it);
 		for (int ihit=0;ihit<hit->m_data.size();ihit++){
 			switch (hit->m_data[ihit].readout){
 			case 1:
-				m_event->timestamp=hit->timestamp; //it is irrelevant to take timestamp from this or from #2, they're the same!
-				m_event->Ec1=hit->m_data[ihit].E;
-				T1=hit->m_data[ihit].T;
 				E1=hit->m_data[ihit].E;
+				T1=hit->m_data[ihit].T;
 				flag1=hit->m_data[ihit].good_ped_RMS;
+
+				m_event->Ec1=E1;
+				m_event->Qc1=hit->m_data[ihit].Q;
+				m_event->Qcs1=hit->m_data[ihit].Qs;
 				break;
 			case 2:
-				m_event->Ec2=hit->m_data[ihit].E;
-				T2=hit->m_data[ihit].T;
 				E2=hit->m_data[ihit].E;
+				T2=hit->m_data[ihit].T;
 				flag2=hit->m_data[ihit].good_ped_RMS;
+
+				m_event->Ec2=E2;
+				m_event->Qc2=hit->m_data[ihit].Q;
+				m_event->Qcs2=hit->m_data[ihit].Qs;
 				break;
 			}
 		}
+		m_event->AddAssociatedObject(hit);
 	}
 	if (E2<=m_EC2_cut){
 		m_event->E=E2;
@@ -165,7 +183,6 @@ jerror_t CataniaEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 				m_event->vExtVetoHitsIsInCoincidence.push_back(false);
 			}
 			m_event->AddAssociatedObject(hit);
-
 		}
 	}
 	/*Now loop on inner veto hits*/
