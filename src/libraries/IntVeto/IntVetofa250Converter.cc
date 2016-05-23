@@ -109,14 +109,9 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 	m_thisCrossingTime.first=-1;
 	m_thisCrossingTime.second=-1;
 	if (m_waveform[0]>thr) m_thisCrossingTime.first=0;
-<<<<<<< HEAD
 
-	for (int ii=0;ii<size;ii++){
-
-
-=======
 	for (int ii=1;ii<size;ii++){
->>>>>>> branch 'master' of git@github.com:JeffersonLab/bdxReco.git
+
 		if ((m_waveform[ii]>thr)&&(	m_waveform[ii-1]<thr)) m_thisCrossingTime.first=ii;
 
 		else if ((	m_waveform[ii]<thr)&&(	m_waveform[ii-1]>thr) && (m_thisCrossingTime.first!=-1)) {
