@@ -24,7 +24,7 @@ public:
 	public:
 		int readout;
 		double E;
-		double Q;
+		double Q,Qs;
 		double T;
 		bool good_ped_RMS;
 		CalorimeterSiPMHit::hit_type type;

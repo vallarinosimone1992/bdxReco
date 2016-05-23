@@ -98,6 +98,7 @@ jerror_t CalorimeterDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 
 			CalorimeterDigiHit::CalorimeterSiPMDigiHit hit;
 			hit.Q=m_CalorimeterSiPMHit_tmp[ihit]->Qphe;
+			hit.Qs=m_CalorimeterSiPMHit_tmp[ihit]->QpheS;
 			hit.T=m_CalorimeterSiPMHit_tmp[ihit]->T;
 			hit.readout=m_CalorimeterSiPMHit_tmp[ihit]->m_channel.calorimeter->readout;
 			hit.good_ped_RMS=m_CalorimeterSiPMHit_tmp[ihit]->good_ped_RMS;
