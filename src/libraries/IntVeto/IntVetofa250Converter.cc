@@ -109,14 +109,23 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 	m_thisCrossingTime.first=-1;
 	m_thisCrossingTime.second=-1;
 	if (m_waveform[0]>thr) m_thisCrossingTime.first=0;
+
 	for (int ii=0;ii<size;ii++){
+
+
 		if ((m_waveform[ii]>thr)&&(	m_waveform[ii-1]<thr)) m_thisCrossingTime.first=ii;
+
 		else if ((	m_waveform[ii]<thr)&&(	m_waveform[ii-1]>thr) && (m_thisCrossingTime.first!=-1)) {
+
 			m_thisCrossingTime.second=ii;
 			m_crossingTimes.push_back(m_thisCrossingTime);
 			m_thisCrossingTime.first=-1;
 			m_thisCrossingTime.second=-1;
+
+
+
 		}
+
 	}
 	//It may happen that the last sample is still over thr!
 	if (m_waveform[size-1]>thr){

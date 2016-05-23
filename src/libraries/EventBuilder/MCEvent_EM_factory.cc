@@ -50,7 +50,7 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 
 	double inefficiency_iv=1;		// % on single detector
-	double inefficiency_ev=0.5;		// % on single detector
+	double inefficiency_ev=1.;		// % on single detector
 
 	double Ene_thr=10;		// Energy threshold on single Crystal
 
@@ -121,13 +121,13 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 				switch (hit->m_data[ihit].readout){
 				case 1:
 					m_event->phe1 +=(hit->m_data[ihit].Q);   	// Q-> number of p.e.
-//					m_event->E1=(hit->m_data[ihit].E); 		// energy calibration for muons
-					m_event->E1=(hit->m_data[ihit].Q)/9.5; // energy calibration from data : 16 MeV  protons at 12cm from the SiPM
+					m_event->E1=(hit->m_data[ihit].E); 		// energy calibration for muons
+				//	m_event->E1=(hit->m_data[ihit].Q)/9.5; // energy calibration from data : 16 MeV  protons at 12cm from the SiPM
 					break;
 				case 2:
 					m_event->phe2 +=(hit->m_data[ihit].Q);  	// Q-> number of p.e.
-//					m_event->E2=(hit->m_data[ihit].E); 	// energy calibration for muons
-					m_event->E2=(hit->m_data[ihit].Q)/17; // energy calibration from data : 16 MeV  protons at 12cm from the SiPM
+					m_event->E2=(hit->m_data[ihit].E); 	// energy calibration for muons
+				//	m_event->E2=(hit->m_data[ihit].Q)/17; // energy calibration from data : 16 MeV  protons at 12cm from the SiPM
 					break;
 				}
 			}
@@ -139,7 +139,7 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		m_event->E += (m_event->E1 +m_event->E2)/2;				// sum the energies of all the crystals fired
 
 	    m_event->nCalorimeterHits++;
-	    if(hit->m_channel.x==0||hit->m_channel.x==9||hit->m_channel.y==0||hit->m_channel.y==9)m_event->nCalorimeterHits_ext_layer++;		// Multiplicity of the external crystals
+	    if((hit->m_channel.x==0||hit->m_channel.x==9)&&(hit->m_channel.y==0||hit->m_channel.y==9))m_event->nCalorimeterHits_ext_layer++;		// Multiplicity of the external crystals
 	    m_event->vCalorimeterHits.push_back(hit->m_channel);
 
 	    switch (hit->m_channel.sector){

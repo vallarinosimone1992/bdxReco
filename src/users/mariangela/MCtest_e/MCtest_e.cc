@@ -75,14 +75,7 @@ jerror_t MCtest::init(void)
 	t->Branch("x_cal",x_cal,"x_cal[800]/I");
 	t->Branch("y_cal",y_cal,"y_cal[800]/I");
 	t->Branch("multi_cal",&multi_cal);
-	t->Branch("multi_sect0",&multi_sect0);
-	t->Branch("multi_sect1",&multi_sect1);
-	t->Branch("multi_sect2",&multi_sect2);
-	t->Branch("multi_sect3",&multi_sect3);
-	t->Branch("multi_sect4",&multi_sect4);
-	t->Branch("multi_sect5",&multi_sect5);
-	t->Branch("multi_sect6",&multi_sect6);
-	t->Branch("multi_sect7",&multi_sect7);
+
 
 	t->Branch("multi_cl",&multi_cl);
 	t->Branch("Eseed",&Eseed);
