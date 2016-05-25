@@ -134,6 +134,7 @@ jerror_t CalorimeterCluster_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 
 			_data.push_back(cluster); 							         //publish it
 		}
+
 	}//end loop on sectors
 
 

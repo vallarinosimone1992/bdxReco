@@ -49,6 +49,9 @@ class MCEvent_EM:public jana::JObject,public TObject{
 		double Eseed,Nhit_cluster,Nhit_cluster_near_seed,E_cluster,T_cluster;
 		double xseed,yseed, sectorseed;
 
+		int sector_EM;
+		double theta;
+
 #if (!defined(__APPLE__))
 		ClassDef(MCEvent_EM,1);
 #endif

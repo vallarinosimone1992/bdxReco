@@ -177,7 +177,7 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	                                   }
 
-//									}	// end else for Ene threshold
+
 
 							}   //end else on Time >0
 
@@ -195,21 +195,76 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
  //          jout << "S7= "<< m_event->nCalorimeterHits_S7<<endl;
 
 
+    //// number of sector involved in the EM shower ///
+
+m_event->sector_EM=0;
+map<int,vector<const CalorimeterHit*> > sector_hits;  /*key: sector, data: all hits in that sector*/
+map<int,vector<const CalorimeterHit*> >::const_iterator sector_hits_it;  /*key: sector, data: all hits in that sector*/
+
+
+vector<const CalorimeterHit*> all_hits;
+vector<const CalorimeterHit*>::const_iterator all_hits_it;
+loop->Get(all_hits);
+
+
+/*1: divide hits in different sectors. At this stage, do not apply yet any cut*/
+for (all_hits_it=all_hits.begin();all_hits_it!=all_hits.end();all_hits_it++){
+sector_hits[(*all_hits_it)->m_channel.sector].push_back(*all_hits_it);  //the [] operator in a map create a new data if key does not exists.
+}
+/*2: start the loop on the sectors*/
+for (sector_hits_it=sector_hits.begin();sector_hits_it!=sector_hits.end();sector_hits_it++){
+int this_sector;
+double this_sector_seed_temp=0;  // mr
+vector<const CalorimeterHit*> this_sector_hits;
+vector<const CalorimeterHit*>::iterator this_sector_hits_it;
+
+vector<const CalorimeterHit*> this_sector_hits_temp;      // mr
+vector<const CalorimeterHit*>::iterator this_sector_hits_temp_it; //mr
+
+
+this_sector=(sector_hits_it)->first;
+this_sector_hits_temp=(sector_hits_it)->second;
+
+int ii=0;
+for (this_sector_hits_temp_it=this_sector_hits_temp.begin();this_sector_hits_temp_it!=this_sector_hits_temp.end();this_sector_hits_temp_it++){
+if ((*this_sector_hits_temp_it)->E > 20) ii++;
+
+                                             	}
+if(ii>0) m_event->sector_EM++;
+        }
+
+
+
 	       double seed_temp=0;
 	       double seed = 0;
+	       double x_cl_t[m_event->sector_EM];
+	       double y_cl_t[m_event->sector_EM];
+	       double sector_cl_t[m_event->sector_EM];
 	       double x_cl=0;
-	       double y_cl=0;
+           double y_cl=0;
 	       double E_cl=0;
 	       double sector_cl = 0;
 	       int Nhits_cl=0;
 	       int Nhits_cl_near_seed=0;
+           double gamma=-99;
 
 
 
+ int jj=0;
 	for (cclusters_it=cclusters.begin();cclusters_it!=cclusters.end();cclusters_it++){			// loop over clusters
 			const CalorimeterCluster *hit=(*cclusters_it);
 
+
+
 			seed = hit->Eseed;
+
+			x_cl_t[jj] = hit->x;
+            y_cl_t[jj] = hit->y;
+            sector_cl_t[jj]=hit->sector;
+
+			E_cl += hit->E;
+			Nhits_cl += hit->Nhits;
+
 			if (seed > seed_temp ){
 				seed_temp = seed;
 				x_cl = hit->x;
@@ -217,17 +272,38 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 				sector_cl = hit->sector;
 				Nhits_cl_near_seed=hit->Nhits_near_seed;
 			                      }
-			E_cl += hit->E;
-			Nhits_cl += hit->Nhits;
+             jj++;
 
 	                           }
 
-//	 jout << "Eseed "<< hit->Eseed<<endl;
+	   double idir=0;
+	   double jdir=0;
+	   double kdir=0;
+	   double M=0;
 
-//           jout << "x " << hit->x<<endl;
-//           jout << "y "<<hit->y<<endl;
-//           jout << "Nhit "<<hit->Nhits<<endl;
-//           jout << "E "<< hit->E<<endl;
+	   if (jj>=2){
+
+        idir = y_cl_t[1] - y_cl_t[0];
+        jdir = x_cl_t[1] - x_cl_t[0];
+        kdir = sector_cl_t[1] - sector_cl_t[0];
+
+   //     jout << idir << " "<< jdir << " "<<kdir<<endl;
+
+        M = sqrt(pow(idir,2) + pow(jdir,2) + pow(kdir,2) );
+
+//        jout << M << endl;
+        gamma = acos(kdir/M);
+
+  //      jout << gamma<< endl;
+
+	    }
+
+         m_event->theta = gamma;
+
+
+
+
+
 
 			m_event->Eseed=seed_temp;
 	        m_event->xseed=x_cl;
@@ -238,6 +314,11 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 			m_event->sectorseed=sector_cl;
 
 			//	m_event->T_cluster;
+
+
+
+
+
 
 
 			/*Now loop on inner veto hits*/
