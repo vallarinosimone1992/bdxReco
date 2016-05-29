@@ -92,8 +92,12 @@ jerror_t CataniaEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	}
 	CataniaEvent *m_event=new CataniaEvent();
 	m_event->timestamp=0;
-	m_event->E=0;
-	m_event->T=0;
+	m_event->E1=0;
+	m_event->T1=0;
+	m_event->E2=0;
+	m_event->T2=0;
+	m_event->flag_RMS1=false;
+	m_event->flag_RMS2=false;
 	m_event->flag_RMS=false;
 	if (m_isMC==0){
 		m_event->time=evData->time;
@@ -128,40 +132,55 @@ jerror_t CataniaEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	for (chits_it=chits.begin();chits_it!=chits.end();chits_it++){
 		const CalorimeterHit *hit=(*chits_it);
-		for (int ihit=0;ihit<hit->m_data.size();ihit++){
-			switch (hit->m_data[ihit].readout){
-			case 1:
-				E1=hit->m_data[ihit].E;
-				T1=hit->m_data[ihit].T;
-				flag1=hit->m_data[ihit].good_ped_RMS;
+		if (hit->m_channel.y==0){ //this is the first crystal
+			for (int ihit=0;ihit<hit->m_data.size();ihit++){
+				switch (hit->m_data[ihit].readout){
+				case 1:
+					E1=hit->m_data[ihit].E;
+					T1=hit->m_data[ihit].T;
+					flag1=hit->m_data[ihit].good_ped_RMS;
 
-				m_event->Ec1=E1;
-				m_event->Qc1=hit->m_data[ihit].Q;
-				m_event->Qcs1=hit->m_data[ihit].Qs;
-				break;
-			case 2:
-				E2=hit->m_data[ihit].E;
-				T2=hit->m_data[ihit].T;
-				flag2=hit->m_data[ihit].good_ped_RMS;
+					m_event->Ec1=E1;
+					m_event->Qc1=hit->m_data[ihit].Q;
+					m_event->Qcs1=hit->m_data[ihit].Qs;
+					break;
+				case 2:
+					E2=hit->m_data[ihit].E;
+					T2=hit->m_data[ihit].T;
+					flag2=hit->m_data[ihit].good_ped_RMS;
 
-				m_event->Ec2=E2;
-				m_event->Qc2=hit->m_data[ihit].Q;
-				m_event->Qcs2=hit->m_data[ihit].Qs;
-				break;
+					m_event->Ec2=E2;
+					m_event->Qc2=hit->m_data[ihit].Q;
+					m_event->Qcs2=hit->m_data[ihit].Qs;
+					break;
+				}
 			}
+		}
+		else if (hit->m_channel.y==1){ //the second crystal
+			m_event->Ec3=hit->m_data[0].E;
+			m_event->Qc3=hit->m_data[0].Q;
+			m_event->Qcs3=hit->m_data[0].Qs;
+			m_event->E2=hit->m_data[0].E;
+			m_event->T2=hit->m_data[0].T;
+			m_event->flag_RMS2=hit->m_data[0].good_ped_RMS;
 		}
 		m_event->AddAssociatedObject(hit);
 	}
+
 	if (E2<=m_EC2_cut){
-		m_event->E=E2;
-		m_event->T=T2;
-		m_event->flag_RMS=flag2;
+		m_event->E1=E2;
+		m_event->T1=T2;
+		m_event->flag_RMS1=flag2;
 	}
 	else{
-		m_event->E=E1;
-		m_event->T=T1;
-		m_event->flag_RMS=flag1;
+		m_event->E1=E1;
+		m_event->T1=T1;
+		m_event->flag_RMS1=flag1;
 	}
+
+	m_event->E=(m_event->E1+m_event->E2)/2;
+	m_event->T=(m_event->T1*m_event->E1+m_event->T2*m_event->E2)/((m_event->E1+m_event->E2));
+	m_event->flag_RMS=(m_event->flag_RMS1)&&(m_event->flag_RMS2);
 
 	/*Now loop on external veto hits*/
 	m_event->nExtVetoHits=0;
@@ -215,10 +234,10 @@ jerror_t CataniaEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		const PaddlesHit *phit=(*phits_it);
 		switch (phit->m_channel.id){
 		case (0):
-														m_event->Ep1=phit->E;
+																m_event->Ep1=phit->E;
 		break;
 		case (1):
-														m_event->Ep2=phit->E;
+																m_event->Ep2=phit->E;
 		break;
 		}
 	}

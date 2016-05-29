@@ -33,11 +33,13 @@ class CataniaEvent:public jana::JObject,public TObject{
 			AddString(items,"RMSflag","%i",flag_RMS);
 		}
 
-		double Qc1,Qc2,Qcs1,Qcs2;
+		double Qc1,Qc2,Qc3,Qcs1,Qcs2,Qcs3;
+		double Ec1,Ec2,Ec3;
 
-		double Ec1,Ec2;
-		double E,T;
-		bool flag_RMS;
+
+		double E1,T1,E2,T2,E,T;
+		bool flag_RMS,flag_RMS1,flag_RMS2;
+
 
 		int nExtVetoHits;
 		int nExtVetoHitsCoincidence;
