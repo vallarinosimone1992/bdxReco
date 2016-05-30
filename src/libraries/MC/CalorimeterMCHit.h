@@ -36,6 +36,7 @@ class CalorimeterMCHit:public jana::JObject{
 
 		//raw banks
 		double totEdep;
+		int pid;
 };
 
 #endif // _genParticle_

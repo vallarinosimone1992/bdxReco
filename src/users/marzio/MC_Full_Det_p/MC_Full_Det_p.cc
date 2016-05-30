@@ -129,9 +129,13 @@ jerror_t MC_Full_Det_p::init(void)
 
     t->Branch("Eseed",&Eseed);
     t->Branch("Ecluster",&Ecluster);
+    t->Branch("Tcluster",&Tcluster);
     t->Branch("sector_seed",&sector_seed);
     t->Branch("x_seed",&x_seed);
     t->Branch("y_seed",&y_seed);
+
+    t->Branch("theta",&theta);
+
 
 
 
@@ -283,9 +287,10 @@ jerror_t MC_Full_Det_p::evnt(JEventLoop *loop, uint64_t eventnumber)
             sector_seed = clhit->sectorseed;
             x_seed = clhit->xseed;
             y_seed = clhit->yseed;
+            theta=clhit->theta;
 
-//            jout<<"Eseed= "<<clhit->Eseed<<" Xseed= "<<clhit->xseed<<" Yseed= "<<clhit->yseed<<endl;
-//            jout<<"Nhit_cluster= "<<clhit->Nhit_cluster<<" E_cluster= "<<clhit->E_cluster<<endl;
+            jout<<"Eseed= "<<clhit->Eseed<<" Xseed= "<<clhit->xseed<<" Yseed= "<<clhit->yseed<<" Theta= "<<theta<<endl;
+            jout<<"Nhit_cluster= "<<clhit->Nhit_cluster<<" E_cluster= "<<clhit->E_cluster<<" T_cluster= "<<clhit->T_cluster<<endl;
 
 
 	}			// end loop over MC events
@@ -303,6 +308,8 @@ jerror_t MC_Full_Det_p::evnt(JEventLoop *loop, uint64_t eventnumber)
 				jout<<"Sector= "<<calo_hit->sector<<" X= "<<calo_hit->x<<" Y= "<<calo_hit->y<<endl;
 				jout<<"adcr= "<<calo_hit->adcr<<" adcl= "<<calo_hit->adcl<<endl;				// adcr == SiPM1  , adcl=SiPM2
 				jout<<" totEdep= "<<calo_hit->totEdep<<endl;
+				jout<<" PID= "<<calo_hit->pid<<endl;
+
 				totEdep=calo_hit->totEdep;
 //				E1[i] = calo_hit->adcr/9.5;
 //				E2[i] = calo_hit->adcl/17.;
