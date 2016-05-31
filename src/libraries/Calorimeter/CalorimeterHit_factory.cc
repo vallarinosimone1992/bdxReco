@@ -138,6 +138,9 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 				hit.Q=Q;
 				hit.Qs=Qs;
 				hit.T=T;
+				hit.good_ped_RMS=m_CalorimeterDigiHit->m_data[0].good_ped_RMS;
+				hit.type=m_CalorimeterDigiHit->m_data[0].type;
+
 				/*Try to calibrate in energy and ped-sub*/
 				m_index=m_CalorimeterHit->m_channel;
 				m_index.readout=m_CalorimeterDigiHit->m_data[0].readout;

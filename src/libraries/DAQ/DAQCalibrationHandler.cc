@@ -16,7 +16,7 @@ jerror_t DAQCalibrationHandler::fillCalib(const std::vector<std::vector<double> 
 		if (irow>0) prevNdata=nData;
 		nData=calib_data.at(irow).size()-3;   //crate, slot channel
 		if (nData<=0) {
-			jerr<<"Error in IntvetoCalibration::fillCalib. No data?"<<endl;
+			jerr<<"Error in DAQCalibrationHandler::fillCalib. No data?"<<endl;
 			m_calib.clear();
 			return 	VALUE_OUT_OF_RANGE;
 		}
@@ -63,7 +63,7 @@ vector<double> DAQCalibrationHandler::getCalib(const TranslationTable::csc_t &in
 	else{
 		it=m_calib.find(index);
 		if (it==m_calib.end()){
-			jerr<<"DAQCalibrationHandler:getCalib element not found"<<endl;
+			jerr<<"DAQCalibrationHandler:getCalib element not found. ROC:  "<<index.rocid<<" SLOT: "<<index.slot<<" CH: "<<index.channel<<endl;
 			return ret;
 		}
 		else{

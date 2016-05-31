@@ -139,7 +139,6 @@ jerror_t CataniaEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 					E1=hit->m_data[ihit].E;
 					T1=hit->m_data[ihit].T;
 					flag1=hit->m_data[ihit].good_ped_RMS;
-
 					m_event->Ec1=E1;
 					m_event->Qc1=hit->m_data[ihit].Q;
 					m_event->Qcs1=hit->m_data[ihit].Qs;
@@ -148,7 +147,6 @@ jerror_t CataniaEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 					E2=hit->m_data[ihit].E;
 					T2=hit->m_data[ihit].T;
 					flag2=hit->m_data[ihit].good_ped_RMS;
-
 					m_event->Ec2=E2;
 					m_event->Qc2=hit->m_data[ihit].Q;
 					m_event->Qcs2=hit->m_data[ihit].Qs;

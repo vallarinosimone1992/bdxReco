@@ -41,6 +41,7 @@ public:
 		 AddString(items,"Qphe","%f",Qphe);
 		 AddString(items,"A","%f",A);
 		 AddString(items,"ped","%f",ped);
+		 AddString(items,"rms_flag","%i",1*good_ped_RMS);
 	}
 
 	//A.C. do not touch these

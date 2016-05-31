@@ -60,7 +60,7 @@ void* JanaViewRootGUIThread(void *arg)
 	JVMF = new jv_mainframe(gClient->GetRoot(), 600, 600, true);
 	
 	try{
-		sleep(5);
+		sleep(8);
 		jout<<"JanaViewRootGuiThread: before app.Run()"<<endl;
 		app.Run();
 
