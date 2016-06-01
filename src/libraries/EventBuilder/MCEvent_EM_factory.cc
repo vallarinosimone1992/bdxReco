@@ -139,15 +139,15 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 		if(   ((m_event->E1 +m_event->E2)/2)<Ene_thr     ) continue;
 
-<<<<<<< HEAD
+
          if(((m_event->E1 +m_event->E2)/2)>=50) m_event->nCalorimeterHits_thr++;    // number of crystals above the threshold
-=======
+
 		if ( ((m_event->E1 +m_event->E2)/2)>e_crys_max ) {
 			e_crys_max=((m_event->E1 +m_event->E2)/2);
 			m_event->y_crys_max=hit->m_channel.x;		// x and y are inverted in the simulazion (?)
 			m_event->x_crys_max=hit->m_channel.y;
 		}
->>>>>>> branch 'master' of git@github.com:JeffersonLab/bdxReco.git
+
 
 		if(hit->m_channel.x==0&&hit->m_channel.y==5&&hit->m_channel.sector==5)m_event->E_single_crys = (m_event->E1 +m_event->E2)/2;			// Energy of a single cryslal
 
