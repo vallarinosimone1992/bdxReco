@@ -275,10 +275,7 @@ if(ii>0) m_event->sector_EM++;
 
 
 			seed = hit->Eseed;
-<<<<<<< HEAD
-         //   jout << "seed= "<<seed << endl;
-=======
->>>>>>> branch 'master' of git@github.com:JeffersonLab/bdxReco.git
+
 			x_cl_t[jj] = hit->x;
             y_cl_t[jj] = hit->y;
             sector_cl_t[jj]=hit->sector;
