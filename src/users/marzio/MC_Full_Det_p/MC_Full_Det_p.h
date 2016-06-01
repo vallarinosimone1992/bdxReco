@@ -41,8 +41,10 @@ class MC_Full_Det_p:public jana::JEventProcessor{
 	  double multi_sect0, multi_sect1, multi_sect2, multi_sect3, multi_sect4, multi_sect5, multi_sect6, multi_sect7;
 	  double multi_cl,multi_cl_near_seed, Eseed, Ecluster, Tcluster;
 	  int sector_seed;
-	  double x_seed, y_seed;
+	  double x_seed, y_seed, x_crysEmax, y_crysEmax;
 	  double theta;
+
+	  int block,nblock;
 
         TTree *t;
         		JROOTOutput *m_ROOTOutput;

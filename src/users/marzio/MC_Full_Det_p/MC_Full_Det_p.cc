@@ -134,6 +134,12 @@ jerror_t MC_Full_Det_p::init(void)
     t->Branch("x_seed",&x_seed);
     t->Branch("y_seed",&y_seed);
 
+    t->Branch("x_crysEmax",&x_crysEmax);
+    t->Branch("y_crysEmax",&y_crysEmax);
+
+    t->Branch("block",&block);
+    t->Branch("nblock",&nblock);
+
     t->Branch("theta",&theta);
 
 
@@ -288,6 +294,13 @@ jerror_t MC_Full_Det_p::evnt(JEventLoop *loop, uint64_t eventnumber)
             x_seed = clhit->xseed;
             y_seed = clhit->yseed;
             theta=clhit->theta;
+            x_crysEmax = clhit->x_crys_max;
+            y_crysEmax = clhit->y_crys_max;
+
+            block=clhit->Block;
+            nblock=clhit->Nblock;
+
+
 
             jout<<"Eseed= "<<clhit->Eseed<<" Xseed= "<<clhit->xseed<<" Yseed= "<<clhit->yseed<<" Theta= "<<theta<<endl;
             jout<<"Nhit_cluster= "<<clhit->Nhit_cluster<<" E_cluster= "<<clhit->E_cluster<<" T_cluster= "<<clhit->T_cluster<<endl;
@@ -362,12 +375,12 @@ jerror_t MC_Full_Det_p::evnt(JEventLoop *loop, uint64_t eventnumber)
 									    for (int ihit=0;ihit<calo_hit->m_data.size();ihit++){			// loop over the 2 SiPMs
 									    				switch (calo_hit->m_data[ihit].readout){
 									    				case 1:
-									    					E1[i]=(calo_hit->m_data[ihit].E); 		// energy calibration for muons
-									    //					E1[i]=(calo_hit->m_data[ihit].Q)/9.5; // energy calibration from data : 16 MeV  protons at 12cm from the SiPM
+									    //					E1[i]=(calo_hit->m_data[ihit].E); 		// energy calibration for muons
+									    					E1[i]=(calo_hit->m_data[ihit].Q)/9.5; // energy calibration from data : 16 MeV  protons at 12cm from the SiPM
 									    					break;
 									    				case 2:
-									    					E2[i]=(calo_hit->m_data[ihit].E); 	// energy calibration for muons
-									    //					E2[i]=(calo_hit->m_data[ihit].Q)/17; // energy calibration from data : 16 MeV  protons at 12cm from the SiPM
+									    //					E2[i]=(calo_hit->m_data[ihit].E); 	// energy calibration for muons
+									    					E2[i]=(calo_hit->m_data[ihit].Q)/17; // energy calibration from data : 16 MeV  protons at 12cm from the SiPM
 									    					break;
 									    				}
 									    			}

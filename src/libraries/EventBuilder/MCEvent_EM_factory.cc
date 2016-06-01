@@ -52,7 +52,7 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	double inefficiency_iv=1;		// % on single detector
 	double inefficiency_ev=1.;		// % on single detector
 
-	double Ene_thr=10;		// Energy threshold on single Crystal
+	double Ene_thr=0;		// Energy threshold on single Crystal
 
 	vector <const CalorimeterHit*> chits;
 	vector <const CalorimeterHit*>::const_iterator chits_it;
@@ -112,6 +112,9 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	flag1=false;
 	flag2=false;
 
+	double e_crys_max=0;
+
+
 	for (chits_it=chits.begin();chits_it!=chits.end();chits_it++){				// loop over the fired crystals
 		const CalorimeterHit *hit=(*chits_it);
 
@@ -120,12 +123,12 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		for (int ihit=0;ihit<hit->m_data.size();ihit++){			// loop over the 2 SiPMs
 				switch (hit->m_data[ihit].readout){
 				case 1:
-					m_event->phe1 +=(hit->m_data[ihit].Q);   	// Q-> number of p.e.
+				//	m_event->phe1 +=(hit->m_data[ihit].Q);   	// Q-> number of p.e.
 					m_event->E1=(hit->m_data[ihit].E); 		// energy calibration for muons
 				//	m_event->E1=(hit->m_data[ihit].Q)/9.5; // energy calibration from data : 16 MeV  protons at 12cm from the SiPM
 					break;
 				case 2:
-					m_event->phe2 +=(hit->m_data[ihit].Q);  	// Q-> number of p.e.
+				//	m_event->phe2 +=(hit->m_data[ihit].Q);  	// Q-> number of p.e.
 					m_event->E2=(hit->m_data[ihit].E); 	// energy calibration for muons
 				//	m_event->E2=(hit->m_data[ihit].Q)/17; // energy calibration from data : 16 MeV  protons at 12cm from the SiPM
 					break;
@@ -134,6 +137,11 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 		if(   ((m_event->E1 +m_event->E2)/2)<Ene_thr     ) continue;
 
+		if ( ((m_event->E1 +m_event->E2)/2)>e_crys_max ) {
+			e_crys_max=((m_event->E1 +m_event->E2)/2);
+			m_event->y_crys_max=hit->m_channel.x;		// x and y are inverted in the simulazion (?)
+			m_event->x_crys_max=hit->m_channel.y;
+		}
 
 		if(hit->m_channel.x==0&&hit->m_channel.y==5&&hit->m_channel.sector==5)m_event->E_single_crys = (m_event->E1 +m_event->E2)/2;			// Energy of a single cryslal
 		m_event->E += (m_event->E1 +m_event->E2)/2;				// sum the energies of all the crystals fired
@@ -211,6 +219,7 @@ loop->Get(all_hits);
 for (all_hits_it=all_hits.begin();all_hits_it!=all_hits.end();all_hits_it++){
 sector_hits[(*all_hits_it)->m_channel.sector].push_back(*all_hits_it);  //the [] operator in a map create a new data if key does not exists.
 }
+
 /*2: start the loop on the sectors*/
 for (sector_hits_it=sector_hits.begin();sector_hits_it!=sector_hits.end();sector_hits_it++){
 int this_sector;
@@ -251,16 +260,17 @@ if(ii>0) m_event->sector_EM++;
 
 
  int jj=0;
+ 	 jout<<"£££££££££££££££££££££££££££"<<endl;
 	for (cclusters_it=cclusters.begin();cclusters_it!=cclusters.end();cclusters_it++){			// loop over clusters
 			const CalorimeterCluster *hit=(*cclusters_it);
 
 
 
 			seed = hit->Eseed;
-
 			x_cl_t[jj] = hit->x;
             y_cl_t[jj] = hit->y;
             sector_cl_t[jj]=hit->sector;
+     	    m_event->Block=hit->sector;
 
 			E_cl += hit->E;
 			Nhits_cl += hit->Nhits;
@@ -275,7 +285,7 @@ if(ii>0) m_event->sector_EM++;
              jj++;
 
 	                           }
-
+	   m_event->Nblock=jj;
 	   double idir=0;
 	   double jdir=0;
 	   double kdir=0;
@@ -283,22 +293,25 @@ if(ii>0) m_event->sector_EM++;
 
 	   if (jj>=2){
 
-        idir = y_cl_t[1] - y_cl_t[0];
-        jdir = x_cl_t[1] - x_cl_t[0];
-        kdir = sector_cl_t[1] - sector_cl_t[0];
+        idir = (y_cl_t[1] - y_cl_t[0])*5;		// x 5 cm
+        jdir = (x_cl_t[1] - x_cl_t[0])*5;		// x 5 cm
+        kdir = (sector_cl_t[1] - sector_cl_t[0])*50;		//x 40 cm
 
-   //     jout << idir << " "<< jdir << " "<<kdir<<endl;
+        jout<< " X2= "<<x_cl_t[1]<< " X1= "<<x_cl_t[0]<<endl;
+        jout<< " Y2= "<<y_cl_t[1]<< " Y1= "<<y_cl_t[0]<<endl;
+        jout<< " Z2= "<<sector_cl_t[1]<< " Z1= "<<sector_cl_t[0]<<endl;
+        jout << idir << " "<< jdir << " "<<kdir<<endl;
 
         M = sqrt(pow(idir,2) + pow(jdir,2) + pow(kdir,2) );
 
-//        jout << M << endl;
+        jout << M << endl;
         gamma = acos(kdir/M);
 
-  //      jout << gamma<< endl;
+        jout << "Theta= "<<(180/3.1415)*gamma<< endl;
 
 	    }
 
-         m_event->theta = gamma;
+       m_event->theta = (180/3.1415)*gamma;
 
 
 
