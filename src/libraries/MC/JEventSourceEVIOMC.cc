@@ -219,6 +219,7 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory)
 			for(unsigned int ir=0; ir<bankRaw.size(); ir++){
 				if (bankRaw[ir].getIntRawVar("hitn")==bankDgt[ih].getIntDgtVar("hitn")){
 					hit->totEdep=bankRaw[ir].getIntRawVar("totEdep");
+					hit->pid=bankRaw[ir].getIntRawVar("pid");
 					break;
 				}
 			}
@@ -278,6 +279,7 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory)
 			{
 				if (bankRaw[ir].getIntRawVar("hitn")==bankDgt[ih].getIntDgtVar("hitn")){
 					hit->totEdep=bankRaw[ir].getIntRawVar("totEdep");
+
 					break;
 				}
 			}
@@ -325,6 +327,7 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory)
 			{
 				if (bankRaw[ir].getIntRawVar("hitn")==bankDgt[ih].getIntDgtVar("hitn")){
 					hit->totEdep=bankRaw[ir].getIntRawVar("totEdep");
+
 					break;
 				}
 			}
@@ -369,6 +372,7 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory)
 			{
 				if (bankRaw[ir].getIntRawVar("hitn")==bankDgt[ih].getIntDgtVar("hitn")){
 					hit->totEdep=bankRaw[ir].getIntRawVar("totEdep");
+
 					break;
 				}
 			}

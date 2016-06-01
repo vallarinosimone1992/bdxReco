@@ -241,7 +241,7 @@ jerror_t JEventProcessor_Catania::evnt(JEventLoop *loop, uint64_t eventnumber)
 		if ((tWord&0x1)==0) return NOERROR;
 	}
 
-	if (chits.size()!=1){
+	if (chits.size()==0){
 		//jout<<"No calorimeter hit this event"<<endl;
 		return NOERROR;
 	}

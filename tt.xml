@@ -32,6 +32,7 @@
       <channel number="1" detector="CALO" sector="0" row="0" col="0" readout="2"/>
       <channel number="2" detector="CALO" sector="0" row="0" col="0" readout="3"/>
       <channel number="3" detector="CALO" sector="0" row="0" col="0" readout="4"/>
+      <channel number="4" detector="CALO" sector="0" row="1" col="0" readout="1"/>
     </slot>
     <slot number="6" type="fADC250">
       <channel number="0" detector="INT_VETO" sector="0" layer="0" component="0" readout="1"/>

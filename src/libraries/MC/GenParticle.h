@@ -42,6 +42,9 @@ class GenParticle:public jana::JObject,generatedParticle{
 			jout<<momentum.x()<<" "<<momentum.y()<<" "<<momentum.z()<<std::endl;
 			jout<<vertex.x()<<" "<<vertex.y()<<" "<<vertex.z()<<std::endl;
 		}
+
+
+
 };
 
 #endif // _genParticle_

@@ -37,8 +37,11 @@ public:
 	// This method is used primarily for pretty printing
 	// the second argument to AddString is printf style format
 	void toStrings(vector<pair<string,string> > &items)const{
-		// AddString(items, "id", "%4d", id);
-		// AddString(items, "E", "%f", E);
+		 AddString(items, "Qraw", "%f",Qraw);
+		 AddString(items,"Qphe","%f",Qphe);
+		 AddString(items,"A","%f",A);
+		 AddString(items,"ped","%f",ped);
+		 AddString(items,"rms_flag","%i",1*good_ped_RMS);
 	}
 
 	//A.C. do not touch these
