@@ -52,7 +52,7 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	double inefficiency_iv=1;		// % on single detector
 	double inefficiency_ev=1.;		// % on single detector
 
-	double Ene_thr=10;		// Energy threshold on single Crystal
+	double Ene_thr=0;		// Energy threshold on single Crystal
 
 	vector <const CalorimeterHit*> chits;
 	vector <const CalorimeterHit*>::const_iterator chits_it;
@@ -108,6 +108,8 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	double T1,T2;
 	bool flag1,flag2;
 
+	int take_event=0;
+
 	T1=T2=0;
 	flag1=false;
 	flag2=false;
@@ -120,12 +122,12 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		for (int ihit=0;ihit<hit->m_data.size();ihit++){			// loop over the 2 SiPMs
 				switch (hit->m_data[ihit].readout){
 				case 1:
-					m_event->phe1 +=(hit->m_data[ihit].Q);   	// Q-> number of p.e.
+				//	m_event->phe1 +=(hit->m_data[ihit].Q);   	// Q-> number of p.e.
 					m_event->E1=(hit->m_data[ihit].E); 		// energy calibration for muons
 				//	m_event->E1=(hit->m_data[ihit].Q)/9.5; // energy calibration from data : 16 MeV  protons at 12cm from the SiPM
 					break;
 				case 2:
-					m_event->phe2 +=(hit->m_data[ihit].Q);  	// Q-> number of p.e.
+				//	m_event->phe2 +=(hit->m_data[ihit].Q);  	// Q-> number of p.e.
 					m_event->E2=(hit->m_data[ihit].E); 	// energy calibration for muons
 				//	m_event->E2=(hit->m_data[ihit].Q)/17; // energy calibration from data : 16 MeV  protons at 12cm from the SiPM
 					break;
@@ -134,11 +136,14 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 		if(   ((m_event->E1 +m_event->E2)/2)<Ene_thr     ) continue;
 
+         if(((m_event->E1 +m_event->E2)/2)>=50) m_event->nCalorimeterHits_thr++;    // number of crystals above the threshold
 
 		if(hit->m_channel.x==0&&hit->m_channel.y==5&&hit->m_channel.sector==5)m_event->E_single_crys = (m_event->E1 +m_event->E2)/2;			// Energy of a single cryslal
+
 		m_event->E += (m_event->E1 +m_event->E2)/2;				// sum the energies of all the crystals fired
 
-	    m_event->nCalorimeterHits++;
+
+		 m_event->nCalorimeterHits++;
 	    if((hit->m_channel.x==0||hit->m_channel.x==9)&&(hit->m_channel.y==0||hit->m_channel.y==9))m_event->nCalorimeterHits_ext_layer++;		// Multiplicity of the external crystals
 	    m_event->vCalorimeterHits.push_back(hit->m_channel);
 
@@ -183,7 +188,7 @@ jerror_t MCEvent_EM_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	              }			// end loop over the fired crystals
 
-
+   // if (take_event<2) m_event->E = -99;
 
  //          jout << "S0= "<< m_event->nCalorimeterHits_S0<<endl;
  //          jout << "S1= "<< m_event->nCalorimeterHits_S1<<endl;
@@ -257,7 +262,7 @@ if(ii>0) m_event->sector_EM++;
 
 
 			seed = hit->Eseed;
-
+         //   jout << "seed= "<<seed << endl;
 			x_cl_t[jj] = hit->x;
             y_cl_t[jj] = hit->y;
             sector_cl_t[jj]=hit->sector;
@@ -313,6 +318,8 @@ if(ii>0) m_event->sector_EM++;
 			m_event->E_cluster=E_cl;
 			m_event->sectorseed=sector_cl;
 
+//			jout << "sono il seed principale "<< m_event->Eseed<<endl;
+
 			//	m_event->T_cluster;
 
 
@@ -324,6 +331,7 @@ if(ii>0) m_event->sector_EM++;
 			/*Now loop on inner veto hits*/
 				m_event->nIntVetoHits=0;
 				m_event->nIntVetoHitsCoincidence=0;
+				m_event->nIntVetoHits_0=0;
 				for (ivhits_it=ivhits.begin();ivhits_it!=ivhits.end();ivhits_it++){
 					const IntVetoHit *hit=(*ivhits_it);
 					 random =((double)rand()/(double)RAND_MAX) * 100;
@@ -331,6 +339,11 @@ if(ii>0) m_event->sector_EM++;
 					else{
 						m_event->nIntVetoHits++;
 						m_event->vIntVetoHits.push_back(hit->m_channel);
+                        if(hit->m_channel.component==0){
+
+                        	m_event->nIntVetoHits_0++;      //nIntVetoHits: multiplicity of IV -top
+                        }
+
 
 					}
 				}

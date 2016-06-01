@@ -12,6 +12,7 @@
 #include <MC/CalorimeterMCHit.h>
 #include <MC/ExtVetoMCHit.h>
 #include <MC/IntVetoMCHit.h>
+#include <MC/GenParticle.h>
 
 #include <Calorimeter/CalorimeterHit.h>
 #include <ExtVeto/ExtVetoHit.h>
@@ -197,6 +198,9 @@ jerror_t MC_Full_Det::evnt(JEventLoop *loop, uint64_t eventnumber)
 	vector<const ExtVetoHit*> data_ev;
 	vector<const ExtVetoHit*>::const_iterator data_ev_hit;
 
+	vector<const GenParticle*> data_gen_mc;
+		vector<const GenParticle*>::const_iterator data_gen_mc_hit;
+
 
 	loop->Get(data);
 	loop->Get(data_calo_mc);
@@ -205,6 +209,7 @@ jerror_t MC_Full_Det::evnt(JEventLoop *loop, uint64_t eventnumber)
 	loop->Get(data_calo);
 	loop->Get(data_iv);
 	loop->Get(data_ev);
+
 
 
 
@@ -233,6 +238,8 @@ jerror_t MC_Full_Det::evnt(JEventLoop *loop, uint64_t eventnumber)
               y_cal[i] = clhit->vCalorimeterHits.at(i).y;
 
          }
+
+
 
             multi_iv = clhit->nIntVetoHits;
 			nhit_iv=multi_iv;
@@ -305,7 +312,14 @@ jerror_t MC_Full_Det::evnt(JEventLoop *loop, uint64_t eventnumber)
 									    				}
 									    			}
 									    	E[i]=(E1[i]+E2[i])/2;
+                                      if (multi_cal>1){
+                                    	  if (E[i]>0){
+                                  jout <<calo_hit->m_channel.sector<<" "<<calo_hit->m_channel.x << " "<< calo_hit->m_channel.y<< " " <<E[i]<<endl;
 
+                                    	  }
+
+
+                                      }
 
 
 									}

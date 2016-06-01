@@ -92,6 +92,7 @@ jerror_t MC_Full_Det_p::init(void)
 
 
 	t->Branch("multi_cal",&multi_cal);
+	t->Branch("multi_cal_thr",&multi_cal_thr);
 	t->Branch("multi_cal_ext_layer",&multi_cal_ext_layer);
 
 
@@ -102,6 +103,7 @@ jerror_t MC_Full_Det_p::init(void)
 
 	t->Branch("nhit_iv", &nhit_cal, "nhit_iv/I");
 	t->Branch("multi_iv",&multi_iv);
+	t->Branch("multi_iv_channel0",&multi_iv_channel0);
 	t->Branch("sector_iv",sector_iv,"sector_iv[nhit_iv]/I");
 	t->Branch("channel_iv",channel_iv,"channel_iv[nhit_iv]/I");
 
@@ -223,6 +225,7 @@ jerror_t MC_Full_Det_p::evnt(JEventLoop *loop, uint64_t eventnumber)
             E_tot = clhit->E;
             E_single_crys=clhit->E_single_crys;
 			multi_cal = clhit->nCalorimeterHits;
+			multi_cal_thr = clhit->nCalorimeterHits_thr;    // number of crystals above the threshold
 			multi_cal_ext_layer = clhit->nCalorimeterHits_ext_layer;
 			nhit_cal=multi_cal;
 			jout<<" phe1_tot= "<<phe1_tot<<" phe2_tot= "<<phe2_tot<<" E_tot= "<<E_tot<<endl;
@@ -235,7 +238,9 @@ jerror_t MC_Full_Det_p::evnt(JEventLoop *loop, uint64_t eventnumber)
              jout << "Sector Cal= "<<sector_cal[i]<<" X= "<< x_cal[i] << " Y= "<< y_cal[i]<<endl;
          }
 
-            multi_iv = clhit->nIntVetoHits;
+            multi_iv = clhit->nIntVetoHits;   // multiplcity IV total
+            multi_iv_channel0 = clhit->nIntVetoHits_0; //multiplicity IV top
+
 			nhit_iv=multi_iv;
             jout << "Mult IV="<<multi_iv << endl;
 

@@ -37,6 +37,7 @@ class MCEvent:public jana::JObject,public TObject{
 
 		int nIntVetoHits;
 		int nIntVetoHitsCoincidence;
+		int nIntVetoHits_0;
 		vector <TranslationTable::INT_VETO_Index_t> vIntVetoHits;
 		vector <TranslationTable::INT_VETO_Index_t> vIntVetoHitsCoincidence;
 
