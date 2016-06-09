@@ -11,7 +11,6 @@
 #include <MC/CalorimeterMCHit.h>
 #include <Calorimeter/CalorimeterHit.h>
 
-#include <EventBuilder/MCEvent_EM.h>
 #include <EventBuilder/MCEvent.h>
 
 #include <system/JROOTOutput.h>
@@ -137,8 +136,8 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 */
 
 
-	vector<const MCEvent_EM*> data;
-	vector<const MCEvent_EM*>::const_iterator data_it;
+	vector<const MCEvent*> data;
+	vector<const MCEvent*>::const_iterator data_it;
 
 	vector<const CalorimeterMCHit*> data_calo;
 	vector<const CalorimeterMCHit*>::const_iterator data_calo_it;
@@ -173,7 +172,7 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	for (data_it=data.begin();data_it<data.end();data_it++){		// loop over MC events
 
-			const MCEvent_EM *clhit = *data_it;
+			const MCEvent *clhit = *data_it;
 
 //			E1 = clhit->E1;
 //			E2 = clhit->E2;

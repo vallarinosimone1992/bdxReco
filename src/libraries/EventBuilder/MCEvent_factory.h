@@ -23,10 +23,11 @@ class MCEvent_factory:public jana::JFactory<MCEvent>{
 		jerror_t evnt(jana::JEventLoop *eventLoop, uint64_t eventnumber);	///< Called every event.
 		jerror_t erun(void);						///< Called everytime run number changes, provided brun has been called.
 		jerror_t fini(void);						///< Called after last event of last event source has been processed.
+		double random;
 
 	public:
 
-		double m_EC2_cut;					  //cut on the EC2 energy.
+		double m_EC2_cut;					   //cut on the EC2 energy.
 		double m_ExtVeto_timeWindows;          //cut on the ExtVeto time - coincidence with the crystal
 		double m_IntVeto_timeWindows;          //cut on the IntVeto time - coincidence with the crystal
 };

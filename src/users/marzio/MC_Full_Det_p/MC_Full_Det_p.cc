@@ -17,7 +17,7 @@
 #include <ExtVeto/ExtVetoHit.h>
 #include <IntVeto/IntVetoHit.h>
 
-#include <EventBuilder/MCEvent_EM.h>
+#include <EventBuilder/MCEvent.h>
 
 #include <system/JROOTOutput.h>
 #include "TTree.h"
@@ -187,8 +187,8 @@ jerror_t MC_Full_Det_p::evnt(JEventLoop *loop, uint64_t eventnumber)
 	vector<const ExtVetoHit*>::const_hiterator data_hit;
 */
 
-	vector<const MCEvent_EM*> data;
-	vector<const MCEvent_EM*>::const_iterator data_hit;
+	vector<const MCEvent*> data;
+	vector<const MCEvent*>::const_iterator data_hit;
 
 	vector<const CalorimeterMCHit*> data_calo_mc;
 	vector<const CalorimeterMCHit*>::const_iterator data_calo_mc_hit;
@@ -228,7 +228,7 @@ jerror_t MC_Full_Det_p::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	for (data_hit=data.begin();data_hit<data.end();data_hit++){		// loop over MC events
 
-			const MCEvent_EM *clhit = *data_hit;
+			const MCEvent *clhit = *data_hit;
 
 			phe1_tot = clhit->phe1;
 			phe2_tot = clhit->phe2;

@@ -13,9 +13,6 @@ class MCEvent:public jana::JObject,public TObject{
 	public:
 		JOBJECT_PUBLIC(MCEvent);
 		
-		// Add data members here. For example:
-		// int id;
-		// double E;
 		
 		// This method is used primarily for pretty printing
 		// the second argument to AddString is printf style format
@@ -24,9 +21,13 @@ class MCEvent:public jana::JObject,public TObject{
 			// AddString(items, "E", "%f", E);
 		}
 	//	double Ec1,Ec2;
-		double E,T, E1, E2, phe1, phe2;
-		int nCalorimeterHits;
+		double E,T, E1, E2, phe1, phe2,E_single_crys;
+		int nCalorimeterHits;   //mr
 		int nCalorimeterHits_ext_layer;
+		int nCalorimeterHits_thr;
+		int nCalorimeterHits_S0, nCalorimeterHits_S1, nCalorimeterHits_S2, nCalorimeterHits_S3, nCalorimeterHits_S4, nCalorimeterHits_S5, nCalorimeterHits_S6, nCalorimeterHits_S7;
+
+
 		vector <TranslationTable::CALO_Index_t> vCalorimeterHits;
 		bool flag_RMS;
 
@@ -42,6 +43,17 @@ class MCEvent:public jana::JObject,public TObject{
 		vector <TranslationTable::INT_VETO_Index_t> vIntVetoHitsCoincidence;
 
 		double Ep1,Ep2;
+
+		// For clustering
+		double Eseed,Nhit_cluster,Nhit_cluster_near_seed,E_cluster,T_cluster;
+		double xseed,yseed, sectorseed;
+
+		double x_crys_max,y_crys_max;
+		int Nblock,Block;
+
+		int sector_EM;
+		double theta;
+
 
 #if (!defined(__APPLE__))
 		ClassDef(MCEvent,1);
