@@ -13,6 +13,9 @@
 #include <MC/ExtVetoMCHit.h>
 #include <MC/IntVetoMCHit.h>
 
+#include <MC/GenParticle.h>
+
+
 #include <Calorimeter/CalorimeterHit.h>
 #include <ExtVeto/ExtVetoHit.h>
 #include <IntVeto/IntVetoHit.h>
@@ -199,6 +202,9 @@ jerror_t MC_Full_Det_p::evnt(JEventLoop *loop, uint64_t eventnumber)
 	vector<const ExtVetoMCHit*> data_ev_mc;
 	vector<const ExtVetoMCHit*>::const_iterator data_ev_mc_hit;
 
+	vector<const GenParticle*> data_genparticle_mc;
+	vector<const GenParticle*>::const_iterator data_genparticle_mc_hit;
+
 	vector<const CalorimeterHit*> data_calo;
 	vector<const CalorimeterHit*>::const_iterator data_calo_hit;
 
@@ -213,9 +219,11 @@ jerror_t MC_Full_Det_p::evnt(JEventLoop *loop, uint64_t eventnumber)
 	loop->Get(data_calo_mc);
 	loop->Get(data_iv_mc);
 	loop->Get(data_ev_mc);
+//	loop->Get(data_genparticle_mc);
 	loop->Get(data_calo);
 	loop->Get(data_iv);
 	loop->Get(data_ev);
+
 
 
 
@@ -343,6 +351,7 @@ jerror_t MC_Full_Det_p::evnt(JEventLoop *loop, uint64_t eventnumber)
 					const IntVetoMCHit *iv_hit = *data_iv_mc_hit;
 					jout<<"Sector= "<<iv_hit->sector<< " Channel= "<<iv_hit->channel<<" System= "<<iv_hit->system<<endl;
 					jout<<"totEdep= "<<iv_hit->totEdep<<endl;
+					jout<<" PID= "<<iv_hit->pid<<endl;
 					jout<<"adc1= "<<iv_hit->adc1<<" adc2= "<<iv_hit->adc2<<endl;
 					jout<<"adc3= "<<iv_hit->adc3<<" adc4= "<<iv_hit->adc4<<endl;
 					jout<<"tdc1= "<<iv_hit->tdc1<<" tdc2= "<<iv_hit->tdc2<<endl;
