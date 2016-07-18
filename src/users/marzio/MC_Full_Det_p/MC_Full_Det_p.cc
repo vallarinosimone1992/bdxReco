@@ -351,7 +351,7 @@ jerror_t MC_Full_Det_p::evnt(JEventLoop *loop, uint64_t eventnumber)
 					const IntVetoMCHit *iv_hit = *data_iv_mc_hit;
 					jout<<"Sector= "<<iv_hit->sector<< " Channel= "<<iv_hit->channel<<" System= "<<iv_hit->system<<endl;
 					jout<<"totEdep= "<<iv_hit->totEdep<<endl;
-					jout<<" PID= "<<iv_hit->pid<<endl;
+				//	jout<<" PID= "<<iv_hit->pid<<endl;
 					jout<<"adc1= "<<iv_hit->adc1<<" adc2= "<<iv_hit->adc2<<endl;
 					jout<<"adc3= "<<iv_hit->adc3<<" adc4= "<<iv_hit->adc4<<endl;
 					jout<<"tdc1= "<<iv_hit->tdc1<<" tdc2= "<<iv_hit->tdc2<<endl;
