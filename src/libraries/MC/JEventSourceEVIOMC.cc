@@ -46,6 +46,13 @@ JEventSourceEvioMC::JEventSourceEvioMC(const char* source_name):JEventSource(sou
 		chan = 0;
 		jerr<<e->toString()<<endl;
 	}
+
+	/*Read the bank map*/
+	map<string, string> allSystems;
+	allSystems["bdx"] = "TEXT";   //from gbank.cc src file, it will look for a file "name__bank.txt"
+	goptions bdxOpt;
+	banksMap = read_banks(bdxOpt, allSystems);
+
 }
 
 // Destructor
@@ -66,18 +73,15 @@ jerror_t JEventSourceEvioMC::GetEvent(JEvent &event)
 	hitTypes.push_back("crs");
 	hitTypes.push_back("veto");
 
-	map<string, string> allSystems;
-	allSystems["bdx"] = "TEXT";   //from gbank.cc src file, it will look for a file "name__bank.txt"
-	goptions bdxOpt;
-	banksMap = read_banks(bdxOpt, allSystems);
-	/*	map<string,gBank>::iterator it;
+
+	/*map<string,gBank>::iterator it;
 	for (it=banksMap.begin();it!=banksMap.end();it++){
-		jout<<it->first<<" "<<it->second.bankName<<endl;
+		jout<<"!!! "<<it->first<<" "<<it->second.bankName<<endl;
 		for (int a=0;a<it->second.name.size();a++){
 			jout<<it->second.name[a]<<" "<<it->second.type[a]<<" "<<endl;
 		}
-	}
-	 */
+	}*/
+
 	if(chan->read())
 	{
 		EDT=new evioDOMTree(chan);
@@ -93,6 +97,7 @@ jerror_t JEventSourceEvioMC::GetEvent(JEvent &event)
 		curRunNumber=evt->headerBank["runNo"];
 		if (overwriteRunNumber!=-1) event.SetRunNumber(overwriteRunNumber);
 		else event.SetRunNumber(curRunNumber);
+
 
 
 		return NOERROR;
@@ -139,14 +144,20 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory)
 
 	if(dataClassName == "GenParticle"){
 		vector<generatedParticle> particles; //has to be here since CopyTo requires 1 vector
-		particles =	getGenerated(*this_edt,banksMap["generated"],0);
+		map<string,gBank>::iterator it;
+		it=banksMap.find("generated");
+		if (it==banksMap.end()){
+			jerr<<"Something strange, no generated bank this event: "<<event.GetEventNumber()<<endl<<fflush;
+			return VALUE_OUT_OF_RANGE;
+		}
+
+		particles =	getGenerated(*this_edt,it->second,0);
 
 		if (particles.size()!=1){
 			jerr<<"Something strange, more than 1 gen particle: "<<particles.size()<<endl;
 			return VALUE_OUT_OF_RANGE;
 		}
 		else{
-
 			vector<GenParticle*> jparticles;
 			GenParticle *particle=new GenParticle(particles[0]);
 			jparticles.push_back(particle);
