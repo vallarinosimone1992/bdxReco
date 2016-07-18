@@ -149,6 +149,14 @@ jerror_t MC_Full_Det_p::init(void)
 
 
 
+    t->Branch("px_gen", &px_gen);
+    t->Branch("py_gen", &py_gen);
+    t->Branch("pz_gen", &pz_gen);
+    t->Branch("E_gen", &E_gen);
+    t->Branch("pid_gen", &pid_gen);
+    t->Branch("vx_gen", &vx_gen);
+    t->Branch("vy_gen", &vy_gen);
+    t->Branch("vz_gen", &vz_gen);
 
 
     //  t->Branch("h_wave",&h_wave);
@@ -238,6 +246,20 @@ jerror_t MC_Full_Det_p::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 			const GenParticle *genparticle = *data_genparticle_mc_hit;
 			genparticle->Print();
+
+			px_gen = genparticle->px;
+			py_gen = genparticle->py;
+			pz_gen = genparticle->pz;
+			E_gen = genparticle->E;
+
+			pid_gen = genparticle->pid;
+
+			vx_gen = genparticle->vx;
+			vy_gen = genparticle->vy;
+			vz_gen = genparticle->vz;
+
+
+
 
 		}
 

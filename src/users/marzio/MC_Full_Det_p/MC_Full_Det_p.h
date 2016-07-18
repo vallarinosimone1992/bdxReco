@@ -47,6 +47,11 @@ class MC_Full_Det_p:public jana::JEventProcessor{
 
 	  int block,nblock;
 
+
+	  double px_gen, py_gen, pz_gen, E_gen;
+	  int  pid_gen;
+      double vx_gen, vy_gen, vz_gen;
+
         TTree *t;
         		JROOTOutput *m_ROOTOutput;
 
