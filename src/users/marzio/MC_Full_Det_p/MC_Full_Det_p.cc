@@ -219,7 +219,7 @@ jerror_t MC_Full_Det_p::evnt(JEventLoop *loop, uint64_t eventnumber)
 	loop->Get(data_calo_mc);
 	loop->Get(data_iv_mc);
 	loop->Get(data_ev_mc);
-//	loop->Get(data_genparticle_mc);
+	loop->Get(data_genparticle_mc);
 	loop->Get(data_calo);
 	loop->Get(data_iv);
 	loop->Get(data_ev);
