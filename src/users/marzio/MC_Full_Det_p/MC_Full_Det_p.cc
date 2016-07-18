@@ -234,6 +234,14 @@ jerror_t MC_Full_Det_p::evnt(JEventLoop *loop, uint64_t eventnumber)
 	   jout << "start event= "<< eventN<< endl;
 
 
+		for (data_genparticle_mc_hit=data_genparticle_mc.begin();data_genparticle_mc_hit<data_genparticle_mc.end();data_genparticle_mc_hit++){		// loop over MC GENERATED events
+
+			const GenParticle *genparticle = *data_genparticle_mc_hit;
+			genparticle->Print();
+
+		}
+
+
 	for (data_hit=data.begin();data_hit<data.end();data_hit++){		// loop over MC events
 
 			const MCEvent *clhit = *data_hit;
