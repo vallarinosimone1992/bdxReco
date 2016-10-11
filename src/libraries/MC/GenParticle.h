@@ -38,10 +38,25 @@ class GenParticle:public jana::JObject,generatedParticle{
 
 
 		void Print()const{
+			jout<<"(((((((((((((((((((((((Gen particle)))))))))))))))))))))))))"<<std::endl;
 			jout<<"pid: "<<PID<<endl;
 			jout<<momentum.x()<<" "<<momentum.y()<<" "<<momentum.z()<<std::endl;
 			jout<<vertex.x()<<" "<<vertex.y()<<" "<<vertex.z()<<std::endl;
+			jout<<"Ene true: "<<sqrt(momentum.x()*momentum.x()+momentum.y()*momentum.y()+momentum.z()*momentum.z())<<" MeV"<<std::endl;   // rest massignored
+			jout<<"(((((((((((((((((((((((((((((()))))))))))))))))))))))))))))))"<<std::endl;
+
 		}
+
+
+
+		double px = momentum.x();
+		double py = momentum.y();
+		double pz = momentum.z();
+        int pid = PID;
+        double vx = vertex.x();
+        double vy = vertex.y();
+        double vz = vertex.z();
+        double E = sqrt(momentum.x()*momentum.x()+momentum.y()*momentum.y()+momentum.z()*momentum.z());
 
 
 

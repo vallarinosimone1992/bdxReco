@@ -364,7 +364,7 @@ if(ii>0) m_event->sector_EM++;
 		 random =((double)rand()/(double)RAND_MAX) * 100;
 //		jout << "Sector= "<<hit->m_channel.sector<< "Component  "<<hit->m_channel.component<<endl;
 
-		if (hit->T<0 || random<inefficiency_ev) continue; //The ExtVeto condition for a "good" hit
+		if (hit->E<=0||hit->T<0 || random<inefficiency_ev) continue; //The ExtVeto condition for a "good" hit
 
 		else{
 			m_event->nExtVetoHits++;

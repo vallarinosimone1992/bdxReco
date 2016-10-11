@@ -163,6 +163,7 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory)
 			jparticles.push_back(particle);
 
 
+
 			JFactory<GenParticle> *fac= dynamic_cast<JFactory<GenParticle>*>(factory);
 			fac->CopyTo(jparticles);
 			return NOERROR;
