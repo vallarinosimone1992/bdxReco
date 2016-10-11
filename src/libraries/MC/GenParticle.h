@@ -49,14 +49,14 @@ class GenParticle:public jana::JObject,generatedParticle{
 
 
 
-		double px = momentum.x();
-		double py = momentum.y();
-		double pz = momentum.z();
-        int pid = PID;
-        double vx = vertex.x();
-        double vy = vertex.y();
-        double vz = vertex.z();
-        double E = sqrt(momentum.x()*momentum.x()+momentum.y()*momentum.y()+momentum.z()*momentum.z());
+		double px;
+		double py;
+		double pz;
+        int pid;
+        double vx;
+        double vy;
+        double vz;
+        double E;
 
 
 
