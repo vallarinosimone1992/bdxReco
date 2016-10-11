@@ -26,7 +26,7 @@ class CataniaEvent_factory:public jana::JFactory<CataniaEvent>{
 
 	public:
 
-		double m_EC2_cut;					  //cut on the EC2 energy.
+		double m_EC2_cut;					   //cut on the EC2 energy.
 		double m_ExtVeto_timeWindows;          //cut on the ExtVeto time - coincidence with the crystal
 		double m_IntVeto_timeWindows;          //cut on the IntVeto time - coincidence with the crystal
 

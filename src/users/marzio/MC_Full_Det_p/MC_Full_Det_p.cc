@@ -78,7 +78,7 @@ jerror_t MC_Full_Det_p::init(void)
 
 	app->RootWriteLock();
 
-	jout<<"test::init is called"<<std::endl;
+	// //jout<<"test::init is called"<<std::endl;
 
 	t=new TTree("t","t");
 
@@ -246,36 +246,36 @@ jerror_t MC_Full_Det_p::evnt(JEventLoop *loop, uint64_t eventnumber)
 			multi_cal_thr = clhit->nCalorimeterHits_thr;    // number of crystals above the threshold
 			multi_cal_ext_layer = clhit->nCalorimeterHits_ext_layer;
 			nhit_cal=multi_cal;
-			jout<<" phe1_tot= "<<phe1_tot<<" phe2_tot= "<<phe2_tot<<" E_tot= "<<E_tot<<endl;
-            jout<<" Mult_Cal= "<<multi_cal<<" Multi_cal_ext_layer= "<<multi_cal_ext_layer<<endl;
+			// //jout<<" phe1_tot= "<<phe1_tot<<" phe2_tot= "<<phe2_tot<<" E_tot= "<<E_tot<<endl;
+            // //jout<<" Mult_Cal= "<<multi_cal<<" Multi_cal_ext_layer= "<<multi_cal_ext_layer<<endl;
 
          for (int i=0; i<multi_cal;i++){
 			sector_cal[i] = clhit->vCalorimeterHits.at(i).sector;
               x_cal[i] = clhit->vCalorimeterHits.at(i).x;
               y_cal[i] = clhit->vCalorimeterHits.at(i).y;
-             jout << "Sector Cal= "<<sector_cal[i]<<" X= "<< x_cal[i] << " Y= "<< y_cal[i]<<endl;
+             // //jout << "Sector Cal= "<<sector_cal[i]<<" X= "<< x_cal[i] << " Y= "<< y_cal[i]<<endl;
          }
 
             multi_iv = clhit->nIntVetoHits;   // multiplcity IV total
             multi_iv_channel0 = clhit->nIntVetoHits_0; //multiplicity IV top
 
 			nhit_iv=multi_iv;
-            jout << "Mult IV="<<multi_iv << endl;
+            // //jout << "Mult IV="<<multi_iv << endl;
 
             for (int i=0; i<multi_iv;i++){
          			sector_iv[i] = clhit->vIntVetoHits.at(i).sector;
                     channel_iv[i] = clhit->vIntVetoHits.at(i).component;
-                    jout<<"Sector IV = "<<sector_iv[i]<<" Component IV= "<<channel_iv[i]<<endl;
+                    // //jout<<"Sector IV = "<<sector_iv[i]<<" Component IV= "<<channel_iv[i]<<endl;
                   }
 
             multi_ev = clhit->nExtVetoHits;
 			nhit_ev=multi_ev;
-            jout << "Mult EV="<<multi_ev << endl;
+            // //jout << "Mult EV="<<multi_ev << endl;
 
             for (int i=0; i<multi_ev;i++){
                      			sector_ev[i] = clhit->vExtVetoHits.at(i).sector;
                                 channel_ev[i] = clhit->vExtVetoHits.at(i).component;
-                                jout<<"Sector EV = "<<sector_ev[i]<<" Component EV= "<<channel_ev[i]<<endl;
+                                // //jout<<"Sector EV = "<<sector_ev[i]<<" Component EV= "<<channel_ev[i]<<endl;
 
             }
 
@@ -288,14 +288,14 @@ jerror_t MC_Full_Det_p::evnt(JEventLoop *loop, uint64_t eventnumber)
             multi_sect6 = clhit->nCalorimeterHits_S6;
             multi_sect7 = clhit->nCalorimeterHits_S7;
             /*
-            			jout<<"multi_sect0= "<<multi_sect0<<endl;
-            			jout<<"multi_sect1= "<<multi_sect1<<endl;
-            			jout<<"multi_sect2= "<<multi_sect2<<endl;
-            			jout<<"multi_sect3= "<<multi_sect3<<endl;
-            			jout<<"multi_sect4= "<<multi_sect4<<endl;
-            			jout<<"multi_sect5= "<<multi_sect5<<endl;
-            			jout<<"multi_sect6= "<<multi_sect6<<endl;
-            			jout<<"multi_sect7= "<<multi_sect7<<endl;
+            			// //jout<<"multi_sect0= "<<multi_sect0<<endl;
+            			// //jout<<"multi_sect1= "<<multi_sect1<<endl;
+            			// //jout<<"multi_sect2= "<<multi_sect2<<endl;
+            			// //jout<<"multi_sect3= "<<multi_sect3<<endl;
+            			// //jout<<"multi_sect4= "<<multi_sect4<<endl;
+            			// //jout<<"multi_sect5= "<<multi_sect5<<endl;
+            			// //jout<<"multi_sect6= "<<multi_sect6<<endl;
+            			// //jout<<"multi_sect7= "<<multi_sect7<<endl;
             */
 
             multi_cl = clhit->Nhit_cluster;
@@ -315,76 +315,76 @@ jerror_t MC_Full_Det_p::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 
 
-            jout<<"Eseed= "<<clhit->Eseed<<" Xseed= "<<clhit->xseed<<" Yseed= "<<clhit->yseed<<" Theta= "<<theta<<endl;
-            jout<<"Nhit_cluster= "<<clhit->Nhit_cluster<<" E_cluster= "<<clhit->E_cluster<<" T_cluster= "<<clhit->T_cluster<<endl;
+            // //jout<<"Eseed= "<<clhit->Eseed<<" Xseed= "<<clhit->xseed<<" Yseed= "<<clhit->yseed<<" Theta= "<<theta<<endl;
+            // //jout<<"Nhit_cluster= "<<clhit->Nhit_cluster<<" E_cluster= "<<clhit->E_cluster<<" T_cluster= "<<clhit->T_cluster<<endl;
 
 
 	}			// end loop over MC events
 
 
-	jout <<" $$$$$$$$$$$$$ Now MC HIT $$$$$$$$$$$$$$$"<<endl;
+	// //jout <<" $$$$$$$$$$$$$ Now MC HIT $$$$$$$$$$$$$$$"<<endl;
 
-    jout << "/// Calorimeter ///"<<endl;
+    // //jout << "/// Calorimeter ///"<<endl;
     E_tot_MC=0;
 
 	int i=0;
 	for (data_calo_mc_hit=data_calo_mc.begin();data_calo_mc_hit<data_calo_mc.end();data_calo_mc_hit++){	// loop over CaloMC hits
 		i++;
 				const CalorimeterMCHit *calo_hit = *data_calo_mc_hit;
-				jout<<"Sector= "<<calo_hit->sector<<" X= "<<calo_hit->x<<" Y= "<<calo_hit->y<<endl;
-				jout<<"adcr= "<<calo_hit->adcr<<" adcl= "<<calo_hit->adcl<<endl;				// adcr == SiPM1  , adcl=SiPM2
-				jout<<" totEdep= "<<calo_hit->totEdep<<endl;
-				jout<<" PID= "<<calo_hit->pid<<endl;
+				// //jout<<"Sector= "<<calo_hit->sector<<" X= "<<calo_hit->x<<" Y= "<<calo_hit->y<<endl;
+				// //jout<<"adcr= "<<calo_hit->adcr<<" adcl= "<<calo_hit->adcl<<endl;				// adcr == SiPM1  , adcl=SiPM2
+				// //jout<<" totEdep= "<<calo_hit->totEdep<<endl;
+				// //jout<<" PID= "<<calo_hit->pid<<endl;
 
 				totEdep=calo_hit->totEdep;
 //				E1[i] = calo_hit->adcr/9.5;
 //				E2[i] = calo_hit->adcl/17.;
-				jout << "(hardcoded calib) E1= "<<calo_hit->adcr/9.5<<" E2= "<< calo_hit->adcl/17. <<endl;
+				// //jout << "(hardcoded calib) E1= "<<calo_hit->adcr/9.5<<" E2= "<< calo_hit->adcl/17. <<endl;
 				E_tot_MC+=calo_hit->totEdep;
 				         }
-    jout <<"////////////"<<endl;
-     jout<<"E_tot_MC= "<<E_tot_MC<<endl;
-	jout << "/// IV /// "<<endl;
+    // //jout <<"////////////"<<endl;
+     // //jout<<"E_tot_MC= "<<E_tot_MC<<endl;
+	// //jout << "/// IV /// "<<endl;
 	 i=0;
 		for (data_iv_mc_hit=data_iv_mc.begin();data_iv_mc_hit<data_iv_mc.end();data_iv_mc_hit++){	// loop over Interna Veto MC hits
 			i++;
 					const IntVetoMCHit *iv_hit = *data_iv_mc_hit;
-					jout<<"Sector= "<<iv_hit->sector<< " Channel= "<<iv_hit->channel<<" System= "<<iv_hit->system<<endl;
-					jout<<"totEdep= "<<iv_hit->totEdep<<endl;
-				//	jout<<" PID= "<<iv_hit->pid<<endl;
-					jout<<"adc1= "<<iv_hit->adc1<<" adc2= "<<iv_hit->adc2<<endl;
-					jout<<"adc3= "<<iv_hit->adc3<<" adc4= "<<iv_hit->adc4<<endl;
-					jout<<"tdc1= "<<iv_hit->tdc1<<" tdc2= "<<iv_hit->tdc2<<endl;
-					jout<<"tdc3= "<<iv_hit->tdc3<<" tdc4= "<<iv_hit->tdc4<<endl;
+					// //jout<<"Sector= "<<iv_hit->sector<< " Channel= "<<iv_hit->channel<<" System= "<<iv_hit->system<<endl;
+					// //jout<<"totEdep= "<<iv_hit->totEdep<<endl;
+				//	// //jout<<" PID= "<<iv_hit->pid<<endl;
+					// //jout<<"adc1= "<<iv_hit->adc1<<" adc2= "<<iv_hit->adc2<<endl;
+					// //jout<<"adc3= "<<iv_hit->adc3<<" adc4= "<<iv_hit->adc4<<endl;
+					// //jout<<"tdc1= "<<iv_hit->tdc1<<" tdc2= "<<iv_hit->tdc2<<endl;
+					// //jout<<"tdc3= "<<iv_hit->tdc3<<" tdc4= "<<iv_hit->tdc4<<endl;
 
 					         }
-	    jout <<"////////////"<<endl;
+	    // //jout <<"////////////"<<endl;
 
 
-		jout << "/// EV /// "<<endl;
+		// //jout << "/// EV /// "<<endl;
 	  i=0;
 				for (data_ev_mc_hit=data_ev_mc.begin();data_ev_mc_hit<data_ev_mc.end();data_ev_mc_hit++){	// loop over External Veto MC hits
 					i++;
 							const ExtVetoMCHit *ev_hit = *data_ev_mc_hit;
-							jout<<"Sector= "<<ev_hit->sector<< " Channel= "<<ev_hit->channel<<" System= "<<ev_hit->system<<endl;
-							jout<<"totEdep= "<<ev_hit->totEdep<<endl;
-							jout<<"adc= "<<ev_hit->adc<<" tdc= "<<ev_hit->tdc<<endl;
+							// //jout<<"Sector= "<<ev_hit->sector<< " Channel= "<<ev_hit->channel<<" System= "<<ev_hit->system<<endl;
+							// //jout<<"totEdep= "<<ev_hit->totEdep<<endl;
+							// //jout<<"adc= "<<ev_hit->adc<<" tdc= "<<ev_hit->tdc<<endl;
 							         }
-			    jout <<"////////////"<<endl;
+			    // //jout <<"////////////"<<endl;
 
 
-				jout <<" $$$$$$$$$$$$$ Now Data HIT $$$$$$$$$$$$$$$"<<endl;
+				// //jout <<" $$$$$$$$$$$$$ Now Data HIT $$$$$$$$$$$$$$$"<<endl;
 
-		jout << "/// Calorimeter /// "<<endl;
+		// //jout << "/// Calorimeter /// "<<endl;
 			 i=0;
 					for (data_calo_hit=data_calo.begin();data_calo_hit<data_calo.end();data_calo_hit++){	// loop over reconstructed Calorimeter hits
 									 	i++;
 									    const CalorimeterHit *calo_hit = *data_calo_hit;
 
-									    jout<<"Sector= "<<calo_hit->m_channel.sector<<" X= "<<calo_hit->m_channel.x<<" Y= "<<calo_hit->m_channel.y<<" Readout= "<<calo_hit->m_channel.readout<<endl;
-									    jout<<"E= "<<calo_hit->E<<endl;
-									    jout<<"Q= "<<calo_hit->Q<<endl;			// Q in p.e. is the sum of SiPM1+SiPM2
-									    jout<<"T= "<<calo_hit->T<<endl;
+									    // //jout<<"Sector= "<<calo_hit->m_channel.sector<<" X= "<<calo_hit->m_channel.x<<" Y= "<<calo_hit->m_channel.y<<" Readout= "<<calo_hit->m_channel.readout<<endl;
+									    // //jout<<"E= "<<calo_hit->E<<endl;
+									    // //jout<<"Q= "<<calo_hit->Q<<endl;			// Q in p.e. is the sum of SiPM1+SiPM2
+									    // //jout<<"T= "<<calo_hit->T<<endl;
 
 									    for (int ihit=0;ihit<calo_hit->m_data.size();ihit++){			// loop over the 2 SiPMs
 									    				switch (calo_hit->m_data[ihit].readout){
@@ -400,45 +400,45 @@ jerror_t MC_Full_Det_p::evnt(JEventLoop *loop, uint64_t eventnumber)
 									    			}
 									    	E[i]=(E1[i]+E2[i])/2;
 
-									    	jout<<"i= "<<i<<" E1= "<<E1[i]<<" E2= "<<E2[i]<< " E= "<<E[i]<<endl;
+									    	// //jout<<"i= "<<i<<" E1= "<<E1[i]<<" E2= "<<E2[i]<< " E= "<<E[i]<<endl;
 
 									}
-									    jout <<"////////////"<<endl;
+									    // //jout <<"////////////"<<endl;
 
 
-	    jout << "/// IV /// "<<endl;
+	    // //jout << "/// IV /// "<<endl;
 			  i=0;
 				  	for (data_iv_hit=data_iv.begin();data_iv_hit<data_iv.end();data_iv_hit++){	// loop over External Veto MC hits
 					    			i++;
 					    				const IntVetoHit *iv_hit = *data_iv_hit;
 
-					    			jout<<"Sector= "<<iv_hit->m_channel.sector<<" Layer= "<<iv_hit->m_channel.layer<<" Component= "<<iv_hit->m_channel.component<<endl;
-					    			jout<<"Q= "<<iv_hit->Q<<endl;
-					    		    jout<<"T= "<<iv_hit->T<<endl;
+					    			// //jout<<"Sector= "<<iv_hit->m_channel.sector<<" Layer= "<<iv_hit->m_channel.layer<<" Component= "<<iv_hit->m_channel.component<<endl;
+					    			// //jout<<"Q= "<<iv_hit->Q<<endl;
+					    		    // //jout<<"T= "<<iv_hit->T<<endl;
 					    							         }
 
-					    			    jout <<"////////////"<<endl;
+					    			    // //jout <<"////////////"<<endl;
 
-	    jout << "/// EV /// "<<endl;
+	    // //jout << "/// EV /// "<<endl;
 	    	  i=0;
 	    				for (data_ev_hit=data_ev.begin();data_ev_hit<data_ev.end();data_ev_hit++){	// loop over External Veto MC hits
 	    					i++;
 	    							const ExtVetoHit *ev_hit = *data_ev_hit;
 
-	    							jout<<"Sector= "<<ev_hit->m_channel.sector<<" Component= "<<ev_hit->m_channel.component<<endl;
-	    							jout<<"Q= "<<ev_hit->E<<endl;
-	    							jout<<"T= "<<ev_hit->T<<endl;
+	    							// //jout<<"Sector= "<<ev_hit->m_channel.sector<<" Component= "<<ev_hit->m_channel.component<<endl;
+	    							// //jout<<"Q= "<<ev_hit->E<<endl;
+	    							// //jout<<"T= "<<ev_hit->T<<endl;
 	    							         }
 
-	    			    jout <<"////////////"<<endl;
+	    			    // //jout <<"////////////"<<endl;
 
 		t->Fill();
 
 		japp->RootUnLock();
 
-		jout<<"**********************************************"<<endl;
-		jout<<"**********************************************"<<endl;
-		jout<<"**********************************************"<<endl;
+		// //jout<<"**********************************************"<<endl;
+		// //jout<<"**********************************************"<<endl;
+		// //jout<<"**********************************************"<<endl;
 
 		return NOERROR;
 		}
