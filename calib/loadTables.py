@@ -101,7 +101,7 @@ filen = variation+"/ExtVeto.Ene"
 command = commandBase+table+filen
 subprocess.call(command,shell=True)
 
-#ExtVeto
+#Paddles
 table = "/Paddles/PMT_gain "
 filen = variation+"/Paddles.PMT_gain"
 command = commandBase+table+filen
