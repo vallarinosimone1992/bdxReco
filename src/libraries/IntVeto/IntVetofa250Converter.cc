@@ -89,6 +89,7 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 
 
 
+
 	//1: compute the average
 	for (int ii=0;ii<size;ii++){
 		output->average+=m_waveform.at(ii);
