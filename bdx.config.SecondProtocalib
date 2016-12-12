@@ -8,7 +8,7 @@ THREAD_TIMEOUT_FIRST_EVENT 120
 #IntVeto parameters
 INTVETO:MIN_TOT  12    #min tot in ns to consider a pulse
 INTVETO:THR	 0.5   	#min amplitude of a pulse -in phe units
-INTVETO:NPED 60    #num of samples in pedestal determination event by event
+INTVETO:NPED 20    #num of samples in pedestal determination event by event
 INTVETO:NSB	 20    #num of samples before the maximum
 INTVETO:NSA	 30    #num of samples after  the maximum
 
@@ -17,7 +17,7 @@ INTVETO:HIT_THR_SINGLE  -30   #thr in phe charge for a detector with single read
 INTVETO:HIT_THR_MULTI   -30   #thr in phe charge for a detector with multiple readout
 INTVETO:HIT_N_MULTI     2   #multiplicity for a detector with multi readout
 
-INTVETO:HIT_BOTTOM_WORKAROUND 1 #the work-around for the bottom plate (sector=layer=0 component=3), that is seen as a single object but is separate
+INTVETO:HIT_BOTTOM_WORKAROUND 0 #the work-around for the bottom plate (sector=layer=0 component=3), that is seen as a single object but is separate for protov1
 INTVETO:VERBOSE  2
 
 #ExtVeto parameters
