@@ -46,11 +46,11 @@ JEventSourceEvioDAQ::JEventSourceEvioDAQ(const char* source_name):JEventSource(s
 	gPARMS->SetDefaultParameter("DAQ:RUN_NUMBER",overwriteRunNumber);
 
 	// open EVIO file - buffer is hardcoded at 3M... that right?
-	jout << " Opening input file " << source_name << "." << endl;
+	jout << " Opening input file " << source_name <<  endl;
 
 	try{
-		//		chan = new evioFileChannel(source_name, "r", 300000);
-		chan = new evioFileChannel(source_name, "r", 10804);
+		chan = new evioFileChannel(source_name, "r", 300000);
+		//chan = new evioFileChannel(source_name, "r", 10804);
 		chan->open();
 	}
 	catch(evioException *e){
@@ -95,7 +95,6 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event)
 				//				int leafSize = leaf->getSize();
 				vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
 				curRunNumber=pData->at(1);
-				jout<<"JEventSourceEvioDAQ::GetEvent new run number: "<<curRunNumber<<endl;
 			}
 			if((*iter)->tag==eventHeader_CODA_tag){ /*To be compatible also with data taken without header*/
 				const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*iter);
@@ -143,6 +142,7 @@ jerror_t JEventSourceEvioDAQ::GetObjects(JEvent &event, JFactory_base *factory)
 
 	// Get name of data class we're trying to extract
 	string dataClassName = factory->GetDataClassName();
+
 
 	//As suggested by David, do a check on the factory type to decide what to do
 	JFactory<fa250Mode1Hit> *fac_fa250Mode1hit = dynamic_cast<JFactory<fa250Mode1Hit>*>(factory);
@@ -326,32 +326,6 @@ jerror_t JEventSourceEvioDAQ::GetObjects(JEvent &event, JFactory_base *factory)
 		return NOERROR;
 	}
 
-	/*Mevent* this_evt = (Mevent*)event.GetRef();
-
-
-
-	if(dataClassName == "CTOFhit")
-	{
-		// getting EVIO bank
-		vector<hitOutput> bankDgt = this_evt->dgtBanks["ctof"];
-
-		vector<CTOFhit*> ctofhits;
-		for(unsigned int ih=0; ih<bankDgt.size(); ih++)
-		{
-			CTOFhit *ctofhit = new CTOFhit;
-			ctofhit->paddle = bankDgt[ih].getIntDgtVar("paddle");
-			ctofhit->ADCL   = bankDgt[ih].getIntDgtVar("ADCL");
-			ctofhit->ADCR   = bankDgt[ih].getIntDgtVar("ADCR");
-			ctofhits.push_back(ctofhit);
-		}
-
-		// publish the CTOFhit
-		JFactory<CTOFhit> *fac = dynamic_cast<JFactory<CTOFhit>*>(factory);
-		fac->CopyTo(ctofhits);
-		return NOERROR;
-
-	}
-	 */
 
 
 

@@ -73,11 +73,11 @@ void    EvioCompositeDecoder::decode(vector<uint32_t> *vec, int dataSize){
 		if ((bankSlot<=0)||(bankSlot>21)) continue;  //A.C. work-around
 
 
-		/* cout << " decoding : SLOT = " << (unsigned int) bankSlot
+/*	 cout << " decoding : SLOT = " << (unsigned int) bankSlot
 	 << "  TRIGGER = " << bankTrigger 
 	 << "  TIME = " << bankTime 
-	 << " NCHAN = " << bankNChannels  << endl;*/
-
+	 << " NCHAN = " << bankNChannels  << endl;
+*/
 
 		nchannels = 0;
 
