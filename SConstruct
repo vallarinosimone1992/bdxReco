@@ -3,13 +3,7 @@ from init_env import init_environment
 import platform
 import SCons
 
-	
-	
-	
-
-
-
-env = init_environment("clas12 qt5 evio jana clhep root banks ccdb geant4 xercesc")
+env = init_environment("qt5 clas12 root evio jana clhep banks ccdb geant4 xercesc mlibrary")
 
 
 debug = ARGUMENTS.get('debug', 0)

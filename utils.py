@@ -28,7 +28,7 @@ def AddROOTdict(env,reldir,absdir):
 	rootclingpath = "%s/bin/rootcling" % (rootsys)
 	if env['SHOWBUILD']==0:
 			rootcintactionNoLinkDef  = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCE" % (rootcintpath," -I".join(env['CPPPATH'])), 'ROOTCINT   [$SOURCE]')
-			rootclingactionNoLinkDef = SCons.Script.Action("%s  -f $TARGET -c -p -I%s $SOURCE" % (rootclingpath," -I".join(env['CPPPATH'])), 'ROOTCLING  [$SOURCE]')
+			rootclingactionNoLinkDef = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCE" % (rootclingpath," -I".join(env['CPPPATH'])), 'ROOTCLING  [$SOURCE]')
 	else:
 			rootcintactionNoLinkDef  = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCE" % (rootcintpath," -I".join(env['CPPPATH'])))
 			rootclingactionNoLinkDef = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCE" % (rootclingpath," -I".join(env['CPPPATH'])))

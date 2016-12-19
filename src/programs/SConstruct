@@ -1,8 +1,13 @@
 Import('env')
 
 # Loop over libraries, building each
-progs=['bdxReco']
+this_env=env.Copy()
+this_env.Prepend(LIBS="libbdxRecoExt") 
+this_env.Prepend(LIBS="libbdxReco")
 
+
+progs=['bdxReco']
 for prog in progs:
     src =Glob(prog+'/*.cc')
-    env.Program(source=src,target='#/bin/'+prog,LIBS=['bdxRecoExt','bdxReco'])
+    this_env.Program(source=src,target='#/bin/'+prog)	
+
