@@ -83,11 +83,19 @@ jerror_t JEventProcessor_energycal::init(void)
 
 	t=new TTree("energycal","energycal");
 	t->Branch("eventN",&eventN);
+
+	/*Old CsI(Tl) crystal*/
 	t->Branch("Qc1",&Qc1);
 	t->Branch("Qc2",&Qc2);
 	t->Branch("Qctot",&Qctot);
 	t->Branch("Tc1",&Tc1);
 	t->Branch("Tc2",&Tc2);
+
+	/*New matrix*/
+	t->Branch("Qmatrix",Qmatrix);
+	t->Branch("Tmatrix",Tmatrix);
+
+	/*Two paddles*/
 	t->Branch("Ep1",&Ep1);
 	t->Branch("Ep2",&Ep2);
 	t->Branch("Qp1",&Qp1);
@@ -234,32 +242,54 @@ jerror_t JEventProcessor_energycal::evnt(JEventLoop *loop, uint64_t eventnumber)
 		const CalorimeterHit *evchit= *cdata_it;
 		Qc1=0;
 		Qc2=0;
-		for (int idata=0;idata<evchit->m_data.size();idata++){
-			switch (evchit->m_data[idata].readout){
-			case (1):
-								Qc1 = evchit->m_data[idata].Q;
-								Tc1 = evchit->m_data[idata].T;
-			break;
-			case (2):
-								Qc2 = evchit->m_data[idata].Q;
-								Tc2 = evchit->m_data[idata].T;
-			break;
-			default:
-				break;
-
+		switch (evchit->m_channel.sector){
+		case 0: /*4x4 matrix*/
+			/*There's 1 readut only. Check this*/
+			if (evchit->m_data.size()!=1){
+				jout<<"Error! CalorimeterHit x: "<<evchit->m_channel.x<<" y: "<<evchit->m_channel.y<<" has "<<evchit->m_data.size()<<" entries (should be 1)"<<endl;
 			}
+			Qmatrix[evchit->m_channel.y*4+evchit->m_channel.x]=evchit->m_data[0].Q;
+			Tmatrix[evchit->m_channel.y*4+evchit->m_channel.x]=evchit->m_data[0].T;
+			break;
+		case 1: /*Old CsI(Tl)*/
+			for (int idata=0;idata<evchit->m_data.size();idata++){
+				switch (evchit->m_data[idata].readout){
+				case (1):
+											Qc1 = evchit->m_data[idata].Q;
+				Tc1 = evchit->m_data[idata].T;
+				break;
+				case (2):
+											Qc2 = evchit->m_data[idata].Q;
+				Tc2 = evchit->m_data[idata].T;
+				break;
+				default:
+					break;
+				}
+			}
+		break;
+		case 2: /*New BSO*/
+
+		break;
+
+		default:
+
+		break;
+
+
+
 		}
+
 
 		Ec_MC=0;
 		if (isMC){
-				evchit->Get(mc_data); //use a vector since it is re-iterating!
-				for (int imc=0;imc<mc_data.size();imc++){
-					Ec_MC+=mc_data[imc]->totEdep;
-				}
+			evchit->Get(mc_data); //use a vector since it is re-iterating!
+			for (int imc=0;imc<mc_data.size();imc++){
+				Ec_MC+=mc_data[imc]->totEdep;
 			}
-			else{
-				Ec_MC=-1;
-			}
+		}
+		else{
+			Ec_MC=-1;
+		}
 	}
 
 
@@ -279,7 +309,10 @@ jerror_t JEventProcessor_energycal::evnt(JEventLoop *loop, uint64_t eventnumber)
 		hc1_2->Fill(Qc1,Qc2);
 	}
 	eventN=eventnumber;
-	if((Ep1 > 0.5) && (Ep2 > 0.5)) t->Fill();
+	//if((Ep1 > 0.5) && (Ep2 > 0.5)) t->Fill();
+
+//	if((Ep1 > 0.5) && (Ep2 > 0.5))
+	t->Fill();
 
 	app->RootUnLock();
 

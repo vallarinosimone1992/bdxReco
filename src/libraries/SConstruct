@@ -11,3 +11,5 @@ for lib in libs:
 	AddROOTdict(env,reldir,absdir)
 	src = src+Glob(lib+'/*.cc')
 env.SharedLibrary(source=src,target='#/lib/bdxReco')
+
+

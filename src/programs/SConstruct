@@ -1,7 +1,7 @@
 Import('env')
 
 # Loop over libraries, building each
-this_env=env.Copy()
+this_env=env.Clone()
 this_env.Prepend(LIBS="libbdxRecoExt") 
 this_env.Prepend(LIBS="libbdxReco")
 
