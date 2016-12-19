@@ -92,8 +92,8 @@ jerror_t JEventProcessor_energycal::init(void)
 	t->Branch("Tc2",&Tc2);
 
 	/*New matrix*/
-	t->Branch("Qmatrix",Qmatrix);
-	t->Branch("Tmatrix",Tmatrix);
+	t->Branch("Qmatrix",Qmatrix,"Qmatrix[16]/D");
+	t->Branch("Tmatrix",Tmatrix,"Tmatrix[16]/D");
 
 	/*Two paddles*/
 	t->Branch("Ep1",&Ep1);
@@ -237,7 +237,11 @@ jerror_t JEventProcessor_energycal::evnt(JEventLoop *loop, uint64_t eventnumber)
 		}
 
 	}
-
+	for (int ii=0;ii<16;ii++){
+		Qmatrix[ii]=-1000;
+		Tmatrix[ii]=-1000;
+	}
+	jout<<endl<<endl;
 	for (cdata_it=cdata.begin();cdata_it<cdata.end();cdata_it++){
 		const CalorimeterHit *evchit= *cdata_it;
 		Qc1=0;
@@ -248,6 +252,7 @@ jerror_t JEventProcessor_energycal::evnt(JEventLoop *loop, uint64_t eventnumber)
 			if (evchit->m_data.size()!=1){
 				jout<<"Error! CalorimeterHit x: "<<evchit->m_channel.x<<" y: "<<evchit->m_channel.y<<" has "<<evchit->m_data.size()<<" entries (should be 1)"<<endl;
 			}
+			cout<<"x: "<<evchit->m_channel.x<<" y: "<<evchit->m_channel.y<<endl;
 			Qmatrix[evchit->m_channel.y*4+evchit->m_channel.x]=evchit->m_data[0].Q;
 			Tmatrix[evchit->m_channel.y*4+evchit->m_channel.x]=evchit->m_data[0].T;
 			break;

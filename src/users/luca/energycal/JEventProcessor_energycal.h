@@ -41,7 +41,8 @@ private:
 
 	//data variables
 	double Qc1,Qc2,Ep1,Ep2,Qctot,Tp1,Tp2,Tpdiff,Tc1,Tc2,Qp1,Qp2;
-	double Qmatrix[16],Tmatrix[16];
+	double Qmatrix[16];
+	double Tmatrix[16];
 	const IntVetoDigiHit* topHit;
 
 
