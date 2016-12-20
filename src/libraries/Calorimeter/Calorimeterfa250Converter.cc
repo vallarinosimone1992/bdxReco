@@ -228,9 +228,16 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 		if (xmin<0) xmin=0;
 		if (xmax>=size) xmax=size-1;
 
+
 		output->Qraw=this->sumSamples((int)xmin,(int)xmax,&(input->samples[0]));
 		output->A=this->getMaximum(input->samples.size(),&(input->samples[0]),Tmax);
 
+		/*jout<<input->m_channel.slot<<" "<<input->m_channel.channel<<" "<<output->A<<endl;
+		for (int is=0;is<input->samples.size();is++){
+			jout<<input->samples[is]<<" ";
+		}
+		jout<<endl;
+		 */
 		/*A.C. test*/
 		xmin=xmax-m_NSB;
 		if (xmin<0) xmin=0;

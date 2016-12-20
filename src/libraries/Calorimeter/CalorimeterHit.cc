@@ -18,7 +18,7 @@ TCanvas* CalorimeterHit::Draw(int id)const{
 	}
 	m_canvas->Clear();
 	m_canvas->cd();
-	m_canvas->Divide(2,2);
+	m_canvas->Divide(4,4);
 
 	vector <const fa250Mode1CalibPedSubHit*> waves;
 	this->Get(waves);

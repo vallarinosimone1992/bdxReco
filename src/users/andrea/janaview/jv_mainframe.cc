@@ -120,6 +120,7 @@ void jv_mainframe::DoQuit(void)
 //-------------------
 void jv_mainframe::DoNext(void)
 {
+	canvas2->Clear();
 	JEP->NextEvent();
 }
 
@@ -296,9 +297,6 @@ void jv_mainframe::DoSelectObject2(Int_t id)
 		DrawObject(obj);
 	}
 	//UpdateObjectValues(obj);
-
-
-
 }
 
 

@@ -29,7 +29,7 @@ class eventData:public jana::JObject{
 			AddString(items,"eventN","%i",eventN);
 			AddString(items,"time","%i",time);
 			for (int iword=0;iword<triggerWords.size();iword++){
-			 AddString(items, Form("word_%i",iword), "%i", triggerWords.at(iword));
+			 AddString(items, Form("word_%i",iword), "%x", triggerWords[iword]);
 			}
 		}
 		

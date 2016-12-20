@@ -40,5 +40,8 @@ void fa250Mode1Hit::toHisto(TH1D *h)const{
 	for (int ii=0;ii<N;ii++){
 		h->Fill(ii,this->samples[ii]);
 	}
+	for (int ii=0;ii<=h->GetNbinsX();ii++){
+		h->SetBinError(ii,0.);
+	}
 	return;
 }
