@@ -270,7 +270,7 @@ jerror_t JEventProcessor_IntVeto_digi::evnt(JEventLoop *loop, uint64_t eventnumb
 		}
 		break;
 		case (1):
-													Q1_1=(*data_it)->m_data[0].Q;
+		Q1_1=(*data_it)->m_data[0].Q;
 		Q1_2=(*data_it)->m_data[1].Q;
 		Q1_3=(*data_it)->m_data[2].Q;
 		Q1_4=(*data_it)->m_data[3].Q;

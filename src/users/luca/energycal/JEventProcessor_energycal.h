@@ -13,7 +13,7 @@ class TH1D;
 class TH2D;
 class TF1;
 class TTree;
-class IntVetoDigiHit;
+class IntVetoHit;
 class JROOTOutput;
 
 
@@ -43,13 +43,14 @@ private:
 	double Qc1,Qc2,Ep1,Ep2,Qctot,Tp1,Tp2,Tpdiff,Tc1,Tc2,Qp1,Qp2;
 	double Qmatrix[16];
 	double Tmatrix[16];
-	int    RMSmatrix[16];
-	const IntVetoDigiHit* topHit;
+	bool    RMSmatrix[16];
+
+	vector<IntVetoHit> IntVetoHits;
 
 
 	//MC variables
 	double Ec_MC;
-
+	double Ematrix_MC[16];
 	int eventN;
 
 };

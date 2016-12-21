@@ -18,6 +18,8 @@ using namespace jana;
 
 #include <MC/CalorimeterMCHit.h>
 
+#include <IntVeto/IntVetoHit.h>
+
 // Routine used to create our JEventProcessor
 #include <JANA/JApplication.h>
 #include <JANA/JFactory.h>
@@ -94,7 +96,7 @@ jerror_t JEventProcessor_energycal::init(void)
 	/*New matrix*/
 	t->Branch("Qmatrix",Qmatrix,"Qmatrix[16]/D");
 	t->Branch("Tmatrix",Tmatrix,"Tmatrix[16]/D");
-	t->Branch("RMSmatrix",RMSmatrix,"RMSmatrix[16]/I");
+	t->Branch("RMSmatrix",RMSmatrix,"RMSmatrix[16]/O");
 
 	/*Two paddles*/
 	t->Branch("Ep1",&Ep1);
@@ -105,8 +107,14 @@ jerror_t JEventProcessor_energycal::init(void)
 	t->Branch("Tp2",&Tp2);
 	t->Branch("Tpdiff",&Tpdiff);
 
-	//Create always MC branch
+	/*Inner hit - use to calibrate requiring one hit on TOP and one hit on BOTTOM*/
+	t->Branch("IntVetoHits",&IntVetoHits);
+
+
+	/*MC branch Old crystal*/
 	t->Branch("Ec_MC",&Ec_MC);
+	/*Matrix*/
+	t->Branch("Ematrix_MC",Ematrix_MC,"Ematrix_MC[16]/D");
 
 	app->RootUnLock();
 	return NOERROR;
@@ -197,15 +205,44 @@ jerror_t JEventProcessor_energycal::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	vector<const PaddlesHit*> data;
 	vector<const PaddlesHit*>::const_iterator data_it;
-	loop->Get(data);
+
 
 
 	vector<const CalorimeterHit*> cdata;
 	vector<const CalorimeterHit*>::const_iterator cdata_it;
+
+	vector<const IntVetoHit*> ivdata;
+	vector<const IntVetoHit*>::const_iterator ivdata_it;
+	loop->Get(ivdata);
+
+	vector<const CalorimeterMCHit*> mc_data;
+
+
+
+	/*Check immedaitely if there's an inner veto hit on TOP and on BOTTOM.
+	 * If not, go next
+	 */
+
+	int hasTop=0;
+	int hasBottom=0;
+	const double thrTOP=5;
+	const double thrBOTTOM=5;
+
+	for (ivdata_it=ivdata.begin();ivdata_it<ivdata.end();ivdata_it++){
+				const IntVetoHit *ivhit= *ivdata_it;
+				if ((ivhit->m_channel.component==0)&&(ivhit->Q>thrTOP)) hasTop=1;
+				if ((ivhit->m_channel.component==3)&&(ivhit->Q>thrBOTTOM)) hasBottom=1;
+	}
+
+	if ((hasTop==0)||(hasBottom==0)) return OBJECT_NOT_AVAILABLE;
+
+	loop->Get(data);
 	loop->Get(cdata);
 
 
-	vector<const CalorimeterMCHit*> mc_data;
+
+
+
 
 	app->RootWriteLock();
 	double E,T;
@@ -253,44 +290,62 @@ jerror_t JEventProcessor_energycal::evnt(JEventLoop *loop, uint64_t eventnumber)
 			if (evchit->m_data.size()!=1){
 				jout<<"Error! CalorimeterHit x: "<<evchit->m_channel.x<<" y: "<<evchit->m_channel.y<<" has "<<evchit->m_data.size()<<" entries (should be 1)"<<endl;
 			}
-
 			Qmatrix[evchit->m_channel.y*4+evchit->m_channel.x]=evchit->m_data[0].Q;
 			Tmatrix[evchit->m_channel.y*4+evchit->m_channel.x]=evchit->m_data[0].T;
+			RMSmatrix[evchit->m_channel.y*4+evchit->m_channel.x]=evchit->m_data[0].good_ped_RMS;
 			break;
 		case 1: /*Old CsI(Tl)*/
 			for (int idata=0;idata<evchit->m_data.size();idata++){
 				switch (evchit->m_data[idata].readout){
 				case (1):
-											Qc1 = evchit->m_data[idata].Q;
+				Qc1 = evchit->m_data[idata].Q;
 				Tc1 = evchit->m_data[idata].T;
 				break;
 				case (2):
-											Qc2 = evchit->m_data[idata].Q;
+				Qc2 = evchit->m_data[idata].Q;
 				Tc2 = evchit->m_data[idata].T;
 				break;
 				default:
 					break;
 				}
 			}
-		break;
+			break;
 		case 2: /*New BSO*/
 
-		break;
+			break;
 
 		default:
 
-		break;
+			break;
+		}
 
 
-
+		IntVetoHits.clear();
+		for (ivdata_it=ivdata.begin();ivdata_it<ivdata.end();ivdata_it++){
+			const IntVetoHit *ivhit= *ivdata_it;
+			IntVetoHit ivhit_tmp = *ivhit;
+			IntVetoHits.push_back(ivhit_tmp);
 		}
 
 
 		Ec_MC=0;
+		for (int ii=0;ii<16;ii++) Ematrix_MC[ii]=0;
+
 		if (isMC){
 			evchit->Get(mc_data); //use a vector since it is re-iterating!
 			for (int imc=0;imc<mc_data.size();imc++){
-				Ec_MC+=mc_data[imc]->totEdep;
+
+				switch(mc_data[imc]->sector){
+
+				case 0: /*New matrix*/
+					Ematrix_MC[mc_data[imc]->y*4+mc_data[imc]->x]+=mc_data[imc]->totEdep;
+					break;
+				case 1: /*Old CsI(Tl)*/
+					Ec_MC+=mc_data[imc]->totEdep;
+					break;
+				default:
+					break;
+				}
 			}
 		}
 		else{
