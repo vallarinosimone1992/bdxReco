@@ -127,8 +127,7 @@ public:
 		}
 		static const int nIDs() {
 			return 4;
-		}
-		;
+		};
 		inline bool isSameActive(const EXT_VETO_Index_t &rhs) const {
 			return (sector == rhs.sector) && (layer == rhs.layer)
 					&& (component == rhs.component);
@@ -188,8 +187,7 @@ public:
 		}
 		static const int nIDs() {
 			return 4;
-		}
-		;
+		};
 		inline bool isSameActive(const INT_VETO_Index_t &rhs) const {
 			return (sector == rhs.sector) && (layer == rhs.layer)
 					&& (component == rhs.component);
@@ -248,8 +246,7 @@ public:
 		}
 		static const int nIDs() {
 			return 4;
-		}
-		;
+		};
 		inline bool isSameActive(const CALO_Index_t &rhs) const {
 			return (sector == rhs.sector) && (x == rhs.x) && (y == rhs.y);
 		}
@@ -289,7 +286,6 @@ public:
 			case 0:
 				return id;
 				break;
-
 			default:
 				jerr << "Wrong id" << std::endl;
 				break;
@@ -297,8 +293,7 @@ public:
 		}
 		static const int nIDs() {
 			return 1;
-		}
-		;
+		};
 		inline bool isSameActive(const PADDLES_Index_t &rhs) const {
 			return (id == rhs.id);
 		}
