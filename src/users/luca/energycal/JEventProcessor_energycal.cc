@@ -317,8 +317,8 @@ jerror_t JEventProcessor_energycal::evnt(JEventLoop *loop, uint64_t eventnumber)
 	eventN=eventnumber;
 	//if((Ep1 > 0.5) && (Ep2 > 0.5)) t->Fill();
 
-	if((Qp1 > 50) && (Qp2 > 50))	t->Fill();
-
+	//if((Qp1 > 50) && (Qp2 > 50))	t->Fill();
+	t->Fill();
 	app->RootUnLock();
 
 
