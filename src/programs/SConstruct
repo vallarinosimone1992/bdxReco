@@ -1,3 +1,4 @@
+import glob
 Import('env')
 
 # Loop over libraries, building each

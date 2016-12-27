@@ -13,11 +13,15 @@
 #include <TT/TranslationTable.h>
 #include <system/BDXObject.h>
 #include <Calorimeter/CalorimeterSiPMHit.h>
-#include <TH1D.h>
-#include <TCanvas.h>
 
 
-class CalorimeterHit:public BDXObject{
+#include <TObject.h>
+
+class TH1D;
+class TCanvas;
+
+
+class CalorimeterHit:public TObject,public BDXObject{
 
 public:
 	struct CalorimeterComponentHit{
@@ -46,7 +50,7 @@ public:
 	double E,Q,T;
 	int N; //how many counters associated with this object were above thr (i.e. how many entries in m_data?
 
-	virtual TCanvas* Draw(int id)const;
+	virtual TCanvas* Draw(int id)const; //!
 
 	TranslationTable::CALO_Index_t m_channel; //Detector-specific ID. Since this is a detector-based object, the readout field will be ==0
 

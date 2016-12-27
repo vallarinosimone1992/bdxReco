@@ -21,7 +21,7 @@
  * - Be as similar as possible to what is obtained from GEMC, while we wait GEMC producing composite, fadc-like, banks.
  */
 
-class IntVetoDigiHit:public jana::JObject,public TObject{
+class IntVetoDigiHit:public TObject,public jana::JObject{
 public:
 	struct IntVetoSiPMDigiHit{
 		int readout;

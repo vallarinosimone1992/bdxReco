@@ -16,7 +16,7 @@ using namespace jana;
 TranslationTable_factory::TranslationTable_factory():
 						tt(0),isMC(0),VERBOSE(0){
 
-	jout<<"TranslationTable_factory creator is called"<<endl;
+
 
 	gPARMS->SetDefaultParameter("TT:VERBOSE", VERBOSE,
 			"Verbosity level for Applying Translation Table."
@@ -41,6 +41,9 @@ TranslationTable_factory::TranslationTable_factory():
 				"Comma separated list of systems to parse EVIO data for. "
 				"Default is empty string which means to parse all. System "
 				"names should be what is returned by DTranslationTable::DetectorName() .");
+	if (VERBOSE>2){
+		jout<<"TranslationTable_factory creator is called. Pointer is: "<<this<<endl;
+	}
 }
 
 
@@ -65,13 +68,15 @@ jerror_t TranslationTable_factory::brun(jana::JEventLoop *eventLoop, int32_t run
 
 	if (isMC==0){
 		// Grab run-dependent translation table from CCDB
+		if (VERBOSE>3){
+					jout<<"TranslationTable_factory::brun -> TT will be created"<<endl;
+		}
 		tt = new TranslationTable(eventLoop);
 
-		// Keep this translation table around and reuse it for
-		// susequent events
+		// Keep this translation table around and reuse it for susequent events
 		_data.push_back(tt);
 		SetFactoryFlag(PERSISTANT);  /*This is very, very important: the Reset Method is not called at every event, so we do not clear data, and we
-	can get the TranslationTable also in evnt method of other factories / event processors*/
+		can get the TranslationTable also in evnt method of other factories / event processors*/
 
 		// If restricting parsing, make sure it is set for this source
 		//	tt->SetSystemsToParse(loop->GetJEvent().GetJEventSource());

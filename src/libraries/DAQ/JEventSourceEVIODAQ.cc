@@ -49,8 +49,7 @@ JEventSourceEvioDAQ::JEventSourceEvioDAQ(const char* source_name):JEventSource(s
 	jout << " Opening input file " << source_name <<  endl;
 
 	try{
-		chan = new evioFileChannel(source_name, "r", 300000);
-		//chan = new evioFileChannel(source_name, "r", 10804);
+		chan = new evioFileChannel(source_name, "r", 3000000);
 		chan->open();
 	}
 	catch(evioException *e){
@@ -64,8 +63,10 @@ JEventSourceEvioDAQ::JEventSourceEvioDAQ(const char* source_name):JEventSource(s
 JEventSourceEvioDAQ::~JEventSourceEvioDAQ()
 {
 	cout << " Closing input file " << source_name << "." << endl;
-	chan->close();
-	delete chan;
+	if (chan){
+		chan->close();
+		delete chan;
+	}
 }
 
 // GetEvent
@@ -75,14 +76,10 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event)
 	event.SetRef(NULL);
 
 
-	if(chan->read())
-	{
+	if(chan->read()){
 		EDT=new evioDOMTree(chan);
-
-		//	Mevent *this_evt = new Mevent(EDT, hitTypes, &banksMap, 0);
-
-		event.SetJEventSource(this);
 		event.SetRef(EDT);
+		event.SetJEventSource(this);
 
 
 		//This part is fine for real data @ catania
@@ -92,19 +89,16 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event)
 		for(iter=fullList->begin(); iter!=fullList->end(); iter++) {
 			if(((*iter)->tag==prestart_tag)&&(overwriteRunNumber==-1)){
 				const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*iter);
-				//				int leafSize = leaf->getSize();
 				vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
 				curRunNumber=pData->at(1);
 			}
-			if((*iter)->tag==eventHeader_CODA_tag){ /*To be compatible also with data taken without header*/
+			if((*iter)->tag==eventHeader_CODA_tag){ //To be compatible also with data taken without header
 				const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*iter);
-				//				int leafSize = leaf->getSize();
 				vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
 				event.SetEventNumber(pData->at(0));
 			}
 			else if((*iter)->tag==eventHeader_tag){
 				const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*iter);
-				//				int leafSize = leaf->getSize();
 				vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
 				event.SetEventNumber(pData->at(2));
 				curRunNumber=pData->at(1);
@@ -116,6 +110,11 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event)
 	}
 	else{
 		jout<<"Source done"<<endl;
+		chan->close();
+		if (chan){
+			delete chan;
+			chan=0;
+		}
 		return NO_MORE_EVENTS_IN_SOURCE;
 	}
 }
@@ -123,8 +122,7 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event)
 // FreeEvent
 void JEventSourceEvioDAQ::FreeEvent(JEvent &event)
 {
-	delete (evioDOMTree*)event.GetRef();
-	//	delete (Mevent*)event.GetRef();
+	if (event.GetRef()!=NULL) delete (evioDOMTree*)event.GetRef();
 }
 
 // GetObjects
@@ -180,11 +178,11 @@ jerror_t JEventSourceEvioDAQ::GetObjects(JEvent &event, JFactory_base *factory)
 								vector<CompositeADCRaw_t>  decdata = decoder.getData();
 								for(int loop = 0; loop < decdata.size();loop++){
 									fa250Mode1Hit *hit=new fa250Mode1Hit();
-									/*Why I do not save directly the CompositeADCRaw_t and use it as the "Jobject in jana:\
-									 * 1) CompositeADCRaw_t is just a simple structure to old data
-									 * 2) CompositeADCRaw_t is just for evio-readout
-									 * 3) fa250Mode1Hit is a more complex class, used within JANA
-									 * */
+									//Why I do not save directly the CompositeADCRaw_t and use it as the "Jobject in jana:\
+									// 1) CompositeADCRaw_t is just a simple structure to old data
+									// 2) CompositeADCRaw_t is just for evio-readout
+									// 3) fa250Mode1Hit is a more complex class, used within JANA
+
 
 									hit->m_channel.rocid=0;  ///TODO better
 									hit->m_channel.slot=decdata[loop].slot;
@@ -195,7 +193,7 @@ jerror_t JEventSourceEvioDAQ::GetObjects(JEvent &event, JFactory_base *factory)
 
 									hit->trigger=decdata[loop].trigger;
 									hit->timestamp=decdata[loop].time;
-								//	jout<<hit->m_channel.rocid<<" "<<hit->m_channel.slot<<" "<<hit->m_channel.channel<<" "<<hit->samples.size()<<" "<<hit->trigger<<" "<<hit->timestamp<<endl;
+									//	jout<<hit->m_channel.rocid<<" "<<hit->m_channel.slot<<" "<<hit->m_channel.channel<<" "<<hit->samples.size()<<" "<<hit->trigger<<" "<<hit->timestamp<<endl;
 									data.push_back(hit);
 								}
 							} catch (exception e){
@@ -241,11 +239,11 @@ jerror_t JEventSourceEvioDAQ::GetObjects(JEvent &event, JFactory_base *factory)
 								vector<CompositeADCPulse_t>  decdata = decoder.getDataPulse();
 								for(int loop = 0; loop < decdata.size();loop++){
 									fa250Mode7Hit *hit=new fa250Mode7Hit();
-									/*Why I do not save directly the CompositeADCPulse_t and use it as the "Jobject in jana:\
-									 * 1) CompositeADCPulse_t is just a simple structure to old data
-									 * 2) CompositeADCPulse_t is just for evio-readout
-									 * 3) fa250Mode7Hit is a more complex class, used within JANA
-									 * */
+									//Why I do not save directly the CompositeADCPulse_t and use it as the "Jobject in jana:\
+									// 1) CompositeADCPulse_t is just a simple structure to old data
+									// 2) CompositeADCPulse_t is just for evio-readout
+									// 3) fa250Mode7Hit is a more complex class, used within JANA
+
 
 									hit->m_channel.rocid=0;  ///TODO better
 									hit->m_channel.slot=decdata[loop].slot;
@@ -318,7 +316,7 @@ jerror_t JEventSourceEvioDAQ::GetObjects(JEvent &event, JFactory_base *factory)
 				}
 			}
 		}
-	//	jout<<"Done: "<<this_eventData->eventN<<" "<<this_eventData->runN<<" "<<this_eventData->time<<endl;
+		//	jout<<"Done: "<<this_eventData->eventN<<" "<<this_eventData->runN<<" "<<this_eventData->time<<endl;
 		if (this_eventData->triggerWords.size()!=0){
 			data.push_back(this_eventData);
 			fac_eventData->CopyTo(data);

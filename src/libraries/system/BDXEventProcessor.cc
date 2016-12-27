@@ -11,9 +11,11 @@ using namespace std;
 #include "string_utilities.h"
 //DAQ
 #include <DAQ/eventData.h>
-
 // TT
 #include <TT/TranslationTable.h>
+
+//DST
+#include <EventBuilder/TEvent.h>
 
 #include "TTree.h"
 
@@ -23,7 +25,7 @@ using namespace std;
 
 // Constructor
 BDXEventProcessor::BDXEventProcessor():
-								m_output(0),m_tt(0),isMC(0)
+										m_output(0),m_tt(0),m_isMC(0),m_buildDST(0),m_eventDST(0),m_runInfo(0),m_event(0)
 {
 	optf="";
 
@@ -46,13 +48,15 @@ jerror_t BDXEventProcessor::init(void)
 {
 
 	bout<<"BDXEventProcessor::init"<<endl;
-	gPARMS->GetParameter("MC",isMC);
+	gPARMS->GetParameter("MC",m_isMC);
+	gPARMS->SetDefaultParameter("SYSTEM:BUILD_DST",m_buildDST,"Build the DST output");
+	bout<<"Building DST is: "<<m_buildDST<<endl;
 
 
 
 
-	gPARMS->SetDefaultParameter("SYSTEM:OUTPUT",optf,
-			"Set OUTPUT file type and name, using the form \"TYPE,FILENAME\". Type can be ROOT, EVIO, TXT. Example: -PSYSTEM:OUTPUT=\"ROOT,out.root\" ");
+
+	gPARMS->SetDefaultParameter("SYSTEM:OUTPUT",optf,"Set OUTPUT file type and name, using the form \"TYPE,FILENAME\". Type can be ROOT, EVIO, TXT. Example: -PSYSTEM:OUTPUT=\"ROOT,out.root\" ");
 
 	outType.assign(optf, 0, optf.find(",")) ;
 	outFile.assign(optf,    optf.find(",") + 1, optf.size()) ;
@@ -81,22 +85,32 @@ jerror_t BDXEventProcessor::init(void)
 
 
 	japp->RootWriteLock();
-	eventHeader=new TTree("EventHeader","EventHeader");
-	eventHeader->Branch("eventN",&eventN);
-	eventHeader->Branch("runN",&runN);
-	eventHeader->Branch("T",&eventT);
-	eventHeader->Branch("tword",&tword);
+	m_eventHeader=new TTree("EventHeader","EventHeader");
+	m_eventHeader->Branch("eventN",&eventN);
+	m_eventHeader->Branch("runN",&runN);
+	m_eventHeader->Branch("T",&eventT);
+	m_eventHeader->Branch("tword",&tword);
 
-	runInfo=new TTree("RunInfo","RunInfo");
-	runInfo->Branch("runN",&runN);
-	runInfo->Branch("dT",&deltaTime);
+	m_runInfo=new TTree("RunInfo","RunInfo");
+	m_runInfo->Branch("runN",&runN);
+	m_runInfo->Branch("dT",&deltaTime);
 	if (m_output){
 		if (m_output->className()=="JRootOutput"){
 			JROOTOutput* m_ROOTOutput=(JROOTOutput*)m_output;
-			(m_ROOTOutput)->AddObject(eventHeader);
-			(m_ROOTOutput)->AddObject(runInfo);
+			(m_ROOTOutput)->AddObject(m_eventHeader);
+			(m_ROOTOutput)->AddObject(m_runInfo);
 		}
 	}
+
+	if (m_buildDST){
+		m_eventDST=new TTree("EventDST","EventDST");
+		m_eventDST->Branch("CataniaEventProto2",&m_event);
+		m_eventDST->Branch("Event",&m_event);
+		if (m_isMC==0) m_eventDST->AddFriend(m_eventHeader);
+	}
+
+
+
 	japp->RootUnLock();
 
 	return NOERROR;
@@ -107,27 +121,12 @@ jerror_t BDXEventProcessor::brun(JEventLoop *eventLoop, int32_t runnumber)
 {
 
 	bout<<"BDXEventProcessor::brun "<<runnumber<<endl;
-	if (isMC==0) {
+	if (m_isMC==0) {
 		eventLoop->GetSingle(m_tt);
 	}
-	/*This is the part where we load ALL the calibrations,
-	 * provided they were associated with this processor!
-	 */
-	/*bout<<"Loading calibrations "<<endl;
-	bout<<"There are: "<<m_calibrations.size()<<" calibrations to load"<<endl;
-	string table;
-	CalibrationHandlerBase* calib;
-	vector<vector < double> > m_rawcalib;
-	for(m_calibrations_it= m_calibrations.begin(); m_calibrations_it!= m_calibrations.end(); m_calibrations_it++){
 
-		table=(*m_calibrations_it).second;
-		calib=(*m_calibrations_it).first;
-		bout<<"Loading table: "<<table<<endl;
-		m_rawcalib.clear();
-		eventLoop->GetCalib(table, m_rawcalib);
-		calib->fillCalib(m_rawcalib);
-	}
-	 */
+
+
 	return NOERROR;
 }
 
@@ -136,10 +135,20 @@ jerror_t BDXEventProcessor::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 
 	const eventData* tData;
-	if (isMC){
-		return NOERROR;
+	vector<const TEvent*> events;
+	if (m_buildDST){
+		loop->Get(events,"CataniaProto2");
+		if (events.size()!=1){
+			bout<<"Not a single TEvent object in this event but: "<<events.size()<<endl;
+			return RESOURCE_UNAVAILABLE;
+		}
+		japp->RootWriteLock();
+		m_event=events[0];
+		m_eventDST->Fill();
+		japp->RootUnLock();
 	}
-	else{
+
+	if (m_isMC==0){
 		try{
 			loop->GetSingle(tData);
 		}
@@ -148,21 +157,17 @@ jerror_t BDXEventProcessor::evnt(JEventLoop *loop, uint64_t eventnumber)
 			return 	OBJECT_NOT_AVAILABLE;
 		}
 		japp->RootWriteLock();
-
 		eventT=tData->time;
 		eventN=eventnumber;
 		tword=tData->triggerWords[0];
 		runN=tData->runN;
-		eventHeader->Fill();
-
-
-		/*Time*/
+		m_eventHeader->Fill();
+		//Time
 		if (eventT<startTime) startTime=eventT;
 		if (eventT>stopTime)  stopTime=eventT;
 		japp->RootUnLock();
-
-		return NOERROR;
 	}
+	return NOERROR;
 }
 
 // erun
@@ -172,7 +177,7 @@ jerror_t BDXEventProcessor::erun(void)
 	deltaTime=stopTime-startTime;
 	bout<<"BDXEventProcessor::erun "<<endl;
 	bout<<"Run start: "<<startTime<<" stop: "<<stopTime<<" diff: "<<deltaTime<<endl;
-	runInfo->Fill();
+	m_runInfo->Fill();
 	japp->RootUnLock();
 
 

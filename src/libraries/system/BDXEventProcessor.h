@@ -24,6 +24,8 @@ using namespace std;
 class TranslationTable;
 class JOutput;
 class TTree;
+class CataniaEventProto2;
+class TEvent;
 
 /*This class is the "main" event processor, that gets called in any case,
  * also if we use users plugins
@@ -66,18 +68,24 @@ private:
 
 	JOutput		*m_output;
 	const TranslationTable *m_tt;
-	int isMC;
+	int m_isMC;
 
 
 	/*The EventHeader tree*/
-	TTree *eventHeader;
+	TTree *m_eventHeader;
 	int eventN,runN,tword,eventT;
 
 	/*Time*/
 	int startTime,stopTime,deltaTime;
 
 	/*The RunInfo tree*/
-	TTree *runInfo;
+	TTree *m_runInfo;
+
+	/*Do we want to build the DST?*/
+	int m_buildDST;
+	TTree *m_eventDST;
+	//const CataniaEventProto2* m_event;
+	const TEvent* m_event;
 
 	JStreamLog bout;
 	JStreamLog berr;

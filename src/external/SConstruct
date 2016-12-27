@@ -1,3 +1,4 @@
+import glob
 Import('env')
 
 
@@ -6,5 +7,5 @@ libs=['evioReader']
 src=[]
 for lib in libs:
     src=src+Glob(lib+'/*.cc')
-    
+   
 env.SharedLibrary(source=src,target='#/lib/bdxRecoExt') 
