@@ -52,7 +52,7 @@ def AddROOTdict(env,reldir,absdir):
 			rootclingactionLinkDef = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCES ; mv `echo $TARGET | awk '{print substr($0,0,length($0)-3) \"_rdict.pcm\"}'` %s" % (rootclingpath," -I".join(env['CPPPATH']),dictdir))
 
     if os.path.exists(rootclingpath) :
-			bldLinkDef = SCons.Script.Builder(action = rootclingactionLinkDef)
+			bldLinkDef = SCons.Script.Builder(actiosn = rootclingactionLinkDef)
     elif os.path.exists(rootcintpath):
 			bldLinkDef = SCons.Script.Builder(action = rootcintactionLinkDef)
     else:

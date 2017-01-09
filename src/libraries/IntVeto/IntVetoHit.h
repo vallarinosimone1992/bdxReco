@@ -45,9 +45,8 @@ public:
 private:
 	mutable vector<TH1D*> hWaves; //!  //Exclude from root dictionary
 
-#if (!defined(__APPLE__))
 	ClassDef(IntVetoHit,1);
-#endif
+
 };
 
 #endif // _IntVetoHit_

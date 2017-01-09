@@ -79,9 +79,8 @@ public:
 	}
 
 
-#if (!defined(__APPLE__))
 	ClassDef(TEvent,1);
-#endif
+
 };
 
 #endif // _TEvent_

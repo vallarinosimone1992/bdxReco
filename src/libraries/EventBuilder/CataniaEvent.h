@@ -72,9 +72,8 @@ class CataniaEvent:public jana::JObject,public TObject{
 		uint64_t timestamp;
 
 
-#if (!defined(__APPLE__))
 		ClassDef(CataniaEvent,1);
-#endif
+
 };
 
 #endif // _CataniaEvent_

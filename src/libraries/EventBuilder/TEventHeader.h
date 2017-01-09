@@ -72,9 +72,9 @@ private:
 
 
 
-#if (!defined(__APPLE__))
+
 	ClassDef(TEventHeader,1);
-#endif
+
 };
 
 #endif /* TEVENTHEADER_H_ */

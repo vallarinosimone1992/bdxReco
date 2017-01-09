@@ -59,9 +59,7 @@ public:
 private:
 	mutable vector<TH1D*> hWaves; //!
 
-#if (!defined(__APPLE__))
 	ClassDef(CalorimeterHit,1);
-#endif
 };
 
 #endif // _CalorimeterHit_

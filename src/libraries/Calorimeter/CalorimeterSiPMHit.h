@@ -64,9 +64,9 @@ public:
 	uint64_t timestamp;
 
 	int nSingles,nSignals;
-#if (!defined(__APPLE__))
+
 	ClassDef(CalorimeterSiPMHit,1);
-#endif
+
 
 };
 #endif // _CalorimeterSiPMHit_

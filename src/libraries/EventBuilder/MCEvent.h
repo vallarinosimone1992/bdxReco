@@ -55,9 +55,9 @@ class MCEvent:public jana::JObject,public TObject{
 		double theta;
 
 
-#if (!defined(__APPLE__))
+
 		ClassDef(MCEvent,1);
-#endif
+
 };
 
 #endif // _MCEvent_
