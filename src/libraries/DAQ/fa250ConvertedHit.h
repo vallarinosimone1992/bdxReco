@@ -18,9 +18,9 @@ public:
 	JOBJECT_PUBLIC(fa250ConvertedHit);
 	fa250ConvertedHit(){};
 	virtual ~fa250ConvertedHit(){};
-#if (!defined(__APPLE__))
+
 	ClassDef(fa250ConvertedHit,1);
-#endif
+
 };
 
 
