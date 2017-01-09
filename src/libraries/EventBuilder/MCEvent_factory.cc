@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <stdlib.h>
 #include <time.h>
+#include <cmath>
 using namespace std;
 
 #include "MCEvent_factory.h"

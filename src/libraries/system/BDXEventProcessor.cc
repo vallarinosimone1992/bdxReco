@@ -104,7 +104,6 @@ jerror_t BDXEventProcessor::init(void)
 
 	if (m_buildDST){
 		m_eventDST=new TTree("EventDST","EventDST");
-		m_eventDST->Branch("CataniaEventProto2",&m_event);
 		m_eventDST->Branch("Event",&m_event);
 		if (m_isMC==0) m_eventDST->AddFriend(m_eventHeader);
 	}

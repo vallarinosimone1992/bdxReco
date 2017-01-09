@@ -42,6 +42,8 @@ private:
 	TEventHeader	*m_eventHeader;
 	vector<TClonesArray*> m_collections;
 	TObjArray			   m_objects;
+
+
 	TClonesArray* getCollection (int id) const;
 	void deleteCollection (int id);
 public:
