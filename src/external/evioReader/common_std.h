@@ -11,7 +11,7 @@
 //#include <stdint.h>
 //#include <sys/types.h>
 
-#if (defined(__APPLE__))
+/*#if (defined(__APPLE__))
 
 #ifndef uint8_t
 typedef unsigned char uint8_t;
@@ -42,11 +42,11 @@ typedef long long int64_t;
 #endif
 
 #else 
-
+*/
 #include <stdint.h>
 #include <string.h>
 
-#endif
+//#endif
 
 #endif
 /**
