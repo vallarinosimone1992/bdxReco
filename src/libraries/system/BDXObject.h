@@ -30,9 +30,8 @@ public:
 protected:
 	mutable TCanvas *m_canvas; //!
 
-#if (!defined(__APPLE__))
+
 	ClassDef(BDXObject,1);
-#endif
 
 };
 

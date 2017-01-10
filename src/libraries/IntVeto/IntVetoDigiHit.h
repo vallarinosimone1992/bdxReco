@@ -56,9 +56,9 @@ public:
 
 	double Qtot;
 	double T; //time of the maximum hit
-#if (!defined(__APPLE__))
+
 	ClassDef(IntVetoDigiHit,1);
-#endif
+
 };
 #endif // _IntVetoDigiHit_
 
