@@ -13,6 +13,7 @@ using namespace std;
 #include "CalorimeterDigiHit_factory_MC.h"
 
 #include <MC/CalorimeterMCHit.h>
+#include <MC/MCType.h>
 #include <Calorimeter/CalorimeterDigiHit.h>
 
 #include <TT/TranslationTable.h>
@@ -24,6 +25,7 @@ using namespace jana;
 //------------------
 jerror_t CalorimeterDigiHit_factory_MC::init(void)
 {
+	gPARMS->GetParameter("MC",m_isMC);
 	return NOERROR;
 }
 
@@ -59,13 +61,24 @@ jerror_t CalorimeterDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnum
 	for (it=m_CalorimeterMCHits.begin();it!=m_CalorimeterMCHits.end();it++){
 		TranslationTable::CALO_Index_t index;
 		m_CalorimeterMCHit=*it;
-		index.sector=m_CalorimeterMCHit->sector-1;
-		index.x=m_CalorimeterMCHit->x-1;
-		index.y=m_CalorimeterMCHit->y-1;
+
+		/*Following lines of code are ok for CataniaProtoV1 and for FullMC*/
+		if ((m_isMC==MCType::CATANIA_V1)||(m_isMC==MCType::FULL_V1)){
+			index.sector=m_CalorimeterMCHit->sector-1;
+			index.x=m_CalorimeterMCHit->x-1;
+			index.y=m_CalorimeterMCHit->y-1;
+		}
+		else if (m_isMC==MCType::CATANIA_V2){
+			index.sector=m_CalorimeterMCHit->sector;
+			index.x=m_CalorimeterMCHit->x;
+			index.y=m_CalorimeterMCHit->y;
+		}
 		index.readout=0;
 
 		m_map_it=m_map.find(index);
 		if (m_map_it==m_map.end()){
+
+
 			m_CalorimeterDigiHit=new CalorimeterDigiHit;
 			m_CalorimeterDigiHit->m_channel=index;
 			m_CalorimeterDigiHit->timestamp=0;
@@ -76,18 +89,20 @@ jerror_t CalorimeterDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnum
 			digi_hit.good_ped_RMS=true;/*by default!*/
 			m_CalorimeterDigiHit->m_data.push_back(digi_hit);
 
-			digi_hit.readout=2;  ///THIS IS CORRECT ---> in MC "left" is the second MPPC, i.e. readout=2
-			digi_hit.Q=m_CalorimeterMCHit->adcl;
-			digi_hit.T=m_CalorimeterMCHit->tdcl*4;
-			digi_hit.good_ped_RMS=true; /*by default!*/
-			m_CalorimeterDigiHit->m_data.push_back(digi_hit);
-			m_map[index]=m_CalorimeterDigiHit;
+			if (m_isMC==MCType::CATANIA_V1){ /*Only Catania_V1 simulations had two readouts in the crystal*/
+				digi_hit.readout=2;  ///THIS IS CORRECT ---> in MC "left" is the second MPPC, i.e. readout=2
+				digi_hit.Q=m_CalorimeterMCHit->adcl;
+				digi_hit.T=m_CalorimeterMCHit->tdcl*4;
+				digi_hit.good_ped_RMS=true; /*by default!*/
+				m_CalorimeterDigiHit->m_data.push_back(digi_hit);
+				m_map[index]=m_CalorimeterDigiHit;
+			}
 		}
 		else{
 			m_CalorimeterDigiHit=m_map_it->second;
 			m_CalorimeterDigiHit->AddAssociatedObject(m_CalorimeterMCHit);
 			m_CalorimeterDigiHit->m_data[0].Q+=m_CalorimeterMCHit->adcr;
-			m_CalorimeterDigiHit->m_data[1].Q+=m_CalorimeterMCHit->adcl;
+			if (m_isMC==MCType::CATANIA_V1)	m_CalorimeterDigiHit->m_data[1].Q+=m_CalorimeterMCHit->adcl;
 		}
 	}
 	for (m_map_it=m_map.begin();m_map_it!=m_map.end();m_map_it++){

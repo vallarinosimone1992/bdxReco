@@ -25,10 +25,11 @@ using namespace std;
 
 // Constructor
 BDXEventProcessor::BDXEventProcessor():
-										m_output(0),m_tt(0),m_isMC(0),m_buildDST(0),m_eventDST(0),m_runInfo(0),m_event(0)
+										m_output(0),m_tt(0),m_isMC(0),m_buildDST(0),m_eventDST(0),m_runInfo(0),m_event(0),eventN(0),tword(0),m_eventHeader(0),eventT(0),deltaTime(0),runN(0)
 {
 	optf="";
-
+	m_DObuildDST=0;
+	m_buildDST="";
 
 	startTime=99999999;
 	stopTime=-99999999;
@@ -49,8 +50,12 @@ jerror_t BDXEventProcessor::init(void)
 
 	bout<<"BDXEventProcessor::init"<<endl;
 	gPARMS->GetParameter("MC",m_isMC);
-	gPARMS->SetDefaultParameter("SYSTEM:BUILD_DST",m_buildDST,"Build the DST output");
+	gPARMS->SetDefaultParameter("SYSTEM:BUILD_DST",m_buildDST,"Enable DST, using the form \"TYPE\". TYPE is the name of an existing event builder. Example: -PSYSTEM:BUILD_DST=\"CataniaProto2\"");
 	bout<<"Building DST is: "<<m_buildDST<<endl;
+
+	if (m_buildDST.size()!=0){
+		m_DObuildDST=0;
+	}
 
 
 
@@ -102,7 +107,7 @@ jerror_t BDXEventProcessor::init(void)
 		}
 	}
 
-	if (m_buildDST){
+	if (m_DObuildDST){
 		m_eventDST=new TTree("EventDST","EventDST");
 		m_eventDST->Branch("Event",&m_event);
 		if (m_isMC==0) m_eventDST->AddFriend(m_eventHeader);
@@ -135,8 +140,8 @@ jerror_t BDXEventProcessor::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	const eventData* tData;
 	vector<const TEvent*> events;
-	if (m_buildDST){
-		loop->Get(events,"CataniaProto2");
+	if (m_DObuildDST){
+		loop->Get(events,m_buildDST.c_str());
 		if (events.size()!=1){
 			bout<<"Not a single TEvent object in this event but: "<<events.size()<<endl;
 			return RESOURCE_UNAVAILABLE;

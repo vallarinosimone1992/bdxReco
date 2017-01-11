@@ -18,8 +18,9 @@ public:
 	ExtVetoDigiHit_factory_MC(){};
 	~ExtVetoDigiHit_factory_MC(){};
 	const char* Tag(void){return "MC";}
-	int getCataniaComponent(int MCchannel);
-	int getFullComponent(int MCchannel);
+	int getCataniaV1Component(int MCchannel);
+	int getCataniaV2Component(int MCchannel);
+	int getFullV1Component(int MCchannel);
 private:
 	jerror_t init(void);						///< Called once at program start.
 	jerror_t brun(jana::JEventLoop *eventLoop, int32_t runnumber);	///< Called everytime a new run number is detected.
@@ -32,6 +33,7 @@ private:
 	std::map<std::pair<int,int>,ExtVetoDigiHit*> m_map;
 	std::map<std::pair<int,int>,ExtVetoDigiHit*>::iterator m_map_it;
 
+	int m_isMC;
 };
 
 #endif // _ExtVetoDigiHit_factory_MC_

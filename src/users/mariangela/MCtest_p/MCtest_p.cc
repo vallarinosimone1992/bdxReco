@@ -308,7 +308,7 @@ jerror_t MCtest::evnt(JEventLoop *loop, uint64_t eventnumber)
 							const ExtVetoMCHit *ev_hit = *data_ev_mc_hit;
 							jout<<"Sector= "<<ev_hit->sector<< " Channel= "<<ev_hit->channel<<" System= "<<ev_hit->system<<endl;
 							jout<<"totEdep= "<<ev_hit->totEdep<<endl;
-							jout<<"adc= "<<ev_hit->adc<<" tdc= "<<ev_hit->tdc<<endl;
+							jout<<"adc= "<<ev_hit->adc1<<" tdc= "<<ev_hit->tdc1<<endl;
 							         }
 			    jout <<"////////////"<<endl;
 

@@ -72,18 +72,20 @@
       <channel number="1" detector="INT_VETO" sector="0" layer="0" component="5" readout="1"/>
     </slot>
     <slot number="8" type="fADC250">
-      <channel number="0" detector="EXT_VETO" sector="0" layer="0" component="0" readout="0"/>
-      <channel number="1" detector="EXT_VETO" sector="0" layer="0" component="1" readout="0"/>
-      <channel number="2" detector="EXT_VETO" sector="0" layer="0" component="2" readout="0"/>
-      <channel number="3" detector="EXT_VETO" sector="0" layer="0" component="3" readout="0"/>
-      <channel number="4" detector="EXT_VETO" sector="0" layer="0" component="4" readout="0"/>
-      <channel number="5" detector="EXT_VETO" sector="0" layer="0" component="5" readout="0"/>
-      <channel number="6" detector="EXT_VETO" sector="0" layer="0" component="6" readout="0"/>
-      <channel number="7" detector="EXT_VETO" sector="0" layer="0" component="7" readout="0"/>
-      <channel number="8" detector="EXT_VETO" sector="0" layer="0" component="8" readout="0"/>
-      <channel number="9" detector="EXT_VETO" sector="0" layer="0" component="9" readout="0"/>
-      <channel number="10" detector="EXT_VETO" sector="0" layer="0" component="10" readout="0"/>
-      <channel number="11" detector="EXT_VETO" sector="0" layer="0" component="11" readout="0"/>
+      <channel number="0" detector="EXT_VETO" sector="0" layer="0" component="0" readout="1"/>
+      <channel number="1" detector="EXT_VETO" sector="0" layer="0" component="1" readout="1"/>
+      <channel number="2" detector="EXT_VETO" sector="0" layer="0" component="2" readout="1"/>
+      <channel number="3" detector="EXT_VETO" sector="0" layer="0" component="3" readout="1"/>
+      <channel number="4" detector="EXT_VETO" sector="0" layer="0" component="4" readout="1"/>
+      <channel number="5" detector="EXT_VETO" sector="0" layer="0" component="5" readout="1"/>
+      <channel number="6" detector="EXT_VETO" sector="0" layer="0" component="6" readout="1"/>
+      <channel number="7" detector="EXT_VETO" sector="0" layer="0" component="6" readout="2"/>
+      <channel number="8" detector="EXT_VETO" sector="0" layer="0" component="7" readout="1"/>
+      <channel number="9" detector="EXT_VETO" sector="0" layer="0" component="8" readout="1"/>
+      <channel number="10" detector="EXT_VETO" sector="0" layer="0" component="9" readout="1"/>
+      <channel number="11" detector="EXT_VETO" sector="0" layer="0" component="10" readout="1"/>
+	  <channel number="12" detector="EXT_VETO" sector="0" layer="0" component="11" readout="1"/>
+      <channel number="13" detector="EXT_VETO" sector="0" layer="0" component="12" readout="1"/>
     </slot>
     <slot number="9" type="fADC250">
       <channel number="0" detector="PADDLES" id="0" />

@@ -22,8 +22,9 @@ class IntVetoDigiHit_factory_MC:public jana::JFactory<IntVetoDigiHit>{
 		~IntVetoDigiHit_factory_MC(){};
 		const char* Tag(void){return "MC";}
 
-		int getCataniaComponent(int MCchannel);
-		int getFullComponent(int MCchannel);
+		int getCataniaV1Component(int MCchannel);
+		int getCataniaV2Component(int MCchannel);
+		int getFullV1Component(int MCchannel);
 	private:
 		jerror_t init(void);						///< Called once at program start.
 		jerror_t brun(jana::JEventLoop *eventLoop, int32_t runnumber);	///< Called everytime a new run number is detected.
@@ -35,6 +36,8 @@ class IntVetoDigiHit_factory_MC:public jana::JFactory<IntVetoDigiHit>{
 		/*The key is the way MC is organized: sector - channel (where sector and channel have a different meaning than in the real data!!!)*/
 		std::map<std::pair<int,int>,IntVetoDigiHit*> m_map;
 		std::map<std::pair<int,int>,IntVetoDigiHit*>::iterator m_map_it;
+
+		int m_isMC;
 };
 
 #endif // _IntVetoDigiHit_factory_MC_

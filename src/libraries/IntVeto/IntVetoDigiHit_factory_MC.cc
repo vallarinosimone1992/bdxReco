@@ -14,6 +14,7 @@ using namespace std;
 
 
 #include <MC/IntVetoMCHit.h>
+#include <MC/MCType.h>
 #include <IntVeto/IntVetoDigiHit.h>
 
 using namespace jana;
@@ -23,6 +24,7 @@ using namespace jana;
 //------------------
 jerror_t IntVetoDigiHit_factory_MC::init(void)
 {
+	gPARMS->GetParameter("MC",m_isMC);
 	return NOERROR;
 }
 
@@ -66,11 +68,14 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 			m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 
-			if (m_IntVetoMCHit->system==VetoMCHit::CATANIA_INTVETO){
-				m_IntVetoDigiHit->m_channel.component=this->getCataniaComponent(m_IntVetoMCHit->channel);
+			if (m_isMC==MCType::CATANIA_V1){
+				m_IntVetoDigiHit->m_channel.component=this->getCataniaV1Component(m_IntVetoMCHit->channel);
 			}
-			else{ //Case of full MC
-				m_IntVetoDigiHit->m_channel.component=this->getFullComponent(m_IntVetoMCHit->channel);
+			if (m_isMC==MCType::CATANIA_V2){
+				m_IntVetoDigiHit->m_channel.component=this->getCataniaV2Component(m_IntVetoMCHit->channel);
+			}
+			if (m_isMC==MCType::FULL_V1){
+				m_IntVetoDigiHit->m_channel.component=this->getFullV1Component(m_IntVetoMCHit->channel);
 			}
 			/*create the component sipm-hits*/
 			switch (m_IntVetoDigiHit->m_channel.component){
@@ -95,47 +100,43 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 			m_IntVetoDigiHit->m_data.push_back(digi_hit);
 			break;
 			case(3): //bottom
-										if (m_IntVetoMCHit->system==VetoMCHit::CATANIA_INTVETO){
-											digi_hit.readout=1;
-											digi_hit.Q=m_IntVetoMCHit->adc1;
-											digi_hit.T=m_IntVetoMCHit->tdc1/1000.;  //MC is in ps
-											m_IntVetoDigiHit->m_data.push_back(digi_hit);
-											digi_hit.readout=2;
-											digi_hit.Q=m_IntVetoMCHit->adc4;
-											digi_hit.T=m_IntVetoMCHit->tdc4/1000.;
-											m_IntVetoDigiHit->m_data.push_back(digi_hit);
-											digi_hit.readout=3;
-											digi_hit.Q=m_IntVetoMCHit->adc3;
-											digi_hit.T=m_IntVetoMCHit->tdc3/1000.;
-											m_IntVetoDigiHit->m_data.push_back(digi_hit);
-											digi_hit.readout=4;
-											digi_hit.Q=m_IntVetoMCHit->adc2;
-											digi_hit.T=m_IntVetoMCHit->tdc2/1000.;
-											m_IntVetoDigiHit->m_data.push_back(digi_hit);
-
-										}
-										else{
-											digi_hit.readout=1;
-											digi_hit.Q=m_IntVetoMCHit->adc1;
-											digi_hit.T=m_IntVetoMCHit->tdc1/1000.;  //MC is in ps
-											m_IntVetoDigiHit->m_data.push_back(digi_hit);
-											digi_hit.readout=2;
-											digi_hit.Q=m_IntVetoMCHit->adc2;
-											digi_hit.T=m_IntVetoMCHit->tdc3/1000.;
-											m_IntVetoDigiHit->m_data.push_back(digi_hit);
-											digi_hit.readout=3;
-											digi_hit.Q=m_IntVetoMCHit->adc3;
-											digi_hit.T=m_IntVetoMCHit->tdc3/1000.;
-											m_IntVetoDigiHit->m_data.push_back(digi_hit);
-											digi_hit.readout=4;
-											digi_hit.Q=m_IntVetoMCHit->adc4;
-											digi_hit.T=m_IntVetoMCHit->tdc4/1000.;
-											m_IntVetoDigiHit->m_data.push_back(digi_hit);
-										}
-
+								if (m_isMC==MCType::CATANIA_V1){
+									digi_hit.readout=1;
+									digi_hit.Q=m_IntVetoMCHit->adc1;
+									digi_hit.T=m_IntVetoMCHit->tdc1/1000.;  //MC is in ps
+									m_IntVetoDigiHit->m_data.push_back(digi_hit);
+									digi_hit.readout=2;
+									digi_hit.Q=m_IntVetoMCHit->adc4;
+									digi_hit.T=m_IntVetoMCHit->tdc4/1000.;
+									m_IntVetoDigiHit->m_data.push_back(digi_hit);
+									digi_hit.readout=3;
+									digi_hit.Q=m_IntVetoMCHit->adc3;
+									digi_hit.T=m_IntVetoMCHit->tdc3/1000.;
+									m_IntVetoDigiHit->m_data.push_back(digi_hit);
+									digi_hit.readout=4;
+									digi_hit.Q=m_IntVetoMCHit->adc2;
+									digi_hit.T=m_IntVetoMCHit->tdc2/1000.;
+									m_IntVetoDigiHit->m_data.push_back(digi_hit);
+								}
+								else{
+									digi_hit.readout=1;
+									digi_hit.Q=m_IntVetoMCHit->adc1;
+									digi_hit.T=m_IntVetoMCHit->tdc1/1000.;  //MC is in ps
+									m_IntVetoDigiHit->m_data.push_back(digi_hit);
+									digi_hit.readout=2;
+									digi_hit.Q=m_IntVetoMCHit->adc2;
+									digi_hit.T=m_IntVetoMCHit->tdc3/1000.;
+									m_IntVetoDigiHit->m_data.push_back(digi_hit);
+									digi_hit.readout=3;
+									digi_hit.Q=m_IntVetoMCHit->adc3;
+									digi_hit.T=m_IntVetoMCHit->tdc3/1000.;
+									m_IntVetoDigiHit->m_data.push_back(digi_hit);
+									digi_hit.readout=4;
+									digi_hit.Q=m_IntVetoMCHit->adc4;
+									digi_hit.T=m_IntVetoMCHit->tdc4/1000.;
+									m_IntVetoDigiHit->m_data.push_back(digi_hit);
+								}
 			break;
-
-
 			case(4): //upstream
 			case(5): //downstream
 			digi_hit.readout=1;
@@ -160,18 +161,18 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 			m_IntVetoDigiHit->m_data[3].Q+=m_IntVetoMCHit->adc4;
 			break;
 			case(3):
-					if (m_IntVetoMCHit->system==VetoMCHit::CATANIA_INTVETO){
-							m_IntVetoDigiHit->m_data[0].Q+=m_IntVetoMCHit->adc1;
-							m_IntVetoDigiHit->m_data[1].Q+=m_IntVetoMCHit->adc4;
-							m_IntVetoDigiHit->m_data[2].Q+=m_IntVetoMCHit->adc3;
-							m_IntVetoDigiHit->m_data[3].Q+=m_IntVetoMCHit->adc2;
-					}
-					else{
-							m_IntVetoDigiHit->m_data[0].Q+=m_IntVetoMCHit->adc1;
-							m_IntVetoDigiHit->m_data[1].Q+=m_IntVetoMCHit->adc2;
-							m_IntVetoDigiHit->m_data[2].Q+=m_IntVetoMCHit->adc3;
-							m_IntVetoDigiHit->m_data[3].Q+=m_IntVetoMCHit->adc4;
-					}
+					if (m_isMC==MCType::CATANIA_V1){
+									m_IntVetoDigiHit->m_data[0].Q+=m_IntVetoMCHit->adc1;
+									m_IntVetoDigiHit->m_data[1].Q+=m_IntVetoMCHit->adc4;
+									m_IntVetoDigiHit->m_data[2].Q+=m_IntVetoMCHit->adc3;
+									m_IntVetoDigiHit->m_data[3].Q+=m_IntVetoMCHit->adc2;
+								}
+								else{
+									m_IntVetoDigiHit->m_data[0].Q+=m_IntVetoMCHit->adc1;
+									m_IntVetoDigiHit->m_data[1].Q+=m_IntVetoMCHit->adc2;
+									m_IntVetoDigiHit->m_data[2].Q+=m_IntVetoMCHit->adc3;
+									m_IntVetoDigiHit->m_data[3].Q+=m_IntVetoMCHit->adc4;
+								}
 			break;
 
 			case(4): //upstream
@@ -185,12 +186,9 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 	for (m_map_it=m_map.begin();m_map_it!=m_map.end();m_map_it++){
 		m_IntVetoDigiHit=m_map_it->second;
 		m_IntVetoDigiHit->Qtot=0;
-//		jout<<"got it: "<<m_IntVetoDigiHit<<" ::: "<<m_IntVetoDigiHit->m_channel.sector<<" "<<m_IntVetoDigiHit->m_channel.component<<" "<<m_IntVetoDigiHit->m_data.size()<<" ";
 		for (int ii=0;ii<m_IntVetoDigiHit->m_data.size();ii++){
-		//	jout<<m_IntVetoDigiHit->m_data[ii].Q<<" ";
 			m_IntVetoDigiHit->Qtot+=m_IntVetoDigiHit->m_data[ii].Q;
 		}
-	//	jout<<" QTOT: "<<m_IntVetoDigiHit->Qtot<<endl;
 		_data.push_back(m_IntVetoDigiHit);
 	}
 	return NOERROR;
@@ -213,40 +211,59 @@ jerror_t IntVetoDigiHit_factory_MC::fini(void)
 }
 
 
-int IntVetoDigiHit_factory_MC::getCataniaComponent(int MCchannel){
+int IntVetoDigiHit_factory_MC::getCataniaV1Component(int MCchannel){
 	int component=-1;
 	switch (MCchannel){
 	case(1): //top
-																	component=0;break;
+																											component=0;break;
 	case(2): //bottom
-																	component=3;break;
+																											component=3;break;
 	case(3):  //upstream
-																	component=4;break;
+																											component=4;break;
 	case(4): //downstream
-																	component=5;break;
+																											component=5;break;
 	case(5): //right
-																	component=2;break;
+																											component=2;break;
 	case(6): //left
-																	component=1;break;
+																											component=1;break;
 	}
 	return component;
 }
 
-int IntVetoDigiHit_factory_MC::getFullComponent(int MCchannel){
+int IntVetoDigiHit_factory_MC::getCataniaV2Component(int MCchannel){
 	int component=-1;
 	switch (MCchannel){
 	case(1): //top
-																	component=0;break;
+																											component=0;break;
 	case(2): //bottom
-																	component=3;break;
+																											component=3;break;
 	case(3):  //upstream
-																	component=4;break;
+																											component=4;break;
 	case(4): //downstream
-																	component=5;break;
+																											component=5;break;
 	case(5): //right
-																	component=2;break;
+																											component=1;break;
 	case(6): //left
-																	component=1;break;
+																											component=2;break;
+	}
+	return component;
+}
+
+int IntVetoDigiHit_factory_MC::getFullV1Component(int MCchannel){
+	int component=-1;
+	switch (MCchannel){
+	case(1): //top
+																											component=0;break;
+	case(2): //bottom
+																											component=3;break;
+	case(3):  //upstream
+																											component=4;break;
+	case(4): //downstream
+																											component=5;break;
+	case(5): //right
+																											component=2;break;
+	case(6): //left
+																											component=1;break;
 	}
 	return component;
 }

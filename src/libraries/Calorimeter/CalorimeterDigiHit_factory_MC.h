@@ -28,6 +28,8 @@ private:
 	/*The key is the way MC is organized: sector - channel (where sector and channel have a different meaning than in the real data!!!)*/
 	std::map<TranslationTable::CALO_Index_t,CalorimeterDigiHit*> m_map;
 	std::map<TranslationTable::CALO_Index_t,CalorimeterDigiHit*>::iterator m_map_it;
+
+	int m_isMC;
 };
 
 #endif // _CalorimeterDigiHit_factory_MC_

@@ -82,7 +82,8 @@ private:
 	TTree *m_runInfo;
 
 	/*Do we want to build the DST?*/
-	int m_buildDST;
+	string m_buildDST;
+	int m_DObuildDST;
 	TTree *m_eventDST;
 	//const CataniaEventProto2* m_event;
 	const TEvent* m_event;

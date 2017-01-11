@@ -12,19 +12,22 @@
 #include "ExtVetoDigiHit.h"
 class TranslationTable;
 class ExtVetoDigiHit_factory:public jana::JFactory<ExtVetoDigiHit>{
-	public:
-		ExtVetoDigiHit_factory(){};
-		~ExtVetoDigiHit_factory(){};
+public:
+	ExtVetoDigiHit_factory(){};
+	~ExtVetoDigiHit_factory(){};
 
 
-	private:
-		jerror_t init(void);						///< Called once at program start.
-		jerror_t brun(jana::JEventLoop *eventLoop, int32_t runnumber);	///< Called everytime a new run number is detected.
-		jerror_t evnt(jana::JEventLoop *eventLoop, uint64_t eventnumber);	///< Called every event.
-		jerror_t erun(void);						///< Called everytime run number changes, provided brun has been called.
-		jerror_t fini(void);						///< Called after last event of last event source has been processed.
+private:
+	jerror_t init(void);						///< Called once at program start.
+	jerror_t brun(jana::JEventLoop *eventLoop, int32_t runnumber);	///< Called everytime a new run number is detected.
+	jerror_t evnt(jana::JEventLoop *eventLoop, uint64_t eventnumber);	///< Called every event.
+	jerror_t erun(void);						///< Called everytime run number changes, provided brun has been called.
+	jerror_t fini(void);						///< Called after last event of last event source has been processed.
 
-		const TranslationTable *m_tt;
+	const TranslationTable *m_tt;
+
+	std::map<TranslationTable::EXT_VETO_Index_t,ExtVetoDigiHit*> m_map;
+	std::map<TranslationTable::EXT_VETO_Index_t,ExtVetoDigiHit*>::iterator m_map_it;
 };
 
 #endif // _ExtVetoDigiHit_factory_

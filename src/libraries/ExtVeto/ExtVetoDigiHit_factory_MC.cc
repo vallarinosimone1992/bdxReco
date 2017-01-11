@@ -12,6 +12,7 @@ using namespace std;
 
 
 #include <MC/ExtVetoMCHit.h>
+#include <MC/MCType.h>
 #include <ExtVeto/ExtVetoDigiHit.h>
 
 
@@ -23,6 +24,7 @@ using namespace jana;
 //------------------
 jerror_t ExtVetoDigiHit_factory_MC::init(void)
 {
+	gPARMS->GetParameter("MC",m_isMC);
 	return NOERROR;
 }
 
@@ -41,7 +43,7 @@ jerror_t ExtVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 
 	ExtVetoDigiHit *m_ExtVetoDigiHit=0;
-
+	ExtVetoDigiHit::ExtVetoPMTDigiHit digi_hit;
 
 	const ExtVetoMCHit *m_ExtVetoMCHit=0;
 
@@ -62,31 +64,67 @@ jerror_t ExtVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 			m_ExtVetoDigiHit->AddAssociatedObject(m_ExtVetoMCHit);
 			m_ExtVetoDigiHit->m_channel.sector=m_ExtVetoMCHit->sector;
 			m_ExtVetoDigiHit->m_channel.layer=0;
-			m_ExtVetoDigiHit->m_channel.readout=0;  //this is an active-volume object
+			m_ExtVetoDigiHit->m_channel.readout=0;
 
-			if (m_ExtVetoMCHit->system==VetoMCHit::CATANIA_EXTVETO){
-				m_ExtVetoDigiHit->m_channel.component=this->getCataniaComponent(m_ExtVetoMCHit->channel);
+
+			if (m_isMC==MCType::CATANIA_V1){
+				m_ExtVetoDigiHit->m_channel.component=this->getCataniaV1Component(m_ExtVetoMCHit->channel);
+				digi_hit.readout=1;
+				digi_hit.Q=m_ExtVetoMCHit->adc1;
+				digi_hit.T=m_ExtVetoMCHit->tdc1/1000.;  //MC is in ps
+				m_ExtVetoDigiHit->m_data.push_back(digi_hit);
 			}
-			else{
-				m_ExtVetoDigiHit->m_channel.component=this->getFullComponent(m_ExtVetoMCHit->channel);; /*Keep this as in MC. There's no data to compare with!*/
+			else if (m_isMC==MCType::CATANIA_V2){
+				m_ExtVetoDigiHit->m_channel.component=this->getCataniaV2Component(m_ExtVetoMCHit->channel);
+				/*create the component PMT-hits*/
+
+				digi_hit.readout=1;
+				digi_hit.Q=m_ExtVetoMCHit->adc1;
+				digi_hit.T=m_ExtVetoMCHit->tdc1/1000.;  //MC is in ps
+				m_ExtVetoDigiHit->m_data.push_back(digi_hit);
+				if (m_ExtVetoMCHit->channel==1){
+					digi_hit.readout=2;
+					digi_hit.Q=m_ExtVetoMCHit->adc2;
+					digi_hit.T=m_ExtVetoMCHit->tdc2/1000.;  //MC is in ps
+					m_ExtVetoDigiHit->m_data.push_back(digi_hit);
+				}
+			}
+			else if (m_isMC==MCType::FULL_V1){
+				m_ExtVetoDigiHit->m_channel.component=this->getFullV1Component(m_ExtVetoMCHit->channel); /*Keep this as in MC. There's no data to compare with!*/
+				digi_hit.readout=1;
+				digi_hit.Q=m_ExtVetoMCHit->adc1;
+				digi_hit.T=m_ExtVetoMCHit->tdc1/1000.;  //MC is in ps
+				m_ExtVetoDigiHit->m_data.push_back(digi_hit);
 			}
 
 
-
-			m_ExtVetoDigiHit->Q=m_ExtVetoMCHit->adc;
-			m_ExtVetoDigiHit->T=m_ExtVetoMCHit->tdc/1000.;  //MC is in ps
 			m_map[std::make_pair(m_ExtVetoMCHit->sector,m_ExtVetoMCHit->channel)]=m_ExtVetoDigiHit;
 		}
 		else{ /*object already there*/
 			m_ExtVetoDigiHit=m_map_it->second;
-			m_ExtVetoDigiHit->Q+=m_ExtVetoMCHit->adc;
+			m_ExtVetoDigiHit->m_data[0].Q+=m_ExtVetoMCHit->adc1;
+
+			if ((m_isMC==MCType::CATANIA_V2)&&(m_ExtVetoMCHit->channel==1)){
+				m_ExtVetoDigiHit->m_data[1].Q+=m_ExtVetoMCHit->adc2;
+			}
+
+
+
+
 			m_ExtVetoDigiHit->AddAssociatedObject(m_ExtVetoMCHit);
-			//m_ExtVetoDigiHit->T=m_ExtVetoMCHit->tdc;
 		}
 	}
 
 	for (m_map_it=m_map.begin();m_map_it!=m_map.end();m_map_it++){
 		m_ExtVetoDigiHit=m_map_it->second;
+
+		m_ExtVetoDigiHit->Q=0;
+		for (int ii=0;ii<m_ExtVetoDigiHit->m_data.size();ii++){
+			m_ExtVetoDigiHit->Q+=m_ExtVetoDigiHit->m_data[ii].Q;
+		}
+
+
+
 		_data.push_back(m_ExtVetoDigiHit);
 	}
 
@@ -111,26 +149,26 @@ jerror_t ExtVetoDigiHit_factory_MC::fini(void)
 	return NOERROR;
 }
 
-int ExtVetoDigiHit_factory_MC::getFullComponent(int channel){
+int ExtVetoDigiHit_factory_MC::getFullV1Component(int channel){
 	int component;
 	switch (channel){
 	case(1)://top
-														component=0;
+																		component=0;
 	break;
 	case(2)://bottom
-														component=3;
+																		component=3;
 	break;
 	case(3)://right
-														component=2;
+																		component=2;
 	break;
 	case(4)://left
-														component=1;
+																		component=1;
 	break;
 	case(5)://downstream
-														component=5;
+																		component=5;
 	break;
 	case(6)://upstream
-														component=4;
+																		component=4;
 	break;
 	default:
 		break;
@@ -138,44 +176,96 @@ int ExtVetoDigiHit_factory_MC::getFullComponent(int channel){
 	return component;
 }
 
-int ExtVetoDigiHit_factory_MC::getCataniaComponent(int channel){
+
+
+int ExtVetoDigiHit_factory_MC::getCataniaV1Component(int channel){
 	int component;
 	switch (channel){
 	case(1):
-														component=7;
+																		component=7;
 	break;
 	case(2):
-														component=6;
+																		component=6;
 	break;
 	case(3):
-														component=8;
+																		component=8;
 	break;
 	case(4):
-														component=9;
+																		component=9;
 	break;
 	case(5):
-														component=11;
+																		component=11;
 	break;
 	case(6):
-														component=10;
+																		component=10;
 	break;
 	case(7):
-														component=2;
+																		component=2;
 	break;
 	case(8):
-														component=1;
+																		component=1;
 	break;
 	case(9):
-														component=0;
+																		component=0;
 	break;
 	case(10):
-														component=3;
+																		component=3;
 	break;
 	case(11):
-														component=4;
+																		component=4;
 	break;
 	case(12):
-														component=5;
+																		component=5;
+	break;
+	default:
+		break;
+	}
+	return component;
+}
+
+int ExtVetoDigiHit_factory_MC::getCataniaV2Component(int channel){
+	int component;
+	switch (channel){
+	case(1):
+					component=6;
+	break;
+	case(2):
+			break; //there is NO channel 2 in simulation
+	case(3):
+					component=8;
+	break;
+	case(4):
+					component=7;
+	break;
+	case(5):
+					component=9;
+	break;
+	case(6):
+					component=10;
+	break;
+	case(7):
+					component=12;
+	break;
+	case(8):
+					component=11;
+	break;
+	case(9):
+					component=5;
+	break;
+	case(10):
+					component=4;
+	break;
+	case(11):
+					component=0;
+	break;
+	case(12):
+					component=1;
+	break;
+	case(13):
+					component=2;
+	break;
+	case(14):
+					component=3;
 	break;
 	default:
 		break;

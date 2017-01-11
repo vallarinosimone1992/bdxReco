@@ -30,7 +30,10 @@ class ExtVetoMCHit:public VetoMCHit{
 		}
 
 		//dgtz banks
-		int adc,tdc;
+		int adc1,tdc1;
+		int adc2,tdc2;
+		int adc3,tdc3;
+		int adc4,tdc4;
 
 		//raw banks
 		double totEdep;

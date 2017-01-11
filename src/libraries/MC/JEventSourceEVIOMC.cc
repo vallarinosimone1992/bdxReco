@@ -38,7 +38,7 @@ JEventSourceEvioMC::JEventSourceEvioMC(const char* source_name):JEventSource(sou
 	jout << " Opening MC input file " << source_name << "." << endl;
 
 	try{
-		 chan = new evioFileChannel(source_name, "r", 300000);
+		chan = new evioFileChannel(source_name, "r", 300000);
 		//chan = new evioFileChannel(source_name, "r");
 		chan->open();
 	}
@@ -209,8 +209,8 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory)
 			hit->sector=bankDgt[ih].getIntDgtVar("sector");
 			hit->x=bankDgt[ih].getIntDgtVar("xch");
 			hit->y=bankDgt[ih].getIntDgtVar("ych");
-     //         jout << " sono in MC "<< endl;
-	//	    jout << "sector "<< hit->sector << " " << hit->x<<" "<<hit->y<<endl;
+			//         jout << " sono in MC "<< endl;
+			//	    jout << "sector "<< hit->sector << " " << hit->x<<" "<<hit->y<<endl;
 
 			/*dgtz banks*/
 			hit->adcl=bankDgt[ih].getIntDgtVar("adcl");
@@ -223,7 +223,7 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory)
 			hit->tdcf=bankDgt[ih].getIntDgtVar("tdcf");
 
 
-		//				jout << hit->adcl << " "<< hit->tdcl << endl;
+			//				jout << hit->adcl << " "<< hit->tdcl << endl;
 			//			jout << hit->adcr << " "<< hit->tdcr << endl;
 
 
@@ -265,7 +265,7 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory)
 			hit->sector=bankDgt[ih].getIntDgtVar("sector");
 			hit->channel=bankDgt[ih].getIntDgtVar("channel");
 
-       //    jout << "sector "<< hit->sector << " " << hit->channel<<endl;
+			//    jout << "sector "<< hit->sector << " " << hit->channel<<endl;
 
 			hit->system=bankDgt[ih].getIntDgtVar("veto");
 
@@ -279,10 +279,10 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory)
 			hit->tdc3=bankDgt[ih].getIntDgtVar("tdc3");
 			hit->tdc4=bankDgt[ih].getIntDgtVar("tdc4");
 
-	//		jout << hit->adc1 << " "<< hit->tdc1 << endl;
-	//		jout << hit->adc2 << " "<< hit->tdc2 << endl;
-	//		jout << hit->adc3 << " "<< hit->tdc3 << endl;
-	//		jout << hit->adc4 << " "<< hit->tdc4 << endl;
+			//		jout << hit->adc1 << " "<< hit->tdc1 << endl;
+			//		jout << hit->adc2 << " "<< hit->tdc2 << endl;
+			//		jout << hit->adc3 << " "<< hit->tdc3 << endl;
+			//		jout << hit->adc4 << " "<< hit->tdc4 << endl;
 
 
 
@@ -329,10 +329,19 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory)
 			hit->system=bankDgt[ih].getIntDgtVar("veto");
 
 			/*dgtz banks*/
-			hit->adc=bankDgt[ih].getIntDgtVar("adc1");
-			hit->tdc=bankDgt[ih].getIntDgtVar("tdc1");
+			/*Note that there's a difference between CataniaProto1 and CataniaProto2. But at this stage, we read all the DgtVar ADC1-2-3-4.
+			 * It will be later, in the ExtVeto library, that this will be handled properly*/
 
-	//		jout << hit->adc << " "<< hit->tdc << endl;
+			hit->adc1=bankDgt[ih].getIntDgtVar("adc1");
+			hit->tdc1=bankDgt[ih].getIntDgtVar("tdc1");
+			hit->adc2=bankDgt[ih].getIntDgtVar("adc2");
+			hit->tdc2=bankDgt[ih].getIntDgtVar("tdc2");
+			hit->adc3=bankDgt[ih].getIntDgtVar("adc3");
+			hit->tdc3=bankDgt[ih].getIntDgtVar("tdc3");
+			hit->adc4=bankDgt[ih].getIntDgtVar("adc4");
+			hit->tdc4=bankDgt[ih].getIntDgtVar("tdc4");
+
+			//		jout << hit->adc << " "<< hit->tdc << endl;
 
 			/*raw banks*/
 			for(unsigned int ir=0; ir<bankRaw.size(); ir++)
