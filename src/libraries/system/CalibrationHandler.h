@@ -153,7 +153,9 @@ template <class T> double CalibrationHandler<T>::getCalibSingle(const T &index){
 	}
 	else{
 		jerr<<"CalibrationHandler<T>::getCalibSingle error: different than 1 entry: "<<this_data.size()<<std::endl;
+		jerr<<"Table: "<<m_table<<endl;
 		jerr<<"T: "<<index.name()<<endl;
+		jerr<<"T print: "<<index.print()<<endl;
 		return 0;
 	}
 }

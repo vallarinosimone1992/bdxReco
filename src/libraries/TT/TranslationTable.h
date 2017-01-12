@@ -16,6 +16,7 @@
 #include <JANA/JEventSource.h>
 
 #include <TObject.h>
+#include <TString.h>
 
 using namespace jana;
 
@@ -155,7 +156,7 @@ public:
 			return false;
 		}
 		string name()const{return "EXT_Veto";}
-
+		string print()const{return Form("ExtVeto sector: %i layer: %i component: %i readout:%i",sector,layer,component,readout);}
 		ClassDef(EXT_VETO_Index_t,1);
 
 	};
@@ -215,6 +216,7 @@ public:
 			return false;
 		}
 		string name()const{return "INT_Veto";}
+		string print()const{return Form("IntVeto sector: %i layer: %i component: %i readout:%i",sector,layer,component,readout);}
 
 		ClassDef(INT_VETO_Index_t,1);
 
@@ -273,6 +275,7 @@ public:
 			return false;
 		}
 		string name()const{return "CALO";}
+		string print()const{return Form("Calo sector: %i x: %i y: %i readout:%i",sector,x,y,readout);}
 		ClassDef(CALO_Index_t,1);
 	};
 
@@ -307,6 +310,7 @@ public:
 			return false;
 		}
 		string name() const{return "PADDLES";}
+		string print()const{return Form("PADDLE id: %i",id);}
 		ClassDef(PADDLES_Index_t,1);
 	};
 
