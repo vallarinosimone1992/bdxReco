@@ -82,7 +82,7 @@ template <class T> jerror_t CalibrationHandler<T>::fillCalib(const std::vector<s
 	for (int irow=0;irow<calib_data.size();irow++){
 		data.clear();
 		if (irow>0) prevNdata=nData;
-		nData=calib_data.at(irow).size()-index.nIDs();
+		nData=calib_data[irow].size()-index.nIDs();
 		if (nData<=0) {
 			jerr<<"Error in CalibrationHandler<T>:::fillCalib. No data?"<<endl;
 			m_calib.clear();
@@ -95,15 +95,16 @@ template <class T> jerror_t CalibrationHandler<T>::fillCalib(const std::vector<s
 		}
 		/*Fill the indexes*/
 		for (int iindex=0;iindex<index.nIDs();iindex++){
-			index.ID(iindex)=calib_data.at(irow).at(iindex);
+			index.ID(iindex)=calib_data[irow][iindex];
 		}
 		/*Fill the data*/
 		for (int idata=0;idata<nData;idata++){
-			data.push_back(calib_data.at(irow).at(index.nIDs()+idata));
+			data.push_back(calib_data[irow][index.nIDs()+idata]);
 		}
 		m_insert_check=m_calib.insert(std::make_pair(index,data));
 		if (m_insert_check.second==false){
-			jout<<"Element already exists in the map. Doing nothing"<<endl;
+			jout<<"Element already exists in the map "<<m_table<<" Doing nothing"<<endl;
+			jout<<"Index print: "<<index.print()<<endl;
 		}
 	}
 	return NOERROR;
