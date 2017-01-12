@@ -25,8 +25,9 @@ using namespace std;
 
 // Constructor
 BDXEventProcessor::BDXEventProcessor():
-										m_output(0),m_tt(0),m_isMC(0),m_buildDST(0),m_eventDST(0),m_runInfo(0),m_event(0),eventN(0),tword(0),m_eventHeader(0),eventT(0),deltaTime(0),runN(0)
+										m_output(0),m_tt(0),m_isMC(0),m_eventDST(0),m_runInfo(0),m_event(0),eventN(0),tword(0),m_eventHeader(0),eventT(0),deltaTime(0),runN(0)
 {
+	bout<<"BDXEventProcessor creator start"<<endl;
 	optf="";
 	m_DObuildDST=0;
 	m_buildDST="";
@@ -36,6 +37,8 @@ BDXEventProcessor::BDXEventProcessor():
 
 	bout.SetTag("BDXEventProcessor >>");
 	berr.SetTag("BDXEventProcessorError >>");
+
+	bout<<"BDXEventProcessor creator end"<<endl;
 }
 
 // Destructor

@@ -47,26 +47,32 @@ int main(int narg, char *argv[])
 		app.Usage();
 		return 0;
 	}
-	int isMC=0;
-	//gPARMS->GetParameter("MC",isMC);
+
+
 
 	app.AddEventSourceGenerator(new JEventSourceEvioGenerator());
+	jout<<"JEventSourceEvioGenerator DONE"<<endl;
 
 	app.AddFactoryGenerator(new JFactoryGenerator_system());
-//	if (isMC==0){
-		app.AddFactoryGenerator(new JFactoryGenerator_DAQ());
-//	}
-	//else{
-		app.AddFactoryGenerator(new JFactoryGenerator_MC());
-//	}
+	jout<<"JFactoryGenerator_system DONE"<<endl;
+	app.AddFactoryGenerator(new JFactoryGenerator_DAQ());
+	jout<<"JFactoryGenerator_DAQ DONE"<<endl;
+	app.AddFactoryGenerator(new JFactoryGenerator_MC());
+	jout<<"JFactoryGenerator_MC DONE"<<endl;
 	app.AddFactoryGenerator(new JFactoryGenerator_TT());
+	jout<<"JFactoryGenerator_TT DONE"<<endl;
 	app.AddFactoryGenerator(new JFactoryGenerator_ExtVeto());
+	jout<<"JFactoryGenerator_ExtVeto DONE"<<endl;
 	app.AddFactoryGenerator(new JFactoryGenerator_IntVeto());
+	jout<<"JFactoryGenerator_IntVeto DONE"<<endl;
 	app.AddFactoryGenerator(new JFactoryGenerator_Calorimeter());
+	jout<<"JFactoryGenerator_Calorimeter DONE"<<endl;
 	app.AddFactoryGenerator(new JFactoryGenerator_Paddles());
+	jout<<"JFactoryGenerator_Paddles DONE"<<endl;
 	app.AddFactoryGenerator(new JFactoryGenerator_EventBuilder());
+	jout<<"JFactoryGenerator_EventBuilder DONE"<<endl;
 	app.AddProcessor(new BDXEventProcessor());
-
+	jout<<"BDXEventProcessor DONE"<<endl;
 	app.Run();
 
 	return 1;

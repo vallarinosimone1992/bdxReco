@@ -8,6 +8,7 @@ env = init_environment("qt5 clas12 root evio jana clhep banks ccdb geant4 xerces
 
 debug = ARGUMENTS.get('debug', 0)
 if int(debug):
+   print "DEBUG IS ON"
    env.Append(CCFLAGS = '-g')
 
 #A.C. probably do this better
