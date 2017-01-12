@@ -60,6 +60,9 @@ jerror_t BDXEventProcessor::init(void)
 		bout<<"No DST will be built"<<endl;
 		m_DObuildDST=0;
 	}
+	else{
+		m_DObuildDST=1;
+	}
 
 
 
