@@ -56,7 +56,8 @@ jerror_t BDXEventProcessor::init(void)
 	gPARMS->SetDefaultParameter("SYSTEM:BUILD_DST",m_buildDST,"Enable DST, using the form \"TYPE\". TYPE is the name of an existing event builder. Example: -PSYSTEM:BUILD_DST=\"CataniaProto2\"");
 	bout<<"Building DST is: "<<m_buildDST<<endl;
 
-	if (m_buildDST.size()!=0){
+	if (m_buildDST.size()==0){
+		bout<<"No DST will be built"<<endl;
 		m_DObuildDST=0;
 	}
 
