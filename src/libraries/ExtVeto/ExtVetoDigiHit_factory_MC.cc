@@ -232,22 +232,22 @@ int ExtVetoDigiHit_factory_MC::getCataniaV2Component(int channel){
 	case(2):
 			break; //there is NO channel 2 in simulation
 	case(3):
-					component=8;
-	break;
-	case(4):
-					component=7;
-	break;
-	case(5):
 					component=9;
 	break;
-	case(6):
+	case(4):
+					component=8;
+	break;
+	case(5):
 					component=10;
 	break;
+	case(6):
+					component=11;
+	break;
 	case(7):
-					component=12;
+					component=13;
 	break;
 	case(8):
-					component=11;
+					component=12;
 	break;
 	case(9):
 					component=5;

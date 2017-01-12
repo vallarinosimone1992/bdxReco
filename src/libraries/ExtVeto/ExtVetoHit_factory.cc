@@ -59,9 +59,6 @@ jerror_t ExtVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	ExtVetoHit *m_ExtVetoHit=0;
 
-	//	int readout;
-	//	double Q,T;
-
 	//1b: retrieve ExtVetoDigiHit objects
 
 	/*This is very important!! Select - or not - the MC case*/
