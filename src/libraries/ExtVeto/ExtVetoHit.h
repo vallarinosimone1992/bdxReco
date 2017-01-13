@@ -31,7 +31,6 @@ class ExtVetoHit:public TObject,public jana::JObject{
 		oid_t ExtVetoDigiHit_id;
 
 		ClassDef(ExtVetoHit,1);
-
 };
 
 #endif // _ExtVetoHit_

@@ -9,7 +9,7 @@
 
 #include <TT/TranslationTable.h>
 
-class MCEvent:public jana::JObject,public TObject{
+class MCEvent:public TObject,public jana::JObject{
 	public:
 		JOBJECT_PUBLIC(MCEvent);
 		

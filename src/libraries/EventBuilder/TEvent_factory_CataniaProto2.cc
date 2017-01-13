@@ -94,13 +94,13 @@ jerror_t TEvent_factory_CataniaProto2::evnt(JEventLoop *loop, uint64_t eventnumb
 	m_event->addCollection(m_IntVetoHits);
 
 
-	loop->Get(evhits);
+/*	loop->Get(evhits);
 	m_ExtVetoHits->Clear("C");
 	for (int ii=0;ii<evhits.size();ii++){
 		((ExtVetoHit*)m_ExtVetoHits->ConstructedAt(ii))->operator=(*(evhits[ii]));
 	}
 	m_event->addCollection(m_ExtVetoHits);
-
+*/
 
 
 	/*publish the event*/

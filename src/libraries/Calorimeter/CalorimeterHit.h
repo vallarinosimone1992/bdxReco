@@ -14,7 +14,6 @@
 #include <system/BDXObject.h>
 #include <Calorimeter/CalorimeterSiPMHit.h>
 
-
 #include <TObject.h>
 
 class TH1D;
@@ -22,6 +21,8 @@ class TCanvas;
 
 
 class CalorimeterHit:public TObject,public BDXObject{
+private:
+	mutable vector<TH1D*> hWaves; //!
 
 public:
 	struct CalorimeterComponentHit{
@@ -55,9 +56,6 @@ public:
 	TranslationTable::CALO_Index_t m_channel; //Detector-specific ID. Since this is a detector-based object, the readout field will be ==0
 
 	uint64_t timestamp;
-
-private:
-	mutable vector<TH1D*> hWaves; //!
 
 	ClassDef(CalorimeterHit,1);
 };

@@ -1,6 +1,5 @@
-#include "ExtVetoDigiHit.h"
-
 #ifdef __CINT__
+#include "ExtVetoDigiHit.h"
 #pragma link off all globals;
 #pragma link off all classes;
 #pragma link off all functions;

@@ -14,7 +14,10 @@
 
 #include <TT/TranslationTable.h>
 
-class CataniaEvent:public jana::JObject,public TObject{
+
+
+
+class CataniaEvent:public TObject,public jana::JObject{
 	public:
 		JOBJECT_PUBLIC(CataniaEvent);
 		

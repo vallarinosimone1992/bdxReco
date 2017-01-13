@@ -22,7 +22,8 @@ class TEventHeader;
 
 using namespace std;
 
-class TEvent:public jana::JObject,public TObject{
+class TEvent:public TObject,public jana::JObject{
+
 public:
 	JOBJECT_PUBLIC(TEvent);
 
@@ -36,6 +37,7 @@ public:
 		// AddString(items, "id", "%4d", id);
 		// AddString(items, "E", "%f", E);
 	}
+
 
 private:
 

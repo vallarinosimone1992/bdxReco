@@ -17,6 +17,9 @@ class TH1D;
 class TCanvas;
 
 class IntVetoHit:public TObject,public BDXObject{
+private:
+	mutable vector<TH1D*> hWaves; //!  //Exclude from root dictionary
+
 public:
 	JOBJECT_PUBLIC(IntVetoHit);
 
@@ -42,8 +45,7 @@ public:
 
 
 	virtual TCanvas* Draw(int id=0) const;//!  //Exclude from root dictionary
-private:
-	mutable vector<TH1D*> hWaves; //!  //Exclude from root dictionary
+
 
 	ClassDef(IntVetoHit,1);
 

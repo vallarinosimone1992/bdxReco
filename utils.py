@@ -24,40 +24,24 @@ class bcolors:
 
 def AddROOTdict(env,reldir,absdir):
     rootsys = os.getenv('ROOTSYS')
-    rootcintpath  = "%s/bin/rootcint" % (rootsys)
     rootclingpath = "%s/bin/rootcling" % (rootsys)
-    
     dictdir = os.getenv('BDXRECO_ROOT')+"/lib"
-    print dictdir
+
     
 #    print "$SOURCE","$TARGET"
     if env['SHOWBUILD']==0:
-			rootcintactionNoLinkDef  = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCE ; mv `echo $TARGET | awk '{print substr($0,0,length($0)-3) \"_rdict.pcm\"}'` %s" % (rootcintpath," -I".join(env['CPPPATH']),dictdir), 'ROOTCINT   [$SOURCE]')
 			rootclingactionNoLinkDef = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCE ; mv `echo $TARGET | awk '{print substr($0,0,length($0)-3) \"_rdict.pcm\"}'` %s" % (rootclingpath," -I".join(env['CPPPATH']),dictdir), 'ROOTCLING  [$SOURCE]')
-    else:
-			rootcintactionNoLinkDef  = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCE ; mv `echo $TARGET | awk '{print substr($0,0,length($0)-3) \"_rdict.pcm\"}'` %s" % (rootcintpath," -I".join(env['CPPPATH']),dictdir))
+                        rootclingactionLinkDef = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCES ; mv `echo $TARGET | awk '{print substr($0,0,length($0)-3) \"_rdict.pcm\"}'` %s" % (rootclingpath," -I".join(env['CPPPATH']),dictdir), 'ROOTCLING  [$SOURCE]')
+    else:	     	
 			rootclingactionNoLinkDef = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCE ; mv `echo $TARGET | awk '{print substr($0,0,length($0)-3) \"_rdict.pcm\"}'` %s" % (rootclingpath," -I".join(env['CPPPATH']),dictdir))
+                        rootclingactionLinkDef = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCES ; mv `echo $TARGET | awk '{print substr($0,0,length($0)-3) \"_rdict.pcm\"}'` %s" % (rootclingpath," -I".join(env['CPPPATH']),dictdir))
     if os.path.exists(rootclingpath) :
 			bldNoLinkDef = SCons.Script.Builder(action = rootclingactionNoLinkDef, suffix='_Dict.cc', src_suffix='.h')
-    elif os.path.exists(rootcintpath):
-			bldNoLinkDef = SCons.Script.Builder(action = rootcintactionNoLinkDef, suffix='_Dict.cc', src_suffix='.h')
+                        bldLinkDef = SCons.Script.Builder(action = rootclingactionLinkDef)
     else:
-			print 'Neither rootcint nor rootcling exists. Unable to create ROOT dictionaries if any encountered.'
+			print 'Rootcling does not exists. Unable to create ROOT dictionaries if any encountered.'
 			return 
-    if env['SHOWBUILD']==0:
-			rootcintactionLinkDef  = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCES ; mv `echo $TARGET | awk '{print substr($0,0,length($0)-3) \"_rdict.pcm\"}'` %s" % (rootcintpath," -I".join(env['CPPPATH']),dictdir), 'ROOTCINT   [$SOURCE]')
-			rootclingactionLinkDef = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCES ; mv `echo $TARGET | awk '{print substr($0,0,length($0)-3) \"_rdict.pcm\"}'` %s" % (rootclingpath," -I".join(env['CPPPATH']),dictdir), 'ROOTCLING  [$SOURCE]')
-    else:
-			rootcintactionLinkDef  = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCES ; mv `echo $TARGET | awk '{print substr($0,0,length($0)-3) \"_rdict.pcm\"}'` %s" % (rootcintpath," -I".join(env['CPPPATH']),dictdir))
-			rootclingactionLinkDef = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCES ; mv `echo $TARGET | awk '{print substr($0,0,length($0)-3) \"_rdict.pcm\"}'` %s" % (rootclingpath," -I".join(env['CPPPATH']),dictdir))
-
-    if os.path.exists(rootclingpath) :
-			bldLinkDef = SCons.Script.Builder(action = rootclingactionLinkDef)
-    elif os.path.exists(rootcintpath):
-			bldLinkDef = SCons.Script.Builder(action = rootcintactionLinkDef)
-    else:
-			print 'Neither rootcint nor rootcling exists. Unable to create ROOT dictionaries if any encountered.'
-			return	
+  
 
 
     env.Append(BUILDERS = {'ROOTDictNoLinkDef' : bldNoLinkDef})
@@ -82,14 +66,13 @@ def AddROOTdict(env,reldir,absdir):
     retVal="";
     for f in glob.glob('*.[h|hh|hpp]'):
         if 'ClassDef' in open(f).read():  
-            filename, file_extension = os.path.splitext(f)    
-           
+            filename, file_extension = os.path.splitext(f)          
             if(int(env['SHOWBUILD'])>=1):
                 print "  ----->  ROOT dictionary for %s" % f
             if os.path.isfile(filename+"_LinkDef.h"):     
+                retVal=env.ROOTDictLinkDef(reldir+"/"+filename+"_Dict.cc",[reldir+"/"+f,reldir+"/"+filename+"_LinkDef.h"])
                 if(int(env['SHOWBUILD'])>=1):
                     print "  -----> Using "+filename+"_LinkDef.h for dictionary"
-                retVal=env.ROOTDictLinkDef(reldir+"/"+filename+"_Dict.cc",[reldir+"/"+f,reldir+"/"+filename+"_LinkDef.h"])
             else:
                 retVal=env.ROOTDictNoLinkDef(reldir+"/"+f)
     os.chdir(curpath)            

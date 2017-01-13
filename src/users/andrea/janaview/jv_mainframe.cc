@@ -14,14 +14,14 @@
 jv_mainframe::jv_mainframe(const TGWindow *p, UInt_t w, UInt_t h,  bool build_gui):TGMainFrame(p,w,h, kMainFrame | kVerticalFrame)
 {
 	CreateGUI();
-	
+
 	SetWindowName("JANA Viewer");
 	SetIconName("JANA Viewer");
 	MapSubwindows();
 	MapWindow();
 	this->SetWidth(1000);
 	Redraw(this);
-	
+
 	timer = new TTimer();
 	timer->Connect("Timeout()", "jv_mainframe", this, "DoTimer()");
 	sleep_time = 250;
@@ -51,47 +51,47 @@ void jv_mainframe::CloseWindow(void)
 //-------------------
 void jv_mainframe::HandleMenu(Int_t id)
 {
-   // Handle menu items.
+	// Handle menu items.
 
-  //cout << "in HandleMenu(" << id << ")" << endl;
+	//cout << "in HandleMenu(" << id << ")" << endl;
 
-   switch (id) {
+	switch (id) {
 
-   case M_FILE_OPEN:
-     break;
+	case M_FILE_OPEN:
+		break;
 
-   case M_FILE_SAVE:
-     break;
-	
-   case M_FILE_NEW_CONFIG:
-     break;
+	case M_FILE_SAVE:
+		break;
 
-   case M_FILE_OPEN_CONFIG:
-     break;
+	case M_FILE_NEW_CONFIG:
+		break;
 
-   case M_FILE_SAVE_CONFIG:
-     break;
+	case M_FILE_OPEN_CONFIG:
+		break;
 
-   case M_FILE_SAVE_AS_CONFIG:
-     break;
+	case M_FILE_SAVE_CONFIG:
+		break;
 
-   case M_FILE_EXIT: 
-     DoQuit();       
-     break;
+	case M_FILE_SAVE_AS_CONFIG:
+		break;
 
-   case M_TOOLS_MACROS:
-     break;
+	case M_FILE_EXIT:
+		DoQuit();
+		break;
 
-   case M_TOOLS_TBROWSER:
-     break;
+	case M_TOOLS_MACROS:
+		break;
 
-   case M_VIEW_NEW_TAB:
-	   break;
+	case M_TOOLS_TBROWSER:
+		break;
 
-   case M_VIEW_REMOVE_TAB:
-	   break;
+	case M_VIEW_NEW_TAB:
+		break;
 
-   }
+	case M_VIEW_REMOVE_TAB:
+		break;
+
+	}
 }
 
 //-------------------
@@ -152,7 +152,7 @@ void jv_mainframe::DoDelayedSelectObjectType(void)
 	DoSelectObjectType(delayed_object_type_id);
 	lbObjectTypes->Select(delayed_object_type_id);
 	lbObjectTypes->SetTopEntry(delayed_object_type_id);
-	
+
 	Redraw(lbObjectTypes);
 }
 
@@ -183,7 +183,7 @@ void jv_mainframe::DoSelectObjectType(Int_t id)
 	lObjectType->Resize();
 	lObjectType2->SetTitle(strdup(nametag.c_str()));
 	lObjectType2->Resize();
-	
+
 
 	// Get factory name and tag
 	string name = nametag;
@@ -197,6 +197,7 @@ void jv_mainframe::DoSelectObjectType(Int_t id)
 	// Get factory and list of objects
 	JEP->Lock();
 	JFactory_base *fac = JEP->loop->GetFactory(name, tag.c_str());
+	jout<<"GetFactory name tag "<<name<<" "<<tag<<endl;
 	if(!fac){
 		JEP->Unlock();
 		_DBG_<<"Unable to find factory for name=\""<<name<<"\"  tag=\"" << tag << "\"" << endl;
@@ -213,18 +214,27 @@ void jv_mainframe::DoSelectObjectType(Int_t id)
 
 	// Get pointers from factory
 	vobjs = fac->Get();
+	jout<<"There are: "<<vobjs.size()<<" objs "<<endl;
+
+
+
+
 
 	// Copy list of objects into listbox
 	lbObjects->RemoveAll();
 	for(uint32_t i=0; i<vobjs.size(); i++){
 		char str[256];
+		if ((vobjs[i])==0){
+			_DBG_<<"Error with vogjbs "<<i<<endl;
+			continue;
+		}
 		sprintf(str, "0x%016lx %s", (unsigned long)vobjs[i], ((JObject*)vobjs[i])->GetName().c_str());
 		lbObjects->AddEntry(str, i+1);
 		lbObjects2->AddEntry(str, i+1);
 	}
-	
+
 	JEP->MakeCallGraph();
-	
+
 	JEP->Unlock();
 	Redraw(lbObjects);
 	Redraw(lbObjects2);
@@ -250,7 +260,7 @@ void jv_mainframe::DoSelectObject(Int_t id)
 	Int_t idx = id-1;
 	if(idx<0 || idx>=(Int_t)vobjs.size()) return;	
 	JObject *obj = (JObject*)vobjs[idx];
-	
+
 	UpdateObjectValues(obj);
 
 	// Get associated objects
@@ -262,10 +272,18 @@ void jv_mainframe::DoSelectObject(Int_t id)
 		lbAssociatedObjects->AddEntry(str, i+1);
 	}
 	Redraw(lbAssociatedObjects);
-	
+
 	// Get associated to objects
+
+
+
+
+
+
+
 	a2objs.clear();
 	JEP->GetAssociatedTo(obj, a2objs);
+	jout<<"This object is associated to: "<<a2objs.size()<<" objects "<<endl;
 	for(uint32_t i=0; i<a2objs.size(); i++){
 		char str[256];
 		sprintf(str, "0x%016lx %s", (unsigned long)a2objs[i], a2objs[i]->GetName().c_str());
@@ -315,7 +333,7 @@ void jv_mainframe::DoSelectAssociatedObject(Int_t id)
 	Int_t idx = id-1;
 	if(idx<0 || idx>=(Int_t)aobjs.size()) return;	
 	JObject *obj = (JObject*)aobjs[idx];
-	
+
 	UpdateObjectValues(obj);
 }
 
@@ -328,7 +346,7 @@ void jv_mainframe::DoSelectAssociatedToObject(Int_t id)
 	Int_t idx = id-1;
 	if(idx<0 || idx>=(Int_t)a2objs.size()) return;	
 	JObject *obj = (JObject*)a2objs[idx];
-	
+
 	UpdateObjectValues(obj);
 }
 
@@ -341,7 +359,7 @@ void jv_mainframe::DoDoubleClickAssociatedObject(Int_t id)
 	Int_t idx = id-1;
 	if(idx<0 || idx>=(Int_t)aobjs.size()) return;	
 	JObject *obj = (JObject*)aobjs[idx];
-	
+
 	SelectNewObject(obj);
 }
 
@@ -354,7 +372,7 @@ void jv_mainframe::DoDoubleClickAssociatedToObject(Int_t id)
 	Int_t idx = id-1;
 	if(idx<0 || idx>=(Int_t)a2objs.size()) return;	
 	JObject *obj = (JObject*)a2objs[idx];
-	
+
 	SelectNewObject(obj);
 }
 
@@ -385,7 +403,7 @@ void jv_mainframe::UpdateInfo(string source, int run, int event)
 	lRun->SetText(str);
 	sprintf(str, "%d", event);
 	lEvent->SetText(str);
-	
+
 	Redraw(lSource);
 }
 
@@ -423,7 +441,7 @@ void jv_mainframe::UpdateObjectTypeList(vector<JVFactoryInfo> &facinfo)
 		objtypes.push_back(nametag);
 		if(nametag == selected_nametag) selected_id = id;
 	}
-	
+
 	Redraw(lbObjectTypes);
 
 	if(selected_id>0){
@@ -459,7 +477,7 @@ void jv_mainframe::UpdateObjectValues(JObject *obj)
 
 	vector<pair<string,string> > items;
 	obj->toStrings(items);
-	
+
 	// Find maximum label width
 	uint32_t max_width = 0;
 	for(uint32_t i=0; i<items.size(); i++){
@@ -487,7 +505,7 @@ void jv_mainframe::UpdateObjectValues(JObject *obj)
 		string &lab = items[i].first;
 		string &val = items[i].second;
 		string line = lab + string(max_width+1 - lab.length(), ' ') + " : " + val;
-		
+
 		TGTextLBEntry *entry = new TGTextLBEntry(lbObjectValues->GetContainer(), new TGString(line.c_str()), i+1, uGC->GetGC(), ufont->GetFontStruct());
 		lbObjectValues->AddEntry((TGLBEntry *)entry, new TGLayoutHints(kLHintsTop | kLHintsLeft));
 	}
@@ -503,21 +521,21 @@ void jv_mainframe::SelectNewObject(void *vobj)
 	string nametag = obj->GetNameTag();
 	for(uint32_t i=0; i<objtypes.size(); i++){
 		if(objtypes[i] != nametag) continue;
-		
+
 		DoSelectObjectType(i+1);
 		lbObjectTypes->Select(i+1);
 		lbObjectTypes->SetTopEntry(i+1);
-		
+
 		break;
 	}
-	
+
 	for(uint32_t i=0; i<objtypes.size(); i++){
 		if(vobjs[i] != vobj) continue;
-		
+
 		DoSelectObject(i+1);
 		lbObjects->Select(i+1);
 		lbObjects->SetTopEntry(i+1);
-		
+
 		break;
 	}
 }
@@ -615,7 +633,7 @@ TGFrame* jv_mainframe::AddSpacer(TGCompositeFrame* frame, UInt_t w, UInt_t h, UL
 
 	TGFrame *f =  new TGFrame(frame, w, h);
 	frame->AddFrame(f, new TGLayoutHints(hints ,2,2,2,2));
-	
+
 	return f;
 }
 
@@ -628,7 +646,7 @@ TGListBox* jv_mainframe::AddListBox(TGCompositeFrame* frame, string lab, UInt_t 
 	TGListBox *lb = new TGListBox(frame);
 	frame->AddFrame(lb, new TGLayoutHints(hints ,2,2,2,2));
 	lb->SetWidth(w);
-	
+
 	return lb;
 }
 
@@ -640,14 +658,14 @@ void jv_mainframe::CreateGUI(void)
 {
 	// Use the "color wheel" rather than the classic palette.
 	TColor::CreateColorWheel();
-	
 
-   //==============================================================================================
-   // make a menubar
-   // Create menubar and popup menus. The hint objects are used to place
-   // and group the different menu widgets with respect to eachother.
 
-//	TGDockableFrame    *fMenuDock;
+	//==============================================================================================
+	// make a menubar
+	// Create menubar and popup menus. The hint objects are used to place
+	// and group the different menu widgets with respect to eachother.
+
+	//	TGDockableFrame    *fMenuDock;
 	TGMenuBar  *fMenuBar;
 	TGPopupMenu  *fMenuFile, *fMenuTools, *fMenuView;
 	TGLayoutHints      *fMenuBarLayout, *fMenuBarItemLayout;
@@ -693,8 +711,8 @@ void jv_mainframe::CreateGUI(void)
 	fMenuFile->Connect("Activated(Int_t)", "jv_mainframe", this, "HandleMenu(Int_t)");
 	fMenuTools->Connect("Activated(Int_t)", "jv_mainframe", this, "HandleMenu(Int_t)");
 	fMenuView->Connect("Activated(Int_t)", "jv_mainframe", this, "HandleMenu(Int_t)");
-   
-   
+
+
 	//==============================================================================================
 	// Fill in main content of window. Note that most of the area is taken up by the
 	// contents of the TGTab object which is filled in by the RSTab class constructor.
@@ -713,7 +731,7 @@ void jv_mainframe::CreateGUI(void)
 	fMain->AddFrame(fMainBot, new TGLayoutHints(kLHintsLeft | kLHintsTop | kLHintsExpandX,2,2,2,2));
 
 	//....... Top Frame .......
-	
+
 	TGGroupFrame *fInfo = new TGGroupFrame(fMainTop, "Current Event Info", kVerticalFrame);
 	fMainTop->AddFrame(fInfo, new TGLayoutHints(kLHintsLeft | kLHintsTop | kLHintsExpandX | kLHintsExpandY,2,2,2,2));
 
@@ -730,7 +748,7 @@ void jv_mainframe::CreateGUI(void)
 				0,1000000); //specify limits
 	fInfo->AddFrame(fCh, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));*/
 	//....... Middle Frame .......
-	
+
 	TGVerticalFrame *fObjectTypes = new TGVerticalFrame(fMainMid);
 	fMainMid->AddFrame(fObjectTypes, new TGLayoutHints(kLHintsLeft | kLHintsTop | kLHintsExpandY ,2,2,2,2));
 	lbObjectTypes = AddListBox(fObjectTypes, "Object Types", 300, kLHintsExpandY);
@@ -762,7 +780,7 @@ void jv_mainframe::CreateGUI(void)
 
 	// ---- Call Graph Tab ----
 	TGCompositeFrame *tCallGraph = fTab->AddTab("Call Graph");
-	
+
 	// Use TGCanvas to get scrollbars for the canvas
 	TGCanvas *gcanvas = new TGCanvas(tCallGraph, 100, 100, kFixedSize);
 	tCallGraph->AddFrame(gcanvas, new TGLayoutHints(kLHintsExpandY | kLHintsExpandX));
@@ -772,7 +790,7 @@ void jv_mainframe::CreateGUI(void)
 	canvas = new TRootEmbeddedCanvas("rec1", fCanvas, 400, 400);
 	canvas->GetCanvas()->SetFillColor(TColor::GetColor( (Float_t)0.96, 0.96, 0.99));
 	fCanvas->AddFrame(canvas, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY,2,2,2,2));
-	
+
 	// ---- Draw Tab ----
 	TGCompositeFrame *tDraw = fTab->AddTab("Graphical objects");
 	TGHorizontalFrame *fDraw = new TGHorizontalFrame(tDraw);
