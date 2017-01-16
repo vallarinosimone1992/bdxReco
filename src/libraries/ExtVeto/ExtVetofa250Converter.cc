@@ -154,8 +154,8 @@ jerror_t ExtVetofa250Converter::convertMode1Hit(ExtVetoPMTHit* output,const fa25
 
 
 
-
-	output->Q = (Q*4*2*1E-3)/50;         /// charge in nWb , 50 ohm, *2 ->splitter
+	output->Q = (Q*4*1E-3)/50;         /// charge in nWb , 50 ohm,
+//	output->Q = (Q*4*2*1E-3)/50;         /// charge in nWb , 50 ohm, *2 ->splitter
 	output->T=T*4;                     //// Time in nS
 	output->pedestal=pedestal;
 
