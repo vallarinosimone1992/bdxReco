@@ -45,7 +45,12 @@ public:
 	// the second argument to AddString is printf style format
 	void toStrings(vector<pair<string,string> > &items)const{
 		// AddString(items, "id", "%4d", id);
-		// AddString(items, "E", "%f", E);
+		AddString(items, "sector", "%i", m_channel.sector);
+		AddString(items, "x", "%i", m_channel.x);
+		AddString(items, "y", "%i", m_channel.y);
+		AddString(items, "E", "%f", E);
+		AddString(items, "T", "%f", T);
+
 	}
 	vector<CalorimeterComponentHit> m_data;
 	double E,Q,T;
