@@ -21,8 +21,6 @@ class TCanvas;
 
 
 class CalorimeterHit:public TObject,public BDXObject{
-private:
-	mutable vector<TH1D*> hWaves; //!
 
 public:
 	struct CalorimeterComponentHit{
@@ -57,10 +55,13 @@ public:
 	int N; //how many counters associated with this object were above thr (i.e. how many entries in m_data?
 
 	virtual TCanvas* Draw(int id)const; //!
+	mutable TH1D* hWave; //!
 
 	TranslationTable::CALO_Index_t m_channel; //Detector-specific ID. Since this is a detector-based object, the readout field will be ==0
 
 	uint64_t timestamp;
+
+
 
 	ClassDef(CalorimeterHit,1);
 };

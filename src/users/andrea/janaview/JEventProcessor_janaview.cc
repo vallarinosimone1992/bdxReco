@@ -57,7 +57,7 @@ void* JanaViewRootGUIThread(void *arg)
 	int narg = 0;
 	TApplication app("JANA Viewer", &narg, NULL);
 	app.SetReturnFromRun(true);
-	JVMF = new jv_mainframe(gClient->GetRoot(), 600, 600, true);
+	JVMF = new jv_mainframe(gClient->GetRoot(), 900, 600, true);
 	
 	try{
 		sleep(8);

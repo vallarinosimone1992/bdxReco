@@ -50,11 +50,15 @@ public:
 		AddString(items, "ped","%f",ped);
 		AddString(items, "rms_flag","%i",1*good_ped_RMS);
 		AddString(items, "type","%i",1*m_type);
+		AddString(items, "n_singles","%i",1*m_nSingles);
+		AddString(items, "n_signals","%i",1*m_nSignals);
 	}
 
 	//A.C. do not touch these
 	//both crate-slot channel and detector-specific ID. Since this is a sensor-based object, the readout field will be !=0
-	TranslationTable::ChannelInfo m_channel; //!
+	TranslationTable::ChannelInfo m_channel;//!
+
+	TranslationTable::CALO_Index_t m_ch; //a.c. tmp
 	/*These 3 variables are: hit charge (u.a.), hit time (in ns), hit amplitude (in mV)*/
 	double Qraw,Qphe;
 	double QrawS,QpheS;
@@ -66,7 +70,7 @@ public:
 
 	uint64_t timestamp;
 
-	int nSingles,nSignals;
+	int m_nSingles,m_nSignals;
 
 	ClassDef(CalorimeterSiPMHit,1);
 

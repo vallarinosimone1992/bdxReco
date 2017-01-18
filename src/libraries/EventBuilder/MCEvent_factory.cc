@@ -278,8 +278,8 @@ if(ii>0) m_event->sector_EM++;
 
 			x_cl_t[jj] = hit->x;
             y_cl_t[jj] = hit->y;
-            sector_cl_t[jj]=hit->sector;
-     	    m_event->Block=hit->sector;
+            sector_cl_t[jj]=hit->m_sector;
+     	    m_event->Block=hit->m_sector;
 
 			E_cl += hit->E;
 			Nhits_cl += hit->Nhits;
@@ -288,7 +288,7 @@ if(ii>0) m_event->sector_EM++;
 				seed_temp = seed;
 				x_cl = hit->x;
 				y_cl = hit->y;
-				sector_cl = hit->sector;
+				sector_cl = hit->m_sector;
 				Nhits_cl_near_seed=hit->Nhits_near_seed;
 			                      }
              jj++;

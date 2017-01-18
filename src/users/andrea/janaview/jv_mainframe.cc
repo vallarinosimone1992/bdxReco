@@ -27,6 +27,8 @@ jv_mainframe::jv_mainframe(const TGWindow *p, UInt_t w, UInt_t h,  bool build_gu
 	sleep_time = 250;
 	timer->Start(sleep_time, kFALSE);
 
+	canvasTMP=0;
+
 }
 
 //---------------------------------
@@ -120,7 +122,7 @@ void jv_mainframe::DoQuit(void)
 //-------------------
 void jv_mainframe::DoNext(void)
 {
-	canvas2->Clear();
+	//canvas2->Clear();
 	JEP->NextEvent();
 }
 
@@ -163,11 +165,10 @@ void jv_mainframe::DoSelectObjectType(Int_t id)
 {
 	// Clear listboxs of associated objects
 	lbObjects->RemoveAll();
-	lbObjects2->RemoveAll();
+
 	lbAssociatedObjects->RemoveAll();
 	lbAssociatedToObjects->RemoveAll();
 	Redraw(lbObjects);
-	Redraw(lbObjects2);
 	Redraw(lbAssociatedObjects);
 	Redraw(lbAssociatedToObjects);
 
@@ -181,8 +182,7 @@ void jv_mainframe::DoSelectObjectType(Int_t id)
 	string nametag = e->GetTitle();
 	lObjectType->SetTitle(strdup(nametag.c_str()));
 	lObjectType->Resize();
-	lObjectType2->SetTitle(strdup(nametag.c_str()));
-	lObjectType2->Resize();
+
 
 
 	// Get factory name and tag
@@ -230,14 +230,13 @@ void jv_mainframe::DoSelectObjectType(Int_t id)
 		}
 		sprintf(str, "0x%016lx %s", (unsigned long)vobjs[i], ((JObject*)vobjs[i])->GetName().c_str());
 		lbObjects->AddEntry(str, i+1);
-		lbObjects2->AddEntry(str, i+1);
 	}
 
 	JEP->MakeCallGraph();
 
 	JEP->Unlock();
 	Redraw(lbObjects);
-	Redraw(lbObjects2);
+
 }
 
 
@@ -274,13 +273,6 @@ void jv_mainframe::DoSelectObject(Int_t id)
 	Redraw(lbAssociatedObjects);
 
 	// Get associated to objects
-
-
-
-
-
-
-
 	a2objs.clear();
 	JEP->GetAssociatedTo(obj, a2objs);
 	jout<<"This object is associated to: "<<a2objs.size()<<" objects "<<endl;
@@ -290,32 +282,25 @@ void jv_mainframe::DoSelectObject(Int_t id)
 		lbAssociatedToObjects->AddEntry(str, i+1);
 	}
 	Redraw(lbAssociatedToObjects);
-}
 
-
-
-
-
-
-
-
-//-------------------
-// DoSelectObject
-//-------------------
-void jv_mainframe::DoSelectObject2(Int_t id)
-{
 
 
 	// Get pointer to selected object as a JObject
-	Int_t idx = id-1;
-	if(idx<0 || idx>=(Int_t)vobjs.size()) return;
-	BDXObject *obj=0;
-	obj = dynamic_cast<BDXObject*>((JObject*)vobjs[idx]);
-	if (obj!=0){
-		DrawObject(obj);
+	BDXObject *obj2=0;
+	obj2 = dynamic_cast<BDXObject*>((JObject*)vobjs[idx]);
+	if (obj2!=0){
+		DrawObject(obj2);
 	}
-	//UpdateObjectValues(obj);
+
 }
+
+
+
+
+
+
+
+
 
 
 
@@ -454,14 +439,14 @@ void jv_mainframe::UpdateObjectTypeList(vector<JVFactoryInfo> &facinfo)
 //-------------------
 // UpdateObjectValues
 //-------------------
+
 void jv_mainframe::DrawObject(BDXObject *obj)
 {
-	TCanvas *canvas=obj->Draw(canvas2->GetCanvasWindowId());
 
-
-	canvas2->AdoptCanvas(canvas);
-	canvas->Modified();
-	canvas->Update();
+	canvasTMP=obj->Draw(canvas2->GetCanvasWindowId());
+	canvas2->AdoptCanvas(canvasTMP);
+	canvasTMP->Modified();
+	canvasTMP->Update();
 
 }
 
@@ -765,18 +750,40 @@ void jv_mainframe::CreateGUI(void)
 	TGVerticalFrame *fObjects = new TGVerticalFrame(fObjectDetails);
 	TGVerticalFrame *fAssociated = new TGVerticalFrame(fObjectDetails);
 	TGVerticalFrame *fObjectValues = new TGVerticalFrame(fObjectDetails);
+	TGVerticalFrame *fDraw = new TGVerticalFrame(fObjectDetails);
+
 	fObjectDetails->AddFrame(fObjects, new TGLayoutHints(kLHintsLeft | kLHintsTop | kLHintsExpandX | kLHintsExpandY ,2,2,2,2));
-	fObjectDetails->AddFrame(fAssociated, new TGLayoutHints(kLHintsLeft | kLHintsTop | kLHintsExpandX | kLHintsExpandY ,2,2,2,2));
+	//fObjectDetails->AddFrame(fAssociated, new TGLayoutHints(kLHintsLeft | kLHintsTop | kLHintsExpandX | kLHintsExpandY ,2,2,2,2));
 	fObjectDetails->AddFrame(fObjectValues, new TGLayoutHints(kLHintsLeft | kLHintsTop | kLHintsExpandX | kLHintsExpandY ,2,2,2,2));
+	fObjectDetails->AddFrame(fDraw, new TGLayoutHints(kLHintsLeft | kLHintsTop | kLHintsExpandX | kLHintsExpandY ,2,2,2,2));
+
+	//TGcanvas to draw
+	TGCanvas *gcanvas2 = new TGCanvas(fDraw, 100, 100, kFixedSize);
+	fDraw->AddFrame(gcanvas2, new TGLayoutHints(kLHintsExpandY | kLHintsExpandX));
+	fCanvas2 = new TGVerticalFrame(gcanvas2->GetViewPort(), 10, 10);
+	gcanvas2->SetContainer(fCanvas2);
+
+
+	canvas2 = new TRootEmbeddedCanvas("rec2", fCanvas2, 400, 400);
+	canvas2->GetCanvas()->SetFillColor(TColor::GetColor( (Float_t)0.96, 0.96, 0.99));
+	fCanvas2->AddFrame(canvas2, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY,2,2,2,2));
 
 	lObjectType = AddLabel(fObjects, "---------------");
 	lbObjects = AddListBox(fObjects, "Objects this event");
 
-	lbAssociatedObjects = AddListBox(fAssociated, "Associated Objects");
-	lbAssociatedToObjects = AddListBox(fAssociated, "Objects to which this is associated\n(may be incomplete)");
-
 	lObjectValue = AddLabel(fObjectValues, "---------------");
 	lbObjectValues = AddListBox(fObjectValues, "", 250, kLHintsExpandX | kLHintsExpandY);
+
+	lbAssociatedObjects = AddListBox(fObjectValues, "Associated Objects");
+	lbAssociatedToObjects = AddListBox(fObjectValues, "Objects to which this is associated\n(may be incomplete)");
+
+	//	lbAssociatedObjects = AddListBox(fAssociated, "Associated Objects");
+	//	lbAssociatedToObjects = AddListBox(fAssociated, "Objects to which this is associated\n(may be incomplete)");
+
+	//	lObjectValue = AddLabel(fObjectValues, "---------------");
+	//	lbObjectValues = AddListBox(fObjectValues, "", 250, kLHintsExpandX | kLHintsExpandY);
+
+
 
 	// ---- Call Graph Tab ----
 	TGCompositeFrame *tCallGraph = fTab->AddTab("Call Graph");
@@ -791,26 +798,6 @@ void jv_mainframe::CreateGUI(void)
 	canvas->GetCanvas()->SetFillColor(TColor::GetColor( (Float_t)0.96, 0.96, 0.99));
 	fCanvas->AddFrame(canvas, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY,2,2,2,2));
 
-	// ---- Draw Tab ----
-	TGCompositeFrame *tDraw = fTab->AddTab("Graphical objects");
-	TGHorizontalFrame *fDraw = new TGHorizontalFrame(tDraw);
-	tDraw->AddFrame(fDraw, new TGLayoutHints(kLHintsLeft | kLHintsTop | kLHintsExpandX | kLHintsExpandY ,2,2,2,2));
-
-	TGVerticalFrame *fObjectsDraw = new TGVerticalFrame(fDraw);
-	fDraw->AddFrame(fObjectsDraw,new TGLayoutHints(kLHintsLeft | kLHintsTop | kLHintsExpandX | kLHintsExpandY ,2,2,2,2));
-
-	lObjectType2 = AddLabel(fObjectValues, "---------------");
-	lbObjects2 = AddListBox(fObjectsDraw, "Objects this event");
-
-	// Use TGCanvas to get scrollbars for the canvas
-	TGCanvas *gcanvas2 = new TGCanvas(fDraw, 200, 200);
-	fDraw->AddFrame(gcanvas2, new TGLayoutHints(kLHintsExpandY | kLHintsExpandX));
-	fCanvas2 = new TGVerticalFrame(gcanvas2->GetViewPort(), 10, 10);
-	gcanvas2->SetContainer(fCanvas2);
-
-	canvas2 = new TRootEmbeddedCanvas(0, fCanvas2, 400, 400);
-	canvas2->GetCanvas()->SetFillColor(TColor::GetColor( (Float_t)0.96, 0.96, 0.99));
-	fCanvas2->AddFrame(canvas2, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY,2,2,2,2));
 
 
 	//....... Bottom Frame .......
@@ -824,7 +811,6 @@ void jv_mainframe::CreateGUI(void)
 	//bNextN->Connect("Clicked()","jv_mainframe", this, "DoNextN()");
 	lbObjectTypes->Connect("Selected(Int_t)","jv_mainframe", this, "DoSelectObjectType(Int_t)");
 	lbObjects->Connect("Selected(Int_t)","jv_mainframe", this, "DoSelectObject(Int_t)");
-	lbObjects2->Connect("Selected(Int_t)","jv_mainframe", this, "DoSelectObject2(Int_t)");
 
 	lbAssociatedObjects->Connect("Selected(Int_t)","jv_mainframe", this, "DoSelectAssociatedObject(Int_t)");
 	lbAssociatedObjects->Connect("DoubleClicked(Int_t)","jv_mainframe", this, "DoDoubleClickAssociatedObject(Int_t)");

@@ -67,83 +67,50 @@ jerror_t CalorimeterCluster_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 
 	double Emax=-99999;
 	bool hasSeed=false;
-	/*1: divide hits in different sectors. At this stage, do not apply yet any cut*/
+	/*1: divide hits in different sectors. At this stage, just apply the energy cut on a single CRS*/
 	for (all_hits_it=all_hits.begin();all_hits_it!=all_hits.end();all_hits_it++){
-		sector_hits[(*all_hits_it)->m_channel.sector].push_back(*all_hits_it);  //the [] operator in a map create a new data if key does not exists.
+		if ((*all_hits_it)->E > m_CLUSTER_HIT_THR){
+			sector_hits[(*all_hits_it)->m_channel.sector].push_back(*all_hits_it);  //the [] operator in a map create a new data if key does not exists.
+		}
 	}
 	/*2: start the loop on the sectors*/
 	for (sector_hits_it=sector_hits.begin();sector_hits_it!=sector_hits.end();sector_hits_it++){
 		int this_sector;
-		double this_sector_seed_temp=0;  // mr
 		vector<const CalorimeterHit*> this_sector_hits;
 		vector<const CalorimeterHit*>::iterator this_sector_hits_it;
-
-		vector<const CalorimeterHit*> this_sector_hits_temp;      // mr
-	    vector<const CalorimeterHit*>::iterator this_sector_hits_temp_it; //mr
-
 		const CalorimeterHit* this_sector_seed;
 
 		this_sector=(sector_hits_it)->first;
-//		this_sector_hits=(sector_hits_it)->second;
-		this_sector_hits_temp=(sector_hits_it)->second;
+		this_sector_hits=(sector_hits_it)->second;
 
-
-
-
-          /*    command erease no match with const vector
-		//2A: apply minimum energy cut
-				for (this_sector_hits_it=this_sector_hits.begin();this_sector_hits_it!=this_sector_hits.end();this_sector_hits_it++){
-					if ((*this_sector_hits_it)->E <= m_CLUSTER_HIT_THR){
-						this_sector_hits.erase(this_sector_hits_it);
-					}
-				}//end 2A loop
-         */
-
-		//2A: apply minimum energy cut
-
-          for (this_sector_hits_temp_it=this_sector_hits_temp.begin();this_sector_hits_temp_it!=this_sector_hits_temp.end();this_sector_hits_temp_it++){
-			if ((*this_sector_hits_temp_it)->E > m_CLUSTER_HIT_THR){
-
-				this_sector_hits.push_back(*this_sector_hits_temp_it);
-		                                                        	}
-		}//end 2A loop
 
 		/*2B: search the seed in this sector*/
 		Emax=-99999;
 		for (this_sector_hits_it=this_sector_hits.begin();this_sector_hits_it!=this_sector_hits.end();this_sector_hits_it++){
-
 			//Check if the energy of this hit is higher than the maximum. If so, make this as the (temporary) maximum
 			if ((*this_sector_hits_it)->E>Emax){
 				Emax=(*this_sector_hits_it)->E;
 				this_sector_seed=(*this_sector_hits_it);
-			    this_sector_seed_temp = this_sector_seed->E; //mr
 			}
 		}
 		hasSeed=false;
 		//At the end of this loop, this_sector_seed MAY be a seed, if the energy is higher than the CLUSTER_SEED_THR
-  // if (this_sector_seed->E>m_CLUSTER_SEED_THR){
-		if (this_sector_seed_temp>m_CLUSTER_SEED_THR){
-
-	        hasSeed=true;
+		 if (this_sector_seed->E>m_CLUSTER_SEED_THR){
+			hasSeed=true;
 		}
 		//If there is NO seed, then in this sector there is NO EM shower. Go on, to the next sector
 		if (hasSeed==false) continue;
 		else{ //There is a cluster
 			CalorimeterCluster *cluster = new CalorimeterCluster;        //Create a cluster
 			this->setCluster(cluster,this_sector_seed,this_sector_hits); //set all the cluster properties (see below)
-
 			_data.push_back(cluster); 							         //publish it
 		}
-
 	}//end loop on sectors
 
 
 
 
-
-
-
-return NOERROR;
+	return NOERROR;
 }
 
 //------------------
@@ -178,22 +145,21 @@ void CalorimeterCluster_factory::setCluster(CalorimeterCluster *cluster,const Ca
 	cluster->Nhits_near_seed = 0;
 	cluster->E = 0;             			 //Set the cluster total energy
 	cluster->Eseed = (seed)->E;              //Set the seed energy to the cluster
-    cluster->sector= seed->m_channel.sector;
+	cluster->m_sector= seed->m_channel.sector;
 
 	for (hits_it=hits.begin();hits_it!=hits.end();hits_it++){ //set the cluster total energy. Add the hits to the cluster
 		E=(*hits_it)->E;
 		cluster->E += E;
 		cluster->Nhits++;
-		if( ((*hits_it)->m_channel.sector==seed->m_channel.sector) && abs((*hits_it)->m_channel.x-seed->m_channel.x)<=1 && abs((*hits_it)->m_channel.y-seed->m_channel.y)<=1 )cluster->Nhits_near_seed++;
+		if(abs((*hits_it)->m_channel.x-seed->m_channel.x)<=1 && abs((*hits_it)->m_channel.y-seed->m_channel.y)<=1 )cluster->Nhits_near_seed++;
 		cluster->AddAssociatedObject(*hits_it);
-
 	}
 	Etot=cluster->E;
 
 	for (hits_it=hits.begin();hits_it!=hits.end();hits_it++){ //weighted x-y
 		E=(*hits_it)->E;
 		pos_weight=std::max(0.,(m_CLUSTER_POS_W0+log(E/Etot)));
-	//	den+=E*pos_weight;
+		//	den+=E*pos_weight;
 		den+=pos_weight;  // from HPS note 2014-002
 
 		Xnum+=((*hits_it)->m_channel.x)*pos_weight;

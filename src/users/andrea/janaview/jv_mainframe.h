@@ -78,7 +78,7 @@ class jv_mainframe:public TGMainFrame{
 		void DoDelayedSelectObjectType(void);
 		void DoSelectObjectType(Int_t id);
 
-		void DoSelectObject(Int_t id);void DoSelectObject2(Int_t id);
+		void DoSelectObject(Int_t id);
 		void DoSelectAssociatedObject(Int_t id);
 		void DoSelectAssociatedToObject(Int_t id);
 		void DoTimer(void);
@@ -108,10 +108,10 @@ class jv_mainframe:public TGMainFrame{
 		TGLabel   *lSource;
 		TGLabel   *lRun;
 		TGLabel   *lEvent;
-		TGLabel   *lObjectType,*lObjectType2;
+		TGLabel   *lObjectType;
 		TGLabel   *lObjectValue;
 		TGListBox *lbObjectTypes;
-		TGListBox *lbObjects,*lbObjects2;
+		TGListBox *lbObjects;
 		TGListBox *lbAssociatedObjects;
 		TGListBox *lbAssociatedToObjects;
 		TGListBox *lbObjectValues;
@@ -119,9 +119,13 @@ class jv_mainframe:public TGMainFrame{
 		TGNumberEntry *fCh;
 		
 		TGTab *fTab;
-		TGVerticalFrame *fCanvas,*fCanvas2;
-		TRootEmbeddedCanvas *canvas,*canvas2;
+		TGVerticalFrame *fCanvas;
+		TRootEmbeddedCanvas *canvas;
 		
+		TGVerticalFrame *fCanvas2;
+		TRootEmbeddedCanvas *canvas2;
+		TCanvas *canvasTMP;
+
 		vector<string> objtypes; // nametags of values in object type listbox
 		vector<void*> vobjs;
 #if !defined(__CINT__) && !defined(__CLING__)

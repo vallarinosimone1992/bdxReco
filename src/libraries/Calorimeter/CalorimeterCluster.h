@@ -11,7 +11,17 @@
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
 
-class CalorimeterCluster:public jana::JObject{
+
+#include <system/BDXObject.h>
+#include "TObject.h"
+
+class TH1D;
+class TCanvas;
+
+class CalorimeterCluster:public TObject,public BDXObject{
+	private:
+		mutable vector<TH1D*> hWaves; //!
+
 	public:
 		JOBJECT_PUBLIC(CalorimeterCluster);
 		
@@ -29,7 +39,11 @@ class CalorimeterCluster:public jana::JObject{
 		double Eseed;
 		double E,T;
 		double x,y;
-		int Nhits, Nhits_near_seed,sector;
+		int Nhits, Nhits_near_seed,m_sector;
+
+
+		virtual TCanvas* Draw(int id)const; //!
+		ClassDef(CalorimeterCluster,1);
 
 };
 

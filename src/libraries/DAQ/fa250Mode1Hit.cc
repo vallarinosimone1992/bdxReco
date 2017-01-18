@@ -1,5 +1,4 @@
 #include "fa250Mode1Hit.h"
-
 #include "TH1D.h"
 #include "TCanvas.h"
 
@@ -14,11 +13,11 @@ TCanvas* fa250Mode1Hit::Draw(int id) const{
 
 
 	if (m_canvas==0){
-		if (id==0){
+		if (id<0){
 			m_canvas=new TCanvas();
 		}
 		else{
-			m_canvas=new TCanvas(Form("c%i_%i_%i",m_channel.rocid,m_channel.slot,m_channel.channel),500,500,id);
+			m_canvas=new TCanvas(Form("ch%i_%i_%i",m_channel.rocid,m_channel.slot,m_channel.channel),100,100,id);
 		}
 	}
 	m_canvas->cd();

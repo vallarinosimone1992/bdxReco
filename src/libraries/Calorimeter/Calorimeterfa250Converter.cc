@@ -101,8 +101,8 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 	std::vector<int> m_signalCrossingIndexes;
 
 
-	output->nSingles=0;
-	output->nSignals=0;
+	output->m_nSingles=0;
+	output->m_nSignals=0;
 
 	output->average=0;
 	//1: compute the average
@@ -172,18 +172,18 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 		}
 	}
 
-	output->nSignals=m_signalCrossingIndexes.size();
-	output->nSingles=m_singleCrossingIndexes.size();
+	output->m_nSignals=m_signalCrossingIndexes.size();
+	output->m_nSingles=m_singleCrossingIndexes.size();
 
 
-	if (((output->nSignals)==0)&&(output->nSingles)==0){
+	if (((output->m_nSignals)==0)&&(output->m_nSingles)==0){
 		output->m_type=CalorimeterSiPMHit::noise;
 		output->T=0;
 		output->Qraw=this->sumSamples(0,m_NSB+m_NSA,&(input->samples[0])); //to be uniform with the case below
-		output->A=00;
+		output->A=0;
 		return NOERROR;
 	}
-	else if ((output->nSignals==0)&&(output->nSingles==1)){
+	else if ((output->m_nSignals==0)&&(output->m_nSingles==1)){
 		output->A=this->getMaximum(m_crossingTimes[0].first,m_crossingTimes[0].second,&(input->samples[0]),Tmax);
 
 		if ((Tmax<=m_NSB)||(Tmax>=(size-1-m_NSA))){
@@ -222,7 +222,7 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 
 		}
 	}
-	else if (output->nSignals>=1){
+	else if (output->m_nSignals>=1){
 		output->m_type=CalorimeterSiPMHit::real_signal;
 
 
@@ -272,7 +272,7 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 		output->Qraw=0;
 		output->QrawS=0;
 		prev_xmin=0;
-		for (int iphe=0;iphe<output->nSingles;iphe++){
+		for (int iphe=0;iphe<output->m_nSingles;iphe++){
 			idx=m_singleCrossingIndexes[iphe];
 			xmin=m_crossingTimes[idx].first;
 			xmax=m_crossingTimes[idx].second;
