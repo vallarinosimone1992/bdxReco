@@ -25,14 +25,10 @@ int PThreadIDUniqueInt(pthread_t tid){
 Calorimeterfa250Converter_factory::Calorimeterfa250Converter_factory():m_calorimeterfa250Converter(0){
 
 
-	m_SINGLE_SIGNAL_TOT=120;
-	m_MIN_TOT=12;
-	m_THR=8;
+
 	m_NPED=20;
 	m_NSAMPLES=2000;
-	gPARMS->SetDefaultParameter("CALORIMETER:MIN_TOT",m_MIN_TOT,"Min ToT (in ns) for a pulse to be considered");
-	gPARMS->SetDefaultParameter("CALORIMETER:SINGLE_SIGNAL_TOT",m_SINGLE_SIGNAL_TOT,"Min ToT (in ns) of a good signal");
-	gPARMS->SetDefaultParameter("CALORIMETER:THR",m_THR,"Min amplitude (in mV) for a signal to be considered");
+
 	gPARMS->SetDefaultParameter("CALORIMETER:NSB",m_NSB,"Samples before the maximum to integrate for single phes");
 	gPARMS->SetDefaultParameter("CALORIMETER:NSA",m_NSA,"Samples after the maximum to integrate for single phes");
 	gPARMS->SetDefaultParameter("CALORIMETER:NPED",m_NPED,"Number of samples to include in the pedestal computation event-by-event");
@@ -47,7 +43,8 @@ jerror_t Calorimeterfa250Converter_factory::init(void)
 {
 
 
-
+	m_thr=new CalibrationHandler<TranslationTable::CALO_Index_t>("/Calorimeter/thr");
+	this->mapCalibrationHandler(m_thr);
 	return NOERROR;
 }
 
@@ -56,23 +53,28 @@ jerror_t Calorimeterfa250Converter_factory::init(void)
 //------------------
 jerror_t Calorimeterfa250Converter_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber)
 {
+
+
+
+
+	this->updateCalibrationHandler(m_thr,eventLoop);
+
+
+
+
+
+
+	gPARMS->GetParameter("CALORIMETER:VERBOSE",	m_calorimeterfa250Converter->verbose());
 	int threadId= PThreadIDUniqueInt(eventLoop->GetPThreadID());
 	m_calorimeterfa250Converter=new Calorimeterfa250Converter();
 	m_calorimeterfa250Converter->name()=string(Form("h%i",threadId));
 
-	gPARMS->GetParameter("CALORIMETER:VERBOSE",	m_calorimeterfa250Converter->verbose());
-
-	m_calorimeterfa250Converter->m_SINGLE_SIGNAL_TOT=m_SINGLE_SIGNAL_TOT;
-	m_calorimeterfa250Converter->m_MIN_TOT=m_MIN_TOT;
-	m_calorimeterfa250Converter->m_THR=m_THR;
 	m_calorimeterfa250Converter->m_NSB=m_NSB;
 	m_calorimeterfa250Converter->m_NSA=m_NSA;
 	m_calorimeterfa250Converter->m_NPED=m_NPED;
 	m_calorimeterfa250Converter->m_NSAMPLES=m_NSAMPLES;
 
-
-
-
+	m_calorimeterfa250Converter->m_thrDB=m_thr;
 
 
 	_data.push_back(m_calorimeterfa250Converter);

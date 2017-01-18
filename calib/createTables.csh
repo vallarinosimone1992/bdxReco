@@ -21,6 +21,8 @@ set CalorimeterEneLines = 40000
 
 echo "Calorimeter"
 $command mkdir $CalorimeterFolder
+echo "Thr"
+$command mktbl $CalorimeterFolder/thr -r $CalorimeterSipmGainLines  $CalorimeterIndexes thr=double minToT=double singleSignalToT=double "#fadc signals THR"
 echo "Sipm gain"
 $command mktbl $CalorimeterFolder/sipm_gain -r $CalorimeterSipmGainLines  $CalorimeterIndexes sipm_gain=double "#sipm gain"
 echo "ene"

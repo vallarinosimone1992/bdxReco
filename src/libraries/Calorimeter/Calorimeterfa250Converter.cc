@@ -76,6 +76,11 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 	int N,n,idx;
 	double min,max,xmin,xmax,prev_xmin,prev_xmax,rms,Tmax;
 
+	/*Get thr and TOT from DB*/
+	m_THR=m_thrDB->getCalib(*(output->m_channel.calorimeter))[0];
+	m_MIN_TOT=m_thrDB->getCalib(*(output->m_channel.calorimeter))[1];
+	m_SINGLE_SIGNAL_TOT=m_thrDB->getCalib(*(output->m_channel.calorimeter))[2];
+
 
 	output->Qraw=0;
 	output->T=0;
@@ -151,18 +156,18 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 
 	/*Compute ToT */
 	for (int itime=0;itime<m_crossingTimes.size();itime++){
-		m_crossingTimesDelta.push_back(m_crossingTimes.at(itime).second-m_crossingTimes.at(itime).first);
+		m_crossingTimesDelta.push_back(m_crossingTimes[itime].second-m_crossingTimes[itime].first);
 	}
 
 	/*Verify the ToT for each pulse*/
 	for (int itime=0;itime<m_crossingTimes.size();itime++){
-		if (m_crossingTimesDelta.at(itime)<0){
+		if (m_crossingTimesDelta[itime]<0){
 			jerr<<"Calorimeterfa20Converter::convertMode1Hit error, negative ToT?"<<std::endl;
 		}
-		else if (m_crossingTimesDelta.at(itime)>m_SINGLE_SIGNAL_TOT/4){
+		else if (m_crossingTimesDelta[itime]>m_SINGLE_SIGNAL_TOT/4){
 			m_signalCrossingIndexes.push_back(itime);
 		}
-		else if((m_crossingTimesDelta.at(itime)>m_MIN_TOT/4)||(m_crossingTimes.at(itime).second)==(size)||(m_crossingTimes.at(itime).first)==(0)){
+		else if((m_crossingTimesDelta[itime]>m_MIN_TOT/4)||(m_crossingTimes[itime].second)==(size)||(m_crossingTimes[itime].first)==(0)){
 			m_singleCrossingIndexes.push_back(itime);
 		}
 	}

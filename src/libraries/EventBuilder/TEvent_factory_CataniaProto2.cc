@@ -77,11 +77,11 @@ jerror_t TEvent_factory_CataniaProto2::evnt(JEventLoop *loop, uint64_t eventnumb
 
 
 	/*Loop over JANA objects, clear collections and fill them*/
-
 	loop->Get(chits);
 	m_CaloHits->Clear("C");
 	for (int ii=0;ii<chits.size();ii++){
 		((CalorimeterHit*)m_CaloHits->ConstructedAt(ii))->operator=(*(chits[ii]));
+		m_event->AddAssociatedObject(chits[ii]);
 	}
 	m_event->addCollection(m_CaloHits);
 
@@ -90,17 +90,19 @@ jerror_t TEvent_factory_CataniaProto2::evnt(JEventLoop *loop, uint64_t eventnumb
 	m_IntVetoHits->Clear("C");
 	for (int ii=0;ii<ivhits.size();ii++){
 		((IntVetoHit*)m_IntVetoHits->ConstructedAt(ii))->operator=(*(ivhits[ii]));
+		m_event->AddAssociatedObject(ivhits[ii]);
 	}
 	m_event->addCollection(m_IntVetoHits);
 
 
-/*	loop->Get(evhits);
+	loop->Get(evhits);
 	m_ExtVetoHits->Clear("C");
 	for (int ii=0;ii<evhits.size();ii++){
 		((ExtVetoHit*)m_ExtVetoHits->ConstructedAt(ii))->operator=(*(evhits[ii]));
+		m_event->AddAssociatedObject(evhits[ii]);
 	}
 	m_event->addCollection(m_ExtVetoHits);
-*/
+
 
 
 	/*publish the event*/
