@@ -130,7 +130,7 @@ jerror_t CataniaEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	}
 
 
-	for (chits_it=chits.begin();chits_it!=chits.end();chits_it++){
+	/*for (chits_it=chits.begin();chits_it!=chits.end();chits_it++){
 		const CalorimeterHit *hit=(*chits_it);
 		if (hit->m_channel.y==0){ //this is the first crystal
 			for (int ihit=0;ihit<hit->m_data.size();ihit++){
@@ -164,7 +164,7 @@ jerror_t CataniaEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		}
 		m_event->AddAssociatedObject(hit);
 	}
-
+*/
 	if (E2<=m_EC2_cut){
 		m_event->E1=E2;
 		m_event->T1=T2;

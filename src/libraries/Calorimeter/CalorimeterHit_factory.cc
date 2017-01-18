@@ -92,79 +92,72 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	const CalorimeterDigiHit *m_CalorimeterDigiHit;
 	CalorimeterHit *m_CalorimeterHit=0;
 
-	TranslationTable::CALO_Index_t m_index;
 
-	int readout;
-	double Q,Qs,T,Qtot,Qmax,Tmax;
-	int flagOk;
-
+	int countOk;
+	double Q,T,Qtot,Qmax,Tmax;
 	double gain,ped;
 
-	//1b: retrieve CalorimeterSiPMHit objects
 
-	/*This is very important!! Select - or not - the MC case*/
+
 	if (isMC){
 		loop->Get(m_CalorimeterDigiHits,"MC");
 	}
 	else{
 		loop->Get(m_CalorimeterDigiHits);
 	}
+	/*Do the matching
+	 */
+	m_map.clear();
+	for (it=m_CalorimeterDigiHits.begin(); it != m_CalorimeterDigiHits.end() ; it++){
+		m_channel = ((*it)->m_channel);
+		m_channel.readout = 0;
+		m_map[m_channel].push_back(*it);
+	}
 
-	for (it=m_CalorimeterDigiHits.begin();it!=m_CalorimeterDigiHits.end();it++){
-		m_CalorimeterDigiHit=(*it);
+	/*Now the map is full of all the hits in different active elements of calorimeter, i.e. with different identifiers, BUT readout, that maps the sipm hits.
+	 * Each hit has a reference to the digi hits that made it
+	 */
+	vector <const CalorimeterDigiHit*> m_CalorimeterDigiHit_tmp;
+	for (m_map_it=m_map.begin();m_map_it!=m_map.end();m_map_it++){
 
-		flagOk=0;
-		Qtot=0;
-		Qmax=-9999;
-		if ((*it)->m_data.size()==0){
-			continue;
-		}
-		else if ((*it)->m_data.size()==1){   /*Single readout object*/
-			Q=m_CalorimeterDigiHit->m_data[0].Q;
-			Qs=m_CalorimeterDigiHit->m_data[0].Qs;
-			T=m_CalorimeterDigiHit->m_data[0].T;
+		m_CalorimeterDigiHit_tmp=m_map_it->second;
 
+
+		//Do some processing
+		if (m_CalorimeterDigiHit_tmp.size()==1){ //single-ch readout
+			m_CalorimeterDigiHit=m_CalorimeterDigiHit_tmp[0];
+			Q=m_CalorimeterDigiHit->Q;
+			T=m_CalorimeterDigiHit->T;
 			if (Q	> m_THR_singleReadout){
-
 				m_CalorimeterHit=new CalorimeterHit();
-				m_CalorimeterHit->timestamp=m_CalorimeterDigiHit->timestamp;
-				m_CalorimeterHit->E=0;
 				m_CalorimeterHit->m_channel=m_CalorimeterDigiHit->m_channel;
-				m_CalorimeterHit->AddAssociatedObject(m_CalorimeterDigiHit);
-				m_CalorimeterHit->Q=Q;
+				m_CalorimeterHit->m_channel.readout=0;
+				m_CalorimeterHit->timestamp=m_CalorimeterDigiHit->timestamp;
 				m_CalorimeterHit->T=T;
-				CalorimeterHit::CalorimeterComponentHit hit;
-				hit.readout=m_CalorimeterDigiHit->m_data[0].readout;
-				hit.Q=Q;
-				hit.Qs=Qs;
-				hit.T=T;
-				hit.good_ped_RMS=m_CalorimeterDigiHit->m_data[0].good_ped_RMS;
-				hit.type=m_CalorimeterDigiHit->m_data[0].type;
+				m_CalorimeterHit->RMSflag=m_CalorimeterDigiHit->RMSflag;
 
 				/*Try to calibrate in energy and ped-sub*/
-				m_index=m_CalorimeterHit->m_channel;
-				m_index.readout=m_CalorimeterDigiHit->m_data[0].readout;
-				gain=m_ene->getCalib(m_index)[0];
-				ped=m_ene->getCalib(m_index)[1];
-				hit.E=(Q-ped);
+				gain=m_ene->getCalib(m_CalorimeterHit->m_channel)[0];
+				ped=m_ene->getCalib(m_CalorimeterHit->m_channel)[1];
+				m_CalorimeterHit->E=(Q-ped);
 				if (gain!=0){
-					hit.E/=gain;
+					m_CalorimeterHit->E/=gain;
 				}
-				m_CalorimeterHit->E=hit.E;
-				m_CalorimeterHit->m_data.push_back(hit);
-				m_CalorimeterHit->N=1;
-				_data.push_back(m_CalorimeterHit);
+				m_CalorimeterHit->AddAssociatedObject(m_CalorimeterDigiHit);
+				_data.push_back(m_CalorimeterHit); //publish it
 			}
 		}
-		else if ((*it)->m_data.size()>=2){   /*Multiple readout object*/
-
-			for (int idigi=0;idigi<m_CalorimeterDigiHit->m_data.size();idigi++){
-				Q=m_CalorimeterDigiHit->m_data[idigi].Q;
-				Qs=m_CalorimeterDigiHit->m_data[idigi].Qs;
-				T=m_CalorimeterDigiHit->m_data[idigi].T;
+		else if (m_CalorimeterDigiHit_tmp.size()>=2){   /*Multiple readout object*/
+			countOk=0;
+			Qtot=0;
+			Qmax=-9999;
+			for (int idigi=0;idigi<m_CalorimeterDigiHit_tmp.size();idigi++){
+				m_CalorimeterDigiHit=m_CalorimeterDigiHit_tmp[idigi];
+				Q=m_CalorimeterDigiHit->Q;
+				T=m_CalorimeterDigiHit->T;
 
 				if (Q>m_THR_multipleReadout){
-					flagOk++;
+					countOk++;
 					Qtot+=Q;
 				}
 				if (Q>Qmax){
@@ -173,57 +166,31 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 				}
 			}
 
-			/*At the end of this loop, flagOK is the number of counters above thr*/
-			if (flagOk>=m_N_multipleReadout){
+			/*At the end of this loop, countOK is the number of counters above thr*/
+			if (countOk>=m_N_multipleReadout){
 				m_CalorimeterHit=new CalorimeterHit();
-				m_CalorimeterHit->E=0;
 				m_CalorimeterHit->m_channel=m_CalorimeterDigiHit->m_channel;
+				m_CalorimeterHit->m_channel.readout=0;
 				m_CalorimeterHit->timestamp=m_CalorimeterDigiHit->timestamp;
-				m_CalorimeterHit->AddAssociatedObject(m_CalorimeterDigiHit);
-				m_CalorimeterHit->Q=Qtot;
 				m_CalorimeterHit->T=Tmax;
-				m_CalorimeterHit->N=flagOk;
 
-				/*Loop again*/
-				for (int idigi=0;idigi<m_CalorimeterDigiHit->m_data.size();idigi++){
-					Q=m_CalorimeterDigiHit->m_data[idigi].Q;
-					Qs=m_CalorimeterDigiHit->m_data[idigi].Qs;
-					T=m_CalorimeterDigiHit->m_data[idigi].T;
-				//	jout<<m_CalorimeterDigiHit->m_channel.sector<<" "<<m_CalorimeterDigiHit->m_channel.x<<" "<<m_CalorimeterDigiHit->m_channel.y<<" "<<Q<<endl;
-					if (Q>m_THR_multipleReadout){						/*Clearly this is now enough as condition!*/
-						CalorimeterHit::CalorimeterComponentHit hit;
-						hit.readout=m_CalorimeterDigiHit->m_data[idigi].readout;
-						hit.Q=Q;
-						hit.Qs=Qs;
-						hit.T=T;
-						hit.good_ped_RMS=m_CalorimeterDigiHit->m_data[idigi].good_ped_RMS;
-						hit.type=m_CalorimeterDigiHit->m_data[idigi].type;
-						hit.E=0;
-
-						/*Try to calibrate in energy and ped-sub*/
-						m_index=m_CalorimeterHit->m_channel;
-						m_index.readout=m_CalorimeterDigiHit->m_data[idigi].readout;
-						gain=m_ene->getCalib(m_index)[0];
-						ped=m_ene->getCalib(m_index)[1];
-						hit.E=(Q-ped);
-						if (gain!=0){
-							hit.E/=gain;
-						}
-						//jout<<m_CalorimeterDigiHit->m_channel.sector<<" "<<m_CalorimeterDigiHit->m_channel.x<<" "<<m_CalorimeterDigiHit->m_channel.y<<" "<<Q<<" "<<gain<<" "<<ped<<endl;
-						m_CalorimeterHit->E+=hit.E;
-						m_CalorimeterHit->m_data.push_back(hit);
-					}
+				/*Loop again to associate*/
+				for (int idigi=0;idigi<m_CalorimeterDigiHit_tmp.size();idigi++){
+					m_CalorimeterDigiHit=m_CalorimeterDigiHit_tmp[idigi];
+					m_CalorimeterHit->AddAssociatedObject(m_CalorimeterDigiHit);
 				}
-				m_CalorimeterHit->E/=flagOk;
-
+				/*Try to calibrate in energy and ped-sub*/
+				gain=m_ene->getCalib(m_CalorimeterHit->m_channel)[0];
+				ped=m_ene->getCalib(m_CalorimeterHit->m_channel)[1];
+				m_CalorimeterHit->E=(Qmax-ped);
+				if (gain!=0){
+					m_CalorimeterHit->E/=gain;
+				}
 				_data.push_back(m_CalorimeterHit);
-
 			}
+		}
 
-		}
-		else {
-			jerr<<"CalorimeterHit_factory::evnt error, a CalorimeterDigiHit has more than 2 entries in the data vector??"<<endl;
-		}
+
 
 	}
 

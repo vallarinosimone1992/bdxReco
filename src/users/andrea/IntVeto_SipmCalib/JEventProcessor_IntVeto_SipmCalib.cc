@@ -14,8 +14,6 @@ using namespace jana;
 #include <JANA/JFactory.h>
 
 
-
-#include "JEventProcessor_test.h"
 #include "system/BDXEventProcessor.h"
 
 #include <DAQ/fa250Mode1Hit.h>

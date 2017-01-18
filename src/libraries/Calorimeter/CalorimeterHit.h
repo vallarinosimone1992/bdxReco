@@ -23,15 +23,7 @@ class TCanvas;
 class CalorimeterHit:public TObject,public BDXObject{
 
 public:
-	struct CalorimeterComponentHit{
-	public:
-		int readout;
-		double E;
-		double Q,Qs;
-		double T;
-		bool good_ped_RMS;
-		CalorimeterSiPMHit::hit_type type;
-	};
+
 
 	JOBJECT_PUBLIC(CalorimeterHit);
 
@@ -50,16 +42,16 @@ public:
 		AddString(items, "T", "%f", T);
 
 	}
-	vector<CalorimeterComponentHit> m_data;
-	double E,Q,T;
-	int N; //how many counters associated with this object were above thr (i.e. how many entries in m_data?
+	TranslationTable::CALO_Index_t m_channel; //Detector-specific ID. Since this is a detector-based object, the readout field will be ==0
+	double E,T;
+	bool RMSflag;
+	uint64_t timestamp;
 
 	virtual TCanvas* Draw(int id)const; //!
 	mutable TH1D* hWave; //!
 
-	TranslationTable::CALO_Index_t m_channel; //Detector-specific ID. Since this is a detector-based object, the readout field will be ==0
 
-	uint64_t timestamp;
+
 
 
 

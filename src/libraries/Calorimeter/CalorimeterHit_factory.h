@@ -14,6 +14,7 @@
 #include <system/BDXFactory.h>
 class TranslationTable;
 
+class CalorimeterDigiHit;
 
 class CalorimeterHit_factory:public BDXFactory<CalorimeterHit>{
 	public:
@@ -37,6 +38,10 @@ class CalorimeterHit_factory:public BDXFactory<CalorimeterHit>{
 		int VERBOSE;
 
 		CalibrationHandler<TranslationTable::CALO_Index_t> *m_ene;
+
+		TranslationTable::CALO_Index_t m_channel;
+		std::map<TranslationTable::CALO_Index_t,vector <const CalorimeterDigiHit*>> m_map;
+		std::map<TranslationTable::CALO_Index_t,vector <const CalorimeterDigiHit*>>::iterator m_map_it;
 };
 
 #endif // _CalorimeterHit_factory_

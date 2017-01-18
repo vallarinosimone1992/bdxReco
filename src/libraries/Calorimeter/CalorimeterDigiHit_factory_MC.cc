@@ -45,9 +45,6 @@ jerror_t CalorimeterDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnum
 
 
 	CalorimeterDigiHit *m_CalorimeterDigiHit=0;
-	CalorimeterDigiHit::CalorimeterSiPMDigiHit digi_hit;
-
-
 	const CalorimeterMCHit *m_CalorimeterMCHit=0;
 
 	//1: Here, we get from the framework the objects we need to process
@@ -73,38 +70,45 @@ jerror_t CalorimeterDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnum
 			index.x=m_CalorimeterMCHit->x;
 			index.y=m_CalorimeterMCHit->y;
 		}
-		index.readout=0;
-
+		index.readout=1;
 		m_map_it=m_map.find(index);
 		if (m_map_it==m_map.end()){
 
-
 			m_CalorimeterDigiHit=new CalorimeterDigiHit;
 			m_CalorimeterDigiHit->m_channel=index;
+			m_CalorimeterDigiHit->m_channel.readout=1;///THIS IS CORRECT ---> in MC "right" is the first MPPC, i.e. readout=1
 			m_CalorimeterDigiHit->timestamp=0;
+			m_CalorimeterDigiHit->Q=m_CalorimeterMCHit->adcr;
+			m_CalorimeterDigiHit->T=m_CalorimeterMCHit->tdcr*4;
+			m_CalorimeterDigiHit->RMSflag=true;
 			m_CalorimeterDigiHit->AddAssociatedObject(m_CalorimeterMCHit);
-			digi_hit.readout=1; ///THIS IS CORRECT ---> in MC "right" is the first MPPC, i.e. readout=1
-			digi_hit.Q=m_CalorimeterMCHit->adcr;
-			digi_hit.T=m_CalorimeterMCHit->tdcr*4;   //MC is in 4*ns
-			digi_hit.good_ped_RMS=true;/*by default!*/
-			m_CalorimeterDigiHit->m_data.push_back(digi_hit);
-
-			if (m_isMC==MCType::CATANIA_V1){ /*Only Catania_V1 simulations had two readouts in the crystal*/
-				digi_hit.readout=2;  ///THIS IS CORRECT ---> in MC "left" is the second MPPC, i.e. readout=2
-				digi_hit.Q=m_CalorimeterMCHit->adcl;
-				digi_hit.T=m_CalorimeterMCHit->tdcl*4;
-				digi_hit.good_ped_RMS=true; /*by default!*/
-				m_CalorimeterDigiHit->m_data.push_back(digi_hit);
-				m_map[index]=m_CalorimeterDigiHit;
-			}
+			m_map[index]=m_CalorimeterDigiHit;
 		}
 		else{
-			m_CalorimeterDigiHit=m_map_it->second;
-			m_CalorimeterDigiHit->AddAssociatedObject(m_CalorimeterMCHit);
-			m_CalorimeterDigiHit->m_data[0].Q+=m_CalorimeterMCHit->adcr;
-			if (m_isMC==MCType::CATANIA_V1)	m_CalorimeterDigiHit->m_data[1].Q+=m_CalorimeterMCHit->adcl;
+			m_CalorimeterDigiHit->Q+=m_CalorimeterMCHit->adcr;
+		}
+		if (m_isMC==MCType::CATANIA_V1){ /*Only Catania_V1 simulations had two readouts in the crystal*/
+			index.readout=2;
+			m_map_it=m_map.find(index);
+			if (m_map_it==m_map.end()){
+
+				m_CalorimeterDigiHit=new CalorimeterDigiHit;
+				m_CalorimeterDigiHit->m_channel=index;
+				m_CalorimeterDigiHit->m_channel.readout=1;///THIS IS CORRECT ---> in MC "right" is the first MPPC, i.e. readout=1
+				m_CalorimeterDigiHit->timestamp=0;
+				m_CalorimeterDigiHit->Q=m_CalorimeterMCHit->adcl;
+				m_CalorimeterDigiHit->T=m_CalorimeterMCHit->tdcl*4;
+				m_CalorimeterDigiHit->RMSflag=true;
+				m_CalorimeterDigiHit->AddAssociatedObject(m_CalorimeterMCHit);
+				m_map[index]=m_CalorimeterDigiHit;
+			}
+			else{
+				m_CalorimeterDigiHit->Q+=m_CalorimeterMCHit->adcl;
+			}
 		}
 	}
+
+
 	for (m_map_it=m_map.begin();m_map_it!=m_map.end();m_map_it++){
 		m_CalorimeterDigiHit=m_map_it->second;
 		_data.push_back(m_CalorimeterDigiHit);

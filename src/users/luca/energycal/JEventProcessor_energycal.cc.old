@@ -5,7 +5,7 @@
 // Creator: lmarsicano (on Linux apcx14 2.6.32-573.el6.x86_64 x86_64)
 //
 
-#include "JEventProcessor_energycal.h"
+#include "JEventProcessor_energycal.h.old"
 #include "system/BDXEventProcessor.h"
 using namespace jana;
 

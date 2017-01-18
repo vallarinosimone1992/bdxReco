@@ -9,7 +9,6 @@
 using namespace jana;
 
 
-#include "JEventProcessor_test.h"
 #include <system/BDXEventProcessor.h>
 
 #include <DAQ/fa250Mode1Hit.h>

@@ -15,14 +15,7 @@
 
 class CalorimeterDigiHit:public jana::JObject{
 public:
-	struct CalorimeterSiPMDigiHit{
-		int readout;
-		double Q;
-		double Qs;
-		double T;
-		bool good_ped_RMS;
-		CalorimeterSiPMHit::hit_type type;
-	};
+
 	JOBJECT_PUBLIC(CalorimeterDigiHit);
 
 	// Add data members here. For example:
@@ -35,8 +28,11 @@ public:
 		// AddString(items, "id", "%4d", id);
 		// AddString(items, "E", "%f", E);
 	}
+
+	double Q,T;
+	bool RMSflag;
+	CalorimeterSiPMHit::hit_type type;
 	TranslationTable::CALO_Index_t m_channel; //Detector-specific ID. Since this is a detector-based object, the readout field will be ==0
-	vector <CalorimeterSiPMDigiHit> m_data; //keep in this way to be MC-compatible!
 
 	uint64_t timestamp;
 };

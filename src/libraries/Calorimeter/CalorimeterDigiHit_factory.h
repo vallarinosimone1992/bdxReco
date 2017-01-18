@@ -29,10 +29,9 @@ private:
 
 	int VERBOSE;
 
-	const TranslationTable *m_tt;
 
-	std::map<TranslationTable::CALO_Index_t,CalorimeterDigiHit*> m_map;
-	std::map<TranslationTable::CALO_Index_t,CalorimeterDigiHit*>::iterator m_map_it;
+
+
 };
 
 #endif // _CalorimeterDigiHit_factory_
