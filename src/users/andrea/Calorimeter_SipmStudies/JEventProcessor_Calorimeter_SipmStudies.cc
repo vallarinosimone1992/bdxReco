@@ -50,10 +50,10 @@ void InitPlugin(JApplication *app){
 // JEventProcessor_Calorimeter_SipmStudies (Constructor)
 //------------------
 JEventProcessor_Calorimeter_SipmStudies::JEventProcessor_Calorimeter_SipmStudies():
-		m_ROOTOutput(0)
+				m_ROOTOutput(0)
 {
-	hit1=0;
-	hit2=0;
+	vhit=new vector<const CalorimeterSiPMHit*>;
+
 	m_isFirstCallToBrun=1;
 }
 
@@ -75,35 +75,7 @@ jerror_t JEventProcessor_Calorimeter_SipmStudies::init(void)
 
 	t->Branch("evnt",&eventNumber);
 	//t->SetMakeClass(0);
-	t->Branch("hit1",&hit1);
-	t->Branch("hit2",&hit2);
-
-	t->Branch("Ec1",&Ec1);
-	t->Branch("Ec2",&Ec2);
-	t->Branch("Ec",&Ec);
-
-/*	t->Branch("type1",&m_type1);
-	t->Branch("type2",&m_type2);
-
-
-
-	t->Branch("Q1",&m_Q1);
-	t->Branch("Q2",&m_Q2);
-	t->Branch("Q1s",&m_Q1s);
-	t->Branch("Q2s",&m_Q2s);
-	t->Branch("T1",&m_T1);
-	t->Branch("T2",&m_T2);
-	t->Branch("A1",&m_A1);
-	t->Branch("A2",&m_A2);
-
-	t->Branch("ped",&m_ped1);
-	t->Branch("pedSigma",&m_pedSigma1);
-	t->Branch("ped",&m_ped2);
-	t->Branch("pedSigma",&m_pedSigma2);
-
-	t->Branch("goodRMS1",&m_goodRMS1);
-	t->Branch("goodRMS2",&m_goodRMS2);
-
+	t->Branch("CalorimeterSipmHits",&vhit);
 
 
 	japp->RootUnLock();
@@ -167,10 +139,9 @@ jerror_t JEventProcessor_Calorimeter_SipmStudies::evnt(JEventLoop *loop, uint64_
 	vector <const CalorimeterSiPMHit*> cdata;
 	vector <const CalorimeterSiPMHit*>::const_iterator cdata_it;
 
-	vector <const CalorimeterHit*> cdata2;
-	vector <const CalorimeterHit*>::const_iterator cdata2_it;
+
 	loop->Get(cdata);
-	loop->Get(cdata2);
+
 
 
 	japp->RootWriteLock();
@@ -178,41 +149,18 @@ jerror_t JEventProcessor_Calorimeter_SipmStudies::evnt(JEventLoop *loop, uint64_
 
 
 
-	for (cdata2_it=cdata2.begin();cdata2_it!=cdata2.end();cdata2_it++){
-		const CalorimeterHit *hit= *cdata2_it;
-		Ec=hit->E;
-		for (int idata=0;idata<hit->m_data.size();idata++){
-			switch (hit->m_data[idata].readout){
-			case 1:
-				Ec1=hit->m_data[idata].E;
-				break;
-			case 2:
-				Ec2=hit->m_data[idata].E;
-				break;
-			}
-		}
-	}
 
+	vhit->clear();
 	for (cdata_it=cdata.begin();cdata_it!=cdata.end();cdata_it++){
 		const CalorimeterSiPMHit *sipmhit= *cdata_it;
-		switch (sipmhit->m_channel.int_veto->readout){
-		case (1):
-			hit1=sipmhit;
-		break;
-		case (2):
-			hit2=sipmhit;
-		break;
-		default:
-			break;
-
-		}
+		vhit->push_back(sipmhit);
 	}
 
-t->Fill();
-japp->RootUnLock();
+	t->Fill();
+	japp->RootUnLock();
 
 
-return NOERROR;
+	return NOERROR;
 }
 
 //------------------

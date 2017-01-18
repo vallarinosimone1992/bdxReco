@@ -41,7 +41,7 @@ private:
 
 	double Ec1,Ec2,Ec;
 
-	const CalorimeterSiPMHit *hit1,*hit2;
+	vector <const CalorimeterSiPMHit*> *vhit;
 
 	JROOTOutput *m_ROOTOutput;
 
