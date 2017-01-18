@@ -102,7 +102,7 @@ jerror_t JEventProcessor_Calorimeter_SipmStudies::init(void)
 	t->Branch("pedSigma",&m_pedSigma2);
 
 	t->Branch("goodRMS1",&m_goodRMS1);
-	t->Branch("goodRMS2",&m_goodRMS2);*/
+	t->Branch("goodRMS2",&m_goodRMS2);
 
 
 
