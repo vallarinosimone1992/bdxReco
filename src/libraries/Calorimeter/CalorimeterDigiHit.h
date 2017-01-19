@@ -29,7 +29,8 @@ public:
 		// AddString(items, "E", "%f", E);
 	}
 
-	double Q,T;
+	double Q,T,A; //Charge (u.a.), time (ns), Amplitude (mV)
+	double pedMean,pedRMS;
 	bool RMSflag;
 	CalorimeterSiPMHit::hit_type type;
 	TranslationTable::CALO_Index_t m_channel; //Detector-specific ID. Since this is a detector-based object, the readout field will be ==0

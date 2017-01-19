@@ -47,9 +47,9 @@ public:
 		AddString(items, "Qraw", "%f",Qraw);
 		AddString(items, "Qphe","%f",Qphe);
 		AddString(items, "A","%f",A);
-		AddString(items, "ped","%f",ped);
-		AddString(items, "rms_flag","%i",1*good_ped_RMS);
-		AddString(items, "type","%i",1*m_type);
+		AddString(items, "ped","%f",pedMean);
+		AddString(items, "rms_flag","%i",1*RMSflag);
+		AddString(items, "type","%i",1*type);
 		AddString(items, "n_singles","%i",1*m_nSingles);
 		AddString(items, "n_signals","%i",1*m_nSignals);
 	}
@@ -61,12 +61,11 @@ public:
 	TranslationTable::CALO_Index_t m_ch; //a.c. tmp
 	/*These 3 variables are: hit charge (u.a.), hit time (in ns), hit amplitude (in mV)*/
 	double Qraw,Qphe;
-	double QrawS,QpheS;
 	double T,A;
 	double average;
-	double ped,pedSigma;
-	bool good_ped_RMS;
-	hit_type m_type;
+	double pedMean,pedRMS;
+	bool RMSflag;
+	hit_type type;
 
 	uint64_t timestamp;
 

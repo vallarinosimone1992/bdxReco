@@ -136,7 +136,6 @@ jerror_t CalorimeterSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 			m_q_calib=m_sipm_gain->getCalibSingle(*(m_channel.calorimeter));
 			if (m_q_calib>0){
 				m_CalorimeterSiPMHit->Qphe=m_CalorimeterSiPMHit->Qraw/m_q_calib;
-				m_CalorimeterSiPMHit->QpheS=m_CalorimeterSiPMHit->QrawS/m_q_calib;
 			}
 
 
@@ -157,7 +156,6 @@ jerror_t CalorimeterSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 			m_q_calib=m_sipm_gain->getCalibSingle(*(m_channel.calorimeter));
 			if (m_q_calib>0){
 				m_CalorimeterSiPMHit->Qphe=m_CalorimeterSiPMHit->Qraw/m_q_calib;
-				m_CalorimeterSiPMHit->QpheS=m_CalorimeterSiPMHit->QrawS/m_q_calib;
 			}
 
 			_data.push_back(m_CalorimeterSiPMHit);

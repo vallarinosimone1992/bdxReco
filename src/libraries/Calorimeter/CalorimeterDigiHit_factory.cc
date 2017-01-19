@@ -51,13 +51,26 @@ jerror_t CalorimeterDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 
 	//1: Here, we get from the framework the objects we need to process
 	//1a: create vectors
-	vector <const CalorimeterSiPMHit*> m_CalorimeterSiPMHit;
+	vector <const CalorimeterSiPMHit*> m_CalorimeterSiPMHits;
 	vector <const CalorimeterSiPMHit*>::const_iterator it;
-
+	const CalorimeterSiPMHit*  m_CalorimeterSiPMHit;
 	//1b: retrieve CalorimeterSiPMHit objects
-	loop->Get(m_CalorimeterSiPMHit);
+	loop->Get(m_CalorimeterSiPMHits);
 
-
+	for (it=m_CalorimeterSiPMHits.begin();it!=m_CalorimeterSiPMHits.end();it++){
+		 m_CalorimeterSiPMHit=(*it);
+		 m_CalorimeterDigiHit=new CalorimeterDigiHit();
+		 m_CalorimeterDigiHit->m_channel=*(m_CalorimeterSiPMHit->m_channel.calorimeter);
+		 m_CalorimeterDigiHit->Q=m_CalorimeterSiPMHit->Qphe;
+		 m_CalorimeterDigiHit->T=m_CalorimeterSiPMHit->T;
+		 m_CalorimeterDigiHit->A=m_CalorimeterSiPMHit->A;
+		 m_CalorimeterDigiHit->pedMean=m_CalorimeterSiPMHit->pedMean;
+		 m_CalorimeterDigiHit->pedRMS=m_CalorimeterSiPMHit->pedRMS;
+		 m_CalorimeterDigiHit->RMSflag=m_CalorimeterSiPMHit->RMSflag;
+		 m_CalorimeterDigiHit->timestamp=m_CalorimeterSiPMHit->timestamp;
+		 m_CalorimeterDigiHit->type=m_CalorimeterSiPMHit->type;
+		 _data.push_back(m_CalorimeterDigiHit);
+	}
 
 	return NOERROR;
 }

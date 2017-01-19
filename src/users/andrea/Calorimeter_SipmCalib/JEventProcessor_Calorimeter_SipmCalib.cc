@@ -182,16 +182,16 @@ jerror_t JEventProcessor_Calorimeter_SipmCalib::evnt(JEventLoop *loop, uint64_t 
 		m_x=(*data_it)->m_channel.calorimeter->x;
 		m_y=(*data_it)->m_channel.calorimeter->y;
 		m_readout=(*data_it)->m_channel.calorimeter->readout;
-		m_type=(*data_it)->m_type;
+		m_type=(*data_it)->type;
 		m_singles=(*data_it)->m_nSingles;
 		m_signals=(*data_it)->m_nSignals;
-		Qphe=(*data_it)->QpheS;
-		Qraw=(*data_it)->QrawS;
+		Qphe=(*data_it)->Qphe;
+		Qraw=(*data_it)->Qraw;
 		A=(*data_it)->A;
 		T=(*data_it)->T;
 		average=(*data_it)->average;
-		ped=(*data_it)->ped;
-		pedSigma=(*data_it)->pedSigma;
+		ped=(*data_it)->pedMean;
+		pedSigma=(*data_it)->pedRMS;
 		//for (int ii=0;ii<m_waveform->samples.size();ii++) h->Fill(ii,m_waveform->samples.at(ii));
 	//	h->Write();
 

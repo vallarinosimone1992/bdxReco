@@ -85,7 +85,7 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 	output->Qraw=0;
 	output->T=0;
 	output->A=0;
-	output->m_type=CalorimeterSiPMHit::noise;
+	output->type=CalorimeterSiPMHit::noise;
 
 
 	output->AddAssociatedObject(input);
@@ -111,22 +111,22 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 	}
 	output->average/=input->samples.size();
 	//1a: compute the pedestal
-	output->ped=0;
-	output->pedSigma=0;
+	output->pedMean=0;
+	output->pedRMS=0;
 	for (int ii=0;ii<m_NPED;ii++){
-		output->ped+=input->samples[ii];
-		output->pedSigma+=input->samples[ii]*input->samples[ii];
+		output->pedMean+=input->samples[ii];
+		output->pedRMS+=input->samples[ii]*input->samples[ii];
 	}
-	output->pedSigma/=m_NPED;
-	output->ped/=m_NPED;
-	output->pedSigma=sqrt(output->pedSigma-output->ped*output->ped);
+	output->pedRMS/=m_NPED;
+	output->pedMean/=m_NPED;
+	output->pedRMS=sqrt(output->pedRMS-output->pedMean*output->pedMean);
 
 
 
-	if (output->pedSigma<=input->m_RMS){
-		output->good_ped_RMS=true;
+	if (output->pedRMS<=input->m_RMS){
+		output->RMSflag=true;
 	}
-	else output->good_ped_RMS=false;
+	else output->RMSflag=false;
 
 
 	//2: find m_THR crossings
@@ -177,7 +177,7 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 
 
 	if (((output->m_nSignals)==0)&&(output->m_nSingles)==0){
-		output->m_type=CalorimeterSiPMHit::noise;
+		output->type=CalorimeterSiPMHit::noise;
 		output->T=0;
 		output->Qraw=this->sumSamples(0,m_NSB+m_NSA,&(input->samples[0])); //to be uniform with the case below
 		output->A=0;
@@ -187,7 +187,7 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 		output->A=this->getMaximum(m_crossingTimes[0].first,m_crossingTimes[0].second,&(input->samples[0]),Tmax);
 
 		if ((Tmax<=m_NSB)||(Tmax>=(size-1-m_NSA))){
-			output->m_type=CalorimeterSiPMHit::one_phe;
+			output->type=CalorimeterSiPMHit::one_phe;
 			output->Qraw=this->sumSamples(0,m_NSB+m_NSA,&(input->samples[0])); //to be uniform with the case below
 			output->T=0;
 			return NOERROR;
@@ -196,7 +196,7 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 			/*this instruction is to do sipm studies*/
 			output->Qraw=this->sumSamples(input->samples.size(),&(input->samples[0]));
 
-			output->m_type=CalorimeterSiPMHit::good_one_phe;
+			output->type=CalorimeterSiPMHit::good_one_phe;
 			xmin=Tmax-m_NSB;
 			xmax=Tmax+m_NSA;
 
@@ -208,7 +208,6 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 
 			output->average/=input->samples.size();
 			output->T=Tmax;
-			output->QrawS=this->sumSamples((int)xmin,(int)xmax,&(input->samples[0]));
 			/*now timing*/
 			xmax=m_crossingTimes[0].first; //first sample above m_THR
 			xmin=xmax-1; //sample befor m_THR
@@ -223,7 +222,7 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 		}
 	}
 	else if (output->m_nSignals>=1){
-		output->m_type=CalorimeterSiPMHit::real_signal;
+		output->type=CalorimeterSiPMHit::real_signal;
 
 
 		idx=m_signalCrossingIndexes[0];
@@ -236,19 +235,6 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 
 		output->Qraw=this->sumSamples((int)xmin,(int)xmax,&(input->samples[0]));
 		output->A=this->getMaximum(input->samples.size(),&(input->samples[0]),Tmax);
-
-		/*jout<<input->m_channel.slot<<" "<<input->m_channel.channel<<" "<<output->A<<endl;
-		for (int is=0;is<input->samples.size();is++){
-			jout<<input->samples[is]<<" ";
-		}
-		jout<<endl;
-		 */
-		/*A.C. test*/
-		xmin=xmax-m_NSB;
-		if (xmin<0) xmin=0;
-		xmax=xmin+50;
-		if (xmax>=size) xmax=size-1;
-		output->QrawS=this->sumSamples((int)xmin,(int)xmax,&(input->samples[0]));
 
 
 
@@ -267,10 +253,9 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output,c
 
 	}
 	else{
-		output->m_type=CalorimeterSiPMHit::many_phe;
+		output->type=CalorimeterSiPMHit::many_phe;
 		output->A=0;
 		output->Qraw=0;
-		output->QrawS=0;
 		prev_xmin=0;
 		for (int iphe=0;iphe<output->m_nSingles;iphe++){
 			idx=m_singleCrossingIndexes[iphe];
