@@ -25,8 +25,12 @@ public:
 	// This method is used primarily for pretty printing
 	// the second argument to AddString is printf style format
 	void toStrings(vector<pair<string,string> > &items)const{
-		// AddString(items, "id", "%4d", id);
-		// AddString(items, "E", "%f", E);
+		AddString(items, "sector", "%i", m_channel.sector);
+		AddString(items, "x", "%i", m_channel.x);
+		AddString(items, "y", "%i", m_channel.y);
+		AddString(items, "Q", "%f", Q);
+		AddString(items, "T", "%f", T);
+		AddString(items, "A", "%f", A);
 	}
 
 	double Q,T,A; //Charge (u.a.), time (ns), Amplitude (mV)

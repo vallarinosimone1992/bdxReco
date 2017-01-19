@@ -75,7 +75,7 @@ jerror_t IntVetoDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		m_IntVetoDigiHit->pedRMS=m_IntVetoSiPMHit->pedRMS;
 		m_IntVetoDigiHit->RMSflag=m_IntVetoSiPMHit->RMSflag;
 
-		m_IntVetoDigiHit->AddAssociatedObject((*it));
+		m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoSiPMHit);
 
 		_data.push_back(m_IntVetoDigiHit); //publish it
 	}

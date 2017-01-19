@@ -25,6 +25,7 @@ class CalorimeterHit:public TObject,public BDXObject{
 public:
 
 
+
 	JOBJECT_PUBLIC(CalorimeterHit);
 
 	// Add data members here. For example:

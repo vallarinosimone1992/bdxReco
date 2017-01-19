@@ -69,6 +69,7 @@ jerror_t CalorimeterDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 		 m_CalorimeterDigiHit->RMSflag=m_CalorimeterSiPMHit->RMSflag;
 		 m_CalorimeterDigiHit->timestamp=m_CalorimeterSiPMHit->timestamp;
 		 m_CalorimeterDigiHit->type=m_CalorimeterSiPMHit->type;
+		 m_CalorimeterDigiHit->AddAssociatedObject(m_CalorimeterSiPMHit);
 		 _data.push_back(m_CalorimeterDigiHit);
 	}
 
