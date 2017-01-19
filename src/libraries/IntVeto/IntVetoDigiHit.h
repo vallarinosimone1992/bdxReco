@@ -23,11 +23,7 @@
 
 class IntVetoDigiHit:public TObject,public jana::JObject{
 public:
-	struct IntVetoSiPMDigiHit{
-		int readout;
-		double Q;
-		double T;
-	};
+
 	JOBJECT_PUBLIC(IntVetoDigiHit);
 
 	// Add data members here. For example:
@@ -40,24 +36,19 @@ public:
 		AddString(items, "sector", "%4d", m_channel.sector);
 		AddString(items, "layer", "%4d", m_channel.layer);
 		AddString(items, "component", "%4d", m_channel.component);
-		AddString(items, "Q","%4f",Qtot);
+		AddString(items, "Q","%4f",Q);
 		AddString(items, "T","%4f",T);
-		AddString(items, "N","%4i",m_data.size());
-		for (int ii=0;ii<m_data.size();ii++){
-			AddString(items, "Q: ","%4f",m_data[ii].Q);
-			AddString(items, "T: ","%4f",m_data[ii].T);
-
-		}
-
 	}
 	//A.C. do not touch these
-	TranslationTable::INT_VETO_Index_t m_channel;      //both crate-slot channel and detector-specific ID. Since this is a detector-based object, the readout field will be ==0
-	vector <IntVetoSiPMDigiHit> m_data;                //keep in this way to be MC-compatible!
+	TranslationTable::INT_VETO_Index_t m_channel;      //Detector-specific ID. Since this is a detector-based object, the readout field will be ==0
 
-	double Qtot;
-	double T; //time of the maximum hit
 
-	ClassDef(IntVetoDigiHit,1);
+	double Q,T,A;
+	double pedMean,pedRMS;
+	bool RMSflag;
+
+
+
 
 };
 #endif // _IntVetoDigiHit_

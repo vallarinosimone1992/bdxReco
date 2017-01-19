@@ -9,9 +9,11 @@
 #define _ExtVetoDigiHit_factory_MC_
 
 #include <JANA/JFactory.h>
-#include "ExtVetoDigiHit.h"
+
 #include <map>
 #include <utility>
+
+class ExtVetoDigiHit;
 
 class ExtVetoDigiHit_factory_MC:public jana::JFactory<ExtVetoDigiHit>{
 public:
@@ -29,10 +31,9 @@ private:
 	jerror_t fini(void);						///< Called after last event of last event source has been processed.
 
 	/*This code is here because MC could generate more than 1 hit per sector!*/
-	/*The key is the way MC is organized: sector - channel (where sector and channel have a different meaning than in the real data!!!)*/
-	std::map<std::pair<int,int>,ExtVetoDigiHit*> m_map;
-	std::map<std::pair<int,int>,ExtVetoDigiHit*>::iterator m_map_it;
-
+	std::map<TranslationTable::EXT_VETO_Index_t,vector<ExtVetoDigiHit*>> m_map;
+	std::map<TranslationTable::EXT_VETO_Index_t,vector<ExtVetoDigiHit*>>::iterator m_map_it;
+	TranslationTable::EXT_VETO_Index_t m_channel;
 	int m_isMC;
 };
 

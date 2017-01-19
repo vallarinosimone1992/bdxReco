@@ -26,8 +26,7 @@ private:
 
 	const TranslationTable *m_tt;
 
-	std::map<TranslationTable::EXT_VETO_Index_t,ExtVetoDigiHit*> m_map;
-	std::map<TranslationTable::EXT_VETO_Index_t,ExtVetoDigiHit*>::iterator m_map_it;
+
 };
 
 #endif // _ExtVetoDigiHit_factory_

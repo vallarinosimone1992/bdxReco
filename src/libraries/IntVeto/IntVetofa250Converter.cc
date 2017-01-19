@@ -87,7 +87,9 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 		m_waveform.push_back(input->samples[ii]-ped);
 	}
 
-
+	output->pedMean=ped;
+	output->pedRMS=pedRMS;
+	output->RMSflag=found;
 
 
 	//1: compute the average

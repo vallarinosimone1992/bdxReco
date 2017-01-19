@@ -16,7 +16,7 @@ $command mktbl $DAQFolder/pedestals -r $DAQPedestalLines $DAQIndexes pedestal=do
 set CalorimeterFolder = "/Calorimeter"
 set CalorimeterIndexes = "sector=int x=int y=int readout=int"
 set CalorimeterSipmGainLines = 40000
-set CalorimeterEneLines = 40000
+set CalorimeterEneLines = 8000
 
 
 echo "Calorimeter"

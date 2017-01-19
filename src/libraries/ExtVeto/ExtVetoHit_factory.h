@@ -28,6 +28,9 @@ class ExtVetoHit_factory:public BDXFactory<ExtVetoHit>{
 		jerror_t fini(void);						///< Called after last event of last event source has been processed.
 		const TranslationTable *m_tt;
 		CalibrationHandler<TranslationTable::EXT_VETO_Index_t> *m_ENE_gain;
+		TranslationTable::EXT_VETO_Index_t m_channel;
+		std::map<TranslationTable::EXT_VETO_Index_t,vector <const ExtVetoDigiHit*>> m_map;
+		std::map<TranslationTable::EXT_VETO_Index_t,vector <const ExtVetoDigiHit*>>::iterator m_map_it;
 
 };
 

@@ -5,8 +5,6 @@
 #pragma link off all functions;
 #pragma link C++ nestedclasses;
 #pragma link C++ class ExtVetoDigiHit+;
-#pragma link C++ struct ExtVetoDigiHit::ExtVetoPMTDigiHit+;
-#pragma link C++ class vector<ExtVetoDigiHit::ExtVetoPMTDigiHit>+;
 
 #pragma link C++ class vector<ExtVetoDigiHit>+;
 #pragma link C++ class vector<ExtVetoDigiHit*>+;

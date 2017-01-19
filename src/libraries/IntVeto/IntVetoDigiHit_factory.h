@@ -27,8 +27,7 @@ class IntVetoDigiHit_factory:public jana::JFactory<IntVetoDigiHit>{
 
 		const TranslationTable *m_tt;
 
-		std::map<TranslationTable::INT_VETO_Index_t,IntVetoDigiHit*> m_map;
-		std::map<TranslationTable::INT_VETO_Index_t,IntVetoDigiHit*>::iterator m_map_it;
+
 };
 
 #endif // _IntVetoDigiHit_factory_

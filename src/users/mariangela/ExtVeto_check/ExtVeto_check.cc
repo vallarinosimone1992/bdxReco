@@ -201,7 +201,7 @@ jerror_t ExtVeto_check::evnt(JEventLoop *loop,uint64_t eventnumber)
 			eventN=eventnumber;
 			component=evhit->m_channel.ext_veto->component;
 	   	    Q=(*data_it)->Q;
-			pedestal=(*data_it)->pedestal;
+			pedestal=(*data_it)->pedMean;
 			Tw=tData->triggerWords.at(0);
 			T = (*data_it)->T;
 

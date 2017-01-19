@@ -16,12 +16,13 @@ class TTree;
 class IntVetoHit;
 class JROOTOutput;
 
-
-class JEventProcessor_energycal:public jana::JEventProcessor{
+class JEventProcessor_energycal: public jana::JEventProcessor {
 public:
 	JEventProcessor_energycal();
 	~JEventProcessor_energycal();
-	const char* className(void){return "JEventProcessor_energycal";}
+	const char* className(void) {
+		return "JEventProcessor_energycal";
+	}
 
 private:
 	jerror_t init(void);						///< Called once at program start.
@@ -30,23 +31,21 @@ private:
 	jerror_t erun(void);						///< Called everytime run number changes, provided brun has been called.
 	jerror_t fini(void);						///< Called after last event of last event source has been processed.
 
-
 	int m_isFirstCallToBrun;
-	TH1D *hp1,*hp2,*hc1,*hc2,*hctot;
-	TH2D *hp1_2,*hc1_2;
+	TH1D *hp1, *hp2, *hc1, *hc2, *hctot;
+	TH2D *hp1_2, *hc1_2;
 	TTree *t;
 	JROOTOutput *m_ROOTOutput;
 
 	int isMC;
 
 	//data variables
-	double Qc1,Qc2,Ep1,Ep2,Qctot,Tp1,Tp2,Tpdiff,Tc1,Tc2,Qp1,Qp2;
+	double Qc1, Qc2, Ep1, Ep2, Qctot, Tp1, Tp2, Tpdiff, Tc1, Tc2, Qp1, Qp2;
 	double Qmatrix[16];
 	double Tmatrix[16];
-	bool    RMSmatrix[16];
+	bool RMSmatrix[16];
 
 	vector<IntVetoHit> IntVetoHits;
-
 
 	//MC variables
 	double Ec_MC;

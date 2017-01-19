@@ -52,10 +52,11 @@ jerror_t ExtVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	//1: Here, we get from the framework the objects we need to process
 	//1a: create vectors
-	vector <const ExtVetoDigiHit*> m_ExtVetoDigiHit;
+	vector <const ExtVetoDigiHit*> m_ExtVetoDigiHits;
 	vector <const ExtVetoDigiHit*>::const_iterator it;
+	const ExtVetoDigiHit* m_ExtVetoDigiHit;
 
-	double m_Ene;
+	double Q,Qmax,m_EneCalib;
 
 	ExtVetoHit *m_ExtVetoHit=0;
 
@@ -63,22 +64,46 @@ jerror_t ExtVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	/*This is very important!! Select - or not - the MC case*/
 	if (isMC){
-		loop->Get(m_ExtVetoDigiHit,"MC");
+		loop->Get(m_ExtVetoDigiHits,"MC");
 	}
 	else{
-		loop->Get(m_ExtVetoDigiHit);
+		loop->Get(m_ExtVetoDigiHits);
 	}
-	for (it=m_ExtVetoDigiHit.begin();it!=m_ExtVetoDigiHit.end();it++){
-		m_ExtVetoHit=new ExtVetoHit();
-		m_ExtVetoHit->m_channel = (*it)->m_channel;
-		m_Ene=m_ENE_gain->getCalibSingle(m_ExtVetoHit->m_channel);
-		//jout <<m_ExtVetoHit->m_channel.component << " "<< m_Ene<<endl;
-		m_ExtVetoHit->E=((*it)->Q)*m_Ene;
-		m_ExtVetoHit->T=(*it)->T;
-		m_ExtVetoHit->AddAssociatedObject(*it);
-		//Do whatever you need here
-		_data.push_back(m_ExtVetoHit);
+
+
+	m_map.clear();
+	for (it=m_ExtVetoDigiHits.begin(); it != m_ExtVetoDigiHits.end() ; it++){
+		m_channel = ((*it)->m_channel);
+		m_channel.readout = 0;
+		m_map[m_channel].push_back(*it);
 	}
+
+
+	for (m_map_it=m_map.begin();m_map_it!=m_map.end();m_map_it++){
+			//do here further elaborations!
+			//Compute the charge as the sum of the charges
+			//Compute the hit-time as time of the PMT-hit with largest charge
+			m_ExtVetoDigiHits=m_map_it->second;
+			m_ExtVetoHit=new ExtVetoHit();
+			m_ExtVetoHit->m_channel=m_map_it->first;
+			m_ExtVetoHit->E=0;
+			Qmax=-9999;
+			Q=0;
+			for (int ihit=0;ihit<m_ExtVetoDigiHits.size();ihit++){
+				Q+=m_ExtVetoDigiHits[ihit]->Q;
+				if (m_ExtVetoDigiHits[ihit]->Q>Qmax){
+					Qmax=m_ExtVetoDigiHits[ihit]->Q;
+					m_ExtVetoHit->T=m_ExtVetoDigiHits[ihit]->T;
+				}
+			}
+			m_EneCalib=m_ENE_gain->getCalibSingle(m_ExtVetoHit->m_channel);
+			m_ExtVetoHit->E=Q*m_EneCalib;
+			_data.push_back(m_ExtVetoHit); //publish it
+		}
+
+
+
+
 	return NOERROR;
 }
 

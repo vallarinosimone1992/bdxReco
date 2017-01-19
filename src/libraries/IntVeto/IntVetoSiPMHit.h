@@ -54,8 +54,9 @@ public:
 
 	double Qraw,Qphe,T,A;
 	double average;
-
+	double pedMean,pedRMS;
 	int nSingles;
+	bool RMSflag;
 	hit_type m_type;
 };
 

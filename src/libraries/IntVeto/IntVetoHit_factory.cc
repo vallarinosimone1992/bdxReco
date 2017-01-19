@@ -17,7 +17,7 @@ using namespace jana;
 
 
 IntVetoHit_factory::IntVetoHit_factory():
-												isMC(0){
+																						isMC(0){
 
 	m_THR_singleReadout=5;
 	m_THR_multipleReadout=3;
@@ -73,7 +73,7 @@ jerror_t IntVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	double Q,T,Qtot,Qmax,Tmax;
 	int nReadout;
-	int flagOk;
+	int nCountersTHR;
 
 	//1b: retrieve IntVetoDigiHit objects
 	/*This is very important!! Select - or not - the MC case*/
@@ -84,86 +84,76 @@ jerror_t IntVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		loop->Get(m_IntVetoDigiHits);
 	}
 
-	Qmax=-9999;
-	Q=0;
-	Qtot=0;
-	for (it=m_IntVetoDigiHits.begin();it!=m_IntVetoDigiHits.end();it++){
-		m_IntVetoDigiHit=(*it);
-		nReadout=m_IntVetoDigiHit->m_data.size();
-		if (nReadout==1){
-			Q=m_IntVetoDigiHit->m_data[0].Q;
-			T=m_IntVetoDigiHit->m_data[0].T;
+
+	m_map.clear();
+	for (it=m_IntVetoDigiHits.begin(); it != m_IntVetoDigiHits.end() ; it++){
+		m_channel = ((*it)->m_channel);
+		m_channel.readout = 0;
+		m_map[m_channel].push_back(*it);
+	}
+
+	/*Now the map is full: each key is a PHYSICAL element of the detector (readout==0), and the value is a vector with IntVetoDigiHits belonging to that element*/
+
+
+
+
+	for (m_map_it=m_map.begin();m_map_it!=m_map.end();m_map_it++){
+		m_IntVetoDigiHits=m_map_it->second;
+		Qmax=-9999;
+
+		if (m_IntVetoDigiHits.size()==1){ //Single readout
+			m_IntVetoDigiHit=m_IntVetoDigiHits[0];
+			Q=m_IntVetoDigiHit->Q;
+			T=m_IntVetoDigiHit->T;
 			if (Q>m_THR_singleReadout){
 				m_IntVetoHit=new IntVetoHit();
 				m_IntVetoHit->m_channel = m_IntVetoDigiHit->m_channel;
+				m_IntVetoHit->m_channel.readout=0;
 				m_IntVetoHit->Q=Q;
 				m_IntVetoHit->T=T;
-				m_IntVetoHit->N=1; //there is only 1 readout!
+
 				m_IntVetoHit->AddAssociatedObject(m_IntVetoDigiHit);
 				_data.push_back(m_IntVetoHit);
 			}
 		}
-		else if ((m_IntVetoDigiHit->m_channel.component==3)&&(m_hit_bottom_workAround)){ //this is the case of the bottom counter (for Catania only)
-			flagOk=0;
-			Qmax=-9999;
-			for (int idigi=0;idigi<m_IntVetoDigiHit->m_data.size();idigi++){
-				Q=m_IntVetoDigiHit->m_data[idigi].Q;
-				T=m_IntVetoDigiHit->m_data[idigi].T;
-				if (Q>Qmax){
-					Qmax=Q;
-					Tmax=T;
-				}
-				if (Q>m_THR_singleReadout){
-					flagOk++;
-				}
-			}
-			/*At the end of this loop, flagOK is >=1 only if there is at least one counter over m_THR_singleReadout.*/
-			/*If this is true, create the IntVetoHit, and associate it the charge and the time of the maximum*/
-			if (flagOk>=1){
-				m_IntVetoHit=new IntVetoHit();
-				m_IntVetoHit->m_channel = m_IntVetoDigiHit->m_channel;
-				m_IntVetoHit->Q=Qmax;
-				m_IntVetoHit->T=Tmax;
-				m_IntVetoHit->N=flagOk;   /*This is the number of bars over thr (1..4). Note that bars here are NOT optically related.*/
-				m_IntVetoHit->AddAssociatedObject(m_IntVetoDigiHit); /*Note that with this instruction we can always go back to the raw info*/
-				_data.push_back(m_IntVetoHit);
-			}
-		}
 		else{ /*multiCounter case*/
-			flagOk=0;
+			nCountersTHR=0;
 			Qmax=-9999;
 			Qtot=0;
-			for (int idigi=0;idigi<m_IntVetoDigiHit->m_data.size();idigi++){
-				Q=m_IntVetoDigiHit->m_data[idigi].Q;
-				T=m_IntVetoDigiHit->m_data[idigi].T;
+			for (int idigi=0;idigi<m_IntVetoDigiHits.size();idigi++){
+				Q=m_IntVetoDigiHits[idigi]->Q;
+				T=m_IntVetoDigiHits[idigi]->T;
 				if (Q>Qmax){
 					Qmax=Q;
 					Tmax=T;
 				}
 			}
-			/*At the end of this loop, flagOK is the number of counters above thr*/
 			/*Now use timing too: Tmax is the time of the hit with the highest charge. See if the other counters are in coincidence with this*/
 			if (Qmax<m_THR_multipleReadout) continue; //if the max charge is less than the treshold, by definition this hit is irrelevant.
-			for (int idigi=0;idigi<m_IntVetoDigiHit->m_data.size();idigi++){
-				Q=m_IntVetoDigiHit->m_data[idigi].Q;
-				T=m_IntVetoDigiHit->m_data[idigi].T;
+			for (int idigi=0;idigi<m_IntVetoDigiHits.size();idigi++){
+				Q=m_IntVetoDigiHits[idigi]->Q;
+				T=m_IntVetoDigiHits[idigi]->T;
 				if ((Q>m_THR_multipleReadout)&&(fabs(T-Tmax)<m_DT_multipleReadout)){
-					flagOk++;
+					nCountersTHR++;
 					Qtot+=Q;
 				}
 			}
-			/*Ok. From this point on, flagOK is the number of hits above thr, that are grouped together wrt the hit with the maximum charge*/
-			if (flagOk>=m_N_multipleReadout){
+			/*Ok. From this point on, nCountersTHR is the number of hits above thr, that are grouped together wrt the hit with the maximum charge*/
+			if (nCountersTHR>=m_N_multipleReadout){
 				m_IntVetoHit=new IntVetoHit();
 				m_IntVetoHit->m_channel = m_IntVetoDigiHit->m_channel;
 				m_IntVetoHit->Q=Qtot;
 				m_IntVetoHit->T=Tmax;
-				m_IntVetoHit->N=flagOk;
 				m_IntVetoHit->AddAssociatedObject(m_IntVetoDigiHit); /*Note that with this instruction we can always go back to the raw info*/
 				_data.push_back(m_IntVetoHit);
 			}
 		}
-	}
+	}//End loop on the map
+
+
+
+
+
 
 
 	return NOERROR;

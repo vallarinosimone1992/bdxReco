@@ -53,67 +53,31 @@ jerror_t IntVetoDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	//1: Here, we get from the framework the objects we need to process
 	//1a: create vectors
-	vector <const IntVetoSiPMHit*> m_IntVetoSiPMHit;
+	vector <const IntVetoSiPMHit*> m_IntVetoSiPMHits;
 	vector <const IntVetoSiPMHit*>::const_iterator it;
-
+	const IntVetoSiPMHit* m_IntVetoSiPMHit;
 	//1b: retrieve IntVetoSiPMHit objects
-	loop->Get(m_IntVetoSiPMHit);
+	loop->Get(m_IntVetoSiPMHits);
 
 
-	/*Do the matching
-	 *Proceed in this way:
-	 * loop over the hits
-	 * get the hit index, but put the readout to 0 (active detector element!)
-	 * check if, in the map, a key with this detector index already exists.
-	 * if not exist, add it, and create a new IntVetoDigiHit
-	 * if exist, get it, and add the SiPM hit to the list of sipm hits of the IntVetoDigiHit
-	 */
-	m_map.clear();
-	for (it=m_IntVetoSiPMHit.begin(); it != m_IntVetoSiPMHit.end() ; it++){
-		m_channel = *((*it)->m_channel.int_veto);
-		m_channel.readout = 0;
- 		m_map_it=m_map.find(m_channel);
- 		if (m_map_it == m_map.end()){ //not here. Create a new VetoIntDigiHit object
- 			m_IntVetoDigiHit=new IntVetoDigiHit;
- 			m_IntVetoDigiHit->m_channel=m_channel;
- 			m_IntVetoDigiHit->AddAssociatedObject((*it));
- 			m_map.insert(std::make_pair(m_channel,m_IntVetoDigiHit));
-		}
- 		else{ //element already exists. Get the VetoIntDigiHit
- 			m_IntVetoDigiHit=m_map[m_channel];
- 			m_IntVetoDigiHit->AddAssociatedObject((*it));
- 		}
-	}
 
-	/*Now the map is full of all the hits in different active elements of active veto, i.e. with different identifiers, that maps the sipm hits.
-	 * Each hit has a reference to the SiPM hits that made it
-	 */
-	vector <const IntVetoSiPMHit*> m_IntVetoSiPMHit_tmp;
-	IntVetoDigiHit* m_IntVetoDigiHit_tmp;
-	double Qmax=-99999;
+	for (it=m_IntVetoSiPMHits.begin(); it != m_IntVetoSiPMHits.end() ; it++){
+		m_IntVetoSiPMHit=*it;
+		m_channel = *(m_IntVetoSiPMHit->m_channel.int_veto);
 
-	for (m_map_it=m_map.begin();m_map_it!=m_map.end();m_map_it++){
-		//do here further elaborations!
-		//Compute the charge as the sum of the charges
-		//Compute the hit-time as time of the sipm-hit with largest charge
-		m_IntVetoDigiHit_tmp=m_map_it->second;
-		m_IntVetoDigiHit_tmp->Get(m_IntVetoSiPMHit_tmp,"",0);  //0 means "associated only with this object
+		m_IntVetoDigiHit=new IntVetoDigiHit;
+		m_IntVetoDigiHit->m_channel=m_channel;
+		m_IntVetoDigiHit->Q=m_IntVetoSiPMHit->Qphe;
+		m_IntVetoDigiHit->A=m_IntVetoSiPMHit->A;
+		m_IntVetoDigiHit->T=m_IntVetoSiPMHit->T;
 
-		m_IntVetoDigiHit_tmp->Qtot=0;
-		Qmax=-9999;
-		for (int ihit=0;ihit<m_IntVetoSiPMHit_tmp.size();ihit++){
-			IntVetoDigiHit::IntVetoSiPMDigiHit hit;
-			hit.Q=m_IntVetoSiPMHit_tmp[ihit]->Qphe;
-			hit.T=m_IntVetoSiPMHit_tmp[ihit]->T;
-			hit.readout=m_IntVetoSiPMHit_tmp.at(ihit)->m_channel.int_veto->readout;
-			m_IntVetoDigiHit_tmp->m_data.push_back(hit);
-			m_IntVetoDigiHit_tmp->Qtot+=hit.Q;
-			if (hit.Q>Qmax){
-				Qmax=hit.Q;
-				m_IntVetoDigiHit_tmp->T=hit.T;
-			}
-		}
-		_data.push_back(m_IntVetoDigiHit_tmp); //publish it
+		m_IntVetoDigiHit->pedMean=m_IntVetoSiPMHit->pedMean;
+		m_IntVetoDigiHit->pedRMS=m_IntVetoSiPMHit->pedRMS;
+		m_IntVetoDigiHit->RMSflag=m_IntVetoSiPMHit->RMSflag;
+
+		m_IntVetoDigiHit->AddAssociatedObject((*it));
+
+		_data.push_back(m_IntVetoDigiHit); //publish it
 	}
 
 	return NOERROR;

@@ -33,6 +33,10 @@ class IntVetoHit_factory:public jana::JFactory<IntVetoHit>{
 		double m_DT_multipleReadout;
 		int m_N_multipleReadout;
 		int m_hit_bottom_workAround;
+
+		TranslationTable::INT_VETO_Index_t m_channel;
+		std::map<TranslationTable::INT_VETO_Index_t,vector <const IntVetoDigiHit*>> m_map;
+		std::map<TranslationTable::INT_VETO_Index_t,vector <const IntVetoDigiHit*>>::iterator m_map_it;
 };
 
 #endif // _IntVetoHit_factory_

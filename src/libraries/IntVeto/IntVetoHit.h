@@ -41,8 +41,6 @@ public:
 	TranslationTable::INT_VETO_Index_t m_channel; //Detector-specific ID. Since this is a detector-based object, the readout field will be ==0
 
 	double Q,T; //Q is in phe
-	int N; //how many counters associated with this object were above thr?
-
 
 	virtual TCanvas* Draw(int id=0) const;//!  //Exclude from root dictionary
 

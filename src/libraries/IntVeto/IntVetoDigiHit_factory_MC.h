@@ -34,9 +34,9 @@ class IntVetoDigiHit_factory_MC:public jana::JFactory<IntVetoDigiHit>{
 
 		/*This code is here because MC could generate more than 1 hit per sector!*/
 		/*The key is the way MC is organized: sector - channel (where sector and channel have a different meaning than in the real data!!!)*/
-		std::map<std::pair<int,int>,IntVetoDigiHit*> m_map;
-		std::map<std::pair<int,int>,IntVetoDigiHit*>::iterator m_map_it;
-
+		std::map<TranslationTable::INT_VETO_Index_t,vector<IntVetoDigiHit*>> m_map;
+		std::map<TranslationTable::INT_VETO_Index_t,vector<IntVetoDigiHit*>>::iterator m_map_it;
+		TranslationTable::INT_VETO_Index_t m_channel;
 		int m_isMC;
 };
 

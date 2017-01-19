@@ -22,11 +22,7 @@
 
 class ExtVetoDigiHit:public jana::JObject,public TObject{
 public:
-	struct ExtVetoPMTDigiHit{
-		int readout;
-		double Q;
-		double T;
-	};
+
 	JOBJECT_PUBLIC(ExtVetoDigiHit);
 
 	// Add data members here. For example:
@@ -42,7 +38,7 @@ public:
 	//A.C. do not touch these
 	TranslationTable::EXT_VETO_Index_t m_channel; //both crate-slot channel and detector-specific ID. Since this is a detector-based object, the readout field will be ==0
 	double Q,T;
-	vector <ExtVetoPMTDigiHit> m_data;
+	double pedMean;
 
 	ClassDef(ExtVetoDigiHit,1);
 

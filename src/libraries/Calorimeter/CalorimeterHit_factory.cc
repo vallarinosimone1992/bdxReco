@@ -110,8 +110,11 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	m_map.clear();
 	for (it=m_CalorimeterDigiHits.begin(); it != m_CalorimeterDigiHits.end() ; it++){
 		m_channel = ((*it)->m_channel);
+		/*a.c. fix for crs x=0 y=0 first catania Proto*/
+		if (m_channel.readout!=1) continue;
 		m_channel.readout = 0;
 		m_map[m_channel].push_back(*it);
+
 	}
 
 	/*Now the map is full of all the hits in different active elements of calorimeter, i.e. with different identifiers, BUT readout, that maps the sipm hits.
@@ -147,7 +150,7 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 				_data.push_back(m_CalorimeterHit); //publish it
 			}
 		}
-		else if (m_CalorimeterDigiHit_tmp.size()>=2){   /*Multiple readout object*/
+		else if (m_CalorimeterDigiHit_tmp.size()>=2){   /*Multiple readout object: this is the case of crs x=0 y=0 first catania Proto*/
 			countOk=0;
 			Qtot=0;
 			Qmax=-9999;
