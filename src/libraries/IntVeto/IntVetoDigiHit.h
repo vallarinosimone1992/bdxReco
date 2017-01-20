@@ -10,7 +10,7 @@
 
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
-
+#include <system/BDXObject.h>
 #include <TT/TranslationTable.h>
 #include "TObject.h"
 /*
@@ -21,7 +21,10 @@
  * - Be as similar as possible to what is obtained from GEMC, while we wait GEMC producing composite, fadc-like, banks.
  */
 
-class IntVetoDigiHit:public TObject,public jana::JObject{
+class TCanvas;
+class TH1D;
+
+class IntVetoDigiHit:public TObject,public BDXObject{
 public:
 
 	JOBJECT_PUBLIC(IntVetoDigiHit);
@@ -42,6 +45,8 @@ public:
 	//A.C. do not touch these
 	TranslationTable::INT_VETO_Index_t m_channel;      //Detector-specific ID. Since this is a detector-based object, the readout field will be ==0
 
+	virtual TCanvas* Draw(int id=0) const;//!  //Exclude from root dictionary
+	mutable TH1D* hWave; //!  //Exclude from root dictionary
 
 	double Q,T,A;
 	double pedMean,pedRMS;

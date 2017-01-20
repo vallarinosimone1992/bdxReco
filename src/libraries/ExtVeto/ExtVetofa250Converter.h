@@ -17,7 +17,7 @@
 #include <TT/TranslationTable.h>
 #include <system/CalibrationHandler.h>
 #include <DAQ/DAQCalibrationHandler.h>
-class fa250Mode1CalibHit;
+class fa250Mode1Hit;
 class fa250Mode7Hit;
 
 class ExtVetofa250Converter:public fa250Converter<ExtVetoPMTHit>{
@@ -26,12 +26,14 @@ class ExtVetofa250Converter:public fa250Converter<ExtVetoPMTHit>{
 		
 
 		virtual ExtVetoPMTHit* convertHit(const fa250Hit *hit,const TranslationTable::ChannelInfo &m_channel,int eventN=0) const;
-		jerror_t convertMode1Hit(ExtVetoPMTHit* output,const fa250Mode1CalibHit *input) const;
+		jerror_t convertMode1Hit(ExtVetoPMTHit* output,const fa250Mode1Hit *input) const;
 		jerror_t convertMode7Hit(ExtVetoPMTHit* output,const fa250Mode7Hit *input) const;
 
 		CalibrationHandler<TranslationTable::EXT_VETO_Index_t> *threshold;
 		DAQCalibrationHandler *m_pedestals;
 	//	vector<vector < double> > m_rawpedestal;
+
+		static constexpr double LSB=0.4884;
 };
 
 #endif // _ExtVetofa250Converter_

@@ -12,7 +12,7 @@ using namespace std;
 #include "ExtVeto_SigDisplay.h"
 #include "system/BDXEventProcessor.h"
 
-#include <DAQ/fa250Mode1CalibHit.h>
+#include <DAQ/fa250Mode1Hit.h>
 
 #include <TT/TranslationTable.h>
 
@@ -156,7 +156,7 @@ jerror_t ExtVeto_SigDisplay::evnt(JEventLoop *loop,uint64_t eventnumber)
 	//
 	vector<const CalorimeterSiPMHit*> data;
 	vector<const CalorimeterSiPMHit*>::const_iterator data_it;
-	const fa250Mode1CalibHit *fa;
+	const fa250Mode1Hit *fa;
 	loop->Get(data);
 
 
@@ -201,7 +201,7 @@ jerror_t ExtVeto_SigDisplay::evnt(JEventLoop *loop,uint64_t eventnumber)
 			h->Reset();
 			h->SetName(Form("h%lld",eventnumber));
 			for (int ii=0;ii<fa->samples.size();ii++){
-				h->Fill(ii,fa->samples.at(ii));
+				h->Fill(ii,fa->samples.at(ii)*0.4884);
 			}
 
 			h->Write();

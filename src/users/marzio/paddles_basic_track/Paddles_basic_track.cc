@@ -13,7 +13,7 @@ using namespace std;
 #include "system/BDXEventProcessor.h"
 #include <TT/TranslationTable.h>
 #include <DAQ/eventData.h>
-#include <DAQ/fa250Mode1CalibHit.h>
+#include <DAQ/fa250Mode1Hit.h>
 
 
 #include <Paddles/PaddlesHit.h>
@@ -158,7 +158,7 @@ jerror_t Paddles_basic_track::evnt(JEventLoop *loop,uint64_t eventnumber)
 	vector<const PaddlesHit*> data;
 	vector<const PaddlesHit*>::const_iterator data_it;
 
-	vector <const fa250Mode1CalibHit*> faV;
+	vector <const fa250Mode1Hit*> faV;
 
 	loop->Get(data);
 
@@ -241,11 +241,11 @@ jerror_t Paddles_basic_track::evnt(JEventLoop *loop,uint64_t eventnumber)
 	for (data_it=data.begin();data_it<data.end();data_it++){			// loop paddles up - down
 				const PaddlesHit *evhit = *data_it;
 				evhit->Get(faV);
-				const fa250Mode1CalibHit *fa=faV[0];
+				const fa250Mode1Hit *fa=faV[0];
 
 						if(evhit->m_channel.id==0){
 						for (int ii=0;ii<fa->samples.size();ii++){
-												amp[ii]=fa->samples.at(ii);
+												amp[ii]=fa->samples.at(ii)*0.4884;
 												time[ii]=ii*4;		// in nsec
 												}
 						}

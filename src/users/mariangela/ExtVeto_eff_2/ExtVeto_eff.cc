@@ -12,7 +12,7 @@ using namespace std;
 #include <system/BDXEventProcessor.h>
 
 #include <DAQ/eventData.h>
-#include <DAQ/fa250Mode1CalibHit.h>
+#include <DAQ/fa250Mode1Hit.h>
 #include <DAQ/fa250Mode1CalibPedSubHit.h>
 #include <TT/TranslationTable.h>
 
@@ -171,7 +171,7 @@ jerror_t ExtVeto_eff::evnt(JEventLoop *loop,uint64_t eventnumber)
 	//
 	vector<const CataniaEvent*> data;
 	vector<const CataniaEvent*>::const_iterator data_it;
-	const fa250Mode1CalibHit *fa;
+	const fa250Mode1Hit *fa;
 	loop->Get(data);
 
 	const eventData* tData;

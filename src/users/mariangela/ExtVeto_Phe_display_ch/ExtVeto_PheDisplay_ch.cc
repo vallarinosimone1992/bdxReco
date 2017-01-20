@@ -12,7 +12,7 @@ using namespace std;
 #include "ExtVeto_PheDisplay_ch.h"
 #include "system/BDXEventProcessor.h"
 
-#include <DAQ/fa250Mode1CalibHit.h>
+#include <DAQ/fa250Mode1Hit.h>
 
 #include <TT/TranslationTable.h>
 
@@ -183,7 +183,7 @@ jerror_t ExtVeto_PheDisplay_ch::evnt(JEventLoop *loop,uint64_t eventnumber)
 
 	vector<const ExtVetoPMTHit*> data;
 	vector<const ExtVetoPMTHit*>::const_iterator data_it;
-	const fa250Mode1CalibHit *fa;
+	const fa250Mode1Hit *fa;
 	loop->Get(data);
 
 	const eventData* tData;
@@ -278,7 +278,7 @@ jerror_t ExtVeto_PheDisplay_ch::evnt(JEventLoop *loop,uint64_t eventnumber)
 
 
 			for (int ii=0;ii<fa->samples.size();ii++){
-                 A[ii]=(fa->samples.at(ii));
+                 A[ii]=(fa->samples.at(ii)*0.4884);
                  time[ii] = ii;
              }
 

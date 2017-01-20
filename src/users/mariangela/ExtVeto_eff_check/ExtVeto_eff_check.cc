@@ -11,7 +11,7 @@ using namespace std;
 #include "ExtVeto_eff_check.h"
 #include "system/BDXEventProcessor.h"
 
-#include <DAQ/fa250Mode1CalibHit.h>
+#include <DAQ/fa250Mode1Hit.h>
 
 #include <TT/TranslationTable.h>
 
@@ -214,7 +214,7 @@ jerror_t ExtVeto_eff_check::evnt(JEventLoop *loop,uint64_t eventnumber)
 
 
 
-	const fa250Mode1CalibHit *fa;
+	const fa250Mode1Hit *fa;
 	const eventData* tData;
 		//has to be in a try-catch block, since if no trigger data is there (prestart - start - end events) trows it!
 		try{

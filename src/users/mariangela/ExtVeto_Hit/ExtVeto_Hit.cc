@@ -12,7 +12,8 @@ using namespace std;
 #include "ExtVeto_Hit.h"
 #include "system/BDXEventProcessor.h"
 #include <DAQ/eventData.h>
-#include <DAQ/fa250Mode1CalibHit.h>
+
+#include <DAQ/fa250Mode1Hit.h>
 
 #include <TT/TranslationTable.h>
 
@@ -150,7 +151,7 @@ jerror_t ExtVeto_Hit::evnt(JEventLoop *loop,uint64_t eventnumber)
 
 
 	vector<const ExtVetoHit*>::const_iterator data_it;
-	vector <const fa250Mode1CalibHit*> faV;
+	vector <const fa250Mode1Hit*> faV;
 	loop->Get(data);
 
 	const eventData* tData;
@@ -186,11 +187,11 @@ jerror_t ExtVeto_Hit::evnt(JEventLoop *loop,uint64_t eventnumber)
 		//	for (data_it=data.begin();data_it<data.end();data_it++){			// loop paddles up - down
 						//	const ExtVetoHit *evhit = *data_it;
 							evhit->Get(faV);
-							const fa250Mode1CalibHit *fa=faV[0];
+							const fa250Mode1Hit *fa=faV[0];
 
 //
 									for (int ii=0;ii<fa->samples.size();ii++){
-															A[ii]=fa->samples.at(ii);
+															A[ii]=fa->samples.at(ii)*0.4884;
 															time[ii]=ii*4;		// in nsec
 														    	}
 

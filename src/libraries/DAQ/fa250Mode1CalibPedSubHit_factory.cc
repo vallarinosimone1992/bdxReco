@@ -10,7 +10,7 @@
 #include <iomanip>
 using namespace std;
 
-#include "fa250Mode1CalibHit.h"
+
 #include "fa250Mode1CalibPedSubHit_factory.h"
 #include <TT/TranslationTable.h>
 using namespace jana;
@@ -47,7 +47,7 @@ jerror_t fa250Mode1CalibPedSubHit_factory::brun(jana::JEventLoop *eventLoop, int
 //------------------
 jerror_t fa250Mode1CalibPedSubHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
-	vector<const fa250Mode1CalibHit*> hits;
+	vector<const fa250Mode1Hit*> hits;
 	vector<double> DAQdata;
 	double pedestal,RMS;
 	double sample=0;
@@ -58,7 +58,7 @@ jerror_t fa250Mode1CalibPedSubHit_factory::evnt(JEventLoop *loop, uint64_t event
 
 	for(uint32_t i=0; i<hits.size(); i++){
 
-		const fa250Mode1CalibHit *hit = hits[i];
+		const fa250Mode1Hit *hit = hits[i];
 
 		// Create new fa250Mode1PedSubHit
 		fa250Mode1CalibPedSubHit *CalibPedSubHit = new fa250Mode1CalibPedSubHit;
@@ -74,15 +74,15 @@ jerror_t fa250Mode1CalibPedSubHit_factory::evnt(JEventLoop *loop, uint64_t event
 		DAQdata=m_pedestals->getCalib(hit->m_channel);
 		pedestal=DAQdata[0];
 		RMS=DAQdata[1];
-		pedestal*=LSB;
-		RMS*=LSB;
+
 		for(uint32_t j=0; j<hit->samples.size(); j++){
-			sample = (double)hit->samples[j];
-			sample = sample - pedestal;
+			sample = (double)hit->samples[j]; //get the sample
+			sample = sample - pedestal; //subtract the pedestal (in FADC units)
+			sample = sample * LSB; //convert to mV
 			CalibPedSubHit->samples.push_back(sample);
 		}
-		CalibPedSubHit->m_ped=pedestal;
-		CalibPedSubHit->m_RMS=RMS;
+		CalibPedSubHit->m_ped=pedestal*LSB;
+		CalibPedSubHit->m_RMS=RMS*LSB;
 		// Add original as associated object 
 		CalibPedSubHit->AddAssociatedObject(hit);
 		_data.push_back(CalibPedSubHit);

@@ -11,7 +11,7 @@
 using namespace std;
 
 //objects we need from the framework
-#include <DAQ/fa250Mode1CalibHit.h>
+#include <DAQ/fa250Mode1Hit.h>
 #include <DAQ/fa250Mode7Hit.h>
 #include <TT/TranslationTable.h>
 //objects we put in the framework
@@ -85,13 +85,13 @@ jerror_t ExtVetoPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	//1: Here, we get from the framework the objects we need to process
 	//1a: create vectors
-	vector <const fa250Mode1CalibHit*> m_fa250Mode1CalibHit;
+	vector <const fa250Mode1Hit*> m_fa250Mode1Hit;
 	vector <const fa250Mode7Hit*> m_fa250Mode7Hit;
-	vector <const fa250Mode1CalibHit*>::const_iterator it_fa250Mode1CalibHit;
+	vector <const fa250Mode1Hit*>::const_iterator it_fa250Mode1Hit;
 	vector <const fa250Mode7Hit*>::const_iterator it_fa250Mode7Hit;
 
 	//1b: retrieve objects
-	loop->Get(m_fa250Mode1CalibHit);
+	loop->Get(m_fa250Mode1Hit);
 	loop->Get(m_fa250Mode7Hit);
 	//	jout << "sono qui" <<std::endl;
 	/*2: Now we have the daq objects, still indexed as "crate-slot-channel"
@@ -104,13 +104,13 @@ jerror_t ExtVetoPMTHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	 */
 	/*First, mode 1*/
 	/*Note that in this case we have to integrate the pulse - it is a mode 1 pulse! */
-	for (it_fa250Mode1CalibHit=m_fa250Mode1CalibHit.begin();it_fa250Mode1CalibHit!=m_fa250Mode1CalibHit.end();it_fa250Mode1CalibHit++){
-		m_channel=m_tt->getChannelInfo((*it_fa250Mode1CalibHit)->m_channel);
+	for (it_fa250Mode1Hit=m_fa250Mode1Hit.begin();it_fa250Mode1Hit!=m_fa250Mode1Hit.end();it_fa250Mode1Hit++){
+		m_channel=m_tt->getChannelInfo((*it_fa250Mode1Hit)->m_channel);
 
 		if (m_channel.det_sys==TranslationTable::EXT_VETO){
 			//A.C. do not touch these
-			m_ExtVetoPMTHit=m_extVetofa250Converter->convertHit((fa250Hit*)*it_fa250Mode1CalibHit,m_channel);
-			m_ExtVetoPMTHit->AddAssociatedObject(*it_fa250Mode1CalibHit);
+			m_ExtVetoPMTHit=m_extVetofa250Converter->convertHit((fa250Hit*)*it_fa250Mode1Hit,m_channel);
+			m_ExtVetoPMTHit->AddAssociatedObject(*it_fa250Mode1Hit);
 
 			//Apply phe conversion
 			m_q_calib=m_PMT_gain->getCalibSingle(*(m_channel.ext_veto));

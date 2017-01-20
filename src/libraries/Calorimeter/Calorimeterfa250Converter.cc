@@ -23,7 +23,7 @@
 #include <DAQ/fa250Mode7Hit.h>
 
 #include <JANA/JParameterManager.h>
-#include <DAQ/fa250Mode1CalibHit.h>
+#include <DAQ/fa250Mode1CalibPedSubHit.h>
 
 double fSinglePhe2Pole(double *x,double *par){
 	double ret=0;

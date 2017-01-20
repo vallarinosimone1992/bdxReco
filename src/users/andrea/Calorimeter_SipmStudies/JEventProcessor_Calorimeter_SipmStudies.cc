@@ -15,7 +15,7 @@ using namespace jana;
 
 #include <DAQ/fa250Mode1Hit.h>
 #include <DAQ/fa250Mode1CalibPedSubHit.h>
-#include <DAQ/fa250Mode1CalibHit.h>
+
 
 #include <DAQ/eventData.h>
 

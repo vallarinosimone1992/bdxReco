@@ -11,7 +11,7 @@ using namespace std;
 #include "ExtVeto_calib.h"
 #include "system/BDXEventProcessor.h"
 
-#include <DAQ/fa250Mode1CalibHit.h>
+#include <DAQ/fa250Mode1Hit.h>
 
 #include <TT/TranslationTable.h>
 
@@ -161,7 +161,7 @@ jerror_t ExtVeto_calib::evnt(JEventLoop *loop,uint64_t eventnumber)
 
 
 	vector<const ExtVetoPMTHit*>::const_iterator data_it;
-	const fa250Mode1CalibHit *fa;
+	const fa250Mode1Hit *fa;
 	loop->Get(data);
 
 	const eventData* tData;

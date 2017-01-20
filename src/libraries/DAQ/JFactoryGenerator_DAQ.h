@@ -14,7 +14,6 @@
 #include "fa250Mode1Hit.h"
 #include "fa250Mode7Hit.h"
 #include "eventData.h"
-#include "fa250Mode1CalibHit_factory.h"
 #include "fa250Mode1CalibPedSubHit_factory.h"
 
 class JFactoryGenerator_DAQ: public jana::JFactoryGenerator{
@@ -28,7 +27,7 @@ class JFactoryGenerator_DAQ: public jana::JFactoryGenerator{
 			loop->AddFactory(new JFactory<fa250Mode1Hit>()    );
 			loop->AddFactory(new JFactory<fa250Mode7Hit>()    );
 			loop->AddFactory(new JFactory<eventData  >()    );
-			loop->AddFactory(new fa250Mode1CalibHit_factory() );
+
 			loop->AddFactory(new fa250Mode1CalibPedSubHit_factory());
 			return NOERROR;
 		}

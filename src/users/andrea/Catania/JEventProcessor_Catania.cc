@@ -10,7 +10,6 @@
 #include <system/BDXEventProcessor.h>
 
 #include <DAQ/eventData.h>
-#include <DAQ/fa250Mode1CalibHit.h>
 #include <DAQ/fa250Mode1CalibPedSubHit.h>
 #include <TT/TranslationTable.h>
 
@@ -189,8 +188,8 @@ jerror_t JEventProcessor_Catania::evnt(JEventLoop *loop, uint64_t eventnumber)
 	vector <const fa250Mode1CalibPedSubHit*> ivwaves;
 	vector <const fa250Mode1CalibPedSubHit*>::iterator ivwaves_it;
 
-	vector <const fa250Mode1CalibHit*> evwaves;
-	vector <const fa250Mode1CalibHit*>::iterator evwaves_it;
+	vector <const fa250Mode1Hit*> evwaves;
+	vector <const fa250Mode1Hit*>::iterator evwaves_it;
 
 
 	vector<const CalorimeterMCHit*> mc_data;
