@@ -9,3 +9,7 @@ for lib in libs:
     src=src+Glob(lib+'/*.cc')
    
 env.SharedLibrary(source=src,target='#/lib/bdxRecoExt') 
+
+# Special libraries
+env.Append(CPPPATH=Dir('#/src/external/et/src/libsrc').srcnode().abspath)
+env.SConscript('et/SConstruct',exports='env')

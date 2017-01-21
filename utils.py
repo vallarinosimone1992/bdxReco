@@ -5,11 +5,54 @@ import os
 import SCons
 import glob
 import platform
+import sys
+
+
+
+################
+# File handling
+################s
 
 def getSubdirs(abs_path_dir) :  
     lst = [ name for name in os.listdir(abs_path_dir) if os.path.isdir(os.path.join(abs_path_dir, name)) and name[0] != '.' ]
     lst.sort()
     return lst
+
+def recursiveDirs(root) :
+    """Return a list of all subdirectories of root, top down,
+       including root, but without .svn and .<arch> directories"""
+    return filter( (lambda a : (a.rfind( ".svn")==-1) and \
+                               (a.rfind( ".Linux")==-1) and \
+                               (a.rfind( ".SunOS")==-1) and \
+                               (a.rfind( ".Darwin")==-1) and \
+                               (a.rfind( ".vxworks")==-1)),  [ a[0] for a in os.walk(root)]  )
+
+
+
+def unique(list) :
+    """Remove duplicates from list"""
+    return dict.fromkeys(list).keys()
+
+
+
+def scanFiles(dir, accept=["*.cpp"], reject=[]) :
+    """Return a list of selected files from a directory & its subdirectories"""
+    sources = []
+    paths = recursiveDirs(dir)
+    for path in paths :
+        for pattern in accept :
+            sources+=glob.glob(path+"/"+pattern)
+    for pattern in reject :
+        sources = filter( (lambda a : a.rfind(pattern)==-1 ),  sources )
+    return unique(sources)
+
+
+
+def subdirsContaining(root, patterns):
+    """Return a list of subdirectories containing files of the given pattern"""
+    dirs = unique(map(os.path.dirname, scanFiles(root, patterns)))
+    dirs.sort()
+    return dirs
     
 class bcolors:
     HEADER = '\033[95m'
@@ -77,3 +120,75 @@ def AddROOTdict(env,reldir,absdir):
                 retVal=env.ROOTDictNoLinkDef(reldir+"/"+f)
     os.chdir(curpath)            
         
+        
+        
+        
+        
+        
+        
+
+def configureJNI(env):
+    """Configure the given environment for compiling Java Native Interface
+       c or c++ language files"""
+
+    # first look for a shell variable called JAVA_HOME
+    java_base = os.environ.get('JAVA_HOME')
+    if not java_base:
+        if sys.platform == 'darwin':
+            # Apple's OS X has its own special java base directory
+            java_base = '/System/Library/Frameworks/JavaVM.framework'
+        else:
+            # Search for the java compiler
+            print "JAVA_HOME environment variable not set. Searching for javac to find jni.h ..."
+            if not env.get('JAVAC'):
+                print "The Java compiler must be installed and in the current path, exiting"
+                return 0
+            jcdir = os.path.dirname(env.WhereIs('javac'))        
+            if not jcdir:
+                print "   not found, exiting"
+                return 0
+            # assuming the compiler found is in some directory like
+            # /usr/jdkX.X/bin/javac, java's home directory is /usr/jdkX.X
+            jc = os.path.join(jcdir,'javac')
+            jcrealdir = os.path.dirname(os.path.realpath(jc))
+            java_base = os.path.normpath(os.path.join(jcrealdir, ".."))
+            print "  found, dir = " + java_base        
+        
+    if sys.platform == 'darwin':
+        # Apple does not use Sun's naming convention
+        java_headers = [os.path.join(java_base, 'Headers')]
+        java_libs = [os.path.join(java_base, 'Libraries')]
+    else:
+        # linux
+        java_headers = [os.path.join(java_base, 'include')]
+        java_libs = [os.path.join(java_base, 'lib')]
+        # Sun's windows and linux JDKs keep system-specific header
+        # files in a sub-directory of include
+       
+        if java_base == '/usr' or java_base == '/usr/local':
+            # too many possible subdirectories. Just use defaults
+            print "stocazzo",java_libs,java_base,java_headers
+            java_headers.append(os.path.join(java_headers[0], 'linux'))
+            java_headers.append(os.path.join(java_headers[0], 'solaris'))
+        else:
+            # add all subdirs of 'include'. The system specific headers
+            # should be in there somewhere
+            java_headers = recursiveDirs(java_headers[0])
+
+    # add Java's include and lib directory to the environment
+    env.Append(CPPPATH = java_headers)
+    # (only need the headers right now so comment out next line)
+    #env.Append(LIBPATH = java_libs)
+
+    # add any special platform-specific compilation or linking flags
+    # (only need the headers right now so comment out next lines)
+    #if sys.platform == 'darwin':
+    #    env.Append(SHLINKFLAGS = '-dynamiclib -framework JavaVM')
+    #    env['SHLIBSUFFIX'] = '.jnilib'
+
+    # Add extra potentially useful environment variables
+    #env['JAVA_HOME']   = java_base
+    #env['JNI_CPPPATH'] = java_headers
+    #env['JNI_LIBPATH'] = java_libs
+
+    return 1
