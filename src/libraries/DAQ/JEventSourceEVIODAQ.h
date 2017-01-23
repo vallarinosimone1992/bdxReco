@@ -66,7 +66,7 @@ private:
 	int eventHeader_tag;
 	int eventHeader_CODA_tag;
 	int prestart_tag;
-
+	int end_tag;
 	int curRunNumber, curEventNumber;
 	int overwriteRunNumber;
 

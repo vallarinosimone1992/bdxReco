@@ -21,7 +21,9 @@ using namespace std;
 
 // Constructor
 JEventSourceEvioDAQ::JEventSourceEvioDAQ(const char* source_name) :
-		JEventSource(source_name), chan(0), EDT(0), vme_mother_tag(0), child_mode1_tag(0), child_mode7_tag(0), eventHeader_tag(0), curRunNumber(0), curEventNumber(0) {
+		JEventSource(source_name), chan(0), EDT(0), vme_mother_tag(0), child_mode1_tag(
+				0), child_mode7_tag(0), eventHeader_tag(0), curRunNumber(0), curEventNumber(
+				0) {
 
 	vme_mother_tag = 0x1;
 	child_mode1_tag = 0xe101;
@@ -30,7 +32,7 @@ JEventSourceEvioDAQ::JEventSourceEvioDAQ(const char* source_name) :
 	eventHeader_tag = 0xE10F;
 	eventHeader_CODA_tag = 0xC000;
 	prestart_tag = 0x11;  //decimal 17
-
+	end_tag = 0x20;
 	overwriteRunNumber = -1;
 
 	BUFFER_SIZE = 3000000;
@@ -49,14 +51,20 @@ JEventSourceEvioDAQ::JEventSourceEvioDAQ(const char* source_name) :
 	gPARMS->SetDefaultParameter("DAQ:PRESTART_TAG", prestart_tag);
 	gPARMS->SetDefaultParameter("DAQ:RUN_NUMBER", overwriteRunNumber);
 
-	gPARMS->SetDefaultParameter("DAQ:BUFFER_SIZE", BUFFER_SIZE, "Size in bytes to allocate for holding a single EVIO event.");
+	gPARMS->SetDefaultParameter("DAQ:BUFFER_SIZE", BUFFER_SIZE,
+			"Size in bytes to allocate for holding a single EVIO event.");
 
-	gPARMS->SetDefaultParameter("ET:ET_STATION_NEVENTS", ET_STATION_NEVENTS, "Number of events to use if we have to create the ET station. Ignored if station already exists.");
-	gPARMS->SetDefaultParameter("ET:ET_STATION_CREATE_BLOCKING", ET_STATION_CREATE_BLOCKING, "Set this to 0 to create station in non-blocking mode (default is to create it in blocking mode). Ignored if station already exists.");
+	gPARMS->SetDefaultParameter("ET:ET_STATION_NEVENTS", ET_STATION_NEVENTS,
+			"Number of events to use if we have to create the ET station. Ignored if station already exists.");
+	gPARMS->SetDefaultParameter("ET:ET_STATION_CREATE_BLOCKING",
+			ET_STATION_CREATE_BLOCKING,
+			"Set this to 0 to create station in non-blocking mode (default is to create it in blocking mode). Ignored if station already exists.");
 
-	gPARMS->SetDefaultParameter("ET:TIMEOUT", TIMEOUT, "Set the timeout in seconds for each attempt at reading from ET system (repeated attempts will still be made indefinitely until program quits or the quit_on_et_timeout flag is set.");
+	gPARMS->SetDefaultParameter("ET:TIMEOUT", TIMEOUT,
+			"Set the timeout in seconds for each attempt at reading from ET system (repeated attempts will still be made indefinitely until program quits or the quit_on_et_timeout flag is set.");
 
-	gPARMS->SetDefaultParameter("DAQ:VERBOSE", VERBOSE, "Set verbosity level for processing and debugging statements while parsing. 0=no debugging messages. 10=all messages");
+	gPARMS->SetDefaultParameter("DAQ:VERBOSE", VERBOSE,
+			"Set verbosity level for processing and debugging statements while parsing. 0=no debugging messages. 10=all messages");
 	// open EVIO file - buffer is hardcoded at 3M... that right?
 	jout << " Opening input source: " << source_name << endl;
 
@@ -76,12 +84,22 @@ JEventSourceEvioDAQ::JEventSourceEvioDAQ(const char* source_name) :
 		// No ET and the file didn't work so re-throw the exception
 		if (this->source_name.substr(0, 3) == "ET:") {
 			cerr << endl;
-			cerr << "=== ERROR: ET source specified and this was compiled without    ===" << endl;
-			cerr << "===        ET support. You need to install ET and set your      ===" << endl;
-			cerr << "===        ETROOT environment variable appropriately before     ===" << endl;
-			cerr << "===        recompiling.                                         ===" << endl;
+			cerr
+					<< "=== ERROR: ET source specified and this was compiled without    ==="
+					<< endl;
+			cerr
+					<< "===        ET support. You need to install ET and set your      ==="
+					<< endl;
+			cerr
+					<< "===        ETROOT environment variable appropriately before     ==="
+					<< endl;
+			cerr
+					<< "===        recompiling.                                         ==="
+					<< endl;
 			cerr << endl;
-			throw JException("Failed to open ET system - no ET support enabled: " + this->source_name);
+			throw JException(
+					"Failed to open ET system - no ET support enabled: "
+							+ this->source_name);
 		} else {
 			jerr << " Here" << endl;
 			jerr << e.toString() << endl;
@@ -126,18 +144,25 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event) {
 			evio::evioDOMNodeList::const_iterator iter;
 
 			for (iter = fullList->begin(); iter != fullList->end(); iter++) {
-				if (((*iter)->tag == prestart_tag) && (overwriteRunNumber == -1)) {
-					const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*iter);
-					vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
+				if (((*iter)->tag == prestart_tag)
+						&& (overwriteRunNumber == -1)) {
+					const evio::evioCompositeDOMLeafNode *leaf =
+							static_cast<const evio::evioCompositeDOMLeafNode*>(*iter);
+					vector<uint32_t> *pData =
+							const_cast<vector<uint32_t> *>(&(leaf->data));
 					curRunNumber = pData->at(1);
 				}
 				if ((*iter)->tag == eventHeader_CODA_tag) { //To be compatible also with data taken without header
-					const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*iter);
-					vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
+					const evio::evioCompositeDOMLeafNode *leaf =
+							static_cast<const evio::evioCompositeDOMLeafNode*>(*iter);
+					vector<uint32_t> *pData =
+							const_cast<vector<uint32_t> *>(&(leaf->data));
 					event.SetEventNumber(pData->at(0));
 				} else if ((*iter)->tag == eventHeader_tag) {
-					const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*iter);
-					vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
+					const evio::evioCompositeDOMLeafNode *leaf =
+							static_cast<const evio::evioCompositeDOMLeafNode*>(*iter);
+					vector<uint32_t> *pData =
+							const_cast<vector<uint32_t> *>(&(leaf->data));
 					event.SetEventNumber(pData->at(2));
 					curRunNumber = pData->at(1);
 				}
@@ -301,6 +326,12 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event) {
 		evio::evioDOMNodeList::const_iterator iter;
 
 		for (iter = fullList->begin(); iter != fullList->end(); iter++) {
+
+			if ((*iter)->tag == end_tag){ //it means the run ended.
+				jout<<"Got end event"<<endl;
+				return NO_MORE_EVENTS_IN_SOURCE;
+			}
+
 			if (((*iter)->tag == prestart_tag) && (overwriteRunNumber == -1)) {
 				const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*iter);
 				vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
@@ -346,7 +377,8 @@ void JEventSourceEvioDAQ::FreeEvent(JEvent &event) {
 }
 
 // GetObjects
-jerror_t JEventSourceEvioDAQ::GetObjects(JEvent &event, JFactory_base *factory) {
+jerror_t JEventSourceEvioDAQ::GetObjects(JEvent &event,
+		JFactory_base *factory) {
 /// This gets called through the virtual method of the
 /// JEventSource base class. It creates the objects of the type
 /// which factory is based.
@@ -355,15 +387,19 @@ jerror_t JEventSourceEvioDAQ::GetObjects(JEvent &event, JFactory_base *factory) 
 /// it will be read here.
 
 // We must have a factory to hold the data
-	if (!factory) throw RESOURCE_UNAVAILABLE;
+	if (!factory)
+		throw RESOURCE_UNAVAILABLE;
 
 // Get name of data class we're trying to extract
 	string dataClassName = factory->GetDataClassName();
 
 //As suggested by David, do a check on the factory type to decide what to do
-	JFactory<fa250Mode1Hit> *fac_fa250Mode1hit = dynamic_cast<JFactory<fa250Mode1Hit>*>(factory);
-	JFactory<fa250Mode7Hit> *fac_fa250Mode7hit = dynamic_cast<JFactory<fa250Mode7Hit>*>(factory);
-	JFactory<eventData> *fac_eventData = dynamic_cast<JFactory<eventData>*>(factory);
+	JFactory<fa250Mode1Hit> *fac_fa250Mode1hit = dynamic_cast<JFactory<
+			fa250Mode1Hit>*>(factory);
+	JFactory<fa250Mode7Hit> *fac_fa250Mode7hit = dynamic_cast<JFactory<
+			fa250Mode7Hit>*>(factory);
+	JFactory<eventData> *fac_eventData =
+			dynamic_cast<JFactory<eventData>*>(factory);
 
 	if (fac_fa250Mode1hit != NULL) {
 
@@ -381,27 +417,38 @@ jerror_t JEventSourceEvioDAQ::GetObjects(JEvent &event, JFactory_base *factory) 
 
 				evio::evioDOMNodeList *leafList = (*iter)->getChildList();
 
-				for (branch = leafList->begin(); branch != leafList->end(); branch++) {
+				for (branch = leafList->begin(); branch != leafList->end();
+						branch++) {
 					if ((*branch)->tag == child_mode1_tag) {
-						const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*branch);
+						const evio::evioCompositeDOMLeafNode *leaf =
+								static_cast<const evio::evioCompositeDOMLeafNode*>(*branch);
 						int leafSize = leaf->getSize();
-						vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
+						vector<uint32_t> *pData =
+								const_cast<vector<uint32_t> *>(&(leaf->data));
 						decoder.decode(pData, leafSize);
 						if (decoder.getData().size() > 0) {
 							try {
-								vector<CompositeADCRaw_t> decdata = decoder.getData();
-								for (int loop = 0; loop < decdata.size(); loop++) {
+								vector<CompositeADCRaw_t> decdata =
+										decoder.getData();
+								for (int loop = 0; loop < decdata.size();
+										loop++) {
 									fa250Mode1Hit *hit = new fa250Mode1Hit();
 									//Why I do not save directly the CompositeADCRaw_t and use it as the "Jobject in jana:\
 									// 1) CompositeADCRaw_t is just a simple structure to old data
 									// 2) CompositeADCRaw_t is just for evio-readout
 									// 3) fa250Mode1Hit is a more complex class, used within JANA
 
-									hit->m_channel.rocid = 0;								///TODO better
+									hit->m_channel.rocid = 0;	///TODO better
 									hit->m_channel.slot = decdata[loop].slot;
-									hit->m_channel.channel = decdata[loop].channel;
-									for (int isample = 0; isample < decdata[loop].samples.size(); isample++) {
-										hit->samples.push_back(decdata[loop].samples.at(isample));
+									hit->m_channel.channel =
+											decdata[loop].channel;
+									for (int isample = 0;
+											isample
+													< decdata[loop].samples.size();
+											isample++) {
+										hit->samples.push_back(
+												decdata[loop].samples.at(
+														isample));
 									}
 
 									hit->trigger = decdata[loop].trigger;
@@ -436,33 +483,45 @@ jerror_t JEventSourceEvioDAQ::GetObjects(JEvent &event, JFactory_base *factory) 
 
 				evio::evioDOMNodeList *leafList = (*iter)->getChildList();
 
-				for (branch = leafList->begin(); branch != leafList->end(); branch++) {
+				for (branch = leafList->begin(); branch != leafList->end();
+						branch++) {
 					if ((*branch)->tag == child_mode7_tag) {
-						const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*branch);
+						const evio::evioCompositeDOMLeafNode *leaf =
+								static_cast<const evio::evioCompositeDOMLeafNode*>(*branch);
 						int leafSize = leaf->getSize();
-						vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
+						vector<uint32_t> *pData =
+								const_cast<vector<uint32_t> *>(&(leaf->data));
 						decoder.decode(pData, leafSize);
 						if (decoder.getData().size() > 0) {
 							try {
-								vector<CompositeADCPulse_t> decdata = decoder.getDataPulse();
-								for (int loop = 0; loop < decdata.size(); loop++) {
+								vector<CompositeADCPulse_t> decdata =
+										decoder.getDataPulse();
+								for (int loop = 0; loop < decdata.size();
+										loop++) {
 									fa250Mode7Hit *hit = new fa250Mode7Hit();
 									//Why I do not save directly the CompositeADCPulse_t and use it as the "Jobject in jana:\
 									// 1) CompositeADCPulse_t is just a simple structure to old data
 									// 2) CompositeADCPulse_t is just for evio-readout
 									// 3) fa250Mode7Hit is a more complex class, used within JANA
 
-									hit->m_channel.rocid = 0;								///TODO better
+									hit->m_channel.rocid = 0;	///TODO better
 									hit->m_channel.slot = decdata[loop].slot;
-									hit->m_channel.channel = decdata[loop].channel;
+									hit->m_channel.channel =
+											decdata[loop].channel;
 									hit->trigger = decdata[loop].trigger;
 									hit->timestamp = decdata[loop].time;
-									for (int ipulse = 0; ipulse < decdata[loop].pulses.size(); ipulse++) {
+									for (int ipulse = 0;
+											ipulse < decdata[loop].pulses.size();
+											ipulse++) {
 										fa250Mode7Hit::pulse_t pulse;
-										pulse.tdc = decdata[loop].pulses[ipulse].tdc;
-										pulse.adc = decdata[loop].pulses[ipulse].adc;
-										pulse.ped = decdata[loop].pulses[ipulse].ped;
-										pulse.max = decdata[loop].pulses[ipulse].max;
+										pulse.tdc =
+												decdata[loop].pulses[ipulse].tdc;
+										pulse.adc =
+												decdata[loop].pulses[ipulse].adc;
+										pulse.ped =
+												decdata[loop].pulses[ipulse].ped;
+										pulse.max =
+												decdata[loop].pulses[ipulse].max;
 										hit->pulses.push_back(pulse);
 									}
 									data.push_back(hit);
@@ -491,15 +550,20 @@ jerror_t JEventSourceEvioDAQ::GetObjects(JEvent &event, JFactory_base *factory) 
 			if ((*iter)->tag == vme_mother_tag) {
 				evio::evioDOMNodeList *leafList = (*iter)->getChildList();
 
-				for (branch = leafList->begin(); branch != leafList->end(); branch++) {
+				for (branch = leafList->begin(); branch != leafList->end();
+						branch++) {
 					if ((*branch)->tag == child_trigger_tag) {
-						const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*branch);
+						const evio::evioCompositeDOMLeafNode *leaf =
+								static_cast<const evio::evioCompositeDOMLeafNode*>(*branch);
 						int leafSize = leaf->getSize();
-						vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
+						vector<uint32_t> *pData =
+								const_cast<vector<uint32_t> *>(&(leaf->data));
 						if (leafSize > 0) {
 
-							for (int itrigWord = 0; itrigWord < pData->size(); itrigWord++) {
-								this_eventData->triggerWords.push_back(pData->at(itrigWord));
+							for (int itrigWord = 0; itrigWord < pData->size();
+									itrigWord++) {
+								this_eventData->triggerWords.push_back(
+										pData->at(itrigWord));
 							}
 
 						}
@@ -507,11 +571,15 @@ jerror_t JEventSourceEvioDAQ::GetObjects(JEvent &event, JFactory_base *factory) 
 					}
 
 					else if ((*branch)->tag == eventHeader_tag) {
-						const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*branch);
+						const evio::evioCompositeDOMLeafNode *leaf =
+								static_cast<const evio::evioCompositeDOMLeafNode*>(*branch);
 						int leafSize = leaf->getSize();
-						vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
+						vector<uint32_t> *pData =
+								const_cast<vector<uint32_t> *>(&(leaf->data));
 						if (leafSize != 5) {  //should have 5 words in head bank
-							jerr << "Incompatible number of words in head bank: got " << leafSize << endl;
+							jerr
+									<< "Incompatible number of words in head bank: got "
+									<< leafSize << endl;
 						} else {
 							this_eventData->eventN = pData->at(2);
 							this_eventData->runN = pData->at(1);
@@ -685,8 +753,10 @@ void JEventSourceEvioDAQ::ConnectToET(const char* source_name) {
 
 #else
 	jerr << endl;
-	jerr << "You are attempting to connect to an ET system using a binary that" << endl;
-	jerr << "was compiled without ET support. Please reconfigure and recompile" << endl;
+	jerr << "You are attempting to connect to an ET system using a binary that"
+			<< endl;
+	jerr << "was compiled without ET support. Please reconfigure and recompile"
+			<< endl;
 	jerr << "To get ET support." << endl;
 	jerr << endl;
 	throw exception();
