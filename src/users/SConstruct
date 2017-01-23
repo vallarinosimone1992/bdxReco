@@ -1,5 +1,5 @@
 from utils import *
-Import('env')
+Import('env debug')
 
 users_names = getSubdirs('./')
 

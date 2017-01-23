@@ -14,7 +14,6 @@ using namespace jana;
 
 // bdx headers
 
-
 // EVIO headers
 #include <evioUtil.hxx>
 #include <evioFileChannel.hxx>
@@ -26,36 +25,71 @@ using namespace evio;
 // banks header
 #include "banks.h"
 
+//ET
+#ifdef ET_SUPPORT_ENABLE
+#include "et.h"
+#endif
 
-class JEventSourceEvioDAQ:public JEventSource
-{
-	public:
-		JEventSourceEvioDAQ(const char* source_name);
-		virtual ~JEventSourceEvioDAQ();
+class JEventSourceEvioDAQ: public JEventSource {
+public:
 
-		virtual const char* className(void)      {return static_className();}
-		static const char* static_className(void){return "JEventSourceEvioDAQ";}
+	enum DAQSourceType {
+		kNoSource, kFileSource, kETSource
+	};
 
-		jerror_t GetEvent(JEvent &event);
-		void FreeEvent(JEvent &event);
-		jerror_t GetObjects(JEvent &event, JFactory_base *factory);
-	
+	JEventSourceEvioDAQ(const char* source_name);
+	virtual ~JEventSourceEvioDAQ();
 
-		map<string, gBank> banksMap;
-	
-	private:
-		evioFileChannel *chan;   // EVIO input channel
-		evioDOMTree *EDT;        // single-event evio-DOM-tree
-		int vme_mother_tag;    //tag of the bank containing banks with data from VME
-		int child_mode1_tag;
-		int child_mode7_tag;
-		int child_trigger_tag;
-		int eventHeader_tag;
-		int eventHeader_CODA_tag;
-		int prestart_tag;
+	virtual const char* className(void) {
+		return static_className();
+	}
+	static const char* static_className(void) {
+		return "JEventSourceEvioDAQ";
+	}
 
-		int curRunNumber,curEventNumber;
-		int overwriteRunNumber;
+	jerror_t GetEvent(JEvent &event);
+	void FreeEvent(JEvent &event);
+	jerror_t GetObjects(JEvent &event, JFactory_base *factory);
+	DAQSourceType GetDAQSourceType(void) {
+		return source_type;
+	}
+
+	map<string, gBank> banksMap;
+
+private:
+	evioFileChannel *chan;   // EVIO input channel
+	evioDOMTree *EDT;        // single-event evio-DOM-tree
+	int vme_mother_tag;    //tag of the bank containing banks with data from VME
+	int child_mode1_tag;
+	int child_mode7_tag;
+	int child_trigger_tag;
+	int eventHeader_tag;
+	int eventHeader_CODA_tag;
+	int prestart_tag;
+
+	int curRunNumber, curEventNumber;
+	int overwriteRunNumber;
+
+	int VERBOSE;
+	float TIMEOUT;
+
+	uint32_t BUFFER_SIZE;
+
+	DAQSourceType source_type;
+
+	//ET stuff
+	void ConnectToET(const char* source_name);
+	bool et_connected;
+	int ET_STATION_NEVENTS;
+	bool ET_STATION_CREATE_BLOCKING;
+	bool quit_on_next_ET_timeout;
+	uint32_t *buff;
+#ifdef ET_SUPPORT_ENABLE
+	et_sys_id sys_id;
+	et_att_id att_id;
+	et_stat_id sta_id;
+#endif
+
 };
 
 #endif

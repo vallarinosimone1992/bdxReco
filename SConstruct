@@ -11,6 +11,12 @@ if int(debug):
    print "DEBUG IS ON"
    env.Append(CCFLAGS = '-g')
 
+et_enable = ARGUMENTS.get('ET',0)
+if int(et_enable):
+    print "ET-ring support is enabled"
+    env.AppendUnique(CPPDEFINES='ET_SUPPORT_ENABLE')
+
+
 #A.C. probably do this better
 if (platform.system()=="Darwin"):
 	print "We are on MAC"
@@ -24,10 +30,12 @@ env.Append(CPPPATH=Dir('#/.').srcnode().abspath)
 env.Append(LIBPATH = ['#/lib'])
 env.Replace(RPATH=Dir('#/lib').srcnode().abspath)
 
-libExt=SConscript('src/external/SConstruct',exports='env')
-lib=SConscript('src/libraries/SConstruct',exports='env')
-progs=SConscript('src/programs/SConstruct',exports='env')
-users=SConscript('src/users/SConstruct',exports='env')
+Export('env debug et_enable')
+
+libExt=SConscript('src/external/SConstruct')
+lib=SConscript('src/libraries/SConstruct')
+progs=SConscript('src/programs/SConstruct')
+users=SConscript('src/users/SConstruct')
 
 #env.Prepend(LIBS="libExt") 
 #env.Prepend(LIBS="libbdxReco")

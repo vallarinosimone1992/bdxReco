@@ -1,11 +1,13 @@
 import glob
-Import('env')
+Import('env et_enable')
 
 # Loop over libraries, building each
 this_env=env.Clone()
 this_env.Prepend(LIBS="libbdxRecoExt") 
 this_env.Prepend(LIBS="libbdxReco")
 
+if (et_enable):
+    this_env.Prepend(LIBS="libet")
 
 progs=['bdxReco']
 for prog in progs:

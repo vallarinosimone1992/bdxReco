@@ -1,5 +1,5 @@
 import glob
-Import('env')
+Import('env debug et_enable')
 
 
 # Loop over libraries, building each
@@ -11,5 +11,7 @@ for lib in libs:
 env.SharedLibrary(source=src,target='#/lib/bdxRecoExt') 
 
 # Special libraries
-env.Append(CPPPATH=Dir('#/src/external/et/src/libsrc').srcnode().abspath)
-env.SConscript('et/SConstruct',exports='env')
+
+if (et_enable):
+    env.Append(CPPPATH=Dir('#/src/external/et/src/libsrc').srcnode().abspath)
+    env.SConscript('et/SConstruct',exports='env debug')
