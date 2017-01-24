@@ -71,7 +71,7 @@ jerror_t BDXEventProcessor::init(void) {
 		bout << "Out file type is: " << outType << endl;
 		if (outType == "root") {
 			m_output = new JROOTOutput();
-		} else if (outType == "rootET") { /*Special case, when we connect to ET-ring*/
+		} else if (outType == "root_et") { /*Special case, when we connect to ET-ring*/
 			isET = 1;
 			m_output = new JROOTOutput();
 		} else if (outType == "evio") {
