@@ -37,14 +37,14 @@ class JROOTOutput:public JOutput{
 			// AddString(items, "E", "%f", E);
 		}
 		
-		JROOTOutput(string fname);
+		JROOTOutput();
 		~JROOTOutput();
 
 
 		int AddObject(TObject *obj);
 		int SaveAll();
 		virtual int CloseOutput();
-
+		virtual int OpenOutput(std::string name);
 	private:
 		TFile *m_file;
 		TList *m_objects;

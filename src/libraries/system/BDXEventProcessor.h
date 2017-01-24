@@ -65,6 +65,7 @@ private:
 
 	string           optf;     // Output file
 	string			 outType,outFile;
+	int isET;
 
 	JOutput		*m_output;
 	const TranslationTable *m_tt;
@@ -87,6 +88,8 @@ private:
 	TTree *m_eventDST;
 	//const CataniaEventProto2* m_event;
 	const TEvent* m_event;
+
+	int isFirstCallToBrun;
 
 	JStreamLog bout;
 	JStreamLog berr;
