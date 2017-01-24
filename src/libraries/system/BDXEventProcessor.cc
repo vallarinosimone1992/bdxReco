@@ -60,14 +60,14 @@ jerror_t BDXEventProcessor::init(void) {
 	}
 
 	gPARMS->SetDefaultParameter("SYSTEM:OUTPUT", optf, "Set OUTPUT file type and name, using the form \"TYPE,FILENAME\". Type can be ROOT, EVIO, TXT. Example: -PSYSTEM:OUTPUT=\"ROOT,out.root\" ");
-
+	bout << "Out string is: "<<optf<<endl;
 	outType.assign(optf, 0, optf.find(","));
 	outFile.assign(optf, optf.find(",") + 1, optf.size());
 
 	std::transform(outType.begin(), outType.end(), outType.begin(), ::tolower);
 
 	if (optf != "none") {
-		bout << "Out string is: "<<optf<<endl;
+		bout << "Again, out string is: "<<optf<<endl;
 		bout << "Out file type is: " << outType << endl;
 		if (outType == "root") {
 			m_output = new JROOTOutput();
