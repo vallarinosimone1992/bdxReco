@@ -152,10 +152,10 @@ jerror_t ExtVeto_check::brun(JEventLoop *loop, int32_t runnumber)
 //------------------
 jerror_t ExtVeto_check::evnt(JEventLoop *loop,uint64_t eventnumber)
 {
-	vector<const ExtVetoPMTHit*> data;
+	vector<const ExtVetoHit*> data;
 //jout << "start event"<<endl;
 
-		vector<const ExtVetoPMTHit*>::const_iterator data_it;
+		vector<const ExtVetoHit*>::const_iterator data_it;
 		const fa250Mode1Hit *fa;
 		loop->Get(data);
 
@@ -184,7 +184,7 @@ jerror_t ExtVeto_check::evnt(JEventLoop *loop,uint64_t eventnumber)
 		//  ... fill historgrams or trees ...
 
 	for (data_it=data.begin();data_it<data.end();data_it++){
-
+/*
 
 
 		const ExtVetoPMTHit *evhit = *data_it;
@@ -216,7 +216,7 @@ jerror_t ExtVeto_check::evnt(JEventLoop *loop,uint64_t eventnumber)
 
 			t->Fill();
 
-
+*/
 
 	}
 

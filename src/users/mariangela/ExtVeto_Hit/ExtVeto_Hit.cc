@@ -186,7 +186,8 @@ jerror_t ExtVeto_Hit::evnt(JEventLoop *loop,uint64_t eventnumber)
 
 		//	for (data_it=data.begin();data_it<data.end();data_it++){			// loop paddles up - down
 						//	const ExtVetoHit *evhit = *data_it;
-							evhit->Get(faV);
+				/*
+			  evhit->Get(faV);
 							const fa250Mode1Hit *fa=faV[0];
 
 //
@@ -196,7 +197,7 @@ jerror_t ExtVeto_Hit::evnt(JEventLoop *loop,uint64_t eventnumber)
 														    	}
 
 
-
+*/
 
 
 
