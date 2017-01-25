@@ -39,8 +39,14 @@ public:
 		AddString(items, "sector", "%4d", m_channel.sector);
 		AddString(items, "layer", "%4d", m_channel.layer);
 		AddString(items, "component", "%4d", m_channel.component);
+		AddString(items, "readout", "%4d", m_channel.readout);
 		AddString(items, "Q","%4f",Q);
 		AddString(items, "T","%4f",T);
+		AddString(items, "A","%4f",A);
+		AddString(items, "pedMean","%4f",pedMean);
+		AddString(items, "pedRMS","%4f",pedRMS);
+		AddString(items, "RMSflag","%4d",1*RMSflag);
+
 	}
 	//A.C. do not touch these
 	TranslationTable::INT_VETO_Index_t m_channel;      //Detector-specific ID. Since this is a detector-based object, the readout field will be ==0
