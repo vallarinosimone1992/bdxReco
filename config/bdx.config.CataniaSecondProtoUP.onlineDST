@@ -6,21 +6,18 @@ JANA_CALIB_CONTEXT "variation=CataniaSecondProto1"
 THREAD_TIMEOUT 120
 THREAD_TIMEOUT_FIRST_EVENT 120
 
-#output file: use root format!
+#Et-stuff
 SYSTEM:OUTPUT root_et,out.root
-
-#Event builder
-CATANIAEVENT:EC2_CUT  2  #MeV
-CATANIAEVENT:INTVETO_TIME_WINDOW 2000 #ns
-CATANIAEVENT:EXTVETO_TIME_WINDOW 2000 #ns
-
+#ET:ET_STATION_NEVENTS 100
+#ET:ET_STATION_CREATE_BLOCKING 0
+#ET:TIMEOUT 2
 
 #IntVeto parameters
-INTVETO:MIN_TOT  12    #min tot in ns to consider a pulse
-INTVETO:THR	 0.5   #min amplitude of a pulse -in phe units
-INTVETO:NPED 20    #num of samples in pedestal determination event by event
-INTVETO:NSB	 20    #num of samples before the maximum
-INTVETO:NSA	 30    #num of samples after  the maximum
+INTVETO:MIN_TOT  12 #min tot in ns to consider a pulse
+INTVETO:THR	 0.5    #min amplitude of a pulse -in phe units
+INTVETO:NPED 20     #num of samples in pedestal determination event by event
+INTVETO:NSB	 20     #num of samples before the maximum
+INTVETO:NSA	 30     #num of samples after  the maximum
 
 INTVETO:HIT_THR_SINGLE  12.5  #thr in phe charge for a detector with single readout
 INTVETO:HIT_THR_MULTI   2.5   #thr in phe charge for a detector with multiple readout

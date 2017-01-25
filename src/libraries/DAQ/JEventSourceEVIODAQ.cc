@@ -30,7 +30,7 @@ JEventSourceEvioDAQ::JEventSourceEvioDAQ(const char* source_name) :
 	eventHeader_tag = 0xE10F;
 	eventHeader_CODA_tag = 0xC000;
 	prestart_tag = 0x11;  //decimal 17
-	end_tag = 0x20;
+	end_tag = 0x14; //decimal 20
 	overwriteRunNumber = -1;
 
 	BUFFER_SIZE = 3000000;

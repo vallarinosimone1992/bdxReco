@@ -109,17 +109,16 @@ jerror_t BDXEventProcessor::init(void) {
 // brun
 jerror_t BDXEventProcessor::brun(JEventLoop *eventLoop, int32_t runnumber) {
 
-	bout << "BDXEventProcessor::brun " << runnumber << endl;
+	bout << "BDXEventProcessor::brun " << runnumber << "(isFirstCallToBrun: "<<isFirstCallToBrun<<" m_output: "<<m_output<<")"<<endl;
 
 	if (isFirstCallToBrun) {
-		if (m_output) {
-			if (m_output->className() == "JRootOutput") {
+		if (m_output!=0) {
+			bout<<"got m_output, className is: "<<m_output->className()<<endl;
+			if (strcmp(m_output->className(),"JROOTOutput")==0) {
 				JROOTOutput* m_ROOTOutput = (JROOTOutput*) m_output;
-
 				if (isET == 1) {
-					outFile = string(Form("out.$i.root", runnumber));
-					jout << "Running on ET with root thus changing file name to: " << outFile << endl;
-
+					outFile = string(Form("out.%i.root", runnumber));
+					bout << "Running on ET with root thus changing file name to: " << outFile << endl;
 				}
 				m_ROOTOutput->OpenOutput(outFile);
 
