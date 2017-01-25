@@ -24,9 +24,17 @@ public:
 
 	// This method is used primarily for pretty printing
 	// the second argument to AddString is printf style format
+
 	void toStrings(vector<pair<string,string> > &items)const{
-		// AddString(items, "id", "%4d", id);
-		// AddString(items, "E", "%f", E);
+		/* AddString(items, "id", "%4d", id);*/
+		AddString(items, "sector", "%i", m_channel.ext_veto->sector);
+		AddString(items, "layer", "%i", m_channel.ext_veto->layer);
+		AddString(items, "component", "%i", m_channel.ext_veto->component);
+		AddString(items, "readout", "%i", m_channel.ext_veto->readout);
+		AddString(items, "Q", "%f", Q);
+		AddString(items, "T", "%f", T);
+		AddString(items, "pedMean", "%f", pedMean);
+
 	}
 
 public: //yes, these are public to keep this simple.

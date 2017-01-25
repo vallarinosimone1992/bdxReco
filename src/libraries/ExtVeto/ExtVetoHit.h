@@ -31,7 +31,6 @@ class ExtVetoHit:public TObject,public jana::JObject{
 			 AddString(items, "T", "%f", T);
 		}
 		TranslationTable::EXT_VETO_Index_t m_channel; //Detector-specific ID. Since this is a detector-based object, the readout field will be ==0
-		oid_t ExtVetoDigiHit_id;
 
 		ClassDef(ExtVetoHit,1);
 };
