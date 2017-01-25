@@ -72,8 +72,13 @@ jerror_t BDXEventProcessor::init(void) {
 		if (outType == "root") {
 			m_output = new JROOTOutput();
 		} else if (outType == "root_et") { /*Special case, when we connect to ET-ring*/
+#ifdef ET_SUPPORT_ENABLE
 			isET = 1;
 			m_output = new JROOTOutput();
+#else
+			bout <<"root_et file type was requested, but no ET-support was built. Exiting!"<<endl;
+			exit(1);
+#endif
 		} else if (outType == "evio") {
 			berr << "evio not yet implemented" << endl;
 		} else if (outType == "txt") {
@@ -117,7 +122,7 @@ jerror_t BDXEventProcessor::brun(JEventLoop *eventLoop, int32_t runnumber) {
 			if (strcmp(m_output->className(),"JROOTOutput")==0) {
 				JROOTOutput* m_ROOTOutput = (JROOTOutput*) m_output;
 				if (isET == 1) {
-					outFile = string(Form("out.%i.root", runnumber));
+					outFile = string(Form("out.%i.online.root", runnumber));
 					bout << "Running on ET with root thus changing file name to: " << outFile << endl;
 				}
 				m_ROOTOutput->OpenOutput(outFile);
