@@ -70,7 +70,7 @@ private:
 	int curRunNumber, curEventNumber;
 	int overwriteRunNumber;
 
-	int VERBOSE;
+	int m_VERBOSE;
 	float TIMEOUT;
 
 	uint32_t BUFFER_SIZE;

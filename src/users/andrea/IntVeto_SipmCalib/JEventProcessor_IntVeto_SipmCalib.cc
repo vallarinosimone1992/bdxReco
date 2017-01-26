@@ -165,15 +165,7 @@ jerror_t JEventProcessor_IntVeto_SipmCalib::evnt(JEventLoop *loop, uint64_t even
 		m_component=(*data_it)->m_channel.int_veto->component;
 		m_readout=(*data_it)->m_channel.int_veto->readout;
 
-		/*(*data_it)->GetSingle(m_waveform);
-		h->Reset();
-		h->SetName(Form("h_%lld_%i_%i_%f",eventnumber,(*data_it)->m_channel.int_veto->component,(*data_it)->m_channel.int_veto->readout,(*data_it)->Qphe));
 
-		for (int ii=0;ii<m_waveform->samples.size();ii++){
-			h->Fill(ii,m_waveform->samples[ii]);
-		}
-		h->Write();
-		*/
 		m_type=(*data_it)->m_type;
 		T=(*data_it)->T;
 		A=(*data_it)->A;

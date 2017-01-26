@@ -23,6 +23,8 @@ using namespace std;
 JEventSourceEvioDAQ::JEventSourceEvioDAQ(const char* source_name) :
 		JEventSource(source_name), chan(0), EDT(0), vme_mother_tag(0), child_mode1_tag(0), child_mode7_tag(0), eventHeader_tag(0), curRunNumber(0), curEventNumber(0) {
 
+	jout << "JEventSourceEvioDAQ creator: " <<this<< endl;
+
 	vme_mother_tag = 0x1;
 	child_mode1_tag = 0xe101;
 	child_mode7_tag = 0xe102;
@@ -39,8 +41,10 @@ JEventSourceEvioDAQ::JEventSourceEvioDAQ(const char* source_name) :
 
 	ET_STATION_NEVENTS = 100;
 	ET_STATION_CREATE_BLOCKING = false;
-	TIMEOUT=2;
+	TIMEOUT = 2;
 	quit_on_next_ET_timeout = false;
+
+	et_connected = false;
 
 	gPARMS->SetDefaultParameter("DAQ:VME_MOTHER_TAG", vme_mother_tag);
 	gPARMS->SetDefaultParameter("DAQ:CHILD_MODE1_TAG", child_mode1_tag);
@@ -56,7 +60,8 @@ JEventSourceEvioDAQ::JEventSourceEvioDAQ(const char* source_name) :
 	gPARMS->SetDefaultParameter("ET:ET_STATION_CREATE_BLOCKING", ET_STATION_CREATE_BLOCKING, "Set this to create station in blocking mode (default is to create it in non-blocking mode). Ignored if station already exists.");
 	gPARMS->SetDefaultParameter("ET:TIMEOUT", TIMEOUT, "Set the timeout in seconds for each attempt at reading from ET system (repeated attempts will still be made indefinitely until program quits or the quit_on_et_timeout flag is set.");
 
-	gPARMS->SetDefaultParameter("DAQ:VERBOSE", VERBOSE, "Set verbosity level for processing and debugging statements while parsing. 0=no debugging messages. 10=all messages");
+	gPARMS->SetDefaultParameter("DAQ:VERBOSE", m_VERBOSE, "Set verbosity level for processing and debugging statements while parsing. 0=no debugging messages. 10=all messages");
+
 	// open EVIO file - buffer is hardcoded at 3M... that right?
 	jout << " Opening input source: " << source_name << endl;
 
@@ -102,7 +107,7 @@ JEventSourceEvioDAQ::~JEventSourceEvioDAQ() {
 
 #ifdef HAVE_ET
 	if(et_connected) {
-		if(VERBOSE>0) evioout << "Closing ET connection \"" << this->source_name << "\"" <<endl;
+		if(m_VERBOSE>0) evioout << "Closing ET connection \"" << this->source_name << "\"" <<endl;
 		et_close(sys_id);
 		et_connected = false;
 	}
@@ -161,9 +166,9 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event) {
 		if (buff!=0) {
 			delete buff;
 		}
-		if (VERBOSE>5) jout<<"before new: "<<buff<<" I am: "<<this<<endl;
+		if (m_VERBOSE>5) jout<<"before new: "<<buff<<" I am: "<<this<<endl;
 		buff=new uint32_t[BUFFER_SIZE];
-		if (VERBOSE>5) jout<<"after new: "<<buff<<" I am: "<<this<<endl;
+		if (m_VERBOSE>5) jout<<"after new: "<<buff<<" I am: "<<this<<endl;
 		// Loop until we get an event or are told to stop
 		struct timespec timeout;
 		timeout.tv_sec = (unsigned int) floor(TIMEOUT);// set ET timeout
@@ -203,7 +208,7 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event) {
 		// Check byte order of event by looking at magic #
 		bool swap_needed = false;
 		uint32_t magic = et_buff[7];
-		if (VERBOSE>5) jout<<"Magic word is: "<<hex<<et_buff[7]<<endl;
+		if (m_VERBOSE>5) jout<<"Magic word is: "<<hex<<et_buff[7]<<endl;
 		switch(magic) {
 			case 0xc0da0100: swap_needed = false; break;
 			case 0x0001dac0: swap_needed = true; break;
@@ -213,7 +218,7 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event) {
 		}
 		uint32_t len = et_buff[0];
 		if(swap_needed) len = EVIO_SWAP32(len);
-		if(VERBOSE>3) {
+		if(m_VERBOSE>3) {
 			jout << "Swapping is " << (swap_needed ? "":"not ") << "needed" << endl;
 			jout << " Num. words in EVIO buffer: "<<len<<endl;
 		}
@@ -225,7 +230,7 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event) {
 			jerr<<" " << bufsize_bytes << " > " << BUFFER_SIZE << endl;
 			jerr<<" Will stop reading from this source now. Try restarting"<<endl;
 			jerr<<" with -PEVIO:BUFFER_SIZE=X where X is greater than "<<bufsize_bytes<<endl;
-			if(VERBOSE>3) {
+			if(m_VERBOSE>3) {
 				jout << "First few words in case you are trying to debug:" << endl;
 				for(unsigned int j=0; j<3; j++) {
 					char str[512];
@@ -239,7 +244,7 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event) {
 			return NO_MORE_EVENTS_IN_SOURCE;
 		}
 
-		if(VERBOSE>8) {
+		if(m_VERBOSE>8) {
 			jout << "First few ET words in case you are trying to debug:" << endl;
 			for(unsigned int j=0; j<3; j++) {
 				char str[512];
@@ -259,9 +264,9 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event) {
 		// needed, we just copy it all over in one go.
 		if(!swap_needed) {
 			// Copy NTH and all events without swapping
-			if(VERBOSE>5) jout<<"Before memcpy: buff is: "<<buff<<" et_buff is: "<<et_buff<<" bufsize_bytes is: "<<bufsize_bytes<<" I am: "<<this<<endl;
+			if(m_VERBOSE>5) jout<<"Before memcpy: buff is: "<<buff<<" et_buff is: "<<et_buff<<" bufsize_bytes is: "<<bufsize_bytes<<" I am: "<<this<<endl;
 			memcpy(buff, et_buff, bufsize_bytes);
-			if(VERBOSE>5) jout<<"After memcpy: buff is: "<<buff<<" et_buff is: "<<et_buff<<" bufsize_bytes is: "<<bufsize_bytes<<" I am: "<<this<<endl;
+			if(m_VERBOSE>5) jout<<"After memcpy: buff is: "<<buff<<" et_buff is: "<<et_buff<<" bufsize_bytes is: "<<bufsize_bytes<<" I am: "<<this<<endl;
 
 		} else {
 
@@ -273,7 +278,7 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event) {
 			uint32_t idx = 8;
 			while(idx<len) {
 				uint32_t mylen = EVIO_SWAP32(et_buff[idx]);
-				if(VERBOSE>7) jout <<"        swapping event: idx=" << idx <<" mylen="<<mylen<<endl;
+				if(m_VERBOSE>7) jout <<"        swapping event: idx=" << idx <<" mylen="<<mylen<<endl;
 				if( (idx+mylen) > len ) {
 					jerr << "Bad word count while swapping events in ET event stack!" << endl;
 					jerr << "idx="<<idx<<" mylen="<<mylen<<" len="<<len<<endl;
@@ -286,15 +291,15 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event) {
 				Nevents_in_stack++;
 			}
 
-			if(VERBOSE>3) jout << "        Found " << Nevents_in_stack << " events in the ET event stack." << endl;
+			if(m_VERBOSE>3) jout << "        Found " << Nevents_in_stack << " events in the ET event stack." << endl;
 		}
 		// Put ET event back since we're done with it
 		et_event_put(sys_id, att_id, pe);
-		if(VERBOSE>5) jout<<"before EDT creation"<<endl;
+		if(m_VERBOSE>5) jout<<"before EDT creation"<<endl;
 		EDT = new evioDOMTree(&buff[8]); /*A.C. this assumes the following is true: 1 ET_event contains 1 EVIO block that just has 1 EVIO event*/
 		event.SetRef(EDT);
 		event.SetJEventSource(this);
-		if (VERBOSE>5) jout<<"After EDT creation and reference set"<<endl;
+		if (m_VERBOSE>5) jout<<"After EDT creation and reference set"<<endl;
 
 		//This part is fine for real data @ catania
 		evio::evioDOMNodeListP fullList = EDT->getNodeList();

@@ -10,10 +10,12 @@ endif
 
 echo "BDXRECO_ROOT set to $BDXRECO_ROOT"
 
-set MYSQLDB=clasdb.jlab.org
+set MYSQLHOST=g3db.ge.infn.it
 set MYSQLUSER=bdxreader
+set MYSQLDB=gr3db
 
 #setenv JANA_CALIB_URL sqlite:///$BDXRECO_ROOT/calib/ccdb.calib
-setenv JANA_CALIB_URL mysql://$MYSQLUSER@$MYSQLDB/BDX
+setenv JANA_CALIB_URL mysql://$MYSQLUSER@$MYSQLHOST/$MYSQLDB
+#setenv JANA_CALIB_URL mysql://mysql://bdxreader:g3db/gr3db
 setenv JANA_PLUGIN_PATH $BDXRECO_ROOT/lib:$BDXRECO_ROOT/lib/users
 
