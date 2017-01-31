@@ -86,5 +86,5 @@ for fn in os.listdir("DAQ_pedestals"):
         command = commandBase+" -r "+str(run)+"-"+str(run)
         command += " /DAQ/pedestals DAQ_pedestals/tables/run_"+run+".dat"
         print command
-        subprocess.call(command,shell=True)
+        subprocess.Popen(command,shell=True)
 
