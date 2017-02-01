@@ -12,6 +12,11 @@
 
 #include <EventBuilder/TEvent.h>
 #include <EventBuilder/TEventHeader.h>
+
+#include <Calorimeter/CalorimeterDigiHit.h>
+#include <IntVeto/IntVetoDigiHit.h>
+#include <ExtVeto/ExtVetoDigiHit.h>
+
 #include <Calorimeter/CalorimeterHit.h>
 #include <IntVeto/IntVetoHit.h>
 #include <ExtVeto/ExtVetoHit.h>
@@ -33,6 +38,10 @@ jerror_t TEvent_factory_CataniaProto2::init(void)
 {
 
 	japp->RootWriteLock();
+	m_CaloDigiHits=new TClonesArray("CalorimeterDigiHit");
+	m_IntVetoDigiHits=new TClonesArray("IntVetoDigiHit");
+	m_ExtVetoDigiHits=new TClonesArray("ExtVetoDigiHit");
+
 	m_CaloHits=new TClonesArray("CalorimeterHit");
 	m_IntVetoHits=new TClonesArray("IntVetoHit");
 	m_ExtVetoHits=new TClonesArray("ExtVetoHit");
@@ -53,6 +62,10 @@ jerror_t TEvent_factory_CataniaProto2::brun(jana::JEventLoop *eventLoop, int32_t
 //------------------
 jerror_t TEvent_factory_CataniaProto2::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
+	vector <const CalorimeterDigiHit*> chits_digi;
+	vector <const IntVetoDigiHit*> ivhits_digi;
+	vector <const ExtVetoDigiHit*> evhits_digi;
+
 	vector <const CalorimeterHit*> chits;
 	vector <const IntVetoHit*> ivhits;
 	vector <const ExtVetoHit*> evhits;
@@ -69,7 +82,7 @@ jerror_t TEvent_factory_CataniaProto2::evnt(JEventLoop *loop, uint64_t eventnumb
 		jout<<"TEvent_factory_CataniaProto2::evnt no eventData bank this event"<<endl;
 		return 	OBJECT_NOT_AVAILABLE;
 	}
-	m_eventHeader->setEventType(CataniaProto1Event);
+	m_eventHeader->setEventType(CataniaProto2Event);
 	m_eventHeader->setRunNumber(tData->runN);
 	m_eventHeader->setEventNumber(tData->eventN);
 	m_eventHeader->setEventTime(tData->time);
@@ -77,6 +90,34 @@ jerror_t TEvent_factory_CataniaProto2::evnt(JEventLoop *loop, uint64_t eventnumb
 
 
 	/*Loop over JANA objects, clear collections and fill them*/
+
+	/*Digi objects*/
+	loop->Get(chits_digi);
+	m_CaloDigiHits->Clear("C");
+	for (int ii=0;ii<chits_digi.size();ii++){
+		((CalorimeterDigiHit*)m_CaloDigiHits->ConstructedAt(ii))->operator=(*(chits_digi[ii]));
+		m_event->AddAssociatedObject(chits_digi[ii]);
+	}
+	m_event->addCollection(m_CaloDigiHits);
+
+	loop->Get(ivhits_digi);
+	m_IntVetoDigiHits->Clear("C");
+	for (int ii=0;ii<ivhits_digi.size();ii++){
+		((IntVetoDigiHit*)m_IntVetoDigiHits->ConstructedAt(ii))->operator=(*(ivhits_digi[ii]));
+		m_event->AddAssociatedObject(ivhits_digi[ii]);
+	}
+	m_event->addCollection(m_IntVetoDigiHits);
+
+	loop->Get(evhits_digi);
+	m_ExtVetoDigiHits->Clear("C");
+	for (int ii=0;ii<evhits_digi.size();ii++){
+		((ExtVetoDigiHit*)m_ExtVetoDigiHits->ConstructedAt(ii))->operator=(*(evhits_digi[ii]));
+		m_event->AddAssociatedObject(evhits_digi[ii]);
+	}
+	m_event->addCollection(m_ExtVetoDigiHits);
+
+
+	/*Calibrated and final objects*/
 	loop->Get(chits);
 	m_CaloHits->Clear("C");
 	for (int ii=0;ii<chits.size();ii++){

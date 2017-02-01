@@ -64,7 +64,7 @@ public:
 	}
 
 private:
-	int m_eventType;
+	uint8_t m_eventType;
 	int m_runNumber;
 	int m_eventNumber;
 	int m_eventTime; //Unix Timestamp

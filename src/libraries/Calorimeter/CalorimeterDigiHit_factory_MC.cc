@@ -71,7 +71,6 @@ jerror_t CalorimeterDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnum
 			m_CalorimeterDigiHit = new CalorimeterDigiHit;
 			m_CalorimeterDigiHit->m_channel = index;
 			m_CalorimeterDigiHit->m_channel.readout = 1;///THIS IS CORRECT ---> in MC "right" is the first MPPC, i.e. readout=1
-			m_CalorimeterDigiHit->timestamp = 0;
 			m_CalorimeterDigiHit->Q = m_CalorimeterMCHit->adcr;
 			m_CalorimeterDigiHit->T = m_CalorimeterMCHit->tdcr * 4;
 			m_CalorimeterDigiHit->RMSflag = true;
@@ -88,7 +87,6 @@ jerror_t CalorimeterDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnum
 				m_CalorimeterDigiHit = new CalorimeterDigiHit;
 				m_CalorimeterDigiHit->m_channel = index;
 				m_CalorimeterDigiHit->m_channel.readout = 1;///THIS IS CORRECT ---> in MC "right" is the first MPPC, i.e. readout=1
-				m_CalorimeterDigiHit->timestamp = 0;
 				m_CalorimeterDigiHit->Q = m_CalorimeterMCHit->adcl;
 				m_CalorimeterDigiHit->T = m_CalorimeterMCHit->tdcl * 4;
 				m_CalorimeterDigiHit->RMSflag = true;

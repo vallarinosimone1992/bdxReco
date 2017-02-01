@@ -13,14 +13,13 @@
 #include <TT/TranslationTable.h>
 #include <Calorimeter/CalorimeterSiPMHit.h>
 
-class CalorimeterDigiHit:public jana::JObject{
+#include "TObject.h"
+
+class CalorimeterDigiHit:public TObject,public jana::JObject{
 public:
 
 	JOBJECT_PUBLIC(CalorimeterDigiHit);
 
-	// Add data members here. For example:
-	// int id;
-	// double E;
 
 	// This method is used primarily for pretty printing
 	// the second argument to AddString is printf style format
@@ -37,9 +36,11 @@ public:
 	double pedMean,pedRMS;
 	bool RMSflag;
 	CalorimeterSiPMHit::hit_type type;
-	TranslationTable::CALO_Index_t m_channel; //Detector-specific ID. Since this is a detector-based object, the readout field will be ==0
+	TranslationTable::CALO_Index_t m_channel; //Detector-specific ID. Since this is a detector-based object, the readout field will be 0
 
-	uint64_t timestamp;
+
+
+	ClassDef(CalorimeterDigiHit,1);
 };
 
 #endif // _CalorimeterDigiHit_

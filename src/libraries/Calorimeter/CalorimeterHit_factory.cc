@@ -135,7 +135,6 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 				m_CalorimeterHit=new CalorimeterHit();
 				m_CalorimeterHit->m_channel=m_CalorimeterDigiHit->m_channel;
 				m_CalorimeterHit->m_channel.readout=0;
-				m_CalorimeterHit->timestamp=m_CalorimeterDigiHit->timestamp;
 				m_CalorimeterHit->T=T;
 				m_CalorimeterHit->RMSflag=m_CalorimeterDigiHit->RMSflag;
 
@@ -174,7 +173,6 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 				m_CalorimeterHit=new CalorimeterHit();
 				m_CalorimeterHit->m_channel=m_CalorimeterDigiHit->m_channel;
 				m_CalorimeterHit->m_channel.readout=0;
-				m_CalorimeterHit->timestamp=m_CalorimeterDigiHit->timestamp;
 				m_CalorimeterHit->T=Tmax;
 
 				/*Loop again to associate*/

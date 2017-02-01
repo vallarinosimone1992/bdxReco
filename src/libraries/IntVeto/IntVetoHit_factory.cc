@@ -86,7 +86,7 @@ jerror_t IntVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber) {
 
 		if (m_IntVetoDigiHits.size() == 1) { //Single readout
 			m_IntVetoDigiHit = m_IntVetoDigiHits[0];
-			Q = m_IntVetoDigiHit->Q;
+			Q = m_IntVetoDigiHit->Qphe;
 			T = m_IntVetoDigiHit->T;
 			if (Q > m_THR_singleReadout) {
 				m_IntVetoHit = new IntVetoHit();
@@ -102,7 +102,7 @@ jerror_t IntVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber) {
 			Qmax = -9999;
 			Qtot = 0;
 			for (int idigi = 0; idigi < m_IntVetoDigiHits.size(); idigi++) {
-				Q = m_IntVetoDigiHits[idigi]->Q;
+				Q = m_IntVetoDigiHits[idigi]->Qphe;
 				T = m_IntVetoDigiHits[idigi]->T;
 				if (Q > Qmax) {
 					Qmax = Q;
@@ -113,7 +113,7 @@ jerror_t IntVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber) {
 			if (Qmax < m_THR_multipleReadout)
 				continue; //if the max charge is less than the treshold, by definition this hit is irrelevant.
 			for (int idigi = 0; idigi < m_IntVetoDigiHits.size(); idigi++) {
-				Q = m_IntVetoDigiHits[idigi]->Q;
+				Q = m_IntVetoDigiHits[idigi]->Qphe;
 				T = m_IntVetoDigiHits[idigi]->T;
 				if ((Q > m_THR_multipleReadout) && (fabs(T - Tmax) < m_DT_multipleReadout)) {
 					nCountersTHR++;
@@ -127,7 +127,7 @@ jerror_t IntVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber) {
 				m_IntVetoHit->Q = Qtot;
 				m_IntVetoHit->T = Tmax;
 				for (int idigi = 0; idigi < m_IntVetoDigiHits.size(); idigi++) {
-					Q = m_IntVetoDigiHits[idigi]->Q;
+					Q = m_IntVetoDigiHits[idigi]->Qphe;
 					T = m_IntVetoDigiHits[idigi]->T;
 					if ((Q > m_THR_multipleReadout) && (fabs(T - Tmax) < m_DT_multipleReadout)) {
 						m_IntVetoHit->AddAssociatedObject(m_IntVetoDigiHits[idigi]);

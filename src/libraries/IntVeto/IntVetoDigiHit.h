@@ -40,7 +40,8 @@ public:
 		AddString(items, "layer", "%4d", m_channel.layer);
 		AddString(items, "component", "%4d", m_channel.component);
 		AddString(items, "readout", "%4d", m_channel.readout);
-		AddString(items, "Q","%4f",Q);
+		AddString(items, "Qphe","%4f",Qphe);
+		AddString(items, "Qraw","%4f",Qraw);
 		AddString(items, "T","%4f",T);
 		AddString(items, "A","%4f",A);
 		AddString(items, "pedMean","%4f",pedMean);
@@ -54,12 +55,12 @@ public:
 	virtual TCanvas* Draw(int id=0) const;//!  //Exclude from root dictionary
 	mutable TH1D* hWave; //!  //Exclude from root dictionary
 
-	double Q,T,A;
+	double Qphe,Qraw,T,A;
 	double pedMean,pedRMS;
 	bool RMSflag;
 
 
-
+	ClassDef(IntVetoDigiHit,1);
 
 };
 #endif // _IntVetoDigiHit_

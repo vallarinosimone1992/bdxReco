@@ -126,7 +126,7 @@ jerror_t CataniaEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 	/*Use digihits just for timestamp*/
 	for (cdigihits_it=cdigihits.begin();cdigihits_it!=cdigihits.end();cdigihits_it++){
 		const CalorimeterDigiHit *hit=(*cdigihits_it);
-		m_event->timestamp=hit->timestamp; //it is irrelevant to take timestamp from this or from #2, they're the same!
+		//m_event->timestamp=hit->timestamp; //it is irrelevant to take timestamp from this or from #2, they're the same!
 	}
 
 

@@ -75,7 +75,7 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 				m_IntVetoDigiHit = new IntVetoDigiHit;
 				m_IntVetoDigiHit->m_channel = m_channel;
 				m_IntVetoDigiHit->m_channel.readout = 1;
-				m_IntVetoDigiHit->Q = m_IntVetoMCHit->adc1;
+				m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc1;
 				m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc1 / 1000.; //MC is in ps
 				m_IntVetoDigiHit->A = 0;
 				m_IntVetoDigiHit->RMSflag = true;
@@ -85,7 +85,7 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 				m_IntVetoDigiHit = new IntVetoDigiHit;
 				m_IntVetoDigiHit->m_channel = m_channel;
 				m_IntVetoDigiHit->m_channel.readout = 2;
-				m_IntVetoDigiHit->Q = m_IntVetoMCHit->adc2;
+				m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc2;
 				m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc2 / 1000.; //MC is in ps
 				m_IntVetoDigiHit->A = 0;
 				m_IntVetoDigiHit->RMSflag = true;
@@ -95,7 +95,7 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 				m_IntVetoDigiHit = new IntVetoDigiHit;
 				m_IntVetoDigiHit->m_channel = m_channel;
 				m_IntVetoDigiHit->m_channel.readout = 3;
-				m_IntVetoDigiHit->Q = m_IntVetoMCHit->adc3;
+				m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc3;
 				m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc3 / 1000.; //MC is in ps
 				m_IntVetoDigiHit->A = 0;
 				m_IntVetoDigiHit->RMSflag = true;
@@ -105,7 +105,7 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 				m_IntVetoDigiHit = new IntVetoDigiHit;
 				m_IntVetoDigiHit->m_channel = m_channel;
 				m_IntVetoDigiHit->m_channel.readout = 4;
-				m_IntVetoDigiHit->Q = m_IntVetoMCHit->adc4;
+				m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc4;
 				m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc4 / 1000.; //MC is in ps
 				m_IntVetoDigiHit->A = 0;
 				m_IntVetoDigiHit->RMSflag = true;
@@ -118,7 +118,7 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 					m_IntVetoDigiHit = new IntVetoDigiHit;
 					m_IntVetoDigiHit->m_channel = m_channel;
 					m_IntVetoDigiHit->m_channel.readout = 1;
-					m_IntVetoDigiHit->Q = m_IntVetoMCHit->adc1;
+					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc1;
 					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc1 / 1000.; //MC is in ps
 					m_IntVetoDigiHit->A = 0;
 					m_IntVetoDigiHit->RMSflag = true;
@@ -128,7 +128,7 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 					m_IntVetoDigiHit = new IntVetoDigiHit;
 					m_IntVetoDigiHit->m_channel = m_channel;
 					m_IntVetoDigiHit->m_channel.readout = 2;
-					m_IntVetoDigiHit->Q = m_IntVetoMCHit->adc4;
+					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc4;
 					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc4 / 1000.; //MC is in ps
 					m_IntVetoDigiHit->A = 0;
 					m_IntVetoDigiHit->RMSflag = true;
@@ -138,7 +138,7 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 					m_IntVetoDigiHit = new IntVetoDigiHit;
 					m_IntVetoDigiHit->m_channel = m_channel;
 					m_IntVetoDigiHit->m_channel.readout = 3;
-					m_IntVetoDigiHit->Q = m_IntVetoMCHit->adc3;
+					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc3;
 					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc3 / 1000.; //MC is in ps
 					m_IntVetoDigiHit->A = 0;
 					m_IntVetoDigiHit->RMSflag = true;
@@ -148,7 +148,7 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 					m_IntVetoDigiHit = new IntVetoDigiHit;
 					m_IntVetoDigiHit->m_channel = m_channel;
 					m_IntVetoDigiHit->m_channel.readout = 4;
-					m_IntVetoDigiHit->Q = m_IntVetoMCHit->adc2;
+					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc2;
 					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc2 / 1000.; //MC is in ps
 					m_IntVetoDigiHit->A = 0;
 					m_IntVetoDigiHit->RMSflag = true;
@@ -159,7 +159,7 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 					m_IntVetoDigiHit = new IntVetoDigiHit;
 					m_IntVetoDigiHit->m_channel = m_channel;
 					m_IntVetoDigiHit->m_channel.readout = 1;
-					m_IntVetoDigiHit->Q = m_IntVetoMCHit->adc1;
+					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc1;
 					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc1 / 1000.; //MC is in ps
 					m_IntVetoDigiHit->A = 0;
 					m_IntVetoDigiHit->RMSflag = true;
@@ -169,7 +169,7 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 					m_IntVetoDigiHit = new IntVetoDigiHit;
 					m_IntVetoDigiHit->m_channel = m_channel;
 					m_IntVetoDigiHit->m_channel.readout = 2;
-					m_IntVetoDigiHit->Q = m_IntVetoMCHit->adc2;
+					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc2;
 					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc2 / 1000.; //MC is in ps
 					m_IntVetoDigiHit->A = 0;
 					m_IntVetoDigiHit->RMSflag = true;
@@ -179,7 +179,7 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 					m_IntVetoDigiHit = new IntVetoDigiHit;
 					m_IntVetoDigiHit->m_channel = m_channel;
 					m_IntVetoDigiHit->m_channel.readout = 3;
-					m_IntVetoDigiHit->Q = m_IntVetoMCHit->adc3;
+					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc3;
 					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc3 / 1000.; //MC is in ps
 					m_IntVetoDigiHit->A = 0;
 					m_IntVetoDigiHit->RMSflag = true;
@@ -189,7 +189,7 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 					m_IntVetoDigiHit = new IntVetoDigiHit;
 					m_IntVetoDigiHit->m_channel = m_channel;
 					m_IntVetoDigiHit->m_channel.readout = 4;
-					m_IntVetoDigiHit->Q = m_IntVetoMCHit->adc4;
+					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc4;
 					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc4 / 1000.; //MC is in ps
 					m_IntVetoDigiHit->A = 0;
 					m_IntVetoDigiHit->RMSflag = true;
@@ -204,7 +204,7 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 				m_IntVetoDigiHit = new IntVetoDigiHit;
 				m_IntVetoDigiHit->m_channel = m_channel;
 				m_IntVetoDigiHit->m_channel.readout = 1;
-				m_IntVetoDigiHit->Q = m_IntVetoMCHit->adc1;
+				m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc1;
 				m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc1 / 1000.; //MC is in ps
 				m_IntVetoDigiHit->A = 0;
 				m_IntVetoDigiHit->RMSflag = true;
@@ -222,16 +222,16 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 			{
 				m_IntVetoDigiHit = m_map_it->second[0];
 				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_IntVetoDigiHit->Q += m_IntVetoMCHit->adc1;
+				m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc1;
 				m_IntVetoDigiHit = m_map_it->second[1];
 				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_IntVetoDigiHit->Q += m_IntVetoMCHit->adc2;
+				m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc2;
 				m_IntVetoDigiHit = m_map_it->second[2];
 				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_IntVetoDigiHit->Q += m_IntVetoMCHit->adc3;
+				m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc3;
 				m_IntVetoDigiHit = m_map_it->second[3];
 				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_IntVetoDigiHit->Q += m_IntVetoMCHit->adc4;
+				m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc4;
 				break;
 			}
 			case (3): //bottom
@@ -239,30 +239,30 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 				if (m_isMC == MCType::CATANIA_V1) {
 					m_IntVetoDigiHit = m_map_it->second[0];
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-					m_IntVetoDigiHit->Q += m_IntVetoMCHit->adc1;
+					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc1;
 					m_IntVetoDigiHit = m_map_it->second[1];
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-					m_IntVetoDigiHit->Q += m_IntVetoMCHit->adc4;
+					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc4;
 					m_IntVetoDigiHit = m_map_it->second[2];
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-					m_IntVetoDigiHit->Q += m_IntVetoMCHit->adc3;
+					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc3;
 					m_IntVetoDigiHit = m_map_it->second[3];
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-					m_IntVetoDigiHit->Q += m_IntVetoMCHit->adc2;
+					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc2;
 					break;
 				} else {
 					m_IntVetoDigiHit = m_map_it->second[0];
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-					m_IntVetoDigiHit->Q += m_IntVetoMCHit->adc1;
+					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc1;
 					m_IntVetoDigiHit = m_map_it->second[1];
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-					m_IntVetoDigiHit->Q += m_IntVetoMCHit->adc2;
+					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc2;
 					m_IntVetoDigiHit = m_map_it->second[2];
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-					m_IntVetoDigiHit->Q += m_IntVetoMCHit->adc3;
+					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc3;
 					m_IntVetoDigiHit = m_map_it->second[3];
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-					m_IntVetoDigiHit->Q += m_IntVetoMCHit->adc4;
+					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc4;
 					break;
 				}
 			}
@@ -271,7 +271,7 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 			{
 				m_IntVetoDigiHit = m_map_it->second[0];
 				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_IntVetoDigiHit->Q += m_IntVetoMCHit->adc1;
+				m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc1;
 			}
 			}
 		}

@@ -27,6 +27,9 @@ class TEvent_factory_CataniaProto2:public jana::JFactory<TEvent>{
 		jerror_t fini(void);						///< Called after last event of last event source has been processed.
 
 
+		TClonesArray *m_CaloDigiHits;
+		TClonesArray *m_IntVetoDigiHits;
+		TClonesArray *m_ExtVetoDigiHits;
 
 		TClonesArray *m_CaloHits;
 		TClonesArray *m_IntVetoHits;

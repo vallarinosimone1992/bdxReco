@@ -36,9 +36,9 @@ public:
 	// class to relate them to the DAQ indexing scheme of
 	// crate, slot, channel.
 	struct csc_t : public TObject{
-		uint32_t rocid;
-		uint32_t slot;
-		uint32_t channel;
+		uint8_t rocid;
+		uint8_t slot;
+		uint8_t channel;
 
 		inline bool operator==(const struct csc_t &rhs) const {
 			return (rocid == rhs.rocid) && (slot == rhs.slot)
@@ -47,7 +47,7 @@ public:
 
 		csc_t(){};
 		virtual ~csc_t(){};
-		void setCrateSlotChannel(uint32_t cr,uint32_t sl,uint32_t ch){rocid=cr;slot=sl;channel=ch;}
+		void setCrateSlotChannel(uint8_t cr,uint8_t sl,uint8_t ch){rocid=cr;slot=sl;channel=ch;}
 		//...................................
 		// Less than operator for csc_t data types. This is used by
 		// the map<csc_t, XX> to order the entires by key
@@ -103,11 +103,11 @@ public:
 	 * */
 	class EXT_VETO_Index_t :  public TObject{
 	public:
-		int sector;
-		int layer;
-		int component;
-		int readout;
-		int& ID(int n) {
+		int8_t sector;
+		int8_t layer;
+		int8_t component;
+		int8_t readout;
+		int8_t& ID(int n) {
 			switch (n) {
 			case 0:
 				return sector;
@@ -163,11 +163,11 @@ public:
 
 	class INT_VETO_Index_t : public TObject{
 	public:
-		int sector;
-		int layer;
-		int component;
-		int readout;
-		int& ID(int n) {
+		int8_t sector;
+		int8_t layer;
+		int8_t component;
+		int8_t readout;
+		int8_t& ID(int n) {
 			switch (n) {
 			case 0:
 				return sector;
@@ -224,10 +224,10 @@ public:
 
 	class CALO_Index_t : public TObject{
 	public:
-		int sector;
-		int x, y;
-		int readout;
-		int& ID(int n) {
+		int8_t sector;
+		int8_t x, y;
+		int8_t readout;
+		int8_t& ID(int n) {
 			switch (n) {
 			case 0:
 				return sector;
@@ -281,8 +281,8 @@ public:
 
 	class PADDLES_Index_t : public TObject{
 	public:
-		int id;
-		int& ID(int n) {
+		int8_t id;
+		int8_t& ID(int n) {
 			switch (n) {
 			case 0:
 				return id;
