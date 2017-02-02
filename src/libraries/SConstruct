@@ -10,6 +10,6 @@ for lib in libs:
 	absdir = Dir('#/src/libraries/'+reldir).srcnode().abspath	
 	AddROOTdict(env,reldir,absdir)
 	src = src+Glob(lib+'/*.cc')
-env.SharedLibrary(source=src,target='#/lib/bdxReco')
+env.SharedLibrary(source=src,target='#/lib/bdxReco',SHLIBSUFFIX='.so')
 
 
