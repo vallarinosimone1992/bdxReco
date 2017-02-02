@@ -21,3 +21,5 @@ setenv JANA_CALIB_URL mysql://$MYSQLUSER@$MYSQLHOST/$MYSQLDB
 #setenv JANA_CALIB_URL mysql://mysql://bdxreader:g3db/gr3db
 setenv JANA_PLUGIN_PATH $BDXRECO_ROOT/lib:$BDXRECO_ROOT/lib/users
 
+#a.c. this is a work-around for MAC, where -rpath doens't work!!
+setenv DYLD_LIBRARY_PATH ${BDXRECO_ROOT}/lib:${DYLD_LIBRARY_PATH}
