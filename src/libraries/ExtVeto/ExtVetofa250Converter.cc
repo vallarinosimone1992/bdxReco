@@ -30,17 +30,24 @@ jerror_t ExtVetofa250Converter::convertMode1Hit(ExtVetoPMTHit* output, const fa2
 	double T = 0;
 	//   static  double Vpedestal_backup[12]={93.26,91,92,95.6,93,92,92,76.5,98,79,90,108};
 	static vector<double> Vpedestal_backup(100, 0);
-	double Thr;		//mV
+	double VThr, Thr;		//mV
+	int channel;
 
-	Thr = threshold->getCalibSingle(*(output->m_channel.ext_veto));
+	VThr = threshold->getCalibSingle(*(output->m_channel.ext_veto));
 	double pedestal_DAQ;
 
 	pedestal_DAQ = m_pedestals->getCalib(input->m_channel)[0];
 
-	if (Vpedestal_backup.at(output->m_channel.ext_veto->component) == 0) {
+	channel = output->m_channel.ext_veto->component;
+		if (output->m_channel.ext_veto->component ==6 && output->m_channel.ext_veto->readout==2){
+			channel=output->m_channel.ext_veto->component +1;
+		}
 
-		Vpedestal_backup.at(output->m_channel.ext_veto->component) = pedestal_DAQ * LSB;
+	if (Vpedestal_backup.at(channel) == 0) {
+
+		Vpedestal_backup.at(channel) = pedestal_DAQ * LSB;
 	}
+	 Thr = pedestal_DAQ*LSB +VThr;
 	//  jout << "dopo " <<output->m_channel.ext_veto.component << " " << pedestal_DAQ <<" " <<Vpedestal_backup.at(output->m_channel.ext_veto.component) <<std::endl;
 
 	// ************************** Timing calculation ***************************************
@@ -88,7 +95,7 @@ jerror_t ExtVetofa250Converter::convertMode1Hit(ExtVetoPMTHit* output, const fa2
 			} //endfor
 
 			pedestal = Q_pedestal / j;
-			Vpedestal_backup[output->m_channel.ext_veto->component] = pedestal;
+			Vpedestal_backup[channel] = pedestal;
 
 			//                      jout << "papta " <<output->m_channel.ext_veto.component << " " << pedestal_DAQ <<" " <<Vpedestal_backup.at(output->m_channel.ext_veto.component) <<std::endl;
 
@@ -99,7 +106,7 @@ jerror_t ExtVetofa250Converter::convertMode1Hit(ExtVetoPMTHit* output, const fa2
 		} else                // ******************************* Pedestal & Charge Calculation for T<35 ************************************
 		{
 
-			pedestal = Vpedestal_backup[output->m_channel.ext_veto->component];
+			pedestal = Vpedestal_backup[channel];
 
 			for (int ii = 0; ii < size; ii++) {
 
