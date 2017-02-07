@@ -103,7 +103,8 @@ jerror_t ExtVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber) {
 		//	jout << "component "<< m_ExtVetoHit->m_channel.component << " " << Qmax<<endl;
 		m_EneCalib = m_ENE_gain->getCalibSingle(m_ExtVetoHit->m_channel);
 		Emax = Qmax * m_EneCalib;
-		if (Emax < m_THR) continue;
+	//	if (Emax < m_THR) continue;
+		if (m_ExtVetoHit->T<0) continue;
 		m_ExtVetoHit->E = Q * m_EneCalib;
 		_data.push_back(m_ExtVetoHit); //publish it
 	}
