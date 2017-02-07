@@ -24,7 +24,7 @@ using namespace std;
 
 // Constructor
 BDXEventProcessor::BDXEventProcessor() :
-		m_output(0), m_tt(0), m_isMC(0), m_eventDST(0), m_runInfo(0), m_event(0), eventN(0), tword(0), m_eventHeader(0), eventT(0), deltaTime(0), runN(0), isET(0) {
+		m_output(0), m_tt(0), m_isMC(0), m_eventDST(0), m_runInfo(0), m_event(0), eventN(0), m_eventHeader(0), eventT(0), deltaTime(0), runN(0), isET(0) {
 	bout << "BDXEventProcessor creator start" << endl;
 	optf = "";
 	m_DObuildDST = 0;
@@ -94,7 +94,7 @@ jerror_t BDXEventProcessor::init(void) {
 	m_eventHeader->Branch("eventN", &eventN);
 	m_eventHeader->Branch("runN", &runN);
 	m_eventHeader->Branch("T", &eventT);
-	m_eventHeader->Branch("tword", &tword);
+	m_eventHeader->Branch("tword", &tWord);
 
 	m_runInfo = new TTree("RunInfo", "RunInfo");
 	m_runInfo->Branch("runN", &runN);
@@ -169,7 +169,7 @@ jerror_t BDXEventProcessor::evnt(JEventLoop *loop, uint64_t eventnumber) {
 		japp->RootWriteLock();
 		eventT = tData->time;
 		eventN = eventnumber;
-		tword = tData->triggerWords[0];
+		tWord = tData->triggerWords;
 		runN = tData->runN;
 		m_eventHeader->Fill();
 		//Time

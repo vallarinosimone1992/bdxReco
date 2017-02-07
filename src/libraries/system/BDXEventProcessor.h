@@ -74,7 +74,8 @@ private:
 
 	/*The EventHeader tree*/
 	TTree *m_eventHeader;
-	int eventN,runN,tword,eventT;
+	int eventN,runN,eventT;
+	vector<uint32_t> tWord;
 
 	/*Time*/
 	int startTime,stopTime,deltaTime;
