@@ -44,7 +44,7 @@ jerror_t ExtVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 	vector<const ExtVetoMCHit*>::const_iterator it;
 	const ExtVetoMCHit *m_ExtVetoMCHit = 0;
 
-	//1b: retrieve ExtVetoSiPMHit objects
+	//1b: retrieve ExtVetoMCHits objects
 	loop->Get(m_ExtVetoMCHits);
 
 	m_map.clear();
@@ -64,30 +64,26 @@ jerror_t ExtVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 		m_channel.readout = 0;
 		m_map_it = m_map.find(m_channel);
 		if (m_map_it == m_map.end()) { //ExtVetoDigiHit was not created yet
+			m_ExtVetoDigiHit = new ExtVetoDigiHit;
 
-			m_ExtVetoDigiHit->AddAssociatedObject(m_ExtVetoMCHit);
 
 			if ((m_isMC == MCType::CATANIA_V1) || (m_isMC == MCType::FULL_V1)) {
-
-				m_ExtVetoDigiHit = new ExtVetoDigiHit;
-
-				m_ExtVetoDigiHit->m_channel = m_channel;
-				m_ExtVetoDigiHit->m_channel.readout = 1;
-				m_ExtVetoDigiHit->Q = m_ExtVetoMCHit->adc1;
-				m_ExtVetoDigiHit->T = m_ExtVetoMCHit->tdc1 / 1000.;  //MC is in ps
-				m_map[m_channel].push_back(m_ExtVetoDigiHit);
-
-			} else if (m_isMC == MCType::CATANIA_V2) {
-
-				m_ExtVetoDigiHit = new ExtVetoDigiHit;
 				m_ExtVetoDigiHit->m_channel = m_channel;
 				m_ExtVetoDigiHit->m_channel.readout = 1;
 				m_ExtVetoDigiHit->Q = m_ExtVetoMCHit->adc1;
 				m_ExtVetoDigiHit->T = m_ExtVetoMCHit->tdc1 / 1000.;  //MC is in ps
 				m_ExtVetoDigiHit->AddAssociatedObject(m_ExtVetoMCHit);
-				m_map_it->second.push_back(m_ExtVetoDigiHit);
+				m_map[m_channel].push_back(m_ExtVetoDigiHit);
+
+			} else if (m_isMC == MCType::CATANIA_V2) {
+				m_ExtVetoDigiHit->m_channel = m_channel;
+				m_ExtVetoDigiHit->m_channel.readout = 1;
+				m_ExtVetoDigiHit->Q = m_ExtVetoMCHit->adc1;
+				m_ExtVetoDigiHit->T = m_ExtVetoMCHit->tdc1 / 1000.;  //MC is in ps
+				m_ExtVetoDigiHit->AddAssociatedObject(m_ExtVetoMCHit);
+				m_map[m_channel].push_back(m_ExtVetoDigiHit); //this creates a new value if necessary
 				if (m_ExtVetoMCHit->channel == 1) {
-					m_ExtVetoDigiHit = new ExtVetoDigiHit;
+					m_ExtVetoDigiHit = new ExtVetoDigiHit; //create another one!
 					m_ExtVetoDigiHit->m_channel = m_channel;
 					m_ExtVetoDigiHit->m_channel.readout = 2;
 					m_ExtVetoDigiHit->Q = m_ExtVetoMCHit->adc2;

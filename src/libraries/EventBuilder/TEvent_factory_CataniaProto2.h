@@ -10,7 +10,9 @@
 
 #include <JANA/JFactory.h>
 #include "TEvent.h"
+#include <string.h>
 
+class TClonesArray;
 
 
 class TEvent_factory_CataniaProto2:public jana::JFactory<TEvent>{
@@ -34,6 +36,9 @@ class TEvent_factory_CataniaProto2:public jana::JFactory<TEvent>{
 		TClonesArray *m_CaloHits;
 		TClonesArray *m_IntVetoHits;
 		TClonesArray *m_ExtVetoHits;
+
+		int m_isMC,m_MCRunNumber;
+		std::string m_tag;
 
 };
 

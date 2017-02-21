@@ -44,7 +44,7 @@ JEventSource* JEventSourceEvioGenerator::MakeJEventSource(string source)
 		if (m_verbose>2) jout<<"JEventSourceEvioGenerator::MakeJEventSource for DAQ "<<endl;
 		return new JEventSourceEvioDAQ(source.c_str());
 	}
-	else if (m_isMC==1){
+	else if (m_isMC>=1){
 		if (m_verbose>2) jout<<" JEventSourceEvioGenerator::MakeJEventSource for MC "<<endl;
 		return new JEventSourceEvioMC(source.c_str());
 	}

@@ -60,7 +60,8 @@ jerror_t CalorimeterDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnum
 			index.x = m_CalorimeterMCHit->x - 1;
 			index.y = m_CalorimeterMCHit->y - 1;
 		} else if (m_isMC == MCType::CATANIA_V2) {
-			index.sector = m_CalorimeterMCHit->sector;
+			if ( m_CalorimeterMCHit->sector == 1)  index.sector = 0;
+			else if(m_CalorimeterMCHit->sector ==100 )   index.sector = 1;
 			index.x = m_CalorimeterMCHit->x;
 			index.y = m_CalorimeterMCHit->y;
 		}

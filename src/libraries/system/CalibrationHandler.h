@@ -135,6 +135,7 @@ template <class T> vector<double> CalibrationHandler<T>::getCalib(const T &index
 		if (it==m_calib.end()){
 			jerr<<"CalibrationHandler<T>::getCalib element not found"<<endl;
 			jerr<<"T: "<<index.name()<<endl;
+			jerr<<index.print()<<endl;
 			return ret;
 		}
 		else{
