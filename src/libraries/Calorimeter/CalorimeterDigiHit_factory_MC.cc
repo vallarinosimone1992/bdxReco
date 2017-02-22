@@ -47,29 +47,16 @@ jerror_t CalorimeterDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnum
 	vector<const CalorimeterMCHit*> m_CalorimeterMCHits;
 	vector<const CalorimeterMCHit*>::const_iterator it;
 
-	//1b: retrieve CalorimeterSiPMHit objects
+	//1b: retrieve CalorimeterMCHit objects
 	loop->Get(m_CalorimeterMCHits);
 	m_map.clear();
 	for (it = m_CalorimeterMCHits.begin(); it != m_CalorimeterMCHits.end(); it++) {
 		TranslationTable::CALO_Index_t index;
 		m_CalorimeterMCHit = *it;
 
-		/*Following lines of code are ok for CataniaProtoV1 and for FullMC*/
-		if ((m_isMC == MCType::CATANIA_V1) || (m_isMC == MCType::FULL_V1)) {
-			index.sector = m_CalorimeterMCHit->sector - 1;
-			index.x = m_CalorimeterMCHit->x - 1;
-			index.y = m_CalorimeterMCHit->y - 1;
-		} else if (m_isMC == MCType::CATANIA_V2) {
-			if (m_CalorimeterMCHit->sector == 1)
-				index.sector = 0;
-			else if (m_CalorimeterMCHit->sector == 100) index.sector = 1;
-			index.x = m_CalorimeterMCHit->x;
-			index.y = m_CalorimeterMCHit->y;
-		}
-		index.readout = 1;
+		this->SetIndex(index,m_CalorimeterMCHit,m_isMC);
 		m_map_it = m_map.find(index);
 		if (m_map_it == m_map.end()) {
-
 			m_CalorimeterDigiHit = new CalorimeterDigiHit;
 			m_CalorimeterDigiHit->m_channel = index;
 			m_CalorimeterDigiHit->m_channel.readout = 1;	///THIS IS CORRECT ---> in MC "right" is the first MPPC, i.e. readout=1
@@ -85,7 +72,6 @@ jerror_t CalorimeterDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnum
 			index.readout = 2;
 			m_map_it = m_map.find(index);
 			if (m_map_it == m_map.end()) {
-
 				m_CalorimeterDigiHit = new CalorimeterDigiHit;
 				m_CalorimeterDigiHit->m_channel = index;
 				m_CalorimeterDigiHit->m_channel.readout = 1;	///THIS IS CORRECT ---> in MC "right" is the first MPPC, i.e. readout=1
@@ -95,6 +81,8 @@ jerror_t CalorimeterDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnum
 				m_CalorimeterDigiHit->AddAssociatedObject(m_CalorimeterMCHit);
 				m_map[index] = m_CalorimeterDigiHit;
 			} else {
+				m_CalorimeterDigiHit=m_map_it->second;
+				m_CalorimeterDigiHit->AddAssociatedObject(m_CalorimeterMCHit);
 				m_CalorimeterDigiHit->Q += m_CalorimeterMCHit->adcl;
 			}
 		}
@@ -120,5 +108,28 @@ jerror_t CalorimeterDigiHit_factory_MC::erun(void) {
 //------------------
 jerror_t CalorimeterDigiHit_factory_MC::fini(void) {
 	return NOERROR;
+}
+
+void CalorimeterDigiHit_factory_MC::SetIndex(TranslationTable::CALO_Index_t &index,const CalorimeterMCHit *mchit, int MC) {
+	if ((MC == MCType::CATANIA_V1) || (MC == MCType::FULL_V1)) {
+		index.sector = mchit->sector - 1;
+		index.x = mchit->x - 1;
+		index.y = mchit->y - 1;
+	} else if (MC == MCType::CATANIA_V2) {
+		if (mchit->sector == 1) {
+			index.sector = 0;
+			index.x = mchit->y - 1;
+			index.y = 4 - mchit->x;
+		} else if (mchit->sector == 100) {
+			index.sector = 1;
+			index.y = 0;
+			index.x = 0;
+		}
+	}
+	else if (MC == MCType::FULL_V2){
+		//A.C. TO BE DONE
+	}
+	index.readout = 1;
+
 }
 

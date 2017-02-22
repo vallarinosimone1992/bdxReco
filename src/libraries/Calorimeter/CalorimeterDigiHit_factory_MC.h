@@ -11,11 +11,17 @@
 #include <JANA/JFactory.h>
 #include "CalorimeterDigiHit.h"
 
+class CalorimeterMCHit;
+
 class CalorimeterDigiHit_factory_MC:public jana::JFactory<CalorimeterDigiHit>{
 public:
 	CalorimeterDigiHit_factory_MC(){};
 	~CalorimeterDigiHit_factory_MC(){};
 	const char* Tag(void){return "MC";}
+
+	static void SetIndex(TranslationTable::CALO_Index_t &index,const CalorimeterMCHit *mchit,int MC);
+
+
 
 private:
 	jerror_t init(void);						///< Called once at program start.

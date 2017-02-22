@@ -19,6 +19,9 @@
 #include <IntVeto/IntVetoHit.h>
 #include <ExtVeto/ExtVetoHit.h>
 #include <Paddles/PaddlesHit.h>
+
+#include <Calorimeter/CalorimeterMCRealHit.h>
+
 #include <DAQ/eventData.h>
 
 #include <JANA/JApplication.h>
@@ -53,6 +56,12 @@ jerror_t TEvent_factory_CataniaProto2::init(void) {
 	m_CaloHits = new TClonesArray("CalorimeterHit");
 	m_IntVetoHits = new TClonesArray("IntVetoHit");
 	m_ExtVetoHits = new TClonesArray("ExtVetoHit");
+
+	if (m_isMC){
+		m_CaloMCRealHits = new TClonesArray("CalorimeterMCRealHit");
+	}
+
+
 	japp->RootUnLock();
 
 	return NOERROR;
@@ -79,6 +88,9 @@ jerror_t TEvent_factory_CataniaProto2::evnt(JEventLoop *loop, uint64_t eventnumb
 	vector<const CalorimeterHit*> chits;
 	vector<const IntVetoHit*> ivhits;
 	vector<const ExtVetoHit*> evhits;
+
+	vector<const CalorimeterMCRealHit*> chits_MCReal;
+
 	const eventData* tData;
 
 	/*Create the TEvent*/
@@ -156,6 +168,16 @@ jerror_t TEvent_factory_CataniaProto2::evnt(JEventLoop *loop, uint64_t eventnumb
 		m_event->AddAssociatedObject(evhits[ii]);
 	}
 	m_event->addCollection(m_ExtVetoHits);
+
+	if (m_isMC){
+		loop->Get(chits_MCReal);
+		m_CaloMCRealHits->Clear("C");
+		for (int ii = 0; ii < chits_MCReal.size(); ii++) {
+				((CalorimeterMCRealHit*) m_CaloMCRealHits->ConstructedAt(ii))->operator=(*(chits_MCReal[ii]));
+				m_event->AddAssociatedObject(chits_MCReal[ii]);
+			}
+			m_event->addCollection(m_CaloMCRealHits);
+	}
 
 	/*publish the event*/
 	_data.push_back(m_event);

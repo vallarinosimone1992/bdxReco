@@ -201,9 +201,7 @@ jerror_t JEventProcessor_energycal::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 	vector<const CalorimeterMCHit*> mc_data;
 
-	/*Check immedaitely if there's an inner veto hit on TOP and on BOTTOM.
-	 * If not, go next
-	 */
+
 
 	int hasTop = 0;
 	int hasBottom = 0;
@@ -218,10 +216,13 @@ jerror_t JEventProcessor_energycal::evnt(JEventLoop *loop, uint64_t eventnumber)
 			hasBottom = 1;
 	}
 
-	if ((hasTop == 0) || (hasBottom == 0))
-		return OBJECT_NOT_AVAILABLE;
 
+
+	/*if ((hasTop == 0) || (hasBottom == 0))
+		return OBJECT_NOT_AVAILABLE;
+	*/
 	loop->Get(data);
+
 	loop->Get(cdata);
 
 	app->RootWriteLock();

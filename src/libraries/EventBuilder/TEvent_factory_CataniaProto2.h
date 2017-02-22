@@ -37,6 +37,8 @@ class TEvent_factory_CataniaProto2:public jana::JFactory<TEvent>{
 		TClonesArray *m_IntVetoHits;
 		TClonesArray *m_ExtVetoHits;
 
+		TClonesArray *m_CaloMCRealHits;
+
 		int m_isMC,m_MCRunNumber;
 		std::string m_tag;
 

@@ -175,27 +175,6 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory)
 		vector<hitOutput> bankDgt = this_event->dgtBanks["crs"];
 		vector<hitOutput> bankRaw = this_event->rawBanks["crs"];
 
-		/*	map<string,double> dgt;
-		map<string,double>::iterator dgt_it;
-		if (bankDgt.size()==0) return NOERROR;
-		if (bankRaw.size()==0) return NOERROR;
-		for(unsigned int ih=0; ih<bankDgt.size(); ih++){
-
-			dgt=bankDgt[ih].getDgtz();
-			jout<<"has "<<dgt.size()<<endl;
-			for (dgt_it=dgt.begin();dgt_it!=dgt.end();dgt_it++){
-				jout<<"Dgt :"<<ih<<" "<<dgt_it->first<<" "<<dgt_it->second<<endl;
-			}
-		}
-		for(unsigned int ih=0; ih<bankRaw.size(); ih++){
-			dgt=bankRaw[ih].getRaws();
-			jout<<"has "<<dgt.size()<<endl;
-			for (dgt_it=dgt.begin();dgt_it!=dgt.end();dgt_it++){
-				jout<<"Raw :"<<ih<<" "<<dgt_it->first<<" "<<dgt_it->second<<endl;
-			}
-		}
-		 */
-
 		if (bankDgt.size()!=bankRaw.size()){
 			jerr<<"Calorimeter MC banks raw and dgtz different size"<<endl;
 			return VALUE_OUT_OF_RANGE;
