@@ -14,23 +14,25 @@
 
 #include "TObject.h"
 
-class CalorimeterMCRealHit:public TObject,public jana::JObject{
-	public:
-		JOBJECT_PUBLIC(CalorimeterMCRealHit);
-		
-		
+class CalorimeterMCRealHit: public TObject, public jana::JObject {
+public:
+	JOBJECT_PUBLIC(CalorimeterMCRealHit);
 
-		// This method is used primarily for pretty printing
-		// the second argument to AddString is printf style format
-		void toStrings(vector<pair<string,string> > &items)const{
-			// AddString(items, "id", "%4d", id);
-			// AddString(items, "E", "%f", E);
-		}
-		
-		double E;
-		TranslationTable::CALO_Index_t m_channel; //Detector-specific ID. Since this is a detector-based object, the readout field will be ==0
+	// This method is used primarily for pretty printing
+	// the second argument to AddString is printf style format
+	void toStrings(vector<pair<string, string> > &items) const {
+		// AddString(items, "id", "%4d", id);
+		AddString(items, "sector", "%i", m_channel.sector);
+		AddString(items, "x", "%i", m_channel.x);
+		AddString(items, "y", "%i", m_channel.y);
+		AddString(items, "E", "%f", E);
 
-		ClassDef(CalorimeterMCRealHit,1);
+	}
+
+	double E;
+	TranslationTable::CALO_Index_t m_channel; //Detector-specific ID. Since this is a detector-based object, the readout field will be ==0
+
+	ClassDef(CalorimeterMCRealHit,1);
 };
 
 #endif // _CalorimeterMCRealHit_

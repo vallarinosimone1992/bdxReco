@@ -6,7 +6,7 @@ JANA_CALIB_CONTEXT "variation=CataniaSecondProto1"
 THREAD_TIMEOUT 120
 THREAD_TIMEOUT_FIRST_EVENT 120
 
-#Event builder
+
 
 
 #IntVeto parameters
