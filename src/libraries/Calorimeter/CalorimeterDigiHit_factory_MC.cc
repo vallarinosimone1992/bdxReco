@@ -54,7 +54,8 @@ jerror_t CalorimeterDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnum
 		TranslationTable::CALO_Index_t index;
 		m_CalorimeterMCHit = *it;
 
-		this->SetIndex(index,m_CalorimeterMCHit,m_isMC);
+		this->SetIndex(index, m_CalorimeterMCHit, m_isMC);
+		index.readout = 1;
 		m_map_it = m_map.find(index);
 		if (m_map_it == m_map.end()) {
 			m_CalorimeterDigiHit = new CalorimeterDigiHit;
@@ -74,14 +75,14 @@ jerror_t CalorimeterDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnum
 			if (m_map_it == m_map.end()) {
 				m_CalorimeterDigiHit = new CalorimeterDigiHit;
 				m_CalorimeterDigiHit->m_channel = index;
-				m_CalorimeterDigiHit->m_channel.readout = 1;	///THIS IS CORRECT ---> in MC "right" is the first MPPC, i.e. readout=1
+				m_CalorimeterDigiHit->m_channel.readout = 2;	///THIS IS CORRECT ---> in MC "right" is the first MPPC, i.e. readout=1
 				m_CalorimeterDigiHit->Q = m_CalorimeterMCHit->adcl;
 				m_CalorimeterDigiHit->T = m_CalorimeterMCHit->tdcl * 4;
 				m_CalorimeterDigiHit->RMSflag = true;
 				m_CalorimeterDigiHit->AddAssociatedObject(m_CalorimeterMCHit);
 				m_map[index] = m_CalorimeterDigiHit;
 			} else {
-				m_CalorimeterDigiHit=m_map_it->second;
+				m_CalorimeterDigiHit = m_map_it->second;
 				m_CalorimeterDigiHit->AddAssociatedObject(m_CalorimeterMCHit);
 				m_CalorimeterDigiHit->Q += m_CalorimeterMCHit->adcl;
 			}
@@ -110,7 +111,7 @@ jerror_t CalorimeterDigiHit_factory_MC::fini(void) {
 	return NOERROR;
 }
 
-void CalorimeterDigiHit_factory_MC::SetIndex(TranslationTable::CALO_Index_t &index,const CalorimeterMCHit *mchit, int MC) {
+void CalorimeterDigiHit_factory_MC::SetIndex(TranslationTable::CALO_Index_t &index, const CalorimeterMCHit *mchit, int MC) {
 	if ((MC == MCType::CATANIA_V1) || (MC == MCType::FULL_V1)) {
 		index.sector = mchit->sector - 1;
 		index.x = mchit->x - 1;
@@ -125,10 +126,10 @@ void CalorimeterDigiHit_factory_MC::SetIndex(TranslationTable::CALO_Index_t &ind
 			index.y = 0;
 			index.x = 0;
 		}
-	}
-	else if (MC == MCType::FULL_V2){
+	} else if (MC == MCType::FULL_V2) {
 		//A.C. TO BE DONE
 	}
+
 	index.readout = 1;
 
 }
