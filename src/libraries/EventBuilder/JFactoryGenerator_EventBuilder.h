@@ -14,6 +14,7 @@
 #include "CataniaEvent_factory.h"
 //#include "MCEvent_factory.h"
 #include "TEvent_factory_CataniaProto2.h"
+#include "TEvent_factory_FullMC.h"
 
 class JFactoryGenerator_EventBuilder: public jana::JFactoryGenerator{
 	public:
@@ -26,6 +27,7 @@ class JFactoryGenerator_EventBuilder: public jana::JFactoryGenerator{
 			loop->AddFactory(new CataniaEvent_factory());
 		//	loop->AddFactory(new MCEvent_factory());
 			loop->AddFactory(new TEvent_factory_CataniaProto2());
+			loop->AddFactory(new TEvent_factory_FullMC());
 			return NOERROR;
 		}
 
