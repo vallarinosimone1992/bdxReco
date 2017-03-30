@@ -30,6 +30,7 @@ public:
 		AddString(items, "Q", "%f", Q);
 		AddString(items, "T", "%f", T);
 		AddString(items, "A", "%f", A);
+		AddString(items, "type","%i",type);
 	}
 
 	double Q,T,A; //Charge (u.a.), time (ns), Amplitude (mV)
