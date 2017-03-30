@@ -43,8 +43,8 @@ jerror_t TEvent_factory_FullMC::init(void) {
 		gPARMS->GetParameter("MC:RUN_NUMBER", m_MCRunNumber);
 		m_tag="MC";
 	}
-	if ((m_isMC) && (m_isMC != 30)) {
-		jout << "Error! Can use this only with MC==30, i.e. Full detector MC" << endl;
+	if ((m_isMC) && (m_isMC != 10) && (m_isMC != 20)) {
+		jout << "Error! Can use this only with MC=10 or 20, i.e. Full detector MC" << endl;
 		return VALUE_OUT_OF_RANGE;
 	}
 

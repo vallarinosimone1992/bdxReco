@@ -43,7 +43,8 @@ TCanvas* CalorimeterCluster::Draw(int id)const{
 		m_canvas->cd(idx);
 
 		chits[ihit]->Draw(-1);
-		chits[ihit]->hWave->Draw();
+
+		if(chits[ihit]->hWave) chits[ihit]->hWave->Draw();
 	}
 
 

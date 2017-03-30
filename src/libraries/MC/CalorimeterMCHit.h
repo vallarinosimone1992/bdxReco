@@ -30,6 +30,7 @@ public:
 		AddString(items, "x(MC)", "%i", x);
 		AddString(items, "y(MC)", "%i", y);
 		AddString(items, "E", "%f", totEdep);
+		AddString(items, "pid","%i",pid);
 	}
 	int x, y, sector;
 

@@ -127,7 +127,11 @@ void CalorimeterDigiHit_factory_MC::SetIndex(TranslationTable::CALO_Index_t &ind
 			index.x = 0;
 		}
 	} else if (MC == MCType::FULL_V2) {
-		//A.C. TO BE DONE
+
+		//A.C.: to be checked
+		index.sector = mchit->sector - 1;
+		index.x = mchit->x - 1;
+		index.y = mchit->y - 1;
 	}
 
 	index.readout = 1;

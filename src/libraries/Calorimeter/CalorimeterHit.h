@@ -24,7 +24,7 @@ class CalorimeterHit:public TObject,public BDXObject{
 
 public:
 
-
+	CalorimeterHit();
 
 	JOBJECT_PUBLIC(CalorimeterHit);
 

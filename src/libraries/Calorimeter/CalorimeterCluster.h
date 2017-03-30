@@ -11,39 +11,46 @@
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
 
-
 #include <system/BDXObject.h>
 #include "TObject.h"
 
 class TH1D;
 class TCanvas;
 
-class CalorimeterCluster:public TObject,public BDXObject{
-	private:
-		mutable vector<TH1D*> hWaves; //!
+class CalorimeterCluster: public TObject, public BDXObject {
+private:
+	mutable vector<TH1D*> hWaves; //!
 
-	public:
-		JOBJECT_PUBLIC(CalorimeterCluster);
-		
-		// Add data members here. For example:
-		// int id;
-		// double E;
-		
-		// This method is used primarily for pretty printing
-		// the second argument to AddString is printf style format
-		void toStrings(vector<pair<string,string> > &items)const{
-			// AddString(items, "id", "%4d", id);
-			// AddString(items, "E", "%f", E);
-		}
-		
-		double Eseed;
-		double E,T;
-		double x,y;
-		int Nhits, Nhits_near_seed,m_sector;
+public:
+	JOBJECT_PUBLIC(CalorimeterCluster)
+	;
 
+	// Add data members here. For example:
+	// int id;
+	// double E;
 
-		virtual TCanvas* Draw(int id)const; //!
-		ClassDef(CalorimeterCluster,1);
+	// This method is used primarily for pretty printing
+	// the second argument to AddString is printf style format
+	void toStrings(vector<pair<string, string> > &items) const {
+		// AddString(items, "id", "%4d", id);
+
+		AddString(items, "sector", "%f", m_sector);
+		AddString(items, "x", "%f", x);
+		AddString(items, "y", "%f", y);
+
+		AddString(items, "E", "%f", E);
+		AddString(items, "Eseed", "%f", Eseed);
+		AddString(items, "T", "%f", T);
+	}
+
+	double Eseed;
+	double E, T;
+	double x, y;
+	int Nhits, Nhits_near_seed, m_sector;
+
+	virtual TCanvas* Draw(int id) const; //!
+ClassDef(CalorimeterCluster,1)
+	;
 
 };
 

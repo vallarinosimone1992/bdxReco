@@ -5,6 +5,12 @@
 #include <vector>
 #include <DAQ/fa250Mode1CalibPedSubHit.h>
 #include <TT/TranslationTable.h>
+
+CalorimeterHit::CalorimeterHit():
+hWave(0){
+
+}
+
 TCanvas* CalorimeterHit::Draw(int id)const{
 	int Nwaves;
 	int Nsamples;

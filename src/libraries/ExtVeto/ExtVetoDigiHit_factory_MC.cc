@@ -55,12 +55,16 @@ jerror_t ExtVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 		if (m_isMC == MCType::CATANIA_V1) {
 			m_channel.component = this->getCataniaV1Component(m_ExtVetoMCHit->channel);
 		}
-		if (m_isMC == MCType::CATANIA_V2) {
+		else if (m_isMC == MCType::CATANIA_V2) {
 			m_channel.component = this->getCataniaV2Component(m_ExtVetoMCHit->channel);
 		}
-		if (m_isMC == MCType::FULL_V1) {
+		else if (m_isMC == MCType::FULL_V1) {
 			m_channel.component = this->getFullV1Component(m_ExtVetoMCHit->channel);
 		}
+		else if (m_isMC == MCType::FULL_V2) {
+			m_channel.component = this->getFullV2Component(m_ExtVetoMCHit->channel);
+		}
+
 		m_channel.readout = 0;
 		m_map_it = m_map.find(m_channel);
 		if (m_map_it == m_map.end()) { //ExtVetoDigiHit was not created yet
@@ -155,6 +159,41 @@ int ExtVetoDigiHit_factory_MC::getFullV1Component(int channel) {
 	}
 	return component;
 }
+
+
+
+
+int ExtVetoDigiHit_factory_MC::getFullV2Component(int channel) {
+	//A.C: To be checked
+	int component;
+	switch (channel) {
+	case (1):  //top
+		component = 0;
+		break;
+	case (2):  //bottom
+		component = 3;
+		break;
+	case (3):  //right
+		component = 2;
+		break;
+	case (4):  //left
+		component = 1;
+		break;
+	case (5):  //downstream
+		component = 5;
+		break;
+	case (6):  //upstream
+		component = 4;
+		break;
+	default:
+		break;
+	}
+	return component;
+}
+
+
+
+
 
 int ExtVetoDigiHit_factory_MC::getCataniaV1Component(int channel) {
 	int component;
