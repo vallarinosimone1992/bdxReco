@@ -34,13 +34,16 @@ public:
 	void toStrings(vector<pair<string, string> > &items) const {
 		// AddString(items, "id", "%4d", id);
 
-		AddString(items, "sector", "%f", m_sector);
+		AddString(items, "sector", "%i", m_sector);
 		AddString(items, "x", "%f", x);
 		AddString(items, "y", "%f", y);
 
 		AddString(items, "E", "%f", E);
 		AddString(items, "Eseed", "%f", Eseed);
 		AddString(items, "T", "%f", T);
+		AddString(items,"Nhits","%i",Nhits);
+		AddString(items,"NhitsNearSeed","%i",Nhits_near_seed);
+
 	}
 
 	double Eseed;

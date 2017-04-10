@@ -28,16 +28,18 @@ class TEvent_factory_FullMC:public jana::JFactory<TEvent>{
 		jerror_t erun(void);						///< Called everytime run number changes, provided brun has been called.
 		jerror_t fini(void);						///< Called after last event of last event source has been processed.
 
-
+/*
 		TClonesArray *m_CaloDigiHits;
 		TClonesArray *m_IntVetoDigiHits;
 		TClonesArray *m_ExtVetoDigiHits;
-
+*/
 		TClonesArray *m_CaloHits;
+		TClonesArray *m_CaloClusters;
 		TClonesArray *m_IntVetoHits;
 		TClonesArray *m_ExtVetoHits;
 
-		TClonesArray *m_CaloMCRealHits;
+		TClonesArray *m_GenParticles;
+
 
 		int m_isMC,m_MCRunNumber;
 		std::string m_tag;

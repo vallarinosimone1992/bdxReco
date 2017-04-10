@@ -64,14 +64,14 @@ jerror_t JEventSourceEvioMC::GetEvent(JEvent &event) {
 	vector<string> hitTypes;
 	hitTypes.push_back("crs");
 	hitTypes.push_back("veto");
-
-	/*map<string,gBank>::iterator it;
-	 for (it=banksMap.begin();it!=banksMap.end();it++){
-	 jout<<"!!! "<<it->first<<" "<<it->second.bankName<<endl;
-	 for (int a=0;a<it->second.name.size();a++){
-	 jout<<it->second.name[a]<<" "<<it->second.type[a]<<" "<<endl;
-	 }
-	 }*/
+/*
+	map<string, gBank>::iterator it;
+	for (it = banksMap.begin(); it != banksMap.end(); it++) {
+		jout << "!!! " << it->first << " " << it->second.bankName << endl;
+		for (int a = 0; a < it->second.name.size(); a++) {
+			jout << it->second.name[a] << " " << it->second.type[a] << " " << endl;
+		}
+	}*/
 
 	if (chan->read()) {
 		EDT = new evioDOMTree(chan);
@@ -138,11 +138,20 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory) {
 
 		particles = getGenerated(*this_edt, it->second, 0);
 
-		jout << "There are: " << particles.size() << "primaries" << endl;
+		//jout << "There are: " << particles.size() << "primaries" << endl;
 
 		vector<GenParticle*> jparticles;
 		for (int ip = 0; ip < particles.size(); ip++) {
-			GenParticle *particle = new GenParticle(particles[ip]);
+			GenParticle *particle = new GenParticle();
+
+			particle->pid = particles[ip].PID;
+			particle->px = particles[ip].momentum.x();
+			particle->py = particles[ip].momentum.y();
+			particle->pz = particles[ip].momentum.z();
+			particle->vx = particles[ip].vertex.x();
+			particle->vy = particles[ip].vertex.y();
+			particle->vz = particles[ip].vertex.z();
+
 			jparticles.push_back(particle);
 		}
 
@@ -154,6 +163,14 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory) {
 		// getting EVIO bank
 		vector<hitOutput> bankDgt = this_event->dgtBanks["crs"];
 		vector<hitOutput> bankRaw = this_event->rawBanks["crs"];
+
+
+	//	vector<hitOutput> bankDgt = getDgtIntDataBank(*this_edt,"crs",&banksMap,2);
+		//vector<hitOutput> bankRaw = getRawIntDataBank(*this_edt,"crs",&banksMap,2);
+
+
+
+
 
 		if (bankDgt.size() != bankRaw.size()) {
 			jerr << "Calorimeter MC banks raw and dgtz different size" << endl;
@@ -175,15 +192,14 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory) {
 			//A.C. this check is here for 0-edep hits from neutrinos.. don't want to have them
 			if (hit->totEdep <= 0) {
 				delete hit;
-				hit=0;
+				hit = 0;
 				continue;
 			}
 
 			hit->sector = bankDgt[ih].getIntDgtVar("sector");
 			hit->x = bankDgt[ih].getIntDgtVar("xch");
 			hit->y = bankDgt[ih].getIntDgtVar("ych");
-			//         jout << " sono in MC "<< endl;
-			//	    jout << "sector "<< hit->sector << " " << hit->x<<" "<<hit->y<<endl;
+
 
 			/*dgtz banks*/
 			hit->adcl = bankDgt[ih].getIntDgtVar("adcl");
@@ -232,9 +248,9 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory) {
 				}
 			}
 
-			if (hit->totEdep<=0){
+			if (hit->totEdep <= 0) {
 				delete hit;
-				hit=0;
+				hit = 0;
 				continue;
 			}
 
@@ -283,11 +299,7 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory) {
 		for (unsigned int ih = 0; ih < bankDgt.size(); ih++) {
 			if ((bankDgt[ih].getIntDgtVar("veto") != VetoMCHit::CATANIA_EXTVETO) && (bankDgt[ih].getIntDgtVar("veto") != VetoMCHit::FULL_EXTVETO)) continue; //since Marco used the same bank for all the vetos.. blah~!!
 
-
-
-
 			ExtVetoMCHit *hit = new ExtVetoMCHit;
-
 
 			/*raw banks*/
 			for (unsigned int ir = 0; ir < bankRaw.size(); ir++) {
@@ -297,13 +309,11 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory) {
 					break;
 				}
 			}
-			if (hit->totEdep<=0){
+			if (hit->totEdep <= 0) {
 				delete hit;
-				hit=0;
+				hit = 0;
 				continue;
 			}
-
-
 
 			hit->sector = bankDgt[ih].getIntDgtVar("sector");
 			hit->channel = bankDgt[ih].getIntDgtVar("channel");
@@ -323,8 +333,6 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory) {
 			hit->tdc4 = bankDgt[ih].getIntDgtVar("tdc4");
 
 			//		jout << hit->adc << " "<< hit->tdc << endl;
-
-
 
 			extVetoMChits.push_back(hit);
 		}

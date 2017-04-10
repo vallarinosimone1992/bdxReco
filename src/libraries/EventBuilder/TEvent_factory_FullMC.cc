@@ -16,6 +16,7 @@
 #include <ExtVeto/ExtVetoDigiHit.h>
 
 #include <Calorimeter/CalorimeterHit.h>
+#include <Calorimeter/CalorimeterCluster.h>
 #include <IntVeto/IntVetoHit.h>
 #include <ExtVeto/ExtVetoHit.h>
 #include <Paddles/PaddlesHit.h>
@@ -23,6 +24,8 @@
 #include <Calorimeter/CalorimeterMCRealHit.h>
 
 #include <DAQ/eventData.h>
+
+#include <MC/GenParticle.h>
 
 #include <JANA/JApplication.h>
 #include "TClonesArray.h"
@@ -42,6 +45,9 @@ jerror_t TEvent_factory_FullMC::init(void) {
 		jout<<"FullMC event build - MC mode"<<endl;
 		gPARMS->GetParameter("MC:RUN_NUMBER", m_MCRunNumber);
 		m_tag="MC";
+	}else{
+		jerr<<"FullMC must be run in MC mode!"<<endl;
+		return VALUE_OUT_OF_RANGE;
 	}
 	if ((m_isMC) && (m_isMC != 10) && (m_isMC != 20)) {
 		jout << "Error! Can use this only with MC=10 or 20, i.e. Full detector MC" << endl;
@@ -49,18 +55,21 @@ jerror_t TEvent_factory_FullMC::init(void) {
 	}
 
 	japp->RootWriteLock();
-	m_CaloDigiHits = new TClonesArray("CalorimeterDigiHit");
+/*	m_CaloDigiHits = new TClonesArray("CalorimeterDigiHit");
 	m_IntVetoDigiHits = new TClonesArray("IntVetoDigiHit");
 	m_ExtVetoDigiHits = new TClonesArray("ExtVetoDigiHit");
-
+*/
 	m_CaloHits = new TClonesArray("CalorimeterHit");
+	m_CaloClusters = new TClonesArray("CalorimeterCluster");
 	m_IntVetoHits = new TClonesArray("IntVetoHit");
 	m_ExtVetoHits = new TClonesArray("ExtVetoHit");
 
+	m_GenParticles = new TClonesArray("GenParticle");
+/*
 	if (m_isMC){
 		m_CaloMCRealHits = new TClonesArray("CalorimeterMCRealHit");
 	}
-
+*/
 
 	japp->RootUnLock();
 
@@ -80,16 +89,19 @@ jerror_t TEvent_factory_FullMC::brun(jana::JEventLoop *eventLoop, int32_t runnum
 jerror_t TEvent_factory_FullMC::evnt(JEventLoop *loop, uint64_t eventnumber) {
 
 
-
+/*
 	vector<const CalorimeterDigiHit*> chits_digi;
 	vector<const IntVetoDigiHit*> ivhits_digi;
 	vector<const ExtVetoDigiHit*> evhits_digi;
-
+	vector<const CalorimeterMCRealHit*> chits_MCReal;
+*/
 	vector<const CalorimeterHit*> chits;
+	vector<const CalorimeterCluster*> cclusters;
 	vector<const IntVetoHit*> ivhits;
 	vector<const ExtVetoHit*> evhits;
 
-	vector<const CalorimeterMCRealHit*> chits_MCReal;
+	vector<const GenParticle*> genParticles;
+
 
 	const eventData* tData;
 
@@ -136,6 +148,15 @@ jerror_t TEvent_factory_FullMC::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	m_event->addCollection(m_ExtVetoDigiHits);
 	*/
 
+	/*Generated particles*/
+	loop->Get(genParticles);
+	m_GenParticles->Clear("C");
+	for (int ii = 0; ii < genParticles.size(); ii++) {
+		((GenParticle*) m_GenParticles->ConstructedAt(ii))->operator=(*(genParticles[ii]));
+		m_event->AddAssociatedObject(genParticles[ii]);
+	}
+	m_event->addCollection(m_GenParticles);
+
 	/*Calibrated and final objects*/
 	loop->Get(chits);
 	m_CaloHits->Clear("C");
@@ -144,6 +165,14 @@ jerror_t TEvent_factory_FullMC::evnt(JEventLoop *loop, uint64_t eventnumber) {
 		m_event->AddAssociatedObject(chits[ii]);
 	}
 	m_event->addCollection(m_CaloHits);
+
+	loop->Get(cclusters);
+	m_CaloClusters->Clear("C");
+	for (int ii = 0; ii < cclusters.size(); ii++) {
+		((CalorimeterCluster*) m_CaloClusters->ConstructedAt(ii))->operator=(*(cclusters[ii]));
+		m_event->AddAssociatedObject(cclusters[ii]);
+	}
+	m_event->addCollection(m_CaloClusters);
 
 	loop->Get(ivhits);
 	m_IntVetoHits->Clear("C");
@@ -160,7 +189,7 @@ jerror_t TEvent_factory_FullMC::evnt(JEventLoop *loop, uint64_t eventnumber) {
 		m_event->AddAssociatedObject(evhits[ii]);
 	}
 	m_event->addCollection(m_ExtVetoHits);
-
+/*
 	if (m_isMC){
 		loop->Get(chits_MCReal);
 		m_CaloMCRealHits->Clear("C");
@@ -169,7 +198,7 @@ jerror_t TEvent_factory_FullMC::evnt(JEventLoop *loop, uint64_t eventnumber) {
 				m_event->AddAssociatedObject(chits_MCReal[ii]);
 			}
 			m_event->addCollection(m_CaloMCRealHits);
-	}
+	}*/
 
 	/*publish the event*/
 	_data.push_back(m_event);
