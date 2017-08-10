@@ -71,7 +71,7 @@ jerror_t ExtVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 			m_ExtVetoDigiHit = new ExtVetoDigiHit;
 
 
-			if ((m_isMC == MCType::CATANIA_V1) || (m_isMC == MCType::FULL_V1)) {
+			if ((m_isMC == MCType::CATANIA_V1) || (m_isMC == MCType::FULL_V1)|| (m_isMC == MCType::FULL_V2)) {
 				m_ExtVetoDigiHit->m_channel = m_channel;
 				m_ExtVetoDigiHit->m_channel.readout = 1;
 				m_ExtVetoDigiHit->Q = m_ExtVetoMCHit->adc1;
@@ -110,7 +110,6 @@ jerror_t ExtVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 	}
 
 	for (m_map_it = m_map.begin(); m_map_it != m_map.end(); m_map_it++) {
-		m_ExtVetoDigiHit->Q = 0;
 		for (int ii = 0; ii < m_map_it->second.size(); ii++) {
 			m_ExtVetoDigiHit = m_map_it->second[ii];
 			_data.push_back(m_ExtVetoDigiHit);

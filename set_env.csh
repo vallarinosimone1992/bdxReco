@@ -22,4 +22,6 @@ setenv JANA_CALIB_URL mysql://$MYSQLUSER@$MYSQLHOST/$MYSQLDB
 setenv JANA_PLUGIN_PATH $BDXRECO_ROOT/lib:$BDXRECO_ROOT/lib/users
 
 #a.c. this is a work-around for MAC, where -rpath doens't work!!
+#also do this on linux for genoa farm
 setenv DYLD_LIBRARY_PATH ${BDXRECO_ROOT}/lib:${DYLD_LIBRARY_PATH}
+setenv LD_LIBRARY_PATH ${BDXRECO_ROOT}/lib:${LD_LIBRARY_PATH}

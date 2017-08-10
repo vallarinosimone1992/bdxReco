@@ -12,15 +12,19 @@ TCanvas* IntVetoDigiHit::Draw(int id) const {
 	this->Get(waves);
 	if (waves.size()!=1){
 		jout<<"IntVetoDigiHit::Draw no wave associated to this "<<endl;
-		return m_canvas;
+		wave=0;
+		Nsamples = 1;
 	}
 	else{
 		wave=waves[0];
+		Nsamples = wave->samples.size();
 	}
-	Nsamples = wave->samples.size();
+
 	cout<<Nsamples<<endl;
 	hWave = new TH1D(Form("h%i_%i_%i_%i", m_channel.sector, m_channel.layer, m_channel.component, m_channel.readout), Form("h%i_%i_%i_%i", m_channel.sector, m_channel.layer, m_channel.component, m_channel.readout), Nsamples, -0.5, Nsamples - 0.5);
-	wave->toHisto(hWave);
+	if (wave!=0){
+		wave->toHisto(hWave);
+	}
 	if (id >= 0) {
 		if (m_canvas == 0) {
 			m_canvas = new TCanvas(Form("c%i_%i_%i_%i", m_channel.sector, m_channel.layer, m_channel.component, m_channel.readout), 200, 200, id);

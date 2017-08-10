@@ -63,11 +63,24 @@ public:
 		m_eventType = eventType;
 	}
 
+	uint32_t getEventFineTime() const {
+		return m_eventFineTime;
+	}
+
+	void setEventFineTime(uint32_t eventFineTime) {
+		m_eventFineTime = eventFineTime;
+	}
+
 private:
 	uint8_t m_eventType;
 	int m_runNumber;
 	int m_eventNumber;
 	int m_eventTime; //Unix Timestamp
+
+	uint32_t m_eventFineTime; //this is the timestamp as reported by FADC boards, in particular I save here time from fadc in slot4, reading the calorimeter (there should be always a calo hit for events of interest). Units are: 4ns*/
+
+
+
 	std::vector<uint32_t> m_triggerWords;
 
 

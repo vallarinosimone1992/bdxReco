@@ -33,7 +33,7 @@ JEventSourceEvioMC::JEventSourceEvioMC(const char* source_name) :
 	jout << " Opening MC input file " << source_name << "." << endl;
 
 	try {
-		chan = new evioFileChannel(source_name, "r", 300000);
+		chan = new evioFileChannel(source_name, "r", 3000000);
 		//chan = new evioFileChannel(source_name, "r");
 		chan->open();
 	} catch (evioException *e) {
@@ -190,7 +190,7 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory) {
 				}
 			}
 			//A.C. this check is here for 0-edep hits from neutrinos.. don't want to have them
-			if (hit->totEdep <= 0) {
+			if (hit->totEdep <= 0.00001) {
 				delete hit;
 				hit = 0;
 				continue;
@@ -238,7 +238,7 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory) {
 			if ((bankDgt[ih].getIntDgtVar("veto") != VetoMCHit::CATANIA_INTVETO) && (bankDgt[ih].getIntDgtVar("veto") != VetoMCHit::FULL_INTVETO)) continue;
 
 			IntVetoMCHit *hit = new IntVetoMCHit;
-
+			hit->totEdep =0;
 			/*raw banks*/
 			for (unsigned int ir = 0; ir < bankRaw.size(); ir++) {
 				if (bankRaw[ir].getIntRawVar("hitn") == bankDgt[ih].getIntDgtVar("hitn")) {
@@ -248,7 +248,7 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory) {
 				}
 			}
 
-			if (hit->totEdep <= 0) {
+			if (hit->totEdep <= 0.00001){
 				delete hit;
 				hit = 0;
 				continue;
@@ -300,16 +300,24 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory) {
 			if ((bankDgt[ih].getIntDgtVar("veto") != VetoMCHit::CATANIA_EXTVETO) && (bankDgt[ih].getIntDgtVar("veto") != VetoMCHit::FULL_EXTVETO)) continue; //since Marco used the same bank for all the vetos.. blah~!!
 
 			ExtVetoMCHit *hit = new ExtVetoMCHit;
+			hit->totEdep = 0.;
 
+			bool found=false;
 			/*raw banks*/
 			for (unsigned int ir = 0; ir < bankRaw.size(); ir++) {
 				if (bankRaw[ir].getIntRawVar("hitn") == bankDgt[ih].getIntDgtVar("hitn")) {
 					hit->totEdep = bankRaw[ir].getIntRawVar("totEdep");
-
+					found = true;
 					break;
 				}
 			}
-			if (hit->totEdep <= 0) {
+
+			if (!found){
+				jout<<"WHAT? "<<endl;
+			}
+			if (hit->totEdep <= 0.00001) {
+
+
 				delete hit;
 				hit = 0;
 				continue;

@@ -52,8 +52,7 @@ public:
 	int Nhits, Nhits_near_seed, m_sector;
 
 	virtual TCanvas* Draw(int id) const; //!
-ClassDef(CalorimeterCluster,1)
-	;
+	ClassDef(CalorimeterCluster,1);
 
 };
 

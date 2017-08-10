@@ -31,6 +31,8 @@ class fa250Mode1Hit:public fa250Hit{
 			 AddString(items, "crate", "%4d",  m_channel.rocid);
 			 AddString(items, "slot", "%4d",  m_channel.slot);
 			 AddString(items, "channel", "%4d",  m_channel.channel);
+			 AddString(items, "timestamp","%lld",(long long)timestamp);
+
 
 			// AddString(items, "E", "%f", E);
 		}

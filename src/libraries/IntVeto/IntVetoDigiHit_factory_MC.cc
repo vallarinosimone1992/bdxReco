@@ -55,25 +55,20 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 		m_channel.layer = 0;
 		if (m_isMC == MCType::CATANIA_V1) {
 			m_channel.component = this->getCataniaV1Component(m_IntVetoMCHit->channel);
-		}
-		else if (m_isMC == MCType::CATANIA_V2) {
+		} else if (m_isMC == MCType::CATANIA_V2) {
 			m_channel.component = this->getCataniaV2Component(m_IntVetoMCHit->channel);
-		}
-		else if (m_isMC == MCType::FULL_V1) {
+		} else if (m_isMC == MCType::FULL_V1) {
 			m_channel.component = this->getFullV1Component(m_IntVetoMCHit->channel);
-		}
-		else  if (m_isMC == MCType::FULL_V2) {
+		} else if (m_isMC == MCType::FULL_V2) {
 			m_channel.component = this->getFullV2Component(m_IntVetoMCHit->channel);
 		}
-		m_channel.readout=0;
+		m_channel.readout = 0;
 		m_map_it = m_map.find(m_channel);
 		if (m_map_it == m_map.end()) { /*IntVetoDigiHit was not here. Create a new hit*/
 
 			/*create the different digi-hits*/
 			switch (m_channel.component) {
 			case (0): //top
-			case (1): //left
-			case (2): //right
 			{
 				m_IntVetoDigiHit = new IntVetoDigiHit;
 				m_IntVetoDigiHit->m_channel = m_channel;
@@ -110,6 +105,50 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 				m_IntVetoDigiHit->m_channel.readout = 4;
 				m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc4;
 				m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc4 / 1000.; //MC is in ps
+				m_IntVetoDigiHit->A = 0;
+				m_IntVetoDigiHit->RMSflag = true;
+				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+				m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
+				break;
+			}
+			case (1): //left
+			case (2): //right
+			{
+				m_IntVetoDigiHit = new IntVetoDigiHit;
+				m_IntVetoDigiHit->m_channel = m_channel;
+				m_IntVetoDigiHit->m_channel.readout = 1;
+				m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc4;
+				m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc4 / 1000.; //MC is in ps
+				m_IntVetoDigiHit->A = 0;
+				m_IntVetoDigiHit->RMSflag = true;
+				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+				m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
+
+				m_IntVetoDigiHit = new IntVetoDigiHit;
+				m_IntVetoDigiHit->m_channel = m_channel;
+				m_IntVetoDigiHit->m_channel.readout = 2;
+				m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc3;
+				m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc3 / 1000.; //MC is in ps
+				m_IntVetoDigiHit->A = 0;
+				m_IntVetoDigiHit->RMSflag = true;
+				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+				m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
+
+				m_IntVetoDigiHit = new IntVetoDigiHit;
+				m_IntVetoDigiHit->m_channel = m_channel;
+				m_IntVetoDigiHit->m_channel.readout = 3;
+				m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc2;
+				m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc2 / 1000.; //MC is in ps
+				m_IntVetoDigiHit->A = 0;
+				m_IntVetoDigiHit->RMSflag = true;
+				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+				m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
+
+				m_IntVetoDigiHit = new IntVetoDigiHit;
+				m_IntVetoDigiHit->m_channel = m_channel;
+				m_IntVetoDigiHit->m_channel.readout = 4;
+				m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc1;
+				m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc1 / 1000.; //MC is in ps
 				m_IntVetoDigiHit->A = 0;
 				m_IntVetoDigiHit->RMSflag = true;
 				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
@@ -220,8 +259,7 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 
 			switch (m_channel.component) {
 			case (0): //top
-			case (1): //left
-			case (2): //right
+
 			{
 				m_IntVetoDigiHit = m_map_it->second[0];
 				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
@@ -235,6 +273,23 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 				m_IntVetoDigiHit = m_map_it->second[3];
 				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 				m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc4;
+				break;
+			}
+			case (1): //left
+			case (2): //right
+			{
+				m_IntVetoDigiHit = m_map_it->second[0];
+				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+				m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc4;
+				m_IntVetoDigiHit = m_map_it->second[1];
+				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+				m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc3;
+				m_IntVetoDigiHit = m_map_it->second[2];
+				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+				m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc2;
+				m_IntVetoDigiHit = m_map_it->second[3];
+				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+				m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc1;
 				break;
 			}
 			case (3): //bottom
@@ -342,6 +397,11 @@ int IntVetoDigiHit_factory_MC::getCataniaV2Component(int MCchannel) {
 	case (4): //downstream
 		component = 5;
 		break;
+		/* A.C. 10/8/2017.
+		 * THIS IS CORRECT, in the prototype, looking from the amplifiers's side, the IV plate on the right is the LEFT one, with component n.1.
+		 * In the simulations, looking from the amplifiers's side, the IV plate on the right is the RIGHT one, with ch=5. It has to have component n.1
+		 * And vice-versa for the other side.
+		 */
 	case (5): //right
 		component = 1;
 		break;
@@ -377,8 +437,6 @@ int IntVetoDigiHit_factory_MC::getFullV1Component(int MCchannel) {
 	return component;
 }
 
-
-
 int IntVetoDigiHit_factory_MC::getFullV2Component(int MCchannel) {
 
 	//A.C. to be checked
@@ -405,5 +463,4 @@ int IntVetoDigiHit_factory_MC::getFullV2Component(int MCchannel) {
 	}
 	return component;
 }
-
 

@@ -20,6 +20,8 @@
 #include <ExtVeto/ExtVetoHit.h>
 #include <Paddles/PaddlesHit.h>
 
+#include <DAQ/fa250Mode1Hit.h>
+
 #include <Calorimeter/CalorimeterMCRealHit.h>
 
 #include <DAQ/eventData.h>
@@ -79,7 +81,8 @@ jerror_t TEvent_factory_CataniaProto2::brun(jana::JEventLoop *eventLoop, int32_t
 //------------------
 jerror_t TEvent_factory_CataniaProto2::evnt(JEventLoop *loop, uint64_t eventnumber) {
 
-
+	vector<const fa250Mode1Hit*> fahits;
+	uint32_t fineTime=0;
 
 	vector<const CalorimeterDigiHit*> chits_digi;
 	vector<const IntVetoDigiHit*> ivhits_digi;
@@ -109,10 +112,22 @@ jerror_t TEvent_factory_CataniaProto2::evnt(JEventLoop *loop, uint64_t eventnumb
 		m_eventHeader->setEventNumber(tData->eventN);
 		m_eventHeader->setEventTime(tData->time);
 		m_eventHeader->setTriggerWords(tData->triggerWords);
+
+		loop->Get(fahits); /*just to get the event fine time from slot #4 - reading calo*/
+		for (int ii=0;ii<fahits.size();ii++){
+			if (fahits[ii]->m_channel.slot!=4) continue;
+			if (fahits[ii]->m_channel.slot==4){
+				fineTime=fahits[ii]->timestamp;
+				break;
+			}
+		}
+		m_eventHeader->setEventFineTime(fineTime);
+
 	} else {
 		m_eventHeader->setEventType(CataniaProto2MC);
 		m_eventHeader->setEventNumber(eventnumber);
 		m_eventHeader->setEventTime(0);
+		m_eventHeader->setEventFineTime(0);
 		//	m_eventHeader->setTriggerWords(); /*A.C. we don't have any trigger simulation*/
 		m_eventHeader->setRunNumber(m_MCRunNumber);
 	}

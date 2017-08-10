@@ -15,28 +15,35 @@
 /*This class is basically a place-holder for the data coming from EVIO file,
  * for the raw and digitized banks
  */
-class ExtVetoMCHit:public VetoMCHit{
-	public:
-		JOBJECT_PUBLIC(ExtVetoMCHit);
+class ExtVetoMCHit: public VetoMCHit {
+public:
+	JOBJECT_PUBLIC(ExtVetoMCHit)
+	;
 
-		// Add data members here. For example:
-		// int id;
-		// double E;
+	// Add data members here. For example:
+	// int id;
+	// double E;
 
-		// This method is used primarily for pretty printing
-		// the second argument to AddString is printf style format
-		void toStrings(vector<pair<string,string> > &items)const{
-			 AddString(items, "id", "%4d", id);
-		}
+	// This method is used primarily for pretty printing
+	// the second argument to AddString is printf style format
+	void toStrings(vector<pair<string, string> > &items) const {
 
-		//dgtz banks
-		int adc1,tdc1;
-		int adc2,tdc2;
-		int adc3,tdc3;
-		int adc4,tdc4;
+		AddString(items, "sector", "%i", sector);
+		AddString(items, "channel", "%i", channel);
+		AddString(items, "system", "%i", system);
 
-		//raw banks
-		double totEdep;
+		AddString(items, "totEdep", "%f", totEdep);
+		AddString(items, "id", "%4d", id);
+	}
+
+	//dgtz banks
+	int adc1, tdc1;
+	int adc2, tdc2;
+	int adc3, tdc3;
+	int adc4, tdc4;
+
+	//raw banks
+	double totEdep;
 };
 
 #endif
