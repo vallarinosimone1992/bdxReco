@@ -167,7 +167,6 @@ def configureJNI(env):
        
         if java_base == '/usr' or java_base == '/usr/local':
             # too many possible subdirectories. Just use defaults
-            print "stocazzo",java_libs,java_base,java_headers
             java_headers.append(os.path.join(java_headers[0], 'linux'))
             java_headers.append(os.path.join(java_headers[0], 'solaris'))
         else:
