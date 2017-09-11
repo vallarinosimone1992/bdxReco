@@ -89,24 +89,11 @@ jerror_t BDXEventProcessor::init(void) {
 
 	}
 
-	japp->RootWriteLock();
-	m_eventHeader = new TTree("EventHeader", "EventHeader");
-	m_eventHeader->Branch("eventN", &eventN);
-	m_eventHeader->Branch("runN", &runN);
-	m_eventHeader->Branch("T", &eventT);
-	m_eventHeader->Branch("tword", &tWord);
 
-	m_runInfo = new TTree("RunInfo", "RunInfo");
-	m_runInfo->Branch("runN", &runN);
-	m_runInfo->Branch("dT", &deltaTime);
 
-	if (m_DObuildDST) {
-		m_eventDST = new TTree("EventDST", "EventDST");
-		m_eventDST->Branch("Event", &m_event);
-		if (m_isMC == 0) m_eventDST->AddFriend(m_eventHeader);
-	}
 
-	japp->RootUnLock();
+
+
 
 	return NOERROR;
 }
@@ -126,6 +113,26 @@ jerror_t BDXEventProcessor::brun(JEventLoop *eventLoop, int32_t runnumber) {
 					bout << "Running on ET with root thus changing file name to: " << outFile << endl;
 				}
 				m_ROOTOutput->OpenOutput(outFile);
+
+				m_eventHeader = new TTree("EventHeader", "EventHeader");
+				m_eventHeader->Branch("eventN", &eventN);
+				m_eventHeader->Branch("runN", &runN);
+				m_eventHeader->Branch("T", &eventT);
+				m_eventHeader->Branch("tword", &tWord);
+
+				m_runInfo = new TTree("RunInfo", "RunInfo");
+				m_runInfo->Branch("runN", &runN);
+				m_runInfo->Branch("dT", &deltaTime);
+
+				if (m_DObuildDST) {
+					m_eventDST = new TTree("EventDST", "EventDST");
+					m_eventDST->Branch("Event", &m_event);
+					if (m_isMC == 0) m_eventDST->AddFriend(m_eventHeader);
+				}
+
+
+
+
 
 				(m_ROOTOutput)->AddObject(m_eventHeader);
 				(m_ROOTOutput)->AddObject(m_runInfo);
