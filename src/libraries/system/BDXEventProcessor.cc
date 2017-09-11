@@ -60,14 +60,14 @@ jerror_t BDXEventProcessor::init(void) {
 	}
 
 	gPARMS->SetDefaultParameter("SYSTEM:OUTPUT", optf, "Set OUTPUT file type and name, using the form \"TYPE,FILENAME\". Type can be ROOT, EVIO, TXT. Example: -PSYSTEM:OUTPUT=\"ROOT,out.root\" ");
-	bout << "Out string is: "<<optf<<endl;
+	bout << "Out string is: " << optf << endl;
 	outType.assign(optf, 0, optf.find(","));
 	outFile.assign(optf, optf.find(",") + 1, optf.size());
 
 	std::transform(outType.begin(), outType.end(), outType.begin(), ::tolower);
 
 	if (optf != "none") {
-		bout << "Again, out string is: "<<optf<<endl;
+		bout << "Again, out string is: " << optf << endl;
 		bout << "Out file type is: " << outType << endl;
 		if (outType == "root") {
 			m_output = new JROOTOutput();
@@ -76,7 +76,7 @@ jerror_t BDXEventProcessor::init(void) {
 			isET = 1;
 			m_output = new JROOTOutput();
 #else
-			bout <<"root_et file type was requested, but no ET-support was built. Exiting!"<<endl;
+			bout << "root_et file type was requested, but no ET-support was built. Exiting!" << endl;
 			exit(1);
 #endif
 		} else if (outType == "evio") {
@@ -84,16 +84,21 @@ jerror_t BDXEventProcessor::init(void) {
 		} else if (outType == "txt") {
 			berr << "txt not yet implemented" << endl;
 		} else {
-			berr << "file type not recognized: " <<outType<< endl;
+			berr << "file type not recognized: " << outType << endl;
 		}
 
 	}
 
+	/*Event header and runInfo are always created - as memory resident TTrees (these are quite small)*/
+	m_eventHeader = new TTree("EventHeader", "EventHeader");
+	m_eventHeader->Branch("eventN", &eventN);
+	m_eventHeader->Branch("runN", &runN);
+	m_eventHeader->Branch("T", &eventT);
+	m_eventHeader->Branch("tword", &tWord);
 
-
-
-
-
+	m_runInfo = new TTree("RunInfo", "RunInfo");
+	m_runInfo->Branch("runN", &runN);
+	m_runInfo->Branch("dT", &deltaTime);
 
 	return NOERROR;
 }
@@ -101,12 +106,12 @@ jerror_t BDXEventProcessor::init(void) {
 // brun
 jerror_t BDXEventProcessor::brun(JEventLoop *eventLoop, int32_t runnumber) {
 
-	bout << "BDXEventProcessor::brun " << runnumber << "(isFirstCallToBrun: "<<isFirstCallToBrun<<" m_output: "<<m_output<<")"<<endl;
+	bout << "BDXEventProcessor::brun " << runnumber << "(isFirstCallToBrun: " << isFirstCallToBrun << " m_output: " << m_output << ")" << endl;
 
 	if (isFirstCallToBrun) {
-		if (m_output!=0) {
-			bout<<"got m_output, className is: "<<m_output->className()<<endl;
-			if (strcmp(m_output->className(),"JROOTOutput")==0) {
+		if (m_output != 0) {
+			bout << "got m_output, className is: " << m_output->className() << endl;
+			if (strcmp(m_output->className(), "JROOTOutput") == 0) {
 				JROOTOutput* m_ROOTOutput = (JROOTOutput*) m_output;
 				if (isET == 1) {
 					outFile = string(Form("out.%i.online.root", runnumber));
@@ -114,32 +119,19 @@ jerror_t BDXEventProcessor::brun(JEventLoop *eventLoop, int32_t runnumber) {
 				}
 				m_ROOTOutput->OpenOutput(outFile);
 
-				m_eventHeader = new TTree("EventHeader", "EventHeader");
-				m_eventHeader->Branch("eventN", &eventN);
-				m_eventHeader->Branch("runN", &runN);
-				m_eventHeader->Branch("T", &eventT);
-				m_eventHeader->Branch("tword", &tWord);
-
-				m_runInfo = new TTree("RunInfo", "RunInfo");
-				m_runInfo->Branch("runN", &runN);
-				m_runInfo->Branch("dT", &deltaTime);
-
+				/*DST TTree created as file-resident TTree, only if output exists*/
 				if (m_DObuildDST) {
 					m_eventDST = new TTree("EventDST", "EventDST");
 					m_eventDST->Branch("Event", &m_event);
 					if (m_isMC == 0) m_eventDST->AddFriend(m_eventHeader);
+					m_ROOTOutput->AddObject(m_eventDST);
 				}
 
-
-
-
-
+				/*If an output exists, add the eventHeader and runInfo*/
 				(m_ROOTOutput)->AddObject(m_eventHeader);
 				(m_ROOTOutput)->AddObject(m_runInfo);
-				if (m_DObuildDST) (m_ROOTOutput)->AddObject(m_eventDST);
 			}
 		}
-
 	}
 
 	if (m_isMC == 0) {
@@ -196,7 +188,7 @@ jerror_t BDXEventProcessor::erun(void) {
 	m_runInfo->Fill();
 	japp->RootUnLock();
 
-	if (m_output&&(isET==1)) {
+	if (m_output && (isET == 1)) {
 		m_output->CloseOutput();
 	}
 
@@ -245,8 +237,7 @@ void BDXEventProcessor::updateCalibration(CalibrationHandlerBase* cal, JEventLoo
 	bool flagAll = true;
 	int calibratedOne = -1;
 	for (calibrations_it = calibrations.begin(); calibrations_it != calibrations.end(); calibrations_it++) {
-		if ((*calibrations_it)->hasLoadedCurrentRun() == false)
-			flagAll = false;
+		if ((*calibrations_it)->hasLoadedCurrentRun() == false) flagAll = false;
 		else
 			calibratedOne = std::distance(calibrations.begin(), calibrations_it); //save the index of this calibrated object
 	}
@@ -256,10 +247,8 @@ void BDXEventProcessor::updateCalibration(CalibrationHandlerBase* cal, JEventLoo
 	} else if (calibratedOne != -1) { /*It means there is at least an already-calibrated object!*/
 		bout << "Going to fill CalibrationHandlers for table: " << name << " there are: " << calibrations.size() << " Load from data: " << calibratedOne << endl;
 		for (int ical = 0; ical < calibrations.size(); ical++) {
-			if (ical == calibratedOne)
-				continue;
-			else if (calibrations[ical]->hasLoadedCurrentRun() == true)
-				continue;
+			if (ical == calibratedOne) continue;
+			else if (calibrations[ical]->hasLoadedCurrentRun() == true) continue;
 			else {
 				calibrations[ical]->fillCalib(calibrations[calibratedOne]->getRawCalibData());
 			}
