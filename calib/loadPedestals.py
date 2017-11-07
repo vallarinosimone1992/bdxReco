@@ -58,8 +58,8 @@ if (variation=="default"):
     for crate in range(0,20):
         for slot in range(0,20):
             for channel in range(0,16):
-                outF.write("0 "+str(slot)+" "+str(channel)+" 0 0 \n")
-                outF.close()
+                outF.write(str(crate)+" "+str(slot)+" "+str(channel)+" 0 0 \n")
+    outF.close()
     #at this point, we have the file for run 
     #specify in the command
     command = commandBase+" -r "+str(firstRun)+"-"+str(lastRun)
@@ -71,7 +71,6 @@ if (variation=="default"):
 #In case of other variations, need to open file with slot1 only
 else:
     for fn in glob.glob("DAQ_pedestals/run*.ped"): #this may be variation-dependent
-        print fn
         #fn is in the form: absPath/runxxxxx.ped
         fn=os.path.basename(fn)
         run=fn[3:].split('.')[0]
@@ -80,7 +79,10 @@ else:
         if (int(run)>lastRun):
             continue
         outF=open("DAQ_pedestals/tables/run_"+run+".dat","w") #this may be variation-dependent
-        if (variation=="JLabFlux0"): #Read slot 1, then write all the others
+        if (variation=="JLabFlux0"): #Write slot 0, read 1, then write all the others
+            slot = 0
+            for channel in range(0,16):
+                outF.write("0 "+str(slot)+" "+str(channel)+" 0 0 \n")
             with open("DAQ_pedestals/"+fn) as inF:
                 for line in inF:
                     data=line.split()
@@ -90,7 +92,7 @@ else:
                     RMS=data[3]
                     outF.write("0 "+str(slot)+" "+str(channel)+" "+str(ped)+" "+str(RMS)+"\n")
             inF.close()
-            for slot in range(1,20):
+            for slot in range(2,20):
                 for channel in range(0,16):
                     outF.write("0 "+str(slot)+" "+str(channel)+" 0 0 \n")
         else:  #Write slots 1-3, then read 4-10, then write 11-19
@@ -113,7 +115,8 @@ else:
         for crate in range(1,20):
             for slot in range(0,20):
                 for channel in range(0,16):
-                    outF.write(str(crate)+" "+str(slot)+" "+str(channel)+" 0 0\n")        
+                    outF.write(str(crate)+" "+str(slot)+" "+str(channel)+" 0 0\n")    
+        outF.close()
         #at this point, we have the file for run 
         #specify in the command
         command = commandBase+" -r "+str(run)+"-"+str(run)

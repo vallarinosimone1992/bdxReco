@@ -22,3 +22,6 @@ calib/ccdb.calib
 #root Dictionary files
 *Dict*
 
+#pedestal files - don't want these on github
+calib/DAQ_pedestals/*
+calib/DAQ_parms/*
