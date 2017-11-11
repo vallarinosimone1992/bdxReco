@@ -60,6 +60,7 @@ public:
 			if (channel > b.channel) return false;
 			return false;
 		}
+		string print()const{return Form("DAQ crate: %i slot: %i channel: %i",rocid,slot,channel);}
 
 		ClassDef(csc_t,1);
 

@@ -102,7 +102,7 @@ if 'install' in COMMAND_LINE_TARGETS:
     print 'inc  install dirs = ', incInstallDir, ", ", archIncInstallDir
 
 else:
-    print 'No installation being done'
+    print 'No ET installation being done'
 
 print
 

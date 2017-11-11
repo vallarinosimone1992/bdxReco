@@ -38,7 +38,7 @@ public:
 		AddString(items,"Qraw","%4f",Qraw);
 		AddString(items,"Qphe","%4f",Qphe);
 		AddString(items,"T","%4f",T);
-
+		AddString(items,"A","%4f",A);
 	}
 	typedef enum{
 		noise=0,

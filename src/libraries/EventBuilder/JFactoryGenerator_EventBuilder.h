@@ -11,25 +11,32 @@
 #include <JANA/jerror.h>
 #include <JANA/JFactoryGenerator.h>
 
-#include "CataniaEvent_factory.h"
+
 //#include "MCEvent_factory.h"
 #include "TEvent_factory_CataniaProto2.h"
 #include "TEvent_factory_FullMC.h"
+#include "TEvent_factory_JLabFlux.h"
 
-class JFactoryGenerator_EventBuilder: public jana::JFactoryGenerator{
-	public:
-		JFactoryGenerator_EventBuilder(){}
-		virtual ~JFactoryGenerator_EventBuilder(){}
-		virtual const char* className(void){return static_className();}
-		static const char* static_className(void){return "JFactoryGenerator_EventBuilder";}
-		
-		jerror_t GenerateFactories(jana::JEventLoop *loop){
-			loop->AddFactory(new CataniaEvent_factory());
+class JFactoryGenerator_EventBuilder: public jana::JFactoryGenerator {
+public:
+	JFactoryGenerator_EventBuilder() {
+	}
+	virtual ~JFactoryGenerator_EventBuilder() {
+	}
+	virtual const char* className(void) {
+		return static_className();
+	}
+	static const char* static_className(void) {
+		return "JFactoryGenerator_EventBuilder";
+	}
+
+	jerror_t GenerateFactories(jana::JEventLoop *loop) {
 		//	loop->AddFactory(new MCEvent_factory());
-			loop->AddFactory(new TEvent_factory_CataniaProto2());
-			loop->AddFactory(new TEvent_factory_FullMC());
-			return NOERROR;
-		}
+		loop->AddFactory(new TEvent_factory_CataniaProto2());
+		loop->AddFactory(new TEvent_factory_JLabFlux());
+		loop->AddFactory(new TEvent_factory_FullMC());
+		return NOERROR;
+	}
 
 };
 

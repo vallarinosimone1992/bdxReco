@@ -23,7 +23,7 @@ using namespace std;
 JEventSourceEvioDAQ::JEventSourceEvioDAQ(const char* source_name) :
 		JEventSource(source_name), chan(0), EDT(0), vme_mother_tag(0), child_mode1_tag(0), child_mode7_tag(0), eventHeader_tag(0), curRunNumber(0), curEventNumber(0) {
 
-	jout << "JEventSourceEvioDAQ creator: " <<this<< endl;
+	jout << "JEventSourceEvioDAQ creator: " << this << endl;
 
 	vme_mother_tag = 0x1;
 	child_mode1_tag = 0xe101;
@@ -71,12 +71,12 @@ JEventSourceEvioDAQ::JEventSourceEvioDAQ(const char* source_name) :
 		source_type = kFileSource;
 	} catch (evioException e) { /*Check if we can open ET-system*/
 #ifdef  ET_SUPPORT_ENABLE
-		if(this->source_name.substr(0,3) == "ET:") {
-			jout << "Attempting to open \""<<this->source_name<<"\" as ET (network) source..." <<endl;
+		if (this->source_name.substr(0, 3) == "ET:") {
+			jout << "Attempting to open \"" << this->source_name << "\" as ET (network) source..." << endl;
 			ConnectToET(source_name);
 			source_type = kETSource;
 		}
-		if(!et_connected) throw JException("Failed to open ET system: " + this->source_name);
+		if (!et_connected) throw JException("Failed to open ET system: " + this->source_name);
 #else
 		// No ET and the file didn't work so re-throw the exception
 		if (this->source_name.substr(0, 3) == "ET:") {
@@ -140,15 +140,15 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event) {
 					const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*iter);
 					vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
 					event.SetEventNumber(pData->at(0));
-				} else if ((*iter)->tag == eventHeader_tag) {
+				}
+				if ((*iter)->tag == eventHeader_tag) {
 					const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*iter);
 					vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
 					event.SetEventNumber(pData->at(2));
 					curRunNumber = pData->at(1);
 				}
 			}
-			if (overwriteRunNumber != -1)
-				event.SetRunNumber(overwriteRunNumber);
+			if (overwriteRunNumber != -1) event.SetRunNumber(overwriteRunNumber);
 			else
 				event.SetRunNumber(curRunNumber);
 			return NOERROR;
@@ -163,15 +163,15 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event) {
 		}
 	} else if (this->source_type == kETSource) {
 #ifdef ET_SUPPORT_ENABLE
-		if (buff!=0) {
+		if (buff != 0) {
 			delete buff;
 		}
-		if (m_VERBOSE>5) jout<<"before new: "<<buff<<" I am: "<<this<<endl;
-		buff=new uint32_t[BUFFER_SIZE];
-		if (m_VERBOSE>5) jout<<"after new: "<<buff<<" I am: "<<this<<endl;
+		if (m_VERBOSE > 5) jout << "before new: " << buff << " I am: " << this << endl;
+		buff = new uint32_t[BUFFER_SIZE];
+		if (m_VERBOSE > 5) jout << "after new: " << buff << " I am: " << this << endl;
 		// Loop until we get an event or are told to stop
 		struct timespec timeout;
-		timeout.tv_sec = (unsigned int) floor(TIMEOUT);// set ET timeout
+		timeout.tv_sec = (unsigned int) floor(TIMEOUT); // set ET timeout
 		timeout.tv_nsec = (unsigned int) floor(1.0E9 * (TIMEOUT - (float) timeout.tv_sec));
 		et_event *pe = NULL;
 		while (!japp->GetQuittingStatus()) {
@@ -197,45 +197,49 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event) {
 
 			usleep(10);
 		}
-		if(japp->GetQuittingStatus() && pe==NULL) return NO_MORE_EVENTS_IN_SOURCE;
+		if (japp->GetQuittingStatus() && pe == NULL) return NO_MORE_EVENTS_IN_SOURCE;
 		// Get pointer to event buffer in the ET-owned memory
-		uint32_t *et_buff=NULL;
-		et_event_getdata(pe, (void**)&et_buff);
-		if(et_buff == NULL) {
+		uint32_t *et_buff = NULL;
+		et_event_getdata(pe, (void**) &et_buff);
+		if (et_buff == NULL) {
 			jerr << " Got event from ET, but pointer to data is NULL!" << endl;
 			return NO_MORE_EVENTS_IN_SOURCE;
 		}
 		// Check byte order of event by looking at magic #
 		bool swap_needed = false;
 		uint32_t magic = et_buff[7];
-		if (m_VERBOSE>5) jout<<"Magic word is: "<<hex<<et_buff[7]<<endl;
-		switch(magic) {
-			case 0xc0da0100: swap_needed = false; break;
-			case 0x0001dac0: swap_needed = true; break;
-			default:
+		if (m_VERBOSE > 5) jout << "Magic word is: " << hex << et_buff[7] << endl;
+		switch (magic) {
+		case 0xc0da0100:
+			swap_needed = false;
+			break;
+		case 0x0001dac0:
+			swap_needed = true;
+			break;
+		default:
 			jerr << "EVIO magic word not present!" << endl;
 			return NO_MORE_EVENTS_IN_SOURCE;
 		}
 		uint32_t len = et_buff[0];
-		if(swap_needed) len = EVIO_SWAP32(len);
-		if(m_VERBOSE>3) {
-			jout << "Swapping is " << (swap_needed ? "":"not ") << "needed" << endl;
-			jout << " Num. words in EVIO buffer: "<<len<<endl;
+		if (swap_needed) len = EVIO_SWAP32(len);
+		if (m_VERBOSE > 3) {
+			jout << "Swapping is " << (swap_needed ? "" : "not ") << "needed" << endl;
+			jout << " Num. words in EVIO buffer: " << len << endl;
 		}
 
 		// Size of events in bytes
-		uint32_t bufsize_bytes = (len +1)*sizeof(uint32_t);// +1 is for buffer length word
-		if(bufsize_bytes > BUFFER_SIZE) {
-			jerr<<" ET event larger than our BUFFER_SIZE!!!"<<endl;
-			jerr<<" " << bufsize_bytes << " > " << BUFFER_SIZE << endl;
-			jerr<<" Will stop reading from this source now. Try restarting"<<endl;
-			jerr<<" with -PEVIO:BUFFER_SIZE=X where X is greater than "<<bufsize_bytes<<endl;
-			if(m_VERBOSE>3) {
+		uint32_t bufsize_bytes = (len + 1) * sizeof(uint32_t); // +1 is for buffer length word
+		if (bufsize_bytes > BUFFER_SIZE) {
+			jerr << " ET event larger than our BUFFER_SIZE!!!" << endl;
+			jerr << " " << bufsize_bytes << " > " << BUFFER_SIZE << endl;
+			jerr << " Will stop reading from this source now. Try restarting" << endl;
+			jerr << " with -PEVIO:BUFFER_SIZE=X where X is greater than " << bufsize_bytes << endl;
+			if (m_VERBOSE > 3) {
 				jout << "First few words in case you are trying to debug:" << endl;
-				for(unsigned int j=0; j<3; j++) {
+				for (unsigned int j = 0; j < 3; j++) {
 					char str[512];
-					for(unsigned int i=0; i<5; i++) {
-						sprintf(str, " %08x", et_buff[i+j*5]);
+					for (unsigned int i = 0; i < 5; i++) {
+						sprintf(str, " %08x", et_buff[i + j * 5]);
 						jout << str;
 					}
 					jout << endl;
@@ -244,12 +248,12 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event) {
 			return NO_MORE_EVENTS_IN_SOURCE;
 		}
 
-		if(m_VERBOSE>8) {
+		if (m_VERBOSE > 8) {
 			jout << "First few ET words in case you are trying to debug:" << endl;
-			for(unsigned int j=0; j<3; j++) {
+			for (unsigned int j = 0; j < 3; j++) {
 				char str[512];
-				for(unsigned int i=0; i<5; i++) {
-					sprintf(str, " %08x", et_buff[i+j*5]);
+				for (unsigned int i = 0; i < 5; i++) {
+					sprintf(str, " %08x", et_buff[i + j * 5]);
 					jout << str;
 				}
 				jout << endl;
@@ -262,11 +266,11 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event) {
 		// event in the stack using evioswap so that the different
 		// bank types are handled properly. If no swapping is
 		// needed, we just copy it all over in one go.
-		if(!swap_needed) {
+		if (!swap_needed) {
 			// Copy NTH and all events without swapping
-			if(m_VERBOSE>5) jout<<"Before memcpy: buff is: "<<buff<<" et_buff is: "<<et_buff<<" bufsize_bytes is: "<<bufsize_bytes<<" I am: "<<this<<endl;
+			if (m_VERBOSE > 5) jout << "Before memcpy: buff is: " << buff << " et_buff is: " << et_buff << " bufsize_bytes is: " << bufsize_bytes << " I am: " << this << endl;
 			memcpy(buff, et_buff, bufsize_bytes);
-			if(m_VERBOSE>5) jout<<"After memcpy: buff is: "<<buff<<" et_buff is: "<<et_buff<<" bufsize_bytes is: "<<bufsize_bytes<<" I am: "<<this<<endl;
+			if (m_VERBOSE > 5) jout << "After memcpy: buff is: " << buff << " et_buff is: " << et_buff << " bufsize_bytes is: " << bufsize_bytes << " I am: " << this << endl;
 
 		} else {
 
@@ -274,44 +278,42 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event) {
 			swap_int32_t(et_buff, 8, buff);
 
 			// Loop over events in stack
-			int Nevents_in_stack=0;
+			int Nevents_in_stack = 0;
 			uint32_t idx = 8;
-			while(idx<len) {
+			while (idx < len) {
 				uint32_t mylen = EVIO_SWAP32(et_buff[idx]);
-				if(m_VERBOSE>7) jout <<"        swapping event: idx=" << idx <<" mylen="<<mylen<<endl;
-				if( (idx+mylen) > len ) {
+				if (m_VERBOSE > 7) jout << "        swapping event: idx=" << idx << " mylen=" << mylen << endl;
+				if ((idx + mylen) > len) {
 					jerr << "Bad word count while swapping events in ET event stack!" << endl;
-					jerr << "idx="<<idx<<" mylen="<<mylen<<" len="<<len<<endl;
-					jerr << "This indicates a problem either with the DAQ system"<<endl;
-					jerr << "or this parser code! " <<endl;
+					jerr << "idx=" << idx << " mylen=" << mylen << " len=" << len << endl;
+					jerr << "This indicates a problem either with the DAQ system" << endl;
+					jerr << "or this parser code! " << endl;
 					break;
 				}
-				swap_int32_t(&et_buff[idx], mylen+1, &buff[idx]);
-				idx += mylen+1;
+				swap_int32_t(&et_buff[idx], mylen + 1, &buff[idx]);
+				idx += mylen + 1;
 				Nevents_in_stack++;
 			}
 
-			if(m_VERBOSE>3) jout << "        Found " << Nevents_in_stack << " events in the ET event stack." << endl;
+			if (m_VERBOSE > 3) jout << "        Found " << Nevents_in_stack << " events in the ET event stack." << endl;
 		}
 		// Put ET event back since we're done with it
 		et_event_put(sys_id, att_id, pe);
-		if(m_VERBOSE>5) jout<<"before EDT creation"<<endl;
+		if (m_VERBOSE > 5) jout << "before EDT creation" << endl;
 		EDT = new evioDOMTree(&buff[8]); /*A.C. this assumes the following is true: 1 ET_event contains 1 EVIO block that just has 1 EVIO event*/
 		event.SetRef(EDT);
 		event.SetJEventSource(this);
-		if (m_VERBOSE>5) jout<<"After EDT creation and reference set"<<endl;
+		if (m_VERBOSE > 5) jout << "After EDT creation and reference set" << endl;
 
 		//This part is fine for real data @ catania
 		evio::evioDOMNodeListP fullList = EDT->getNodeList();
 		evio::evioDOMNodeList::const_iterator iter;
 
 		for (iter = fullList->begin(); iter != fullList->end(); iter++) {
-
 			if ((*iter)->tag == end_tag) { //it means the run ended.
-				jout<<"Got end event"<<endl;
+				jout << "Got end event" << endl;
 				return NO_MORE_EVENTS_IN_SOURCE;
 			}
-
 			if (((*iter)->tag == prestart_tag) && (overwriteRunNumber == -1)) {
 				const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*iter);
 				vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
@@ -321,17 +323,17 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event) {
 				const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*iter);
 				vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
 				event.SetEventNumber(pData->at(0));
-			} else if ((*iter)->tag == eventHeader_tag) {
+			}
+			if ((*iter)->tag == eventHeader_tag) {
 				const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*iter);
 				vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
 				event.SetEventNumber(pData->at(2));
 				curRunNumber = pData->at(1);
 			}
 		}
-		if (overwriteRunNumber != -1)
-		event.SetRunNumber(overwriteRunNumber);
+		if (overwriteRunNumber != -1) event.SetRunNumber(overwriteRunNumber);
 		else
-		event.SetRunNumber(curRunNumber);
+			event.SetRunNumber(curRunNumber);
 
 		return NOERROR;
 
@@ -389,9 +391,7 @@ jerror_t JEventSourceEvioDAQ::GetObjects(JEvent &event, JFactory_base *factory) 
 
 		for (iter = fullList->begin(); iter != fullList->end(); iter++) {
 			if ((*iter)->tag == vme_mother_tag) {
-
 				evio::evioDOMNodeList *leafList = (*iter)->getChildList();
-
 				for (branch = leafList->begin(); branch != leafList->end(); branch++) {
 					if ((*branch)->tag == child_mode1_tag) {
 						const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*branch);
@@ -403,11 +403,11 @@ jerror_t JEventSourceEvioDAQ::GetObjects(JEvent &event, JFactory_base *factory) 
 								vector<CompositeADCRaw_t> decdata = decoder.getData();
 								for (int loop = 0; loop < decdata.size(); loop++) {
 									fa250Mode1Hit *hit = new fa250Mode1Hit();
-									//Why I do not save directly the CompositeADCRaw_t and use it as the "Jobject in jana:\
-									// 1) CompositeADCRaw_t is just a simple structure to old data
-									// 2) CompositeADCRaw_t is just for evio-readout
-									// 3) fa250Mode1Hit is a more complex class, used within JANA
-
+									/*Why I do not save directly the CompositeADCRaw_t and use it as the "Jobject in jana:
+									 1) CompositeADCRaw_t is just a simple structure to old data
+									 2) CompositeADCRaw_t is just for evio-readout
+									 3) fa250Mode1Hit is a more complex class, used within JANA
+									 */
 									hit->m_channel.rocid = 0;	///TODO better
 									hit->m_channel.slot = decdata[loop].slot;
 									hit->m_channel.channel = decdata[loop].channel;
@@ -417,6 +417,7 @@ jerror_t JEventSourceEvioDAQ::GetObjects(JEvent &event, JFactory_base *factory) 
 
 									hit->trigger = decdata[loop].trigger;
 									hit->timestamp = decdata[loop].time;
+
 									//	jout<<hit->m_channel.rocid<<" "<<hit->m_channel.slot<<" "<<hit->m_channel.channel<<" "<<hit->samples.size()<<" "<<hit->trigger<<" "<<hit->timestamp<<endl;
 									data.push_back(hit);
 								}
@@ -458,11 +459,11 @@ jerror_t JEventSourceEvioDAQ::GetObjects(JEvent &event, JFactory_base *factory) 
 								vector<CompositeADCPulse_t> decdata = decoder.getDataPulse();
 								for (int loop = 0; loop < decdata.size(); loop++) {
 									fa250Mode7Hit *hit = new fa250Mode7Hit();
-									//Why I do not save directly the CompositeADCPulse_t and use it as the "Jobject in jana:\
-									// 1) CompositeADCPulse_t is just a simple structure to old data
-									// 2) CompositeADCPulse_t is just for evio-readout
-									// 3) fa250Mode7Hit is a more complex class, used within JANA
-
+									/*Why I do not save directly the CompositeADCPulse_t and use it as the "Jobject in jana:\
+									 1) CompositeADCPulse_t is just a simple structure to old data
+									 2) CompositeADCPulse_t is just for evio-readout
+									 3) fa250Mode7Hit is a more complex class, used within JANA
+									 */
 									hit->m_channel.rocid = 0;	///TODO better
 									hit->m_channel.slot = decdata[loop].slot;
 									hit->m_channel.channel = decdata[loop].channel;
@@ -499,25 +500,26 @@ jerror_t JEventSourceEvioDAQ::GetObjects(JEvent &event, JFactory_base *factory) 
 		eventData *this_eventData = new eventData();
 
 		for (iter = fullList->begin(); iter != fullList->end(); iter++) {
+
 			if ((*iter)->tag == vme_mother_tag) {
 				evio::evioDOMNodeList *leafList = (*iter)->getChildList();
 
 				for (branch = leafList->begin(); branch != leafList->end(); branch++) {
+
 					if ((*branch)->tag == child_trigger_tag) {
 						const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*branch);
 						int leafSize = leaf->getSize();
 						vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
 						if (leafSize > 0) {
-
 							for (int itrigWord = 0; itrigWord < pData->size(); itrigWord++) {
 								this_eventData->triggerWords.push_back(pData->at(itrigWord));
 							}
-
 						}
 
 					}
 
 					else if ((*branch)->tag == eventHeader_tag) {
+
 						const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*branch);
 						int leafSize = leaf->getSize();
 						vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
@@ -583,45 +585,45 @@ void JEventSourceEvioDAQ::ConnectToET(const char* source_name) {
 // Split source name into session, station, etc...
 	vector<string> fields;
 	string str = source_name;
-	size_t startpos=0, endpos=0;
-	while((endpos = str.find(":", startpos)) != str.npos) {
-		size_t len = endpos-startpos;
-		fields.push_back(len==0 ? "":str.substr(startpos, len));
-		startpos = endpos+1;
+	size_t startpos = 0, endpos = 0;
+	while ((endpos = str.find(":", startpos)) != str.npos) {
+		size_t len = endpos - startpos;
+		fields.push_back(len == 0 ? "" : str.substr(startpos, len));
+		startpos = endpos + 1;
 	}
-	if(startpos<str.length()) fields.push_back(str.substr(startpos, str.npos));
+	if (startpos < str.length()) fields.push_back(str.substr(startpos, str.npos));
 
-	string session = fields.size()>1 ? fields[1]:"";
-	string station = fields.size()>2 ? fields[2]:"";
-	string host = fields.size()>3 ? fields[3]:"localhost";
-	int port = fields.size()>4 ? atoi(fields[4].c_str()):ET_SERVER_PORT;
+	string session = fields.size() > 1 ? fields[1] : "";
+	string station = fields.size() > 2 ? fields[2] : "";
+	string host = fields.size() > 3 ? fields[3] : "localhost";
+	int port = fields.size() > 4 ? atoi(fields[4].c_str()) : ET_SERVER_PORT;
 
-	if(session == "") session = "none";
-	if(station == "") station = "DANA";
-	if(host == "") host = "localhost";
-	string fname = session.at(0)=='/' ? session:(string("/tmp/et_sys_") + session);
+	if (session == "") session = "none";
+	if (station == "") station = "DANA";
+	if (host == "") host = "localhost";
+	string fname = session.at(0) == '/' ? session : (string("/tmp/et_sys_") + session);
 
 // Report to user what we're doing
 	jout << " Opening ET system:" << endl;
-	if(session!=fname) jout << "     session: " << session << endl;
+	if (session != fname) jout << "     session: " << session << endl;
 	jout << "     station: " << station << endl;
 	jout << " system file: " << fname << endl;
 	jout << "        host: " << host << endl;
-	if(port !=0) jout << "        port: " << port << endl;
+	if (port != 0) jout << "        port: " << port << endl;
 
 // connect to the ET system
 	et_openconfig openconfig;
 	et_open_config_init(&openconfig);
-	if(host != "") {
+	if (host != "") {
 		et_open_config_setcast(openconfig, ET_DIRECT);
 		et_open_config_setmode(openconfig, ET_HOST_AS_LOCAL); // ET_HOST_AS_LOCAL or ET_HOST_AS_REMOTE
 		et_open_config_sethost(openconfig, host.c_str());
 		et_open_config_setport(openconfig, ET_BROADCAST_PORT);
 		et_open_config_setserverport(openconfig, port);
 	}
-	int err = et_open(&sys_id,fname.c_str(),openconfig);
-	if(err != ET_OK) {
-		cerr << __FILE__<<":"<<__LINE__<<" Problem opening ET system"<<endl;
+	int err = et_open(&sys_id, fname.c_str(), openconfig);
+	if (err != ET_OK) {
+		cerr << __FILE__ << ":" << __LINE__ << " Problem opening ET system" << endl;
 		cerr << et_perror(err);
 		return;
 	}
@@ -629,17 +631,17 @@ void JEventSourceEvioDAQ::ConnectToET(const char* source_name) {
 // create station config in case no station exists
 	et_statconfig et_station_config;
 	et_station_config_init(&et_station_config);
-	et_station_config_setblock(et_station_config, ET_STATION_CREATE_BLOCKING ? ET_STATION_BLOCKING:ET_STATION_NONBLOCKING);
-	et_station_config_setselect(et_station_config,ET_STATION_SELECT_ALL);
-	et_station_config_setuser(et_station_config,ET_STATION_USER_MULTI);
-	et_station_config_setrestore(et_station_config,ET_STATION_RESTORE_OUT);
-	et_station_config_setcue(et_station_config,ET_STATION_NEVENTS);
-	et_station_config_setprescale(et_station_config,1);
-	cout<<"ET station configured\n";
+	et_station_config_setblock(et_station_config, ET_STATION_CREATE_BLOCKING ? ET_STATION_BLOCKING : ET_STATION_NONBLOCKING);
+	et_station_config_setselect(et_station_config, ET_STATION_SELECT_ALL);
+	et_station_config_setuser(et_station_config, ET_STATION_USER_MULTI);
+	et_station_config_setrestore(et_station_config, ET_STATION_RESTORE_OUT);
+	et_station_config_setcue(et_station_config, ET_STATION_NEVENTS);
+	et_station_config_setprescale(et_station_config, 1);
+	cout << "ET station configured\n";
 
 // create station if not already created
-	int status=et_station_create(sys_id,&sta_id,station.c_str(),et_station_config);
-	if((status!=ET_OK)&&(status!=ET_ERROR_EXISTS)) {
+	int status = et_station_create(sys_id, &sta_id, station.c_str(), et_station_config);
+	if ((status != ET_OK) && (status != ET_ERROR_EXISTS)) {
 		et_close(sys_id);
 		cerr << "Unable to create station " << station << endl;
 		cerr << et_perror(status);
@@ -648,7 +650,7 @@ void JEventSourceEvioDAQ::ConnectToET(const char* source_name) {
 		// less than the number of events we specified for the station CUE.
 		int Nevents = 0;
 		et_system_getnumevents(sys_id, &Nevents);
-		if(Nevents <= ET_STATION_NEVENTS) {
+		if (Nevents <= ET_STATION_NEVENTS) {
 			jerr << "NOTE: The number of events specified for the station cue is equal to" << endl;
 			jerr << "or greater than the number of events in the entire ET system:" << endl;
 			jerr << endl;
@@ -656,27 +658,26 @@ void JEventSourceEvioDAQ::ConnectToET(const char* source_name) {
 			jerr << endl;
 			jerr << "Try re-running with: " << endl;
 			jerr << endl;
-			jerr << "      -PDAQ:ET_STATION_NEVENTS=" << (Nevents+1)/2 << endl;
+			jerr << "      -PDAQ:ET_STATION_NEVENTS=" << (Nevents + 1) / 2 << endl;
 			jerr << endl;
 		}
 		return;
 	}
-	if(status==ET_ERROR_EXISTS) {
+	if (status == ET_ERROR_EXISTS) {
 		jout << " Using existing ET station " << station << endl;
 	} else {
 		jout << " ET station " << station << " created\n";
 	}
 
 // Attach to the ET station
-	status=et_station_attach(sys_id,sta_id,&att_id);
-	if(status!=ET_OK) {
+	status = et_station_attach(sys_id, sta_id, &att_id);
+	if (status != ET_OK) {
 		et_close(sys_id);
 		jerr << "Unable to attach to station " << station << endl;
 		return;
 	}
 
-	jout << "...now connected to ET system: " << fname
-	<< ",   station: " << station << " (station id=" << sta_id << ", attach id=" << att_id <<")" << endl;
+	jout << "...now connected to ET system: " << fname << ",   station: " << station << " (station id=" << sta_id << ", attach id=" << att_id << ")" << endl;
 
 	et_connected = true;
 // chan = new evioETChannel(sys_id, att_id);
@@ -685,13 +686,13 @@ void JEventSourceEvioDAQ::ConnectToET(const char* source_name) {
 // as the event size used in the ET system
 	size_t eventsize;
 	et_system_geteventsize(sys_id, &eventsize);
-	if((uint32_t)eventsize > BUFFER_SIZE) {
-		jout<<" Events in ET system are larger than currently set buffer size:"<<endl;
-		jout<<" "<<eventsize<<" > "<<BUFFER_SIZE<<endl;
-		jout<<" Setting BUFFER_SIZE to "<<eventsize<<endl;
-		BUFFER_SIZE = (uint32_t)eventsize;
+	if ((uint32_t) eventsize > BUFFER_SIZE) {
+		jout << " Events in ET system are larger than currently set buffer size:" << endl;
+		jout << " " << eventsize << " > " << BUFFER_SIZE << endl;
+		jout << " Setting BUFFER_SIZE to " << eventsize << endl;
+		BUFFER_SIZE = (uint32_t) eventsize;
 	} else {
-		jout<<" ET system event size:"<<eventsize<<"  JEventSource_DAQ.BUFFER_SIZE:"<<BUFFER_SIZE<<endl;
+		jout << " ET system event size:" << eventsize << "  JEventSource_DAQ.BUFFER_SIZE:" << BUFFER_SIZE << endl;
 	}
 
 #else

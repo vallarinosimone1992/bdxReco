@@ -22,6 +22,10 @@ jerror_t fa250Mode1CalibPedSubHit_factory::init(void)
 {
 	m_pedestals=new DAQCalibrationHandler("/DAQ/pedestals");
 	this->mapCalibrationHandler(m_pedestals);
+
+	m_parms=new DAQCalibrationHandler("DAQ/parms");
+	this->mapCalibrationHandler(m_parms);
+
 	return NOERROR;
 }
 
@@ -31,11 +35,11 @@ jerror_t fa250Mode1CalibPedSubHit_factory::init(void)
 jerror_t fa250Mode1CalibPedSubHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber)
 {
 	// Here, we would normally get this from the CalibPedSubration DB.
-	// For now, we hard code it...
-	LSB=0.4884;
+	LSB=0.4884; //this is in any case the default
 
 
 	this->updateCalibrationHandler(m_pedestals,eventLoop);
+	this->updateCalibrationHandler(m_parms,eventLoop);
 
 
 
@@ -48,7 +52,7 @@ jerror_t fa250Mode1CalibPedSubHit_factory::brun(jana::JEventLoop *eventLoop, int
 jerror_t fa250Mode1CalibPedSubHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 {
 	vector<const fa250Mode1Hit*> hits;
-	vector<double> DAQdata;
+	vector<double> DAQdata,PARMSdata;
 	double pedestal,RMS;
 	double sample=0;
 	TranslationTable::csc_t index;
@@ -74,6 +78,11 @@ jerror_t fa250Mode1CalibPedSubHit_factory::evnt(JEventLoop *loop, uint64_t event
 		DAQdata=m_pedestals->getCalib(hit->m_channel);
 		pedestal=DAQdata[0];
 		RMS=DAQdata[1];
+
+		PARMSdata=m_parms->getCalib(hit->m_channel);
+		LSB=PARMSdata[0];
+
+
 
 		for(uint32_t j=0; j<hit->samples.size(); j++){
 			sample = (double)hit->samples[j]; //get the sample

@@ -75,7 +75,7 @@ jerror_t IntVetoSiPMHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnu
 		jout<<"Got following sipm_gain for run number: "<<runnumber<<endl;
 		jout<<"Rows: "<<gainCalibMap.size()<<endl;
 		for (gainCalibMap_it=gainCalibMap.begin();gainCalibMap_it!=gainCalibMap.end();gainCalibMap_it++){
-			jout<<gainCalibMap_it->first.sector<<" "<<gainCalibMap_it->first.layer<<" "<<gainCalibMap_it->first.component<<" "<<gainCalibMap_it->first.readout<<" "<<gainCalibMap_it->second.at(0)<<endl;
+			jout<<"sector: "<<1.*gainCalibMap_it->first.sector<<" layer: "<<1.*gainCalibMap_it->first.layer<<" component: "<<1.*gainCalibMap_it->first.component<<" readout: "<<1.*gainCalibMap_it->first.readout<<" gain: "<<gainCalibMap_it->second.at(0)<<endl;
 		}
 	}
 	jout<<"IntVetoSiPMHit_factory::brun done"<<endl;

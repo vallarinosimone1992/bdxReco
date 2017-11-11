@@ -46,7 +46,7 @@ jerror_t TEvent_factory_CataniaProto2::init(void) {
 		m_tag="MC";
 	}
 	if ((m_isMC) && (m_isMC != 2)) {
-		jout << "Error! Can use this only with MC==2, i.e. CataniaSecondProto" << endl;
+		jout << "Error! Can use this only with MC==4, i.e. JLabFlux" << endl;
 		return VALUE_OUT_OF_RANGE;
 	}
 

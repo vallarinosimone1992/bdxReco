@@ -27,6 +27,7 @@ class fa250Mode1CalibPedSubHit_factory:public BDXFactory<fa250Mode1CalibPedSubHi
 		jerror_t fini(void);						///< Called after last event of last event source has been processed.
 
 		DAQCalibrationHandler *m_pedestals;
+		DAQCalibrationHandler *m_parms;
 		double LSB;
 };
 

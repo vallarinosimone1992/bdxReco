@@ -8,9 +8,10 @@ set command = "ccdb -c mysql://bdxwriter:e1tocome@clasdb.jlab.org/BDX"
 set DAQFolder = "/DAQ"
 set DAQIndexes = "crate=int slot=int channel=int"
 set DAQPedestalLines = 6400
-echo "DAQ"
+echo "DAQ peds and parms"
 $command mkdir $DAQFolder
 $command mktbl $DAQFolder/pedestals -r $DAQPedestalLines $DAQIndexes pedestal=double rms=double "#daq pedestals and RMS in fadc counts"
+$command mktbl $DAQFolder/parms -r $DAQPedestalLines $DAQIndexes LSB=double P2=double P3=double P4=double P5=double "#daq LSB and other parms"
 
 #Calorimeter
 set CalorimeterFolder = "/Calorimeter"

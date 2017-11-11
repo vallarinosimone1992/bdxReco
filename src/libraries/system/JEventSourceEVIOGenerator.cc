@@ -11,7 +11,7 @@ using namespace std;
 #include <MC/JEventSourceEVIOMC.h>
 
 JEventSourceEvioGenerator::JEventSourceEvioGenerator() : isMC(0) {
-	gPARMS->SetDefaultParameter("MC", isMC,"Flag to select if analysis is runned on a MC file. 0 Means real data (default). >=1 means MC, according to: \n1 CataniaProtoV1,\n 2 -> CataniaProtoV2, \n 10->FullMC");
+	gPARMS->SetDefaultParameter("MC", isMC,"Flag to select if analysis is runned on a MC file. 0 Means real data (default). >=1 means MC, according to: \n 1 CataniaProtoV1,\n 2 -> CataniaProtoV2,\n 4-> JLabFlux, \n 10->FullMC");
 }
 
 // Describes the file format
