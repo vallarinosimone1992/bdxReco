@@ -7,6 +7,7 @@
 
 #include "jv_mainframe.h"
 #include "JEventProcessor_janaview.h"
+#include <unistd.h>
 
 //---------------------------------
 // jv_mainframe    (Constructor)

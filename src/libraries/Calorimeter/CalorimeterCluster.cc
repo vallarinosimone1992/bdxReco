@@ -9,7 +9,6 @@
 #include "TH1D.h"
 
 
-
 TCanvas* CalorimeterCluster::Draw(int id)const{
 	int Nwaves;
 	int Nsamples;

@@ -71,7 +71,7 @@ def AddROOTdict(env,reldir,absdir):
     dictdir = os.getenv('BDXRECO_ROOT')+"/lib"
 
     
-#    print "$SOURCE","$TARGET"
+
     if env['SHOWBUILD']==0:
 			rootclingactionNoLinkDef = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCE ; mv `echo $TARGET | awk '{print substr($0,0,length($0)-3) \"_rdict.pcm\"}'` %s" % (rootclingpath," -I".join(env['CPPPATH']),dictdir), 'ROOTCLING  [$SOURCE]')
                         rootclingactionLinkDef = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCES ; mv `echo $TARGET | awk '{print substr($0,0,length($0)-3) \"_rdict.pcm\"}'` %s" % (rootclingpath," -I".join(env['CPPPATH']),dictdir), 'ROOTCLING  [$SOURCE]')
@@ -117,9 +117,10 @@ def AddROOTdict(env,reldir,absdir):
                 if(int(env['SHOWBUILD'])>=1):
                     print "  -----> Using "+filename+"_LinkDef.h for dictionary"
             else:
+                retVal=0
                 retVal=env.ROOTDictNoLinkDef(reldir+"/"+f)
     os.chdir(curpath)            
-        
+    
         
         
         

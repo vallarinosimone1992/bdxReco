@@ -1,5 +1,5 @@
 # scons build file for ET examples
-Import('env', 'libInstallDir', 'binInstallDir', 'archDir', 'execLibs', 'debugSuffix')
+Import('env','execLibs','debugSuffix')
 
 
 
@@ -35,8 +35,8 @@ for fileName in fileList:
 ##################################################################
 # Example of how to compile a user-defined event selection routine
 ##################################################################
-if False:
-    userLibName = 'myLibrary'
-    env.AppendUnique(CPPPATH = ['.', '#src/libsrc'])
-    myLib = env.SharedLibrary(target = userLibName+debugSuffix, source = myUserSelectionFiles)
-    env.Alias("examples", env.Install(target = libInstallDir, source = myLib))
+#if False:
+#    userLibName = 'myLibrary'
+#    env.AppendUnique(CPPPATH = ['.', '#src/libsrc'])
+#    myLib = env.SharedLibrary(target = userLibName+debugSuffix, source = myUserSelectionFiles)
+#    env.Alias("examples", env.Install(target = libInstallDir, source = myLib))

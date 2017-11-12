@@ -1,5 +1,5 @@
 # scons build file for ET execsrc
-Import('env', 'binInstallDir', 'archDir', 'execLibs', 'debugSuffix')
+Import('env', 'execLibs', 'debugSuffix')
 
 # lists of all C and C++ files
 fileList = Glob('*.c',  strings=True) + Glob('*.cc', strings=True)

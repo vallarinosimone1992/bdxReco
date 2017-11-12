@@ -142,9 +142,9 @@ class jv_mainframe:public TGMainFrame{
 	
 	
 	private:
-#if (!defined(__APPLE__))
+
 	ClassDef(jv_mainframe,1)
-#endif
+
 };
 
 #endif // _jv_mainframe_

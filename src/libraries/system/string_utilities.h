@@ -6,10 +6,6 @@
 #ifndef string_utilities_H
 #define string_utilities_H
 
-// Qt4 headers
-#include <QString>
-#include <QVariant>
-
 // C++ headers
 #include <vector>
 #include <iostream>
@@ -33,41 +29,7 @@ inline string stringify(int x)
 }
 
 
-// from QVariant to string
-// OS dependance
-inline string qv_tostring(QVariant input)
-{
-	
-	string output;
-	
-	// In Windows we need to initialize the string from toAscii
-	// In Posix we need the toStdString
-	#ifdef _MSC_VER
-		output = input.toString().toLatin1();
-	#else
-		output = input.toString().toStdString();
-	#endif
-	
-	return output;
-}
 
-// from QString to string
-// OS dependance
-inline string qs_tostring(QString input)
-{
-	
-	string output;
-	
-	// In Windows we need to initialize the string from toAscii
-	// In Posix we need the toStdString
-	#ifdef _MSC_VER
-		output = input.toLatin1();
-	#else
-		output = input.toStdString();
-	#endif
-	
-	return output;
-}
 
 
 //replaces a character to another characters.
@@ -146,11 +108,6 @@ bool is_main_variation(string);                     ///< returns 1 if the string
 ostream &operator<<(ostream &stream, map<string, string>);  ///< overload << for map<string, string>
 
 
-// returns a double from a QVariant
-inline double get_number(QVariant input)
-{
-	return get_number(TrimSpaces(qv_tostring(input)));
-}
 
 
 // returns a double from a string
@@ -166,16 +123,6 @@ inline double stringToDouble(string v)
 }
 
 
-// returns a double from a string
-// notice, atof should work but it doesn't work on some Mac
-// atof may also not be thread safe
-// solving all this with stringstream
-// from QString to string
-// OS dependance
-inline double qs_toDouble(QString input)
-{	
-	return stringToDouble(qs_tostring(input));
-}
 
 #endif
 

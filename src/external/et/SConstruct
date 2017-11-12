@@ -35,14 +35,6 @@ versionMinor = '1'
 uname    = os.uname();
 platform = uname[0]
 machine  = uname[4]
-osname   = os.getenv('CODA_OSNAME', platform + '-' +  machine)
-
-# Create an environment while importing the user's PATH.
-# This allows us to get to the vxworks compiler for example.
-# So for vxworks, make sure the tools are in your PATH
-
-
-
 
 # Debug/optimization flags
 debugSuffix = ''
@@ -62,49 +54,18 @@ execLibs = ['m', 'pthread', 'dl', 'rt']
 
 if platform == 'Darwin':
 	execLibs = ['pthread', 'dl']
-	env.Append(CPPDEFINES = ['Darwin'], SHLINKFLAGS = ['-multiply_defined', '-undefined',  '-flat_namespace', 'suppress'])
+	#env.Append(CPPDEFINES = ['Darwin'], SHLINKFLAGS = ['-multiply_defined'])
  	env.Append(CCFLAGS = ['-fmessage-length=0'])
 
 
 
 # Hidden sub directory into which variant builds go
-archDir = '.' + osname + debugSuffix
+archDir = '.' + platform + "_" + machine+ debugSuffix
 
 
-#########################
-# Install stuff
-#########################
-
-libInstallDir     = ""
-binInstallDir     = ""
-incInstallDir     = ""
-archIncInstallDir = ""
 
 
-# If we going to install ...
-if 'install' in COMMAND_LINE_TARGETS:
-    # Determine installation directories
-    installDirs = coda.getInstallationDirs(osname, prefix, incdir, libdir, bindir)
-    
-    mainInstallDir    = installDirs[0]
-    osDir             = installDirs[1]
-    incInstallDir     = installDirs[2]
-    archIncInstallDir = installDirs[3]
-    libInstallDir     = installDirs[4]
-    binInstallDir     = installDirs[5]
-    
-    # Create the include directories (make symbolic link if possible)
-    coda.makeIncludeDirs(incInstallDir, archIncInstallDir, osDir, archIncLocalLink)
-
-    print 'Main install dir  = ', mainInstallDir
-    print 'bin  install dir  = ', binInstallDir
-    print 'lib  install dir  = ', libInstallDir
-    print 'inc  install dirs = ', incInstallDir, ", ", archIncInstallDir
-
-else:
-    print 'No ET installation being done'
-
-print
+print 'ET support being done'
 
 
 
@@ -126,7 +87,7 @@ if not utils.configureJNI(env):
 ######################################################
 
 # Make available to lower level scons files
-Export('env archDir incInstallDir libInstallDir binInstallDir archIncInstallDir execLibs debugSuffix')
+Export('env archDir execLibs debugSuffix')
 
 # Run lower level build files
 

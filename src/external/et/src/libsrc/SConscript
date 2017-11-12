@@ -1,5 +1,5 @@
 # scons build file for ET libraries
-Import('env', 'archIncInstallDir', 'incInstallDir', 'libInstallDir', 'archDir', 'debugSuffix')
+Import('env',  'debugSuffix')
 
 headerList = ['et.h',
               'et_private.h',

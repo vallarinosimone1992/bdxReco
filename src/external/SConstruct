@@ -11,6 +11,10 @@ for lib in libs:
 env.SharedLibrary(source=src,target='#/lib/bdxRecoExt') 
 
 # Special libraries
+env.Append(CPPPATH=Dir('#/src/external/cMsg-3.6/src/regexp').srcnode().abspath)
+env.Append(CPPPATH=Dir('#/src/external/cMsg-3.6/src/libsrc').srcnode().abspath)
+env.Append(CPPPATH=Dir('#/src/external/cMsg-3.6/src/libsrc++').srcnode().abspath)
+env.SConscript('cMsg-3.6/SConstruct',exports="env debug")
 
 if (et_enable):
     env.Append(CPPPATH=Dir('#/src/external/et/src/libsrc').srcnode().abspath)

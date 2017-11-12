@@ -3,7 +3,7 @@ from init_env import init_environment
 import platform
 import SCons
 
-env = init_environment("qt5 clas12 root evio jana clhep banks ccdb geant4 xercesc mlibrary")
+env = init_environment("qt5 root geant4 clhep evio xercesc ccdb mlibrary clas12 jana")
 
 
 debug = ARGUMENTS.get('debug', 0)
@@ -28,7 +28,10 @@ env.Append(CPPPATH=Dir('#/src/libraries').srcnode().abspath)
 env.Append(CPPPATH=Dir('#/.').srcnode().abspath)
 #env.AppendUnique(LINKFLAGS=['-lMinuit2','-lMinuit'])
 env.Append(LIBPATH = ['#/lib'])
+
 env.Replace(RPATH=Dir('#/lib').srcnode().abspath)
+
+
 
 Export('env debug et_enable')
 
@@ -37,8 +40,6 @@ lib=SConscript('src/libraries/SConstruct')
 progs=SConscript('src/programs/SConstruct')
 users=SConscript('src/users/SConstruct')
 
-#env.Prepend(LIBS="libExt") 
-#env.Prepend(LIBS="libbdxReco")
 
 
 
