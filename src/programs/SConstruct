@@ -6,9 +6,9 @@ this_env=env.Clone()
 this_env.Prepend(LIBS="libbdxRecoExt") 
 this_env.Prepend(LIBS="libbdxReco")
 
-this_env.AppendUnique(LIBS='cMsg')
-this_env.AppendUnique(LIBS='cMsgxx')
-this_env.AppendUnique(LIBS='cMsgRegex')
+this_env.AppendUnique(LIBS='cmsg')
+this_env.AppendUnique(LIBS='cmsgxx')
+this_env.AppendUnique(LIBS='cmsgRegex')
 this_env.AppendUnique(LIBS='RootSpy')
 
 if (et_enable):
