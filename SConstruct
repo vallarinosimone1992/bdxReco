@@ -26,7 +26,6 @@ if (platform.system()=="Darwin"):
 env.Append(CPPPATH=Dir('#/src/external').srcnode().abspath)
 env.Append(CPPPATH=Dir('#/src/libraries').srcnode().abspath)
 env.Append(CPPPATH=Dir('#/.').srcnode().abspath)
-#env.AppendUnique(LINKFLAGS=['-lMinuit2','-lMinuit'])
 env.Append(LIBPATH = ['#/lib'])
 
 env.Replace(RPATH=Dir('#/lib').srcnode().abspath)
@@ -38,6 +37,7 @@ Export('env debug et_enable')
 libExt=SConscript('src/external/SConstruct')
 lib=SConscript('src/libraries/SConstruct')
 progs=SConscript('src/programs/SConstruct')
+plugins=SConscript('src/plugins/SConstruct')
 users=SConscript('src/users/SConstruct')
 
 

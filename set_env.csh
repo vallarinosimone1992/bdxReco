@@ -19,7 +19,7 @@ set MYSQLDB=gr3db
 #setenv JANA_CALIB_URL sqlite:///$BDXRECO_ROOT/calib/ccdb.calib
 setenv JANA_CALIB_URL mysql://$MYSQLUSER@$MYSQLHOST/$MYSQLDB
 #setenv JANA_CALIB_URL mysql://mysql://bdxreader:g3db/gr3db
-setenv JANA_PLUGIN_PATH $BDXRECO_ROOT/lib:$BDXRECO_ROOT/lib/users
+setenv JANA_PLUGIN_PATH $BDXRECO_ROOT/lib:$BDXRECO_ROOT/lib/plugins:$BDXRECO_ROOT/lib/users
 
 #a.c. this is a work-around for MAC, where -rpath doens't work!!
 #also do this on linux for genoa farm

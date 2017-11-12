@@ -6,7 +6,6 @@
 //
 
 #include "JEventProcessor_Calorimeter_SipmCalib.h"
-using namespace jana;
 
 
 #include <system/BDXEventProcessor.h>
@@ -36,9 +35,13 @@ using namespace jana;
 // Routine used to create our JEventProcessor
 #include <JANA/JApplication.h>
 #include <JANA/JFactory.h>
+using namespace jana;
+
 extern "C"{
 void InitPlugin(JApplication *app){
+	jout<<"Before InitJANAPlugin"<<endl;
 	InitJANAPlugin(app);
+	jout<<"After InitJANAPlugin"<<endl;
 	app->AddProcessor(new JEventProcessor_Calorimeter_SipmCalib());
 }
 } // "C"

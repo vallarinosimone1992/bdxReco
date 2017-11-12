@@ -42,8 +42,11 @@ debug = ARGUMENTS.get('debug', 0)
 if debug:
     debugSuffix = '-dbg'
     # Compile with -g and add debugSuffix to all executable names
-    env.Append(CCFLAGS = '-g', PROGSUFFIX = debugSuffix)
-
+    env.AppendUnique(CCFLAGS = '-g')
+    env.AppendUnique(CXXFLAGS = '-g')
+    env.AppendUnique(FORTRANFLAGS = '-g')
+    env.AppendUnique(PROGSUFFIX = debugSuffix)
+  
 
 execLibs = ['']
 
@@ -55,7 +58,7 @@ execLibs = ['m', 'pthread', 'dl', 'rt']
 if platform == 'Darwin':
 	execLibs = ['pthread', 'dl']
 	#env.Append(CPPDEFINES = ['Darwin'], SHLINKFLAGS = ['-multiply_defined'])
- 	env.Append(CCFLAGS = ['-fmessage-length=0'])
+ 	env.AppendUnique(CCFLAGS = ['-fmessage-length=0'])
 
 
 

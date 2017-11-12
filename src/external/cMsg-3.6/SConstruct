@@ -52,10 +52,11 @@ debugSuffix = ''
 debug = ARGUMENTS.get('debug', 0)
 if debug:
     debugSuffix = '-dbg'
-# Compile with -g and add debugSuffix to all executable names
-    env.Append(CCFLAGS = '-g', PROGSUFFIX = debugSuffix)
-else:
-    env.Append(CCFLAGS = '-O3')
+    # Compile with -g and add debugSuffix to all executable names
+    env.AppendUnique(CCFLAGS = '-g')
+    env.AppendUnique(CXXFLAGS = '-g')
+    env.AppendUnique(FORTRANFLAGS = '-g')
+    env.AppendUnique(PROGSUFFIX = debugSuffix)
 
 
 
