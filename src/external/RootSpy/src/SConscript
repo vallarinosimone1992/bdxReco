@@ -9,8 +9,9 @@ AddROOTdict(env,reldir,absdir)
 subdirs = ['libRootSpy', 'libRootSpy-client']
 #subdirs.extend(['RootSpy', 'RSArchiver', 'RSMonitor', 'RSelog', 'RSTimeSeries'])
 subdirs.extend(['RootSpy', 'RSMonitor', 'RSelog'])
-#subdirs.extend(['plugins'])
+#subdirs.extend(['plugins']) #A.C>
 #subdirs.extend(['examples'])
 
 SConscript(dirs=subdirs, exports='env execLibs debugSuffix', duplicate=0)
 
+ 
