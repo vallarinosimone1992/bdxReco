@@ -82,10 +82,8 @@ JEventSourceEvioDAQ::JEventSourceEvioDAQ(const char* source_name) :
 		if (this->source_name.substr(0, 3) == "ET:") {
 			cerr << endl;
 			cerr << "=== ERROR: ET source specified and this was compiled without    ===" << endl;
-			cerr << "===        ET support. You need to install ET and set your      ===" << endl;
-			cerr << "===        ETROOT environment variable appropriately before     ===" << endl;
-			cerr << "===        recompiling.                                         ===" << endl;
-			cerr << endl;
+			cerr << "===        ET support. You need recompile with ET support, i.e. ===" << endl;
+			cerr << "===        scons ET=1                                           ===" << endl;
 			throw JException("Failed to open ET system - no ET support enabled: " + this->source_name);
 		} else {
 			jerr << " Here" << endl;

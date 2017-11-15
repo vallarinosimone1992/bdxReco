@@ -8,20 +8,20 @@
 // Routine used to create our JEventProcessor
 
 
-//#include <JANA/JApplication.h>
-//#include <JANA/JFactory.h>
-//using namespace jana;
+#include <JANA/JApplication.h>
+#include <JANA/JFactory.h>
+using namespace jana;
 
 #include <DRootSpy.h>
 
 
 // Entrance point for plugin
 extern "C"{
-//void InitPlugin(JApplication *japp){
-void InitPlugin(void *japp){
-	cout<<"Before InitJANAPlugin"<<endl;
+void InitPlugin(JApplication *japp){
+//void InitPlugin(void *japp){
+	cout<<"Before InitJANAPlugin"<<endl;fflush(stdout);
 	//InitJANAPlugin(japp);
-	cout<<"After InitJANAPlugin"<<endl;
-	new DRootSpy();
+	cout<<"After InitJANAPlugin"<<endl;fflush(stdout);
+	DRootSpy *spy=new DRootSpy();
 	}
 }

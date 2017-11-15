@@ -14,8 +14,11 @@
 
 //#include "MCEvent_factory.h"
 #include "TEvent_factory_CataniaProto2.h"
-#include "TEvent_factory_FullMC.h"
 #include "TEvent_factory_JLabFlux.h"
+
+#ifdef MC_SUPPORT_ENABLE
+#include "TEvent_factory_FullMC.h"
+#endif
 
 class JFactoryGenerator_EventBuilder: public jana::JFactoryGenerator {
 public:
@@ -34,7 +37,9 @@ public:
 		//	loop->AddFactory(new MCEvent_factory());
 		loop->AddFactory(new TEvent_factory_CataniaProto2());
 		loop->AddFactory(new TEvent_factory_JLabFlux());
+#ifdef MC_SUPPORT_ENABLE
 		loop->AddFactory(new TEvent_factory_FullMC());
+#endif
 		return NOERROR;
 	}
 

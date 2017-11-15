@@ -15,7 +15,14 @@ for type in plugin_types:
         env_plugin=env.Clone()
         env_plugin.Append(CPPPATH=absdir)
    #     env_plugin.Append(LIBS = ['RootSpy'+debugSuffix,'RootSpy-client'+debugSuffix,'cmsgRegex'+debugSuffix,'cmsgxx'+debugSuffix,'cmsg'+debugSuffix,'curl'] )
+        
+        #Add root dictionaries if necessary
         AddROOTdict(env,reldir,absdir)
+        
+        #Compile macros
+        AddROOTSpyMacros(env,reldir,absdir)
+        
+        
         plugin_src  = Glob(reldir+'/*.cc')
         env_plugin.SharedLibrary(source=plugin_src,target='#/lib/plugins/'+type+'_'+plugin,SHLIBPREFIX='',SHLIBSUFFIX='.so')
           

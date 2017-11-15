@@ -3,7 +3,18 @@ from init_env import init_environment
 import platform
 import SCons
 
-env = init_environment("qt5 root geant4 clhep evio xercesc ccdb mlibrary clas12 jana")
+
+
+mc_enable = ARGUMENTS.get('MC',0)
+if int(mc_enable):
+    print "MC support is enabled"
+    env = init_environment("qt5 root geant4 clhep evio xercesc ccdb mlibrary clas12 jana")
+    env.AppendUnique(CPPDEFINES='MC_SUPPORT_ENABLE')
+else:
+    print bcolors.WARNING," no MC support",bcolors.ENDC
+    env = init_environment("qt5 root clhep evio xercesc ccdb mlibrary clas12 jana")
+
+
 
 
 debug = ARGUMENTS.get('debug', 0)
@@ -32,7 +43,7 @@ env.Replace(RPATH=Dir('#/lib').srcnode().abspath)
 
 
 
-Export('env debug et_enable')
+Export('env debug et_enable mc_enable')
 
 libExt=SConscript('src/external/SConstruct')
 lib=SConscript('src/libraries/SConstruct')

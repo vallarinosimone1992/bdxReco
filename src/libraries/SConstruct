@@ -1,9 +1,14 @@
 import glob
 from utils import *
-Import('env')
+Import('env mc_enable')
 
 # Loop over libraries, building each
 libs=['EventBuilder','IntVeto','ExtVeto','Calorimeter','Paddles','TT','system','DAQ','MC']
+if (mc_enable):
+	libs=['EventBuilder','IntVeto','ExtVeto','Calorimeter','Paddles','TT','system','DAQ','MC']
+else:
+	libs=['EventBuilder','IntVeto','ExtVeto','Calorimeter','Paddles','TT','system','DAQ']
+	
 src = []
 for lib in libs:
 	reldir = str(lib)

@@ -12,34 +12,31 @@ using namespace jana;
 //factory generators
 #include <system/JFactoryGenerator_system.h>
 #include <DAQ/JFactoryGenerator_DAQ.h>
-#include <MC/JFactoryGenerator_MC.h>
+
 #include <TT/JFactoryGenerator_TT.h>
 #include <IntVeto/JFactoryGenerator_IntVeto.h>
 #include <ExtVeto/JFactoryGenerator_ExtVeto.h>
 #include <Calorimeter/JFactoryGenerator_Calorimeter.h>
 #include <Paddles/JFactoryGenerator_Paddles.h>
 #include <EventBuilder/JFactoryGenerator_EventBuilder.h>
+
+#ifdef MC_SUPPORT_ENABLE
+#include <MC/JFactoryGenerator_MC.h>
+#endif
+
+
 #include "TH1D.h"
-#include "TMinuitMinimizer.h"
 // C++ headers
 #include <iostream>
 using namespace std;
 
 
-//  command line help:
-// -PEVENTS_TO_KEEP=220
-// -PPLUGINS=janadot ; dot -Tpng jana.dot -o jana.png ; open jana.png
-// --nthreads=3
-// -PJANA:JOUT_TAG="aaa"
-//
 
 
 int main(int narg, char *argv[])
 {
-	//goptions bdxOpt;
-	//bdxOpt.setGoptions();
-	//bdxOpt.setOptMap(narg, argv);
-	TH1::AddDirectory(kFALSE);
+	/*A.C. If I de-comment following, RootSPy won't work!*/
+	//TH1::AddDirectory(kFALSE);
 
 	JApplication app(narg, argv);
 
@@ -57,8 +54,10 @@ int main(int narg, char *argv[])
 	jout<<"JFactoryGenerator_system DONE"<<endl;
 	app.AddFactoryGenerator(new JFactoryGenerator_DAQ());
 	jout<<"JFactoryGenerator_DAQ DONE"<<endl;
+#ifdef MC_SUPPORT_ENABLE
 	app.AddFactoryGenerator(new JFactoryGenerator_MC());
 	jout<<"JFactoryGenerator_MC DONE"<<endl;
+#endif
 	app.AddFactoryGenerator(new JFactoryGenerator_TT());
 	jout<<"JFactoryGenerator_TT DONE"<<endl;
 	app.AddFactoryGenerator(new JFactoryGenerator_ExtVeto());

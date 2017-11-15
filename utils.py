@@ -234,7 +234,7 @@ def RootSpyMacroCodeGen(target, source, env):
 ##################################
 # ROOTSPY Macros
 ##################################
-def AddROOTSpyMacros(env):
+def AddROOTSpyMacros(env,reldir,absdir):
     #
     # This is used to generate a C++ file for each ROOT macro file
     # where the complete macro file is embedded as a string. A small
@@ -255,12 +255,12 @@ def AddROOTSpyMacros(env):
 
     # Find all macro files and schedule them to be converted using the above builder
     curpath = os.getcwd()
-    srcpath = env.Dir('.').srcnode().abspath
-    if(int(env['SHOWBUILD'])>1):
+    srcpath = absdir
+    if(int(env['SHOWBUILD'])>=1):
         print "---- Looking for ROOT macro files (*.C) in: %s" % srcpath
     os.chdir(srcpath)
     for f in glob.glob('*.C'):
-        env.AppendUnique(ALL_SOURCES = env.ROOTSpyMacro(f))
-        if(int(env['SHOWBUILD'])>1) : print "       ROOTSpy Macro for %s" % f
+        env.AppendUnique(ALL_SOURCES = env.ROOTSpyMacro(reldir+"/"+f))
+        if(int(env['SHOWBUILD'])>=1) : print "       ROOTSpy Macro for %s" % f
 
     os.chdir(curpath)

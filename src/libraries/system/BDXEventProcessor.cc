@@ -89,7 +89,10 @@ jerror_t BDXEventProcessor::init(void) {
 
 	}
 
+	// lock all root operations
+	japp->RootWriteLock();
 	/*Event header and runInfo are always created - as memory resident TTrees (these are quite small)*/
+	gDirectory->cd();
 	m_eventHeader = new TTree("EventHeader", "EventHeader");
 	m_eventHeader->Branch("eventN", &eventN);
 	m_eventHeader->Branch("runN", &runN);
@@ -99,6 +102,7 @@ jerror_t BDXEventProcessor::init(void) {
 	m_runInfo = new TTree("RunInfo", "RunInfo");
 	m_runInfo->Branch("runN", &runN);
 	m_runInfo->Branch("dT", &deltaTime);
+	japp->RootUnLock();
 
 	return NOERROR;
 }
@@ -108,6 +112,8 @@ jerror_t BDXEventProcessor::brun(JEventLoop *eventLoop, int32_t runnumber) {
 
 	bout << "BDXEventProcessor::brun " << runnumber << "(isFirstCallToBrun: " << isFirstCallToBrun << " m_output: " << m_output << ")" << endl;
 
+	// lock all root operations
+	japp->RootWriteLock();
 	if (isFirstCallToBrun) {
 		if (m_output != 0) {
 			bout << "got m_output, className is: " << m_output->className() << endl;
@@ -137,7 +143,8 @@ jerror_t BDXEventProcessor::brun(JEventLoop *eventLoop, int32_t runnumber) {
 	if (m_isMC == 0) {
 		eventLoop->GetSingle(m_tt);
 	}
-
+	// lock all root operations
+	japp->RootUnLock();
 	return NOERROR;
 }
 
@@ -186,24 +193,24 @@ jerror_t BDXEventProcessor::erun(void) {
 	bout << "BDXEventProcessor::erun " << endl;
 	bout << "Run start: " << startTime << " stop: " << stopTime << " diff: " << deltaTime << endl;
 	m_runInfo->Fill();
-	japp->RootUnLock();
 
 	if (m_output && (isET == 1)) {
 		m_output->CloseOutput();
 	}
-
+	japp->RootUnLock();
 	return NOERROR;
 }
 
 // fini
 jerror_t BDXEventProcessor::fini(void) {
-// If another DEventProcessor is in the list ahead of this one, then
+// If another EventProcessor is in the list ahead of this one, then
 // it will have finished before this is called. e.g. closed the
 // ROOT file!
+	japp->RootWriteLock();
 	if (m_output) {
 		m_output->CloseOutput(); /*This is ok, CloseOutput takes care of m_output already closed*/
 	}
-
+	japp->RootUnLock();
 	return NOERROR;
 }
 

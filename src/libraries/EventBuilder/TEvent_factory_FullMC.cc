@@ -5,6 +5,8 @@
 // Creator: celentan (on Linux apcx4 2.6.32-504.30.3.el6.x86_64 x86_64)
 //
 
+#ifdef MC_SUPPORT_ENABLE
+
 #include <iostream>
 #include <iomanip>
 
@@ -21,11 +23,13 @@
 #include <ExtVeto/ExtVetoHit.h>
 #include <Paddles/PaddlesHit.h>
 
+
 #include <Calorimeter/CalorimeterMCRealHit.h>
+#include <MC/GenParticle.h>
+
 
 #include <DAQ/eventData.h>
 
-#include <MC/GenParticle.h>
 
 #include <JANA/JApplication.h>
 #include "TClonesArray.h"
@@ -223,3 +227,4 @@ jerror_t TEvent_factory_FullMC::fini(void) {
 	return NOERROR;
 }
 
+#endif

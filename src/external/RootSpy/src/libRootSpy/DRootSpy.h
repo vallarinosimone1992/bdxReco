@@ -157,7 +157,7 @@ class DRootSpy:public cMsgCallback{
     void listHists(cMsgMessage &response);
     void getHist(cMsgMessage &response, string &hnamepath, bool send_message=true);
 //	 void getHistUDP(cMsgMessage &response, string hnamepath, uint32_t addr32, uint16_t port);
-	 void getHistUDP(void *response, string hnamepath, uint32_t addr32, uint16_t port);
+	void getHistUDP(void *response, string hnamepath, uint32_t addr32, uint16_t port);
     void getHists(cMsgMessage &response, vector<string> &hnamepaths);
     void getTree(cMsgMessage &response, string &name, string &path, int64_t nentries);
     void treeInfo(string sender);
