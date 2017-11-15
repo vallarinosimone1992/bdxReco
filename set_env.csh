@@ -3,6 +3,9 @@
 #print only if there is a prompt
 alias echo 'if($?prompt) echo \!*  '
 
+echo
+
+
 if(! $?BDXRECO_ROOT) then
     echo "BDXRECO_ROOT was not set properly"
     exit
@@ -25,3 +28,7 @@ setenv JANA_PLUGIN_PATH $BDXRECO_ROOT/lib:$BDXRECO_ROOT/lib/plugins:$BDXRECO_ROO
 #also do this on linux for genoa farm
 setenv DYLD_LIBRARY_PATH ${BDXRECO_ROOT}/lib:${DYLD_LIBRARY_PATH}
 setenv LD_LIBRARY_PATH ${BDXRECO_ROOT}/lib:${LD_LIBRARY_PATH}
+
+echo
+
+unalias echo
