@@ -12,7 +12,7 @@ if int(mc_enable):
     env.AppendUnique(CPPDEFINES='MC_SUPPORT_ENABLE')
 else:
     print bcolors.WARNING," no MC support",bcolors.ENDC
-    env = init_environment("qt5 root clhep evio xercesc ccdb mlibrary clas12 jana")
+    env = init_environment("qt5 root clhep evio xercesc ccdb clas12 jana")
 
 
 
