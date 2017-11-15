@@ -23,7 +23,9 @@ using namespace jana;
 using namespace evio;
 
 // banks header
+#ifdef MC_SUPPORT_ENABLE
 #include "banks.h"
+#endif
 
 //ET
 #ifdef ET_SUPPORT_ENABLE
@@ -54,7 +56,6 @@ public:
 		return source_type;
 	}
 
-	map<string, gBank> banksMap;
 
 private:
 	evioFileChannel *chan;   // EVIO input channel
