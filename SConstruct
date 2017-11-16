@@ -1,8 +1,12 @@
 from utils import *
+from util import cmloptions, loadoptions, check_if_dir_exist
 from init_env import init_environment
 import platform
 import SCons
-
+import os
+from SCons.Environment import *
+from SCons.Variables import *
+from SCons.Script import *
 
 
 mc_enable = ARGUMENTS.get('MC',0)
@@ -12,8 +16,23 @@ if int(mc_enable):
     env.AppendUnique(CPPDEFINES='MC_SUPPORT_ENABLE')
 else:
     print bcolors.WARNING," no MC support",bcolors.ENDC
-    env = init_environment("clhep evio xercesc ccdb jana root")
-    env.Replace(ENV = os.environ)
+    #Need a manual setting
+    opts = Variables()
+    cmloptions(opts)
+    env = Environment(tools=['default'], options = opts, ENV = os.environ)
+    from loadccdb import loadccdb
+    loadccdb(env)
+    from loadclhep import loadclhep
+    loadclhep(env)
+    from loadevio import loadevio
+    loadevio(env)
+    from loadjana import loadjana
+    loadjana(env)
+    from loadroot import loadroot
+    loadroot(env)
+    from loadxerces import loadxerces
+    loadxerces(env)
+    loadoptions(env)
 
 debug = ARGUMENTS.get('debug', 0)
 if int(debug):
