@@ -36,6 +36,11 @@ endif
 setenv DYLD_LIBRARY_PATH ${BDXRECO_ROOT}/lib:${DYLD_LIBRARY_PATH}
 setenv LD_LIBRARY_PATH ${BDXRECO_ROOT}/lib:${LD_LIBRARY_PATH}
 
+#This is for cmsg
+setenv CMSGROOT ${BDXRECO_ROOT}/src/external/cMsg-3.6/java
+
+
+
 echo
 
 unalias echo
