@@ -12,6 +12,7 @@ using namespace CLHEP;
 // C++ headers
 #include <iostream>
 #include <time.h>
+#include <unistd.h>
 using namespace std;
 
 //DAQ
