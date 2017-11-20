@@ -41,7 +41,7 @@ if int(debug):
 
 et_enable = ARGUMENTS.get('ET',0)
 if int(et_enable):
-    print "ET-ring support is enabled"
+    print "ET-ring and ONLINE support is enabled"
     env.AppendUnique(CPPDEFINES='ET_SUPPORT_ENABLE')
 
 
