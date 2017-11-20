@@ -45,6 +45,7 @@ public:
 	}
 	TranslationTable::CALO_Index_t m_channel; //Detector-specific ID. Since this is a detector-based object, the readout field will be ==0
 	double E,T;
+	double Eraw;
 	bool RMSflag;
 
 
@@ -57,7 +58,7 @@ public:
 
 
 
-	ClassDef(CalorimeterHit,1);
+	ClassDef(CalorimeterHit,2);
 };
 
 #endif // _CalorimeterHit_

@@ -11,4 +11,4 @@ echo runReconOnET: RunNumber is: $1
 
 #this is the command
 #need to connect to the et with the syntax:  ET:sessionName:stationName:host:port
-$BDXRECO_ROOT/bin/bdxReco -PTT:XML_FILENAME="$BDXRECO_ROOT/tt.JLabFluxMeasurement.xml" --config=$BDXRECO_ROOT/config/bdx.config.JLabFlux.online -PPLUGINS=monitoring_rootspy,monitoring_DAQWaveformsMode1 ET:bdxtest:DSTMaker:jdaq3:11111
+$BDXRECO_ROOT/bin/bdxReco --config=$BDXRECO_ROOT/config/bdx.config.JLabFlux.online -PPLUGINS=monitoring_rootspy,monitoring_DAQWaveformsMode1 ET:bdxtest:DSTMaker:jdaq3:11111

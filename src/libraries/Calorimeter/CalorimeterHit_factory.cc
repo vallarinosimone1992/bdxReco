@@ -119,6 +119,7 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber) {
 				m_CalorimeterHit->m_channel = m_CalorimeterDigiHit->m_channel;
 				m_CalorimeterHit->m_channel.readout = 0;
 				m_CalorimeterHit->T = T;
+				m_CalorimeterHit->Eraw = Q;
 				m_CalorimeterHit->RMSflag = m_CalorimeterDigiHit->RMSflag;
 
 				/*Try to calibrate in energy and ped-sub*/
@@ -131,7 +132,13 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber) {
 				m_CalorimeterHit->AddAssociatedObject(m_CalorimeterDigiHit);
 				_data.push_back(m_CalorimeterHit); //publish it
 			}
-		} else if (m_CalorimeterDigiHit_tmp.size() >= 2) { /*Multiple readout object: this is the case of crs x=0 y=0 first catania Proto*/
+		}
+		/*Multiple readout object:
+		 *
+		 *  This is the case of crs x=0 y=0 first catania Proto
+		 *  This is also the case of JLabFlux0 crs
+		 *  */
+		else if (m_CalorimeterDigiHit_tmp.size() >= 2) {
 			countOk = 0;
 			Qtot = 0;
 			Qmax = -9999;
@@ -166,6 +173,7 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber) {
 				gain = m_ene->getCalib(m_CalorimeterHit->m_channel)[0];
 				ped = m_ene->getCalib(m_CalorimeterHit->m_channel)[1];
 				m_CalorimeterHit->E = (Qmax - ped);
+				m_CalorimeterHit->Eraw = Qmax;
 
 				if (gain != 0) {
 					m_CalorimeterHit->E /= gain;
