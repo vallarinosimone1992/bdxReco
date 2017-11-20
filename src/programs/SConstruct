@@ -6,13 +6,12 @@ this_env=env.Clone()
 this_env.Prepend(LIBS="libbdxRecoExt") 
 this_env.Prepend(LIBS="libbdxReco")
 
-this_env.AppendUnique(LIBS='cmsg')
-this_env.AppendUnique(LIBS='cmsgxx')
-this_env.AppendUnique(LIBS='cmsgRegex')
-this_env.AppendUnique(LIBS='RootSpy')
-
 if (et_enable):
-    this_env.Prepend(LIBS="libet")
+   this_env.AppendUnique(LIBS='cmsg')
+   this_env.AppendUnique(LIBS='cmsgxx')
+   this_env.AppendUnique(LIBS='cmsgRegex')
+   this_env.AppendUnique(LIBS='RootSpy')
+   this_env.AppendUnique(LIBS="libet")
 
 progs=['bdxReco']
 for prog in progs:
