@@ -10,17 +10,22 @@
 
 #include "TObject.h"
 
-typedef enum{
-	CataniaProto1Event=1,
-	CataniaProto2Event=2,
-	JLabFluxEvent=4,
-	CataniaProto1MC=10,
-	CataniaProto2MC=20,
-	FullMC=30,
-	JLabFluxEventMC=40,
-}eventType;
+typedef enum {
+	CataniaProto1Event = 1, CataniaProto2Event = 2, JLabFluxEvent = 4, CataniaProto1MC = 10, CataniaProto2MC = 20, FullMC = 30, JLabFluxEventMC = 40,
+} eventType;
 
-class TEventHeader : public TObject{
+class TEventHeader: public TObject {
+
+private:
+
+	std::vector<uint32_t> m_triggerWords;
+	uint32_t m_eventFineTime; //this is the timestamp as reported by FADC boards, in particular I save here time from fadc in slot4, reading the calorimeter (there should be always a calo hit for events of interest). Units are: 4ns*/
+
+	int m_runNumber;
+	int m_eventNumber;
+	int m_eventTime; //Unix Timestamp
+	uint8_t m_eventType;
+
 public:
 	TEventHeader();
 	virtual ~TEventHeader();
@@ -41,12 +46,12 @@ public:
 		m_runNumber = runNumber;
 	}
 
-	std::vector<uint32_t> getTriggerWords() const{
+	std::vector<uint32_t> getTriggerWords() const {
 		return m_triggerWords;
 	}
 
-	void setTriggerWords(std::vector<uint32_t> triggerWords){
-		m_triggerWords=triggerWords;
+	void setTriggerWords(std::vector<uint32_t> triggerWords) {
+		m_triggerWords = triggerWords;
 	}
 
 	int getEventTime() const {
@@ -73,22 +78,8 @@ public:
 		m_eventFineTime = eventFineTime;
 	}
 
-private:
-	uint8_t m_eventType;
-	int m_runNumber;
-	int m_eventNumber;
-	int m_eventTime; //Unix Timestamp
-
-	uint32_t m_eventFineTime; //this is the timestamp as reported by FADC boards, in particular I save here time from fadc in slot4, reading the calorimeter (there should be always a calo hit for events of interest). Units are: 4ns*/
-
-
-
-	std::vector<uint32_t> m_triggerWords;
-
-
-
-
-	ClassDef(TEventHeader,1);
+ClassDef(TEventHeader,1)
+	;
 
 };
 

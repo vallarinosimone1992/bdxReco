@@ -86,8 +86,8 @@ private:
 	/*Do we want to build the DST?*/
 	string m_buildDST;
 	int m_DObuildDST;
+
 	TTree *m_eventDST;
-	//const CataniaEventProto2* m_event;
 	const TEvent* m_event;
 
 	int isFirstCallToBrun;

@@ -4,6 +4,7 @@
 #pragma link off all classes;
 #pragma link off all functions;
 
-//#pragma link C++ class jana::JObject+;
+#pragma link C++ class std::vector<TClonesArray*>+;
 #pragma link C++ class TEvent+;
+
 #endif

@@ -63,7 +63,7 @@ jerror_t TEvent_factory_JLabFlux::brun(jana::JEventLoop *eventLoop, int32_t runn
 jerror_t TEvent_factory_JLabFlux::evnt(JEventLoop *loop, uint64_t eventnumber) {
 
 	/*Create the TEvent*/
-	TEvent* m_event = new TEvent;
+	TEvent* m_event = new TEvent();
 	TEventHeader *m_eventHeader = m_event->getEventHeader();
 
 	const eventData* tData;
@@ -82,7 +82,6 @@ jerror_t TEvent_factory_JLabFlux::evnt(JEventLoop *loop, uint64_t eventnumber) {
 		m_eventHeader->setEventNumber(tData->eventN);
 		m_eventHeader->setEventTime(tData->time);
 		m_eventHeader->setTriggerWords(tData->triggerWords);
-
 		m_eventHeader->setEventFineTime(0); //TODO
 
 	} else {
@@ -99,17 +98,17 @@ jerror_t TEvent_factory_JLabFlux::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	m_CaloHits->Clear("C");
 	for (int ii = 0; ii < chits.size(); ii++) {
 		((CalorimeterHit*) m_CaloHits->ConstructedAt(ii))->operator=(*(chits[ii]));
-		m_event->AddAssociatedObject(chits[ii]);
+	//	m_event->AddAssociatedObject(chits[ii]);
 	}
-	m_event->addCollection(m_CaloHits);
+//	m_event->addCollection(m_CaloHits);
 
 	loop->Get(ivhits);
 	m_IntVetoHits->Clear("C");
 	for (int ii = 0; ii < ivhits.size(); ii++) {
 		((IntVetoHit*) m_IntVetoHits->ConstructedAt(ii))->operator=(*(ivhits[ii]));
-		m_event->AddAssociatedObject(ivhits[ii]);
+	//	m_event->AddAssociatedObject(ivhits[ii]);
 	}
-	m_event->addCollection(m_IntVetoHits);
+//	m_event->addCollection(m_IntVetoHits);
 
 	/*publish the event*/
 	_data.push_back(m_event);
