@@ -25,3 +25,6 @@ calib/ccdb.calib
 #pedestal files - don't want these on github
 calib/DAQ_pedestals/*
 calib/DAQ_parms/*
+
+#Backups
+*~
