@@ -15,7 +15,7 @@
 
 #include "TObject.h"
 
-class CalorimeterDigiHit:public TObject,public jana::JObject{
+class CalorimeterDigiHit:public jana::JObject{
 public:
 
 	JOBJECT_PUBLIC(CalorimeterDigiHit);

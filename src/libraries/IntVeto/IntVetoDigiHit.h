@@ -24,7 +24,7 @@
 class TCanvas;
 class TH1D;
 
-class IntVetoDigiHit:public TObject,public BDXObject{
+class IntVetoDigiHit:public BDXObject{
 public:
 
 	JOBJECT_PUBLIC(IntVetoDigiHit);

@@ -12,7 +12,7 @@ from SCons.Script import *
 mc_enable = ARGUMENTS.get('MC',0)
 if int(mc_enable):
     print "MC support is enabled"
-    env = init_environment("qt5 root geant4 clhep evio xercesc ccdb mlibrary clas12 jana")
+    env = init_environment("qt5 root geant4 clhep evio xercesc ccdb mlibrary clas12")
     env.AppendUnique(CPPDEFINES='MC_SUPPORT_ENABLE')
 else:
     print bcolors.WARNING," no MC support",bcolors.ENDC
@@ -26,8 +26,8 @@ else:
     loadclhep(env)
     from loadevio import loadevio
     loadevio(env)
-    from loadjana import loadjana
-    loadjana(env)
+ #   from loadjana import loadjana
+ #   loadjana(env)
     from loadroot import loadroot
     loadroot(env)
     from loadxerces import loadxerces

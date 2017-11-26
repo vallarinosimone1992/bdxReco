@@ -19,7 +19,7 @@ public:
 	fa250ConvertedHit(){};
 	virtual ~fa250ConvertedHit(){};
 
-	//ClassDef(fa250ConvertedHit,1);
+	ClassDef(fa250ConvertedHit,1);
 
 };
 

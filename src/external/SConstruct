@@ -10,13 +10,12 @@ for lib in libs:
    
 env.SharedLibrary(source=src,target='#/lib/bdxRecoExt') 
 
+
+env.AppendUnique(CPPPATH=Dir('#/src/external/jana_0.7.7p1/src/').srcnode().abspath)
+env.AppendUnique(CPPPATH=Dir('#/src/external/jana_0.7.7p1/src/JANA').srcnode().abspath)
+env.SConscript('jana_0.7.7p1/SConstruct',exports="env debug et_enable")
+
 # Special libraries
-
-
-
-
-
-
 if (et_enable):
    #cMSG
    env.Append(CPPPATH=Dir('#/src/external/cMsg-3.6/src/regexp').srcnode().abspath)

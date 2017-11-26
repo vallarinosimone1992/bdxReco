@@ -1,0 +1,12 @@
+import os
+import utils
+
+Import('env','debugSuffix','et_enable')
+
+# Loop over libraries, building each
+#subdirs = ['JANA', 'plugins', 'utilities', 'unit_tests']
+subdirs = ['JANA', 'plugins', 'utilities']
+
+
+
+SConscript(dirs=subdirs, exports='env debugSuffix et_enable', duplicate=0)

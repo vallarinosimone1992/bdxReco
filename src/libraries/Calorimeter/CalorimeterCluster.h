@@ -17,7 +17,7 @@
 class TH1D;
 class TCanvas;
 
-class CalorimeterCluster: public TObject, public BDXObject {
+class CalorimeterCluster: public BDXObject {
 private:
 	mutable vector<TH1D*> hWaves; //!
 

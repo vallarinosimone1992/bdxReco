@@ -22,7 +22,7 @@ using namespace jana;
 
 
 
-class TranslationTable: public TObject,public jana::JObject{
+class TranslationTable: public jana::JObject{
 
 public:
 	JOBJECT_PUBLIC(TranslationTable);

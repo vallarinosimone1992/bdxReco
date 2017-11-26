@@ -17,7 +17,7 @@
 #include <TObject.h>
 
 
-class CalorimeterSiPMHit:public fa250ConvertedHit , public TObject{
+class CalorimeterSiPMHit:public fa250ConvertedHit{
 
 
 public:

@@ -13,12 +13,10 @@
 
 #include "TObject.h"
 
-class GenParticle:public TObject,public jana::JObject{
+class GenParticle:public jana::JObject{
 	public:
 
 		GenParticle(){
-
-
 		}
 		JOBJECT_PUBLIC(GenParticle);
 		

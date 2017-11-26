@@ -13,7 +13,7 @@
 #include <TT/TranslationTable.h>
 #include "TObject.h"
 
-class ExtVetoHit:public TObject,public jana::JObject{
+class ExtVetoHit:public jana::JObject{
 	public:
 		JOBJECT_PUBLIC(ExtVetoHit);
 		

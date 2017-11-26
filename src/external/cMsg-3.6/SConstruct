@@ -24,6 +24,8 @@ import utils
 
 Import('env')
 
+env=env.Clone();
+
 # Created files & dirs will have this permission
 os.umask(002)
 

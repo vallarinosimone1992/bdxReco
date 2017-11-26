@@ -3,8 +3,9 @@ Import('env et_enable')
 
 # Loop over libraries, building each
 this_env=env.Clone()
-this_env.Prepend(LIBS="libbdxRecoExt") 
-this_env.Prepend(LIBS="libbdxReco")
+this_env.PrependUnique(LIBS="libbdxRecoExt") 
+this_env.PrependUnique(LIBS="libbdxReco")
+this_env.PrependUnique(LIBS='JANA')
 
 if (et_enable):
    this_env.AppendUnique(LIBS='cmsg')

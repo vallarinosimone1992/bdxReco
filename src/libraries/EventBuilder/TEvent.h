@@ -22,7 +22,7 @@ class TEventHeader;
 
 using namespace std;
 
-class TEvent:public TObject,public jana::JObject{
+class TEvent:public jana::JObject{
 
 public:
 	JOBJECT_PUBLIC(TEvent);

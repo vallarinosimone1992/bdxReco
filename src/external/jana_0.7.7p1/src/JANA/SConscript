@@ -1,0 +1,14 @@
+# get env object and clone it
+
+Import('env',  'debugSuffix')
+env = env.Clone()
+
+#sbms.AddJANA(env)
+#sbms.library(env)
+
+env.AppendUnique(CPPPATH = ['.'])
+fileList  = Glob('*.cc');
+fileList  += Glob('*.c');
+
+env.SharedLibrary(target='#/lib/JANA'+debugSuffix,source = fileList)
+

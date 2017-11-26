@@ -14,6 +14,8 @@ import utils
 
 Import('env')
 
+env=env.Clone();
+
 # Get platform-specific name
 # Determine the os and machine names
 uname    = os.uname();
@@ -38,7 +40,7 @@ if debug:
     env.AppendUnique(PROGSUFFIX = debugSuffix)
 
 # Enable some C++11 features available in gcc4.4
-env.AppendUnique(CXXFLAGS=['-std=c++11'])
+thisEnv.AppendUnique(CXXFLAGS=['-std=c++11'])
 
 # Hidden sub directory into which variant builds go
 archDir = '.' + platform + "_" + machine+ debugSuffix
@@ -59,4 +61,4 @@ if platform == 'Darwin':
 Export('env execLibs debugSuffix')
 
 # Include SConscript in src
-SConscript('src/SConscript', variant_dir="src/.%s" % (archDir), duplicate=0)
+SConscript('src/SConscript', duplicate=0)

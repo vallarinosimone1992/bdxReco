@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/repos/!svn/ver/2445/tags/jana_0.7.7p1/src/plugins/janaview
+END
+jv_mainframe.cc
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/repos/!svn/ver/2445/tags/jana_0.7.7p1/src/plugins/janaview/jv_mainframe.cc
+END
+JEventProcessor_janaview.cc
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/repos/!svn/ver/2445/tags/jana_0.7.7p1/src/plugins/janaview/JEventProcessor_janaview.cc
+END
+jv_mainframe.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/repos/!svn/ver/2445/tags/jana_0.7.7p1/src/plugins/janaview/jv_mainframe.h
+END
+JEventProcessor_janaview.h
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/repos/!svn/ver/2445/tags/jana_0.7.7p1/src/plugins/janaview/JEventProcessor_janaview.h
+END
+SConscript
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/repos/!svn/ver/2445/tags/jana_0.7.7p1/src/plugins/janaview/SConscript
+END
+JVFactoryInfo.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/repos/!svn/ver/2445/tags/jana_0.7.7p1/src/plugins/janaview/JVFactoryInfo.h
+END
