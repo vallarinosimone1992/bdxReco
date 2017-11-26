@@ -3,7 +3,7 @@ import sys
 import subprocess
 import glob
 
-import utils
+from utils import *
 
 Import ('env et_enable')
 
@@ -44,6 +44,8 @@ env.AppendUnique(LIBS=['pthread'])
 
 # build all src
 SConscript('src/SConscript', exports='env debugSuffix et_enable', duplicate=0)
+
+
 
 # install scripts
 #SConscript('scripts/SConscript', exports='env debugSuffix', duplicate=0)

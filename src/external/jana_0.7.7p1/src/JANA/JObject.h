@@ -114,12 +114,14 @@ class JObject: public TObject{
 	private:
 		
 		bool append_types;
-		set<const JObject*> associated;
+		set<const JObject*> associated; //!
 		// map<const JObject*, string> associated; replaced with set in jana 0.7.7
-		vector<JObject*> auto_delete;
-		mutable vector<string> messagelog;
-		JFactory_base *factory;
+		vector<JObject*> auto_delete;  //!
+		mutable vector<string> messagelog; //!
+		JFactory_base *factory;    //!
 		
+		ClassDef(TObject,1);
+
 };
 
 #if !defined(__CINT__) && !defined(__CLING__)

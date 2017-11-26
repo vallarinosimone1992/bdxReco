@@ -82,6 +82,7 @@ def AddROOTdict(env,reldir,absdir):
         rootclingactionLinkDef = SCons.Script.Action("%s -f $TARGET -c -p -I%s $SOURCES ; mv `echo $TARGET | awk '{print substr($0,0,length($0)-3) \"_rdict.pcm\"}'` %s" % (rootclingpath," -I".join(env['CPPPATH']),dictdir))
     
     if os.path.exists(rootclingpath) :
+       # bldNoLinkDef = SCons.Script.Builder(action = rootclingactionNoLinkDef)
         bldNoLinkDef = SCons.Script.Builder(action = rootclingactionNoLinkDef, suffix='_Dict.cc', src_suffix='.h')
         bldLinkDef = SCons.Script.Builder(action = rootclingactionLinkDef)
     else:
@@ -114,14 +115,16 @@ def AddROOTdict(env,reldir,absdir):
         if 'ClassDef' in open(f).read():  
             filename, file_extension = os.path.splitext(f)          
             if(int(env['SHOWBUILD'])>=1):
-                print "  ----->  ROOT dictionary for %s" % f
+                print "  -----> ROOT dictionary for %s" % f
             if os.path.isfile(filename+"_LinkDef.h"):     
                 retVal=env.ROOTDictLinkDef(reldir+"/"+filename+"_Dict.cc",[reldir+"/"+f,reldir+"/"+filename+"_LinkDef.h"])
                 if(int(env['SHOWBUILD'])>=1):
                     print "  -----> Using "+filename+"_LinkDef.h for dictionary"
             else:
                 retVal=0
-                retVal=env.ROOTDictNoLinkDef(reldir+"/"+f)
+                if(int(env['SHOWBUILD'])>=1):
+                    print "  -----> No LinkDef provided, will proceed without it"
+                retVal=env.ROOTDictNoLinkDef(reldir+"/"+filename+"_Dict.cc",[reldir+"/"+f])
     os.chdir(curpath)            
     
         
