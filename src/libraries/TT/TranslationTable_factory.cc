@@ -113,12 +113,7 @@ jerror_t TranslationTable_factory::erun(void)
 jerror_t TranslationTable_factory::fini(void)
 {
 
-	// If we have a translation table already the delete it
-	if(tt){
-		delete tt;
-	}
-	_data.clear();
-	return NOERROR;
+
 	return NOERROR;
 }
 

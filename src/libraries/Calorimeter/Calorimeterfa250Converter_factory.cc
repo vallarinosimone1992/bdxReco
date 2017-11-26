@@ -28,6 +28,7 @@ Calorimeterfa250Converter_factory::Calorimeterfa250Converter_factory():m_calorim
 
 	m_NPED=20;
 	m_NSAMPLES=2000;
+	m_thr=0;
 
 	gPARMS->SetDefaultParameter("CALORIMETER:NSB",m_NSB,"Samples before the maximum to integrate for single phes");
 	gPARMS->SetDefaultParameter("CALORIMETER:NSA",m_NSA,"Samples after the maximum to integrate for single phes");
@@ -54,28 +55,16 @@ jerror_t Calorimeterfa250Converter_factory::init(void)
 jerror_t Calorimeterfa250Converter_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber)
 {
 
-
-
-
 	this->updateCalibrationHandler(m_thr,eventLoop);
-
-
-
-
-
-
 	int threadId= PThreadIDUniqueInt(eventLoop->GetPThreadID());
 	m_calorimeterfa250Converter=new Calorimeterfa250Converter();
 	m_calorimeterfa250Converter->name()=string(Form("h%i",threadId));
-
-
 	gPARMS->GetParameter("CALORIMETER:VERBOSE",	m_calorimeterfa250Converter->verbose());
 
 	m_calorimeterfa250Converter->m_NSB=m_NSB;
 	m_calorimeterfa250Converter->m_NSA=m_NSA;
 	m_calorimeterfa250Converter->m_NPED=m_NPED;
 	m_calorimeterfa250Converter->m_NSAMPLES=m_NSAMPLES;
-
 	m_calorimeterfa250Converter->m_thrDB=m_thr;
 
 
@@ -101,7 +90,7 @@ jerror_t Calorimeterfa250Converter_factory::evnt(JEventLoop *loop, uint64_t even
 //------------------
 jerror_t Calorimeterfa250Converter_factory::erun(void)
 {
-	if (m_calorimeterfa250Converter) delete m_calorimeterfa250Converter;
+	//if (m_calorimeterfa250Converter!=0) delete m_calorimeterfa250Converter;
 	_data.clear();
 	return NOERROR;
 }
@@ -111,9 +100,9 @@ jerror_t Calorimeterfa250Converter_factory::erun(void)
 //------------------
 jerror_t Calorimeterfa250Converter_factory::fini(void)
 {
-	if (m_calorimeterfa250Converter){
+	/*if (m_calorimeterfa250Converter!=0){
 		delete m_calorimeterfa250Converter;
-	}
+	}*/
 	_data.clear();
 	return NOERROR;
 }

@@ -86,9 +86,6 @@ jerror_t ExtVetofa250Converter_factory::erun(void)
 //------------------
 jerror_t ExtVetofa250Converter_factory::fini(void)
 {
-	if (m_extVetofa250Converter){
-		delete m_extVetofa250Converter;
-	}
 	_data.clear();
 	return NOERROR;
 }

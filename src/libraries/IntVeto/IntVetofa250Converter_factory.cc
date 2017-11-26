@@ -96,9 +96,9 @@ jerror_t IntVetofa250Converter_factory::erun(void)
 {
 
 	this->clearCalibrationHandler(m_intVetofa250Converter->m_thrCalib);
-	if (m_intVetofa250Converter){
+	/*if (m_intVetofa250Converter!=0){
 		delete m_intVetofa250Converter;
-	}
+	}*/
 	_data.clear();
 	return NOERROR;
 }
@@ -108,9 +108,9 @@ jerror_t IntVetofa250Converter_factory::erun(void)
 //------------------
 jerror_t IntVetofa250Converter_factory::fini(void)
 {
-	if (m_intVetofa250Converter){
+/*	if (m_intVetofa250Converter!=0){
 		delete m_intVetofa250Converter;
-	}
+	}*/
 	_data.clear();
 	return NOERROR;
 }

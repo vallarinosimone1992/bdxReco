@@ -91,9 +91,6 @@ jerror_t Paddlesfa250Converter_factory::erun(void)
 //------------------
 jerror_t Paddlesfa250Converter_factory::fini(void)
 {
-	if (m_Paddlesfa250Converter){
-		delete m_Paddlesfa250Converter;
-	}
 	_data.clear();
 	return NOERROR;
 }
