@@ -30,8 +30,8 @@ BDXEventProcessor::BDXEventProcessor() :
 	m_DObuildDST = 0;
 	m_buildDST = "";
 	isFirstCallToBrun = 1;
-	startTime = 99999999;
-	stopTime = -99999999;
+	startTime = 9999999999;
+	stopTime = -9999999999;
 
 	bout.SetTag("BDXEventProcessor >>");
 	berr.SetTag("BDXEventProcessorError >>");
