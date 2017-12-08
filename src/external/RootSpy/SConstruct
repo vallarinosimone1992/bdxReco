@@ -1,4 +1,3 @@
-
 import os
 import sys
 import subprocess
@@ -40,7 +39,7 @@ if debug:
     env.AppendUnique(PROGSUFFIX = debugSuffix)
 
 # Enable some C++11 features available in gcc4.4
-thisEnv.AppendUnique(CXXFLAGS=['-std=c++11'])
+env.AppendUnique(CXXFLAGS=['-std=c++11'])
 
 # Hidden sub directory into which variant builds go
 archDir = '.' + platform + "_" + machine+ debugSuffix
