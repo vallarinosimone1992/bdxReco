@@ -1269,8 +1269,8 @@ int codanetTcpConnect(const char *ip_address, const char *interface, unsigned sh
             coda_err_abort(status, "Unlock gethostbyname Mutex");
         }
         close(sockfd);
-        if (codanetDebug >= CODA_DEBUG_ERROR) fprintf(stderr, "%sTcpConnect: hostname error - %s\n",
-        codanetStr, codanetHstrerror(h_errnop));
+        if (codanetDebug >= CODA_DEBUG_ERROR) fprintf(stderr, "%sTcpConnect: hostname error %s - %s\n",
+        codanetStr,ip_address,codanetHstrerror(h_errnop));
         return(CODA_NETWORK_ERROR);
     }
     pptr = (struct in_addr **) hp->h_addr_list;
@@ -2180,7 +2180,7 @@ int codanetNodeSame(const char *node1, const char *node2, int *same)
      */
    
     if ( (hptr = gethostbyname(node1)) == NULL) {
-        if (codanetDebug >= CODA_DEBUG_ERROR) fprintf(stderr, "%sNodeSame: gethostbyname error\n", codanetStr);
+        if (codanetDebug >= CODA_DEBUG_ERROR) fprintf(stderr, "%sNodeSame: gethostbyname error node1: %s \n", codanetStr,node1);
         return CODA_ERROR;
     }
     for (pptr = hptr->h_addr_list; *pptr != NULL; pptr++) {
@@ -2189,7 +2189,7 @@ int codanetNodeSame(const char *node1, const char *node2, int *same)
     }
 
     if ( (hptr = gethostbyname(node2)) == NULL) {
-        if (codanetDebug >= CODA_DEBUG_ERROR) fprintf(stderr, "%sNodeSame: gethostbyname error\n", codanetStr);
+        if (codanetDebug >= CODA_DEBUG_ERROR) fprintf(stderr, "%sNodeSame: gethostbyname error node2: %s \n", codanetStr,node2);
         return CODA_ERROR;
     }
     for (pptr = hptr->h_addr_list; *pptr != NULL; pptr++) {

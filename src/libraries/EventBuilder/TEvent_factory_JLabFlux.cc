@@ -98,7 +98,7 @@ jerror_t TEvent_factory_JLabFlux::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	m_CaloHits->Clear("C");
 	for (int ii = 0; ii < chits.size(); ii++) {
 		((CalorimeterHit*) m_CaloHits->ConstructedAt(ii))->operator=(*(chits[ii]));
-	//	m_event->AddAssociatedObject(chits[ii]);
+		m_event->AddAssociatedObject(chits[ii]);
 	}
 	m_event->addCollection(m_CaloHits);
 
@@ -106,7 +106,7 @@ jerror_t TEvent_factory_JLabFlux::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	m_IntVetoHits->Clear("C");
 	for (int ii = 0; ii < ivhits.size(); ii++) {
 		((IntVetoHit*) m_IntVetoHits->ConstructedAt(ii))->operator=(*(ivhits[ii]));
-	//	m_event->AddAssociatedObject(ivhits[ii]);
+		m_event->AddAssociatedObject(ivhits[ii]);
 	}
 	m_event->addCollection(m_IntVetoHits);
 

@@ -23,8 +23,6 @@ machine  = uname[4]
 
 
 
-
-
 # Add libraries and libraries/include to include search path
 
 # Debug/optimization flags
