@@ -61,6 +61,8 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 			m_channel.component = this->getFullV1Component(m_IntVetoMCHit->channel);
 		} else if (m_isMC == MCType::FULL_V2) {
 			m_channel.component = this->getFullV2Component(m_IntVetoMCHit->channel);
+		} else if (m_isMC == MCType::JLAB_FLUX_V1) {
+			m_channel.component = this->getJLabFluxV1Component(m_IntVetoMCHit->channel);
 		}
 		m_channel.readout = 0;
 		m_map_it = m_map.find(m_channel);
@@ -461,6 +463,14 @@ int IntVetoDigiHit_factory_MC::getFullV2Component(int MCchannel) {
 		component = 1;
 		break;
 	}
+	return component;
+}
+
+int IntVetoDigiHit_factory_MC::getJLabFluxV1Component(int MCchannel) {
+	int component = -1;
+
+	component = MCchannel; //A.C. using the same numbering (from 1 to 13) as used by Marco in MC
+
 	return component;
 }
 

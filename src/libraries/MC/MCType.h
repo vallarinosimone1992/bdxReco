@@ -14,6 +14,7 @@ public:
 			CATANIA_V2=2,
 			FULL_V1=10,
 			FULL_V2=20,
+			JLAB_FLUX_V1=100
 	};
 
 
