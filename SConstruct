@@ -26,13 +26,16 @@ else:
     loadclhep(env)
     from loadevio import loadevio
     loadevio(env)
- #   from loadjana import loadjana
+ #    from loadjana import loadjana
  #   loadjana(env)
     from loadroot import loadroot
     loadroot(env)
     from loadxerces import loadxerces
     loadxerces(env)
     loadoptions(env)
+
+
+
 
 debug = ARGUMENTS.get('debug', 0)
 if int(debug):
@@ -58,7 +61,8 @@ env.Append(LIBPATH = ['#/lib'])
 
 env.Replace(RPATH=Dir('#/lib').srcnode().abspath)
 
-
+#This drove me crazy! jlab_software jana was including this, and we need it for sophisticated rootspy features..
+env.Append(LINKFLAGS = '-rdynamic')
 
 Export('env debug et_enable mc_enable')
 

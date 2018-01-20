@@ -58,4 +58,5 @@ if platform == 'Darwin':
 Export('env execLibs debugSuffix')
 
 # Include SConscript in src
-SConscript('src/SConscript', duplicate=0)
+SConscript('src/SConscript',variant_dir="src/.%s" % (archDir),duplicate=0)
+ 
