@@ -79,7 +79,7 @@ else:
         if (int(run)>lastRun):
             continue
         outF=open("DAQ_pedestals/tables/run_"+run+".dat","w") #this may be variation-dependent
-        if (variation=="JLabFlux0"): #Write slot 0, read 1, then write all the others
+        if ((variation=="JLabFlux0") or (variation=="JLabFlux0_peds")): #Write slot 0, read 1, then write all the others
             slot = 0
             for channel in range(0,16):
                 outF.write("0 "+str(slot)+" "+str(channel)+" 0 0 \n")
