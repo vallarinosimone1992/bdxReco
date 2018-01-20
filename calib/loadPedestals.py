@@ -1,6 +1,3 @@
-                                                                                                                                                                                                                            
-# -*- coding: utf-8 -*-                                                                                                                                                                                                                             
-
 import string,math,os,sys,subprocess
 import argparse,glob
 
@@ -119,7 +116,7 @@ else:
         outF.close()
         #at this point, we have the file for run 
         #specify in the command
-        command = commandBase+" -r "+str(run)+"-"+str(run)
+        command = commandBase+" -r "+str(run)+"-"
         command += " /DAQ/pedestals DAQ_pedestals/tables/run_"+run+".dat"
         print command
         subprocess.Popen(command,shell=True)
