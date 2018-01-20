@@ -11,4 +11,9 @@ echo runReconOnET: RunNumber is: $1
 
 #this is the command
 #need to connect to the et with the syntax:  ET:sessionName:stationName:host:port
+
+
+#Local DB
+setenv JANA_CALIB_URL sqlite:///$BDXRECO_ROOT/bdx_sqlite.db
+
 $BDXRECO_ROOT/bin/bdxReco --config=$BDXRECO_ROOT/config/bdx.config.JLabFlux.online -PPLUGINS=monitoring_rootspy,monitoring_DAQWaveformsMode1 ET:bdxtest:DSTMaker:jdaq3:11111
