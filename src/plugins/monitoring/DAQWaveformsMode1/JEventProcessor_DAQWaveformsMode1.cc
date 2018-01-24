@@ -21,13 +21,13 @@ using namespace jana;
 #include <JANA/JFactory.h>
 
 /*Here goes the histograms*/
-static const int nCrates = 2;
-static const int nSlots = 21;
+static const int nCrates = 1;
+static const int nSlots = 6;
 static const int nChannels = 16;
 static const int nSamples = 1000;
 // root hist pointers
 static TH1D *hDAQWaveform[nCrates][nSlots][nChannels];
-
+static int  NsamplesWfm[nCrates][nSlots][nChannels];
 extern "C" {
 void InitPlugin(JApplication *app) {
 	InitJANAPlugin(app);
@@ -109,7 +109,7 @@ jerror_t JEventProcessor_DAQWaveformsMode1::brun(JEventLoop *eventLoop, int32_t 
 //------------------
 jerror_t JEventProcessor_DAQWaveformsMode1::evnt(JEventLoop *loop, uint64_t eventnumber) {
 
-	int crate, slot, channel;
+  int crate, slot, channel,N;
 	vector<const fa250Mode1CalibPedSubHit*> m_waveforms;
 	vector<const fa250Mode1CalibPedSubHit*>::const_iterator it;
 
@@ -122,7 +122,10 @@ jerror_t JEventProcessor_DAQWaveformsMode1::evnt(JEventLoop *loop, uint64_t even
 		crate = (*it)->m_channel.rocid;
 		slot = (*it)->m_channel.slot;
 		channel = (*it)->m_channel.channel;
+		N = (*it)->samples.size();
 
+	
+	
 		/*Check for crate-slot-channel numbers*/
 		if (crate < 0) {
 			jerr << "ERROR in DAQWaveformsMode1 plugin, crate number is <0 " << endl;
@@ -150,19 +153,24 @@ jerror_t JEventProcessor_DAQWaveformsMode1::evnt(JEventLoop *loop, uint64_t even
 			return VALUE_OUT_OF_RANGE;
 		}
 
-		/*Ok, here it means the range is fine*/
+		if ( N!= NsamplesWfm[nCrates][nSlots][nChannels]){
+		  jerr << "ERROR in DAQWaveformsMode1 plugin nsamples "<<N<< " " <<NsamplesWfm[nCrates][nSlots][nChannels]<<endl;  
+		}
+	
 
+		/*Ok, here it means the range is fine*/
+		NsamplesWfm[nCrates][nSlots][nChannels]=N;
 		/*Reset histogram*/
 		hDAQWaveform[crate][slot][channel]->Reset();
 
 		/*Check for samples number*/
-		if ((*it)->samples.size()>nSamples){
+		if (N>nSamples){
 			jerr << "ERROR in DAQWaveformsMode1 plugin, number of samples is too high " << (*it)->samples.size()<<" "<<nSamples<<endl;
 			japp->RootUnLock();
 			return VALUE_OUT_OF_RANGE;
 		}
 		hDAQWaveform[crate][slot][channel]->GetXaxis()->SetRangeUser(0,(*it)->samples.size());
-		for (int isample=0;isample<(*it)->samples.size();isample++){
+		for (int isample=0;isample<N;isample++){
 			hDAQWaveform[crate][slot][channel]->SetBinContent(isample,(*it)->samples[isample]);
 		}
 
@@ -170,8 +178,6 @@ jerror_t JEventProcessor_DAQWaveformsMode1::evnt(JEventLoop *loop, uint64_t even
 
 	// Unlock ROOT
 	japp->RootUnLock();
-	return NOERROR;
-
 	return NOERROR;
 }
 
