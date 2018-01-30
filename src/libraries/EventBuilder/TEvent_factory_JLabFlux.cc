@@ -132,7 +132,7 @@ jerror_t TEvent_factory_JLabFlux::fini(void) {
 //	if (m_IntVetoHits!=0) delete (m_IntVetoHits);
 //	if (m_ExtVetoHits!=0) delete (m_ExtVetoHits);
 	japp->RootUnLock();
-	return NOERROR;
+
 
 	return NOERROR;
 }

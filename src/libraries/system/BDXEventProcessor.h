@@ -78,7 +78,7 @@ private:
 	vector<uint32_t> tWord;
 
 	/*Time*/
-	long int startTime,stopTime,deltaTime;
+	Long64_t startTime,stopTime,deltaTime;
 
 	/*The RunInfo tree*/
 	TTree *m_runInfo;
