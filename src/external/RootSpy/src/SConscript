@@ -12,6 +12,6 @@ subdirs.extend(['RootSpy', 'RSMonitor', 'RSelog'])
 #subdirs.extend(['plugins']) #A.C>
 #subdirs.extend(['examples'])
 
-SConscript(dirs=subdirs, exports='env execLibs debugSuffix', duplicate=0)
+SConscript(dirs=subdirs, exports='env execLibs debugSuffix',duplicate=0)
 
  

@@ -31,7 +31,7 @@ if __name__ == "__main__":
 
     #create CCDB api class
     provider = ccdb.AlchemyProvider()                        # this class has all CCDB manipulation functions
-    provider.connect("mysql://bdxwriter:e1tocome@g3db/gr3db")     # use usual connection string to connect to database
+    provider.connect("mysql://bdxwriter:e1tocome@clasdb/BDX")     # use usual connection string to connect to database
     provider.authentication.current_user_name = "bdxCT"  # to have a name in logs
 
     #read file
