@@ -33,6 +33,8 @@ private:
 	TClonesArray *m_CaloHits;
 	TClonesArray *m_IntVetoHits;
 
+	TClonesArray *m_CaloMCRealHits;
+
 	int m_isMC, m_MCRunNumber;
 	std::string m_tag;
 };

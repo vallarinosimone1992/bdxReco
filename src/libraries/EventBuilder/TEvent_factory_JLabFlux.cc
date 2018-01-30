@@ -12,11 +12,15 @@ using namespace std;
 #include <EventBuilder/TEvent.h>
 #include <EventBuilder/TEventHeader.h>
 
+#include <Calorimeter/CalorimeterMCRealHit.h>
 #include <Calorimeter/CalorimeterHit.h>
 #include <IntVeto/IntVetoHit.h>
 
 #include <DAQ/eventData.h>
+#include <MC/MCType.h>
+
 #include "TClonesArray.h"
+
 
 #include "TEvent_factory_JLabFlux.h"
 
@@ -35,8 +39,8 @@ jerror_t TEvent_factory_JLabFlux::init(void) {
 		gPARMS->GetParameter("MC:RUN_NUMBER", m_MCRunNumber);
 		m_tag = "MC";
 	}
-	if ((m_isMC) && (m_isMC != 2)) {
-		jout << "Error! Can use this only with MC==2, i.e. CataniaSecondProto" << endl;
+	if ((m_isMC) && (m_isMC !=  MCType::JLAB_FLUX_V1)) {
+		jout << "Error! Can use this only with MC==100, i.e. JLabFlux " << endl;
 		return VALUE_OUT_OF_RANGE;
 	}
 
@@ -44,6 +48,7 @@ jerror_t TEvent_factory_JLabFlux::init(void) {
 
 	m_CaloHits = new TClonesArray("CalorimeterHit");
 	m_IntVetoHits = new TClonesArray("IntVetoHit");
+	m_CaloMCRealHits = new TClonesArray("CalorimeterMCRealHit");
 
 	japp->RootUnLock();
 
@@ -69,6 +74,8 @@ jerror_t TEvent_factory_JLabFlux::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	const eventData* tData;
 	vector<const CalorimeterHit*> chits;
 	vector<const IntVetoHit*> ivhits;
+
+	vector<const CalorimeterMCRealHit*> chits_MCReal;
 
 	if (!m_isMC) {
 		try {
@@ -110,6 +117,16 @@ jerror_t TEvent_factory_JLabFlux::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	}
 	m_event->addCollection(m_IntVetoHits);
 
+	if (m_isMC) {
+		loop->Get(chits_MCReal);
+		m_CaloMCRealHits->Clear("C");
+		for (int ii = 0; ii < chits_MCReal.size(); ii++) {
+			((CalorimeterMCRealHit*) m_CaloMCRealHits->ConstructedAt(ii))->operator=(*(chits_MCReal[ii]));
+			m_event->AddAssociatedObject(chits_MCReal[ii]);
+		}
+		m_event->addCollection(m_CaloMCRealHits);
+	}
+
 	/*publish the event*/
 	_data.push_back(m_event);
 
@@ -132,7 +149,6 @@ jerror_t TEvent_factory_JLabFlux::fini(void) {
 //	if (m_IntVetoHits!=0) delete (m_IntVetoHits);
 //	if (m_ExtVetoHits!=0) delete (m_ExtVetoHits);
 	japp->RootUnLock();
-
 
 	return NOERROR;
 }

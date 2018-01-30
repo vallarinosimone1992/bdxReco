@@ -21,7 +21,7 @@
 #include <Paddles/PaddlesHit.h>
 
 #include <DAQ/fa250Mode1Hit.h>
-
+#include <MC/MCType.h>
 #include <Calorimeter/CalorimeterMCRealHit.h>
 
 #include <DAQ/eventData.h>
@@ -45,8 +45,8 @@ jerror_t TEvent_factory_CataniaProto2::init(void) {
 		gPARMS->GetParameter("MC:RUN_NUMBER", m_MCRunNumber);
 		m_tag="MC";
 	}
-	if ((m_isMC) && (m_isMC != 2)) {
-		jout << "Error! Can use this only with MC==4, i.e. JLabFlux" << endl;
+	if ((m_isMC) && (m_isMC != MCType::CATANIA_V2)) {
+		jout << "Error! Can use this only with MC==2, i.e. CataniaProto2" << endl;
 		return VALUE_OUT_OF_RANGE;
 	}
 

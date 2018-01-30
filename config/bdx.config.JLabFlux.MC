@@ -1,33 +1,19 @@
 #Configuration file for BDX run.
 
 #System parameters
-MC		0
-JANA_CALIB_CONTEXT "variation=JLabFlux0"
+MC		100
+MC:RUN_NUMBER	0
+JANA_CALIB_CONTEXT "variation=JLabFluxMC"
 THREAD_TIMEOUT 120
 THREAD_TIMEOUT_FIRST_EVENT 120
-
-#TT:XML_FILENAME "$BDXRECO_ROOT/tt.JLabFluxMeasurement.xml"
-DAQ:VME_MOTHER_TAG 80	    #0x50
-DAQ:CHILD_MODE1_TAG 57601   #0xe101
-DAQ:CHILD_TRIGGER_TAG 57638 #0xe126, this is the V1495 trigger bank
-DAQ:EVENTHEADER_TAG 57615   #0xe10f
-DAQ:PRESTART_TAG 17 	    #0x11
-DAQ:VERBOSE 2
-
-#Calorimeter parameters
-CALORIMETER:NPED	       20	#num of samples to include in pedestal
-CALORIMETER:NSB		       10	#num of samples before the maximum
-CALORIMETER:NSA		       20 	#num of samples after  the maximum 
-CALORIMETER:NSAMPLES	   250  #num of samples in the integration window.
 
 
 #IntVeto parameters
 INTVETO:MIN_TOT  12    #min tot in ns to consider a pulse
 INTVETO:THR	 0.5       #min amplitude of a pulse -in phe units
-INTVETO:NPED 20        #num of samples in pedestal determination event by event
+INTVETO:NPED 	 20        #num of samples in pedestal determination event by event
 INTVETO:NSB	 20        #num of samples before the maximum
 INTVETO:NSA	 30        #num of samples after  the maximum
-
 
 
 INTVETO:HIT_THR_SINGLE    5   #thr in phe charge for a detector with single readout
@@ -36,3 +22,4 @@ INTVETO:HIT_DT_MULTI    2000  #time-window coincidence for hits in a counter wit
 INTVETO:HIT_N_MULTI     2     #multiplicity for a detector with multi readout -> Irrelevant here
 
 INTVETO:VERBOSE  3
+

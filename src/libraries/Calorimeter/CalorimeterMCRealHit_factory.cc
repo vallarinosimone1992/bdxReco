@@ -62,6 +62,7 @@ jerror_t CalorimeterMCRealHit_factory::evnt(JEventLoop *loop, uint64_t eventnumb
 			m_CalorimeterMCRealHit = new CalorimeterMCRealHit;
 			m_CalorimeterMCRealHit->m_channel = index;
 			m_CalorimeterMCRealHit->E = m_CalorimeterMCHit->totEdep;
+			jout<<m_CalorimeterMCRealHit->E<<std::endl;
 			m_CalorimeterMCRealHit->AddAssociatedObject(m_CalorimeterMCHit);
 			m_map[index] = 	m_CalorimeterMCRealHit;
 		} else {

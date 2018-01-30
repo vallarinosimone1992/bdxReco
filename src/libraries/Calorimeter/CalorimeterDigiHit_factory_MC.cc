@@ -131,7 +131,7 @@ void CalorimeterDigiHit_factory_MC::SetIndex(TranslationTable::CALO_Index_t &ind
 		index.sector = mchit->sector - 1;
 		index.x = mchit->x - 1;
 		index.y = mchit->y - 1;
-	} else if (MC == MCType::JLAB_FLUX_V1) {
+	} else if (MC == MCType::JLAB_FLUX_V1) { /*In MC we just have 1 SiPM being simulated - while in reality there are two connected to the same crystal*/
 		index.sector = 0;
 		index.x = 0;
 		index.y = 0;
