@@ -41,9 +41,9 @@
       <channel number="10" detector="INT_VETO" sector="0" layer="0" component="11" readout="1"/>
       <channel number="11" detector="INT_VETO" sector="0" layer="0" component="12" readout="1"/>
       <channel number="12" detector="INT_VETO" sector="0" layer="0" component="13" readout="1"/>
-      <channel number="13" detector="CALO" sector="0" row="0" col="1" readout="1"/>
-      <channel number="14" detector="CALO" sector="0" row="0" col="2" readout="1"/>
-      <channel number="15" detector="CALO" sector="0" row="0" col="3" readout="1"/>
+      <channel number="13" detector="CALO" sector="0" row="1" col="1" readout="1"/>
+      <channel number="14" detector="CALO" sector="0" row="0" col="0" readout="1"/>
+      <channel number="15" detector="CALO" sector="0" row="0" col="1" readout="1"/>
     </slot>
   </crate>
 </bdx_translation_table>
