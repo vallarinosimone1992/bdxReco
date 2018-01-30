@@ -91,7 +91,7 @@ jerror_t fa250Mode1CalibPedSubHit_factory::evnt(JEventLoop *loop, uint64_t event
 			CalibPedSubHit->samples.push_back(sample);
 		}
 		CalibPedSubHit->m_ped=pedestal*LSB;
-		CalibPedSubHit->m_RMS=RMS*LSB;
+		CalibPedSubHit->m_RMS=fabs(RMS*LSB); //a.c. there are cases (v1725) where LSB is < 0, but RMS is >0!
 		// Add original as associated object 
 		CalibPedSubHit->AddAssociatedObject(hit);
 		_data.push_back(CalibPedSubHit);
