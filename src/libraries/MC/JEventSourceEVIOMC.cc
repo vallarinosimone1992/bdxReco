@@ -235,7 +235,10 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory) {
 		}
 		vector<IntVetoMCHit*> intVetoMChits;
 		for (unsigned int ih = 0; ih < bankDgt.size(); ih++) {
-			if ((bankDgt[ih].getIntDgtVar("veto") != VetoMCHit::CATANIA_INTVETO) && (bankDgt[ih].getIntDgtVar("veto") != VetoMCHit::FULL_INTVETO)) continue;
+
+
+
+			if ((bankDgt[ih].getIntDgtVar("veto") != VetoMCHit::CATANIA_INTVETO) && (bankDgt[ih].getIntDgtVar("veto") != VetoMCHit::FULL_INTVETO) && (bankDgt[ih].getIntDgtVar("veto") != VetoMCHit::JLAB_FLUX)) continue;
 
 			IntVetoMCHit *hit = new IntVetoMCHit;
 			hit->totEdep =0;
@@ -257,7 +260,7 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory) {
 			hit->sector = bankDgt[ih].getIntDgtVar("sector");
 			hit->channel = bankDgt[ih].getIntDgtVar("channel");
 
-			//    jout << "sector "<< hit->sector << " " << hit->channel<<endl;
+		 //  jout << "sector "<< hit->sector << " " << hit->channel<<endl;
 
 			hit->system = bankDgt[ih].getIntDgtVar("veto");
 

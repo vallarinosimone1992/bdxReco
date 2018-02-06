@@ -68,10 +68,7 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 		m_map_it = m_map.find(m_channel);
 		if (m_map_it == m_map.end()) { /*IntVetoDigiHit was not here. Create a new hit*/
 
-			/*create the different digi-hits*/
-			switch (m_channel.component) {
-			case (0): //top
-			{
+			if (m_isMC == MCType::JLAB_FLUX_V1) {
 				m_IntVetoDigiHit = new IntVetoDigiHit;
 				m_IntVetoDigiHit->m_channel = m_channel;
 				m_IntVetoDigiHit->m_channel.readout = 1;
@@ -81,125 +78,12 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 				m_IntVetoDigiHit->RMSflag = true;
 				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 				m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
+			} else {
 
-				m_IntVetoDigiHit = new IntVetoDigiHit;
-				m_IntVetoDigiHit->m_channel = m_channel;
-				m_IntVetoDigiHit->m_channel.readout = 2;
-				m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc2;
-				m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc2 / 1000.; //MC is in ps
-				m_IntVetoDigiHit->A = 0;
-				m_IntVetoDigiHit->RMSflag = true;
-				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
-
-				m_IntVetoDigiHit = new IntVetoDigiHit;
-				m_IntVetoDigiHit->m_channel = m_channel;
-				m_IntVetoDigiHit->m_channel.readout = 3;
-				m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc3;
-				m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc3 / 1000.; //MC is in ps
-				m_IntVetoDigiHit->A = 0;
-				m_IntVetoDigiHit->RMSflag = true;
-				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
-
-				m_IntVetoDigiHit = new IntVetoDigiHit;
-				m_IntVetoDigiHit->m_channel = m_channel;
-				m_IntVetoDigiHit->m_channel.readout = 4;
-				m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc4;
-				m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc4 / 1000.; //MC is in ps
-				m_IntVetoDigiHit->A = 0;
-				m_IntVetoDigiHit->RMSflag = true;
-				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
-				break;
-			}
-			case (1): //left
-			case (2): //right
-			{
-				m_IntVetoDigiHit = new IntVetoDigiHit;
-				m_IntVetoDigiHit->m_channel = m_channel;
-				m_IntVetoDigiHit->m_channel.readout = 1;
-				m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc4;
-				m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc4 / 1000.; //MC is in ps
-				m_IntVetoDigiHit->A = 0;
-				m_IntVetoDigiHit->RMSflag = true;
-				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
-
-				m_IntVetoDigiHit = new IntVetoDigiHit;
-				m_IntVetoDigiHit->m_channel = m_channel;
-				m_IntVetoDigiHit->m_channel.readout = 2;
-				m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc3;
-				m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc3 / 1000.; //MC is in ps
-				m_IntVetoDigiHit->A = 0;
-				m_IntVetoDigiHit->RMSflag = true;
-				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
-
-				m_IntVetoDigiHit = new IntVetoDigiHit;
-				m_IntVetoDigiHit->m_channel = m_channel;
-				m_IntVetoDigiHit->m_channel.readout = 3;
-				m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc2;
-				m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc2 / 1000.; //MC is in ps
-				m_IntVetoDigiHit->A = 0;
-				m_IntVetoDigiHit->RMSflag = true;
-				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
-
-				m_IntVetoDigiHit = new IntVetoDigiHit;
-				m_IntVetoDigiHit->m_channel = m_channel;
-				m_IntVetoDigiHit->m_channel.readout = 4;
-				m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc1;
-				m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc1 / 1000.; //MC is in ps
-				m_IntVetoDigiHit->A = 0;
-				m_IntVetoDigiHit->RMSflag = true;
-				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
-				break;
-			}
-			case (3): {
-				if (m_isMC == MCType::CATANIA_V1) {
-					m_IntVetoDigiHit = new IntVetoDigiHit;
-					m_IntVetoDigiHit->m_channel = m_channel;
-					m_IntVetoDigiHit->m_channel.readout = 1;
-					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc1;
-					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc1 / 1000.; //MC is in ps
-					m_IntVetoDigiHit->A = 0;
-					m_IntVetoDigiHit->RMSflag = true;
-					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-					m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
-
-					m_IntVetoDigiHit = new IntVetoDigiHit;
-					m_IntVetoDigiHit->m_channel = m_channel;
-					m_IntVetoDigiHit->m_channel.readout = 2;
-					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc4;
-					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc4 / 1000.; //MC is in ps
-					m_IntVetoDigiHit->A = 0;
-					m_IntVetoDigiHit->RMSflag = true;
-					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-					m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
-
-					m_IntVetoDigiHit = new IntVetoDigiHit;
-					m_IntVetoDigiHit->m_channel = m_channel;
-					m_IntVetoDigiHit->m_channel.readout = 3;
-					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc3;
-					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc3 / 1000.; //MC is in ps
-					m_IntVetoDigiHit->A = 0;
-					m_IntVetoDigiHit->RMSflag = true;
-					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-					m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
-
-					m_IntVetoDigiHit = new IntVetoDigiHit;
-					m_IntVetoDigiHit->m_channel = m_channel;
-					m_IntVetoDigiHit->m_channel.readout = 4;
-					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc2;
-					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc2 / 1000.; //MC is in ps
-					m_IntVetoDigiHit->A = 0;
-					m_IntVetoDigiHit->RMSflag = true;
-					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-					m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
-
-				} else {
+				/*create the different digi-hits*/
+				switch (m_channel.component) {
+				case (0): //top
+				{
 					m_IntVetoDigiHit = new IntVetoDigiHit;
 					m_IntVetoDigiHit->m_channel = m_channel;
 					m_IntVetoDigiHit->m_channel.readout = 1;
@@ -239,78 +123,165 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 					m_IntVetoDigiHit->RMSflag = true;
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
+					break;
 				}
-				break;
-			}
-			case (4): //upstream
-			case (5): //downstream
-			{
-				m_IntVetoDigiHit = new IntVetoDigiHit;
-				m_IntVetoDigiHit->m_channel = m_channel;
-				m_IntVetoDigiHit->m_channel.readout = 1;
-				m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc1;
-				m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc1 / 1000.; //MC is in ps
-				m_IntVetoDigiHit->A = 0;
-				m_IntVetoDigiHit->RMSflag = true;
-				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
-				break;
-			}
+				case (1): //left
+				case (2): //right
+				{
+					m_IntVetoDigiHit = new IntVetoDigiHit;
+					m_IntVetoDigiHit->m_channel = m_channel;
+					m_IntVetoDigiHit->m_channel.readout = 1;
+					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc4;
+					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc4 / 1000.; //MC is in ps
+					m_IntVetoDigiHit->A = 0;
+					m_IntVetoDigiHit->RMSflag = true;
+					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+					m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
+
+					m_IntVetoDigiHit = new IntVetoDigiHit;
+					m_IntVetoDigiHit->m_channel = m_channel;
+					m_IntVetoDigiHit->m_channel.readout = 2;
+					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc3;
+					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc3 / 1000.; //MC is in ps
+					m_IntVetoDigiHit->A = 0;
+					m_IntVetoDigiHit->RMSflag = true;
+					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+					m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
+
+					m_IntVetoDigiHit = new IntVetoDigiHit;
+					m_IntVetoDigiHit->m_channel = m_channel;
+					m_IntVetoDigiHit->m_channel.readout = 3;
+					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc2;
+					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc2 / 1000.; //MC is in ps
+					m_IntVetoDigiHit->A = 0;
+					m_IntVetoDigiHit->RMSflag = true;
+					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+					m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
+
+					m_IntVetoDigiHit = new IntVetoDigiHit;
+					m_IntVetoDigiHit->m_channel = m_channel;
+					m_IntVetoDigiHit->m_channel.readout = 4;
+					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc1;
+					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc1 / 1000.; //MC is in ps
+					m_IntVetoDigiHit->A = 0;
+					m_IntVetoDigiHit->RMSflag = true;
+					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+					m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
+					break;
+				}
+				case (3): {
+					if (m_isMC == MCType::CATANIA_V1) {
+						m_IntVetoDigiHit = new IntVetoDigiHit;
+						m_IntVetoDigiHit->m_channel = m_channel;
+						m_IntVetoDigiHit->m_channel.readout = 1;
+						m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc1;
+						m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc1 / 1000.; //MC is in ps
+						m_IntVetoDigiHit->A = 0;
+						m_IntVetoDigiHit->RMSflag = true;
+						m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+						m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
+
+						m_IntVetoDigiHit = new IntVetoDigiHit;
+						m_IntVetoDigiHit->m_channel = m_channel;
+						m_IntVetoDigiHit->m_channel.readout = 2;
+						m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc4;
+						m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc4 / 1000.; //MC is in ps
+						m_IntVetoDigiHit->A = 0;
+						m_IntVetoDigiHit->RMSflag = true;
+						m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+						m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
+
+						m_IntVetoDigiHit = new IntVetoDigiHit;
+						m_IntVetoDigiHit->m_channel = m_channel;
+						m_IntVetoDigiHit->m_channel.readout = 3;
+						m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc3;
+						m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc3 / 1000.; //MC is in ps
+						m_IntVetoDigiHit->A = 0;
+						m_IntVetoDigiHit->RMSflag = true;
+						m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+						m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
+
+						m_IntVetoDigiHit = new IntVetoDigiHit;
+						m_IntVetoDigiHit->m_channel = m_channel;
+						m_IntVetoDigiHit->m_channel.readout = 4;
+						m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc2;
+						m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc2 / 1000.; //MC is in ps
+						m_IntVetoDigiHit->A = 0;
+						m_IntVetoDigiHit->RMSflag = true;
+						m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+						m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
+
+					} else {
+						m_IntVetoDigiHit = new IntVetoDigiHit;
+						m_IntVetoDigiHit->m_channel = m_channel;
+						m_IntVetoDigiHit->m_channel.readout = 1;
+						m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc1;
+						m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc1 / 1000.; //MC is in ps
+						m_IntVetoDigiHit->A = 0;
+						m_IntVetoDigiHit->RMSflag = true;
+						m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+						m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
+
+						m_IntVetoDigiHit = new IntVetoDigiHit;
+						m_IntVetoDigiHit->m_channel = m_channel;
+						m_IntVetoDigiHit->m_channel.readout = 2;
+						m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc2;
+						m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc2 / 1000.; //MC is in ps
+						m_IntVetoDigiHit->A = 0;
+						m_IntVetoDigiHit->RMSflag = true;
+						m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+						m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
+
+						m_IntVetoDigiHit = new IntVetoDigiHit;
+						m_IntVetoDigiHit->m_channel = m_channel;
+						m_IntVetoDigiHit->m_channel.readout = 3;
+						m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc3;
+						m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc3 / 1000.; //MC is in ps
+						m_IntVetoDigiHit->A = 0;
+						m_IntVetoDigiHit->RMSflag = true;
+						m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+						m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
+
+						m_IntVetoDigiHit = new IntVetoDigiHit;
+						m_IntVetoDigiHit->m_channel = m_channel;
+						m_IntVetoDigiHit->m_channel.readout = 4;
+						m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc4;
+						m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc4 / 1000.; //MC is in ps
+						m_IntVetoDigiHit->A = 0;
+						m_IntVetoDigiHit->RMSflag = true;
+						m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+						m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
+					}
+					break;
+				}
+				case (4): //upstream
+				case (5): //downstream
+				{
+					m_IntVetoDigiHit = new IntVetoDigiHit;
+					m_IntVetoDigiHit->m_channel = m_channel;
+					m_IntVetoDigiHit->m_channel.readout = 1;
+					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc1;
+					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc1 / 1000.; //MC is in ps
+					m_IntVetoDigiHit->A = 0;
+					m_IntVetoDigiHit->RMSflag = true;
+					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+					m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
+					break;
+				}
+				}
 			}
 		} else { /*There is already the hit. Sum the charges*/
 
-			switch (m_channel.component) {
-			case (0): //top
+			if (m_isMC == MCType::JLAB_FLUX_V1) {
+				m_IntVetoDigiHit = m_map_it->second[0];
+				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+				m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc1;
 
-			{
-				m_IntVetoDigiHit = m_map_it->second[0];
-				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc1;
-				m_IntVetoDigiHit = m_map_it->second[1];
-				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc2;
-				m_IntVetoDigiHit = m_map_it->second[2];
-				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc3;
-				m_IntVetoDigiHit = m_map_it->second[3];
-				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc4;
-				break;
-			}
-			case (1): //left
-			case (2): //right
-			{
-				m_IntVetoDigiHit = m_map_it->second[0];
-				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc4;
-				m_IntVetoDigiHit = m_map_it->second[1];
-				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc3;
-				m_IntVetoDigiHit = m_map_it->second[2];
-				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc2;
-				m_IntVetoDigiHit = m_map_it->second[3];
-				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc1;
-				break;
-			}
-			case (3): //bottom
-			{
-				if (m_isMC == MCType::CATANIA_V1) {
-					m_IntVetoDigiHit = m_map_it->second[0];
-					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc1;
-					m_IntVetoDigiHit = m_map_it->second[1];
-					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc4;
-					m_IntVetoDigiHit = m_map_it->second[2];
-					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc3;
-					m_IntVetoDigiHit = m_map_it->second[3];
-					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc2;
-					break;
-				} else {
+			} else {
+				switch (m_channel.component) {
+				case (0): //top
+
+				{
 					m_IntVetoDigiHit = m_map_it->second[0];
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc1;
@@ -325,14 +296,63 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc4;
 					break;
 				}
-			}
-			case (4): //upstream
-			case (5): //downstream
-			{
-				m_IntVetoDigiHit = m_map_it->second[0];
-				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc1;
-			}
+				case (1): //left
+				case (2): //right
+				{
+					m_IntVetoDigiHit = m_map_it->second[0];
+					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc4;
+					m_IntVetoDigiHit = m_map_it->second[1];
+					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc3;
+					m_IntVetoDigiHit = m_map_it->second[2];
+					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc2;
+					m_IntVetoDigiHit = m_map_it->second[3];
+					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc1;
+					break;
+				}
+				case (3): //bottom
+				{
+					if (m_isMC == MCType::CATANIA_V1) {
+						m_IntVetoDigiHit = m_map_it->second[0];
+						m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+						m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc1;
+						m_IntVetoDigiHit = m_map_it->second[1];
+						m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+						m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc4;
+						m_IntVetoDigiHit = m_map_it->second[2];
+						m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+						m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc3;
+						m_IntVetoDigiHit = m_map_it->second[3];
+						m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+						m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc2;
+						break;
+					} else {
+						m_IntVetoDigiHit = m_map_it->second[0];
+						m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+						m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc1;
+						m_IntVetoDigiHit = m_map_it->second[1];
+						m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+						m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc2;
+						m_IntVetoDigiHit = m_map_it->second[2];
+						m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+						m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc3;
+						m_IntVetoDigiHit = m_map_it->second[3];
+						m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+						m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc4;
+						break;
+					}
+				}
+				case (4): //upstream
+				case (5): //downstream
+				{
+					m_IntVetoDigiHit = m_map_it->second[0];
+					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc1;
+				}
+				}
 			}
 		}
 	} //end loop on MC hits

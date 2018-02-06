@@ -21,7 +21,8 @@ public:
 			CATANIA_EXTVETO=2,
 			CATANIA_PADDLES=3,
 			FULL_INTVETO=4,
-			FULL_EXTVETO=5
+			FULL_EXTVETO=5,
+			JLAB_FLUX=6
 	};
 
 	VetoMCHit(){};
