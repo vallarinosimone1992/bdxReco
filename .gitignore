@@ -28,3 +28,8 @@ calib/DAQ_pedestals/*
 
 #Backups
 *~
+##Compilation stuff
+**/.Linux-x86_64-dbg/*
+**/.Linux_x86_64/*
+**/.Darwin_x86_64/*
+**/.Darwin_x86_64-dbg/*
