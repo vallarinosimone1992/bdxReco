@@ -8,6 +8,7 @@
 #include "JEventProcessor_IntVetoSipm.h"
 #include <IntVeto/IntVetoSiPMHit.h>
 #include <TT/TranslationTable.h>
+#include <DAQ/eventData.h>
 using namespace jana;
 
 #include <TDirectory.h>
@@ -24,7 +25,8 @@ static const int nReadouts = 4;
 static TH1D *hSipmCharge[nSectors][nLayers][nComponents][nReadouts + 1];
 static TH1D *hSipmAmpl[nSectors][nLayers][nComponents][nReadouts + 1];
 
-static int nEntries[nSectors][nLayers][nComponents][nReadouts + 1]={0};
+static double normQ[nSectors][nLayers][nComponents][nReadouts + 1] = { 0 };
+static double normA[nSectors][nLayers][nComponents][nReadouts + 1] = { 0 };
 
 // Routine used to create our JEventProcessor
 #include <JANA/JApplication.h>
@@ -63,7 +65,6 @@ jerror_t JEventProcessor_IntVetoSipm::init(void) {
 	// japp->RootUnLock();
 	//
 
-
 	if (hSipmCharge[0][0][0][0] != NULL) {
 		japp->RootUnLock();
 		return NOERROR;
@@ -96,7 +97,6 @@ jerror_t JEventProcessor_IntVetoSipm::init(void) {
 jerror_t JEventProcessor_IntVetoSipm::brun(JEventLoop *eventLoop, uint32_t runnumber) {
 	// This is called whenever the run number changes
 
-
 	return NOERROR;
 }
 
@@ -122,7 +122,14 @@ jerror_t JEventProcessor_IntVetoSipm::evnt(JEventLoop *loop, uint64_t eventnumbe
 	vector<const IntVetoSiPMHit*>::const_iterator data_it;
 	loop->Get(data);
 
-	TranslationTable::ChannelInfo m_channel;
+	const eventData* tData;
+
+	try {
+		loop->GetSingle(tData);
+	} catch (unsigned long e) {
+		jout << "JEventProcessor_IntVetoSipm::evnt::evnt no eventData bank this event" << endl;
+		return OBJECT_NOT_AVAILABLE;
+	}
 
 	japp->RootWriteLock();
 	//  ... fill historgrams or trees ...
@@ -142,17 +149,27 @@ jerror_t JEventProcessor_IntVetoSipm::evnt(JEventLoop *loop, uint64_t eventnumbe
 		Araw = (*data_it)->Araw;
 		Qraw = (*data_it)->Qraw;
 
+
 		/*The following mimics calibration code for sipms*/
 		if ((T < 200) || (T > 1800)) continue;
 
-		hSipmAmpl[m_sector][m_layer][m_component][m_readout]->Fill(Aphe);
-		hSipmCharge[m_sector][m_layer][m_component][m_readout]->Fill(Qphe);
 
-		nEntries[m_sector][m_layer][m_component][m_readout]++;
+		m_hSipmQ = hSipmCharge[m_sector][m_layer][m_component][m_readout];
+		m_hSipmA = hSipmAmpl[m_sector][m_layer][m_component][m_readout];
 
-		hSipmAmpl[m_sector][m_layer][m_component][m_readout]->SetNormFactor(1.);
-		hSipmCharge[m_sector][m_layer][m_component][m_readout]->SetNormFactor(1.);
+		m_hSipmQ->Scale(normQ[m_sector][m_layer][m_component][m_readout]);
+		m_hSipmA->Scale(normA[m_sector][m_layer][m_component][m_readout]);
+
+		m_hSipmA->Fill(Aphe);
+		m_hSipmQ->Fill(Qphe);
+
+		normQ[m_sector][m_layer][m_component][m_readout] = m_hSipmQ->Integral(m_hSipmQ->FindBin(-2.), m_hSipmQ->FindBin(10.));
+		normA[m_sector][m_layer][m_component][m_readout] = m_hSipmA->Integral(m_hSipmA->FindBin(-2.), m_hSipmA->FindBin(10.));
+
+		if (normQ[m_sector][m_layer][m_component][m_readout] > 0) m_hSipmQ->Scale(1 / normQ[m_sector][m_layer][m_component][m_readout]);
+		if (normA[m_sector][m_layer][m_component][m_readout] > 0) m_hSipmA->Scale(1 / normA[m_sector][m_layer][m_component][m_readout]);
 	}
+
 	japp->RootUnLock();
 	return NOERROR;
 
@@ -163,9 +180,9 @@ jerror_t JEventProcessor_IntVetoSipm::evnt(JEventLoop *loop, uint64_t eventnumbe
 // erun
 //------------------
 jerror_t JEventProcessor_IntVetoSipm::erun(void) {
-	// This is called whenever the run number changes, before it is
-	// changed to give you a chance to clean up before processing
-	// events from the next run number.
+// This is called whenever the run number changes, before it is
+// changed to give you a chance to clean up before processing
+// events from the next run number.
 	return NOERROR;
 }
 
@@ -173,7 +190,7 @@ jerror_t JEventProcessor_IntVetoSipm::erun(void) {
 // fini
 //------------------
 jerror_t JEventProcessor_IntVetoSipm::fini(void) {
-	// Called before program exit after event processing is finished.
+// Called before program exit after event processing is finished.
 	return NOERROR;
 }
 

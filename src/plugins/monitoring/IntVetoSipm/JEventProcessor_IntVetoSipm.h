@@ -11,7 +11,7 @@
 #include <JANA/JEventProcessor.h>
 #include <system/CalibrationHandler.h>
 
-
+class TH1D;
 
 class JEventProcessor_IntVetoSipm: public jana::JEventProcessor {
 public:
@@ -35,6 +35,9 @@ private:
 	double T;
 
 	CalibrationHandler<TranslationTable::INT_VETO_Index_t> *m_sipm_ampl;
+
+	TH1D *m_hSipmQ;
+	TH1D *m_hSipmA;
 };
 
 #endif // _JEventProcessor_IntVetoSipm_

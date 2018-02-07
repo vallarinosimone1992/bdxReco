@@ -60,10 +60,14 @@
 		c1->cd(ii+1);
 		gPad->SetTicks();
 		gPad->SetGrid();
-		if (hQ[ii]) hQ[ii]->Draw();
+		if (hQ[ii]){
+			hQ[ii]->SetLineWidth(2);
+			hQ[ii]->Draw("HIST");
+		}
 		if (hA[ii]) {
+			hA[ii]->SetLineWidth(2);
 			hA[ii]->SetLineColor(2);
-			hA[ii]->Draw("SAME");
+			hA[ii]->Draw("HISTSAME");
 		}
 	}
 }
