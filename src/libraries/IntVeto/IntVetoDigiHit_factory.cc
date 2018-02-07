@@ -69,7 +69,7 @@ jerror_t IntVetoDigiHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber)
 		m_IntVetoDigiHit->m_channel=m_channel;
 		m_IntVetoDigiHit->Qphe=m_IntVetoSiPMHit->Qphe;
 		m_IntVetoDigiHit->Qraw=m_IntVetoSiPMHit->Qraw;
-		m_IntVetoDigiHit->A=m_IntVetoSiPMHit->A;
+		m_IntVetoDigiHit->A=m_IntVetoSiPMHit->Araw;
 		m_IntVetoDigiHit->T=m_IntVetoSiPMHit->T;
 
 		m_IntVetoDigiHit->pedMean=m_IntVetoSiPMHit->pedMean;

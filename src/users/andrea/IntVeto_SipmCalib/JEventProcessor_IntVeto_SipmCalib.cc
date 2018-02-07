@@ -168,7 +168,7 @@ jerror_t JEventProcessor_IntVeto_SipmCalib::evnt(JEventLoop *loop, uint64_t even
 
 		m_type=(*data_it)->m_type;
 		T=(*data_it)->T;
-		A=(*data_it)->A;
+		A=(*data_it)->Araw;
 		Qphe=(*data_it)->Qphe;
 		Qraw=(*data_it)->Qraw;
 

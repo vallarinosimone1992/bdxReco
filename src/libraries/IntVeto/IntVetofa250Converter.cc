@@ -126,8 +126,6 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 			m_thisCrossingTime.first=-1;
 			m_thisCrossingTime.second=-1;
 
-
-
 		}
 
 	}
@@ -158,22 +156,22 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output,const fa2
 	if ((output->nSingles)==0){
 		output->m_type=IntVetoSiPMHit::noise;
 		output->Qraw=this->sumSamples(m_NSA+m_NSB,&(m_waveform.at(0)));  //for compatibility with case 1
-		output->A=this->getMaximum(m_waveform.size(),&(m_waveform[0]),output->T);
+		output->Araw=this->getMaximum(m_waveform.size(),&(m_waveform[0]),output->T);
 		output->T=-1;
 		return NOERROR;
 	}
 
 	else {
 		output->m_type=IntVetoSiPMHit::real_signal;
-		output->A=-9999;
+		output->Araw=-9999;
 		/*Loop over the thr crossings and select the highest pulse*/
 		for (int iphe=0;iphe<output->nSingles;iphe++){
 			idx=m_singleCrossingIndexes.at(iphe);
 			xmin=m_crossingTimes.at(idx).first;
 			xmax=m_crossingTimes.at(idx).second;
 			max=this->getMaximum((int)xmin,(int)xmax,&(m_waveform[0]),Tmax);
-			if ((output->A) < max){
-				output->A=max;
+			if ((output->Araw) < max){
+				output->Araw=max;
 				imax=idx;
 			}
 		}

@@ -35,6 +35,7 @@ class IntVetoSiPMHit_factory:public BDXFactory<IntVetoSiPMHit>{
 		const IntVetofa250Converter *m_intVetofa250Converter;
 
 		CalibrationHandler<TranslationTable::INT_VETO_Index_t> *m_sipm_gain;
+		CalibrationHandler<TranslationTable::INT_VETO_Index_t> *m_sipm_ampl;
 
 		int VERBOSE;
 

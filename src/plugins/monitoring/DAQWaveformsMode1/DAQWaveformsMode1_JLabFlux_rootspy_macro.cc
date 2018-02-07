@@ -54,6 +54,8 @@ static string macro_data=""
 "\n"
 "\n"
 "\n"
+"\n"
+"\n"
 ;
 class DAQWaveformsMode1_JLabFlux_rootspy_class{
    public:

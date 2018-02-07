@@ -297,7 +297,10 @@ void Dialog_NewReference::DoOK(void)
 	
 	// Rename temporary filename to permanent one
 	rename(tmp_fname.c_str(), fname.c_str()); 
+	cout<<"Dialog_NewReference DoOK 1"<<endl;fflush(stdout);
 
+
+	/*
 	// Create command to send e-mail (excluding the e-mail address)
 	stringstream cmd;
 	cmd<<"(echo \"Reference histogram changed for "<<hnamepath<<":\"; ";
@@ -313,7 +316,7 @@ void Dialog_NewReference::DoOK(void)
 	cmd<<"echo \"Host: " << (host ? host:"unknown") << "\"; ";
 	cmd<<"echo \"User: " << (user ? user:"unknown") << "\"; ";
 	cmd<<"echo \" \"; echo \" \"; ";
-	
+	cout<<"Dialog_NewReference DoOK 2"<<endl;fflush(stdout);
 	// Add current run if non-zero
 	if(RSMF->epics_run_number > 0){
 		cmd<<"echo \"Current run number from EPICS: " << RSMF->epics_run_number << "\"; ";
@@ -326,7 +329,7 @@ void Dialog_NewReference::DoOK(void)
 		cmd<<"echo \"(archived to: " << archivename << ")\"; ";
 		//cmd<<"uuencode --base64 "<<fname<<" previous.png; ";
 	}
-
+	cout<<"Dialog_NewReference DoOK 3"<<endl;fflush(stdout);
 	cmd<<"echo \" \"; echo \" \"; ";
 	cmd<<"echo \"NEW REFERENCE PLOT:\"; ";
 	cmd<<"echo \"(installed as: " << fname << ")\"; ";
@@ -336,6 +339,7 @@ void Dialog_NewReference::DoOK(void)
 	if(old_ref_exists) cmd << " -a " << archivename;
 	cmd << " -a " << fname;
 	
+	cout<<"Dialog_NewReference DoOK 4"<<endl;fflush(stdout);
 	
 	// Make list of all addresses
 	stringstream sstr;
@@ -348,6 +352,8 @@ void Dialog_NewReference::DoOK(void)
 	my_cmd << cmd.str() << addresses;
 	cout << my_cmd.str() << endl;
 	
+	cout<<"Dialog_NewReference DoOK 5"<<endl;fflush(stdout);
+
 #if __APPLE__
 	_DBG_ << "mail command not run for Mac OS X since this will almost certainly" << endl;
 	_DBG_ << "just put this on a queue where no mail agent will ever pick it up and" << endl;
@@ -356,7 +362,7 @@ void Dialog_NewReference::DoOK(void)
 	int res = system(my_cmd.str().c_str());
 	if(res!=0) cerr << "Error executing \""<<my_cmd.str()<<"\"" << endl;
 #endif
-	
+	*/
 // 	// Loop over e-mail addresses, sending the message to each one
 // 	for(auto s : emails){
 // 		stringstream my_cmd;

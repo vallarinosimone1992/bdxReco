@@ -38,7 +38,8 @@ public:
 		AddString(items,"Qraw","%4f",Qraw);
 		AddString(items,"Qphe","%4f",Qphe);
 		AddString(items,"T","%4f",T);
-		AddString(items,"A","%4f",A);
+		AddString(items,"A","%4f",Araw);
+		AddString(items,"A","%4f",Aphe);
 	}
 	typedef enum{
 		noise=0,
@@ -52,7 +53,10 @@ public:
 	//both crate-slot channel and detector-specific ID. Since this is a sensor-based object, the readout field will be !=0
 	TranslationTable::ChannelInfo m_channel;
 
-	double Qraw,Qphe,T,A;
+	double Qraw,Qphe;
+	double T;
+	double Araw;
+	double Aphe;
 	double average;
 	double pedMean,pedRMS;
 	int nSingles;
