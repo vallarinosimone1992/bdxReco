@@ -22,8 +22,8 @@ static const int nSectors = 1;
 static const int nLayers = 1;
 static const int nComponents = 16;
 static const int nReadouts = 4;
-static TH1D *hSipmCharge[nSectors][nLayers][nComponents][nReadouts + 1];
-static TH1D *hSipmAmpl[nSectors][nLayers][nComponents][nReadouts + 1];
+static TH1D *hSipmCharge[nSectors][nLayers][nComponents][nReadouts + 1] = { 0 };
+static TH1D *hSipmAmpl[nSectors][nLayers][nComponents][nReadouts + 1] = { 0 };
 
 static double normQ[nSectors][nLayers][nComponents][nReadouts + 1] = { 0 };
 static double normA[nSectors][nLayers][nComponents][nReadouts + 1] = { 0 };
@@ -65,6 +65,7 @@ jerror_t JEventProcessor_IntVetoSipm::init(void) {
 	// japp->RootUnLock();
 	//
 
+	japp->RootWriteLock();
 	if (hSipmCharge[0][0][0][0] != NULL) {
 		japp->RootUnLock();
 		return NOERROR;
@@ -127,7 +128,7 @@ jerror_t JEventProcessor_IntVetoSipm::evnt(JEventLoop *loop, uint64_t eventnumbe
 	try {
 		loop->GetSingle(tData);
 	} catch (unsigned long e) {
-		jout << "JEventProcessor_IntVetoSipm::evnt::evnt no eventData bank this event" << endl;
+		jout << "JEventProcessor_IntVetoSipm::evnt::evnt no eventData bank this event" << std::endl;
 		return OBJECT_NOT_AVAILABLE;
 	}
 
@@ -149,16 +150,14 @@ jerror_t JEventProcessor_IntVetoSipm::evnt(JEventLoop *loop, uint64_t eventnumbe
 		Araw = (*data_it)->Araw;
 		Qraw = (*data_it)->Qraw;
 
-
 		/*The following mimics calibration code for sipms*/
 		if ((T < 200) || (T > 1800)) continue;
-
 
 		m_hSipmQ = hSipmCharge[m_sector][m_layer][m_component][m_readout];
 		m_hSipmA = hSipmAmpl[m_sector][m_layer][m_component][m_readout];
 
-		m_hSipmQ->Scale(normQ[m_sector][m_layer][m_component][m_readout]);
-		m_hSipmA->Scale(normA[m_sector][m_layer][m_component][m_readout]);
+		if (normQ[m_sector][m_layer][m_component][m_readout] > 0) m_hSipmQ->Scale(normQ[m_sector][m_layer][m_component][m_readout]);
+		if (normA[m_sector][m_layer][m_component][m_readout] > 0) m_hSipmA->Scale(normA[m_sector][m_layer][m_component][m_readout]);
 
 		m_hSipmA->Fill(Aphe);
 		m_hSipmQ->Fill(Qphe);

@@ -93,7 +93,7 @@ jerror_t JEventProcessor_DAQWaveformsMode1::init(void) {
 	japp->RootUnLock();
 	return NOERROR;
 
-	return NOERROR;
+
 }
 
 //------------------

@@ -44,7 +44,7 @@
 
 	}
 
-	// Just for testing
+
 	if(gPad == NULL) {
 		TCanvas *c1 = new TCanvas("cIntVetoSipm");
 		c1->cd(0);

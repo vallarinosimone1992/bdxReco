@@ -9,7 +9,7 @@
 #define _JEventProcessor_IntVetoSipm_
 
 #include <JANA/JEventProcessor.h>
-#include <system/CalibrationHandler.h>
+
 
 class TH1D;
 
@@ -34,7 +34,7 @@ private:
 	double Aphe,Araw;
 	double T;
 
-	CalibrationHandler<TranslationTable::INT_VETO_Index_t> *m_sipm_ampl;
+
 
 	TH1D *m_hSipmQ;
 	TH1D *m_hSipmA;
