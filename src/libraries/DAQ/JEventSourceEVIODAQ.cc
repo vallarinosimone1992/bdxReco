@@ -139,12 +139,6 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event) {
 					vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
 					curRunNumber = (*pData)[1];
 				}
-				if ((*iter)->tag == eventHeader_CODA_tag) { //To be compatible also with data taken without header
-					const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*iter);
-					vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
-					event.SetEventNumber((*pData)[0]);
-					curEventType = PHYSICS_EVENT_TYPE;
-				}
 				if ((*iter)->tag == eventHeader_tag) {
 					const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*iter);
 					vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
@@ -326,12 +320,6 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event) {
 				const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*iter);
 				vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
 				curRunNumber = (*pData)[1];
-			}
-			if ((*iter)->tag == eventHeader_CODA_tag) { //To be compatible also with data taken without header
-				const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*iter);
-				vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
-				event.SetEventNumber((*pData)[0]);
-				curEventType = PHYSICS_EVENT_TYPE;
 			}
 			if ((*iter)->tag == eventHeader_tag) {
 				const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*iter);
