@@ -12,6 +12,9 @@
 
 using namespace jana;
 
+#define PHYSICS_EVENT_TYPE 1
+#define EPICS_EVENT_TYPE 31
+
 // bdx headers
 
 // EVIO headers
@@ -68,8 +71,11 @@ private:
 	int eventHeader_CODA_tag;
 	int prestart_tag;
 	int end_tag;
-	int curRunNumber, curEventNumber;
+	int curRunNumber, curEventNumber,curEventType;
 	int overwriteRunNumber;
+
+	int eventTypeEPICS = 31;
+
 
 	int m_VERBOSE;
 	float TIMEOUT;
