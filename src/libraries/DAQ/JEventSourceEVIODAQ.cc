@@ -22,8 +22,7 @@ using namespace std;
 
 // Constructor
 JEventSourceEvioDAQ::JEventSourceEvioDAQ(const char* source_name) :
-		JEventSource(source_name), chan(0), EDT(0), vme_mother_tag(0), child_mode1_tag(0), child_mode7_tag(0), eventHeader_tag(0), curRunNumber(0), curEventNumber(
-				0) {
+		JEventSource(source_name), chan(0), EDT(0), vme_mother_tag(0), child_mode1_tag(0), child_mode7_tag(0), eventHeader_tag(0), curRunNumber(0), curEventNumber(0) {
 
 	jout << "JEventSourceEvioDAQ creator: " << this << endl;
 
@@ -57,15 +56,11 @@ JEventSourceEvioDAQ::JEventSourceEvioDAQ(const char* source_name) :
 
 	gPARMS->SetDefaultParameter("DAQ:BUFFER_SIZE", BUFFER_SIZE, "Size in bytes to allocate for holding a single EVIO event.");
 
-	gPARMS->SetDefaultParameter("ET:ET_STATION_NEVENTS", ET_STATION_NEVENTS,
-			"Number of events to use if we have to create the ET station. Ignored if station already exists.");
-	gPARMS->SetDefaultParameter("ET:ET_STATION_CREATE_BLOCKING", ET_STATION_CREATE_BLOCKING,
-			"Set this to create station in blocking mode (default is to create it in non-blocking mode). Ignored if station already exists.");
-	gPARMS->SetDefaultParameter("ET:TIMEOUT", TIMEOUT,
-			"Set the timeout in seconds for each attempt at reading from ET system (repeated attempts will still be made indefinitely until program quits or the quit_on_et_timeout flag is set.");
+	gPARMS->SetDefaultParameter("ET:ET_STATION_NEVENTS", ET_STATION_NEVENTS, "Number of events to use if we have to create the ET station. Ignored if station already exists.");
+	gPARMS->SetDefaultParameter("ET:ET_STATION_CREATE_BLOCKING", ET_STATION_CREATE_BLOCKING, "Set this to create station in blocking mode (default is to create it in non-blocking mode). Ignored if station already exists.");
+	gPARMS->SetDefaultParameter("ET:TIMEOUT", TIMEOUT, "Set the timeout in seconds for each attempt at reading from ET system (repeated attempts will still be made indefinitely until program quits or the quit_on_et_timeout flag is set.");
 
-	gPARMS->SetDefaultParameter("DAQ:VERBOSE", m_VERBOSE,
-			"Set verbosity level for processing and debugging statements while parsing. 0=no debugging messages. 10=all messages");
+	gPARMS->SetDefaultParameter("DAQ:VERBOSE", m_VERBOSE, "Set verbosity level for processing and debugging statements while parsing. 0=no debugging messages. 10=all messages");
 
 	// open EVIO file - buffer is hardcoded at 3M... that right?
 	jout << " Opening input source: " << source_name << endl;
@@ -148,9 +143,9 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event) {
 				}
 			}
 
-			if (overwriteRunNumber != -1)
+			if (overwriteRunNumber != -1) {
 				event.SetRunNumber(overwriteRunNumber);
-			else if (curEventType != EPICS_EVENT_TYPE) { //Ignore EPICS (that doesn't have run number :( )
+			} else {
 				event.SetRunNumber(curRunNumber);
 			}
 			return NOERROR;
@@ -173,7 +168,7 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event) {
 		if (m_VERBOSE > 5) jout << "after new: " << buff << " I am: " << this << endl;
 		// Loop until we get an event or are told to stop
 		struct timespec timeout;
-		timeout.tv_sec = (unsigned int) floor(TIMEOUT);// set ET timeout
+		timeout.tv_sec = (unsigned int) floor(TIMEOUT); // set ET timeout
 		timeout.tv_nsec = (unsigned int) floor(1.0E9 * (TIMEOUT - (float) timeout.tv_sec));
 		et_event *pe = NULL;
 		while (!japp->GetQuittingStatus()) {
@@ -212,13 +207,13 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event) {
 		uint32_t magic = et_buff[7];
 		if (m_VERBOSE > 5) jout << "Magic word is: " << hex << et_buff[7] << endl;
 		switch (magic) {
-			case 0xc0da0100:
+		case 0xc0da0100:
 			swap_needed = false;
 			break;
-			case 0x0001dac0:
+		case 0x0001dac0:
 			swap_needed = true;
 			break;
-			default:
+		default:
 			jerr << "EVIO magic word not present!" << endl;
 			return NO_MORE_EVENTS_IN_SOURCE;
 		}
@@ -230,7 +225,7 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event) {
 		}
 
 		// Size of events in bytes
-		uint32_t bufsize_bytes = (len + 1) * sizeof(uint32_t);// +1 is for buffer length word
+		uint32_t bufsize_bytes = (len + 1) * sizeof(uint32_t); // +1 is for buffer length word
 		if (bufsize_bytes > BUFFER_SIZE) {
 			jerr << " ET event larger than our BUFFER_SIZE!!!" << endl;
 			jerr << " " << bufsize_bytes << " > " << BUFFER_SIZE << endl;
@@ -329,12 +324,11 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event) {
 				curEventType = (*pData)[4];
 			}
 		}
-		if (overwriteRunNumber != -1)
-		event.SetRunNumber(overwriteRunNumber);
-		else if (curEventType!=EPICS_EVENT_TYPE) { //Ignore EPICS (that doesn't have run number :( )
+		if (overwriteRunNumber != -1) {
+			event.SetRunNumber(overwriteRunNumber);
+		} else {
 			event.SetRunNumber(curRunNumber);
 		}
-
 		return NOERROR;
 
 #else
