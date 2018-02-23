@@ -169,7 +169,7 @@ jerror_t BDXEventProcessor::evnt(JEventLoop *loop, uint64_t eventnumber) {
 		try {
 			loop->GetSingle(tData);
 		} catch (unsigned long e) {
-			bout << "No eventData bank this event" << endl;
+			//bout << "No eventData bank this event" << endl;
 			return OBJECT_NOT_AVAILABLE;
 		}
 		japp->RootWriteLock();
