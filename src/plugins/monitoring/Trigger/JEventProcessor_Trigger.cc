@@ -21,10 +21,7 @@ TH1D *hTriggerMultiplicity = NULL;
 TH1D *hTriggerTimes = NULL;
 TH2D *hTriggerTimes2D = NULL;
 
-double normTriggerBits = 0;
-double normTriggerTimes = 0;
-double normTriggerMultiplicity = 0;
-double normTriggerTimes2D;
+
 // Routine used to create our JEventProcessor
 #include <JANA/JApplication.h>
 #include <JANA/JFactory.h>
@@ -143,15 +140,10 @@ jerror_t JEventProcessor_Trigger::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	japp->RootWriteLock();
 
 	/*Trigger multiplicity*/
-	if (normTriggerMultiplicity > 0) hTriggerMultiplicity->Scale(normTriggerMultiplicity);
 	hTriggerMultiplicity->Fill(nTriggers);
-	normTriggerMultiplicity = hTriggerMultiplicity->Integral();
-	if (normTriggerMultiplicity > 0) hTriggerMultiplicity->Scale(1. / normTriggerMultiplicity);
+
 
 	/*Trigger words - trigger times*/
-	if (normTriggerBits > 0) hTriggerBits->Scale(normTriggerBits);
-	if (normTriggerTimes >0 ) hTriggerTimes->Scale(normTriggerTimes);
-	if (normTriggerTimes2D > 0) hTriggerTimes2D->Scale(normTriggerTimes2D);
 	for (int jj = 0; jj < nTriggersMAX; jj++){
 		if (nTriggerSingles[jj]>0) hTriggerBits->Fill(jj,nTriggerSingles[jj]);
 		for (int itime=0;itime<trgTimes[jj].size();itime++){
@@ -160,13 +152,6 @@ jerror_t JEventProcessor_Trigger::evnt(JEventLoop *loop, uint64_t eventnumber) {
 		}
 	}
 
-	normTriggerBits= hTriggerBits->Integral();
-	normTriggerTimes=hTriggerTimes->Integral();
-	normTriggerTimes2D=hTriggerTimes2D->Integral();
-
-	if (normTriggerBits > 0) hTriggerBits->Scale(1./normTriggerBits);
-	if (normTriggerTimes > 0) hTriggerTimes->Scale(1./normTriggerTimes);
-	if (normTriggerTimes2D >0) hTriggerTimes2D->Scale(1./normTriggerTimes2D);
 
 
 	app->RootUnLock();
