@@ -16,8 +16,8 @@
 	TH1D *hCaloHitE_rndmTrg_s0_x1_y0=0;
 
 	hCaloHitE_allTrg_s0_x0_y0 = (TH1D*) gDirectory->FindObjectAny("hCaloHitE_allTrg_s0_x0_y0");
-	hCaloHitE_rndmTrg_s0_x1_y0 = (TH1D*) gDirectory->FindObjectAny("hCaloHitE_allTrg_s0_x1_y0");
-	hCaloHitE_allTrg_s0_x1_y0 = (TH1D*) gDirectory->FindObjectAny("hCaloHitE_rndmTrg_s0_x0_y0");
+	hCaloHitE_rndmTrg_s0_x1_y0 = (TH1D*) gDirectory->FindObjectAny("hCaloHitE_rndmTrg_s0_x1_y0");
+	hCaloHitE_allTrg_s0_x1_y0 = (TH1D*) gDirectory->FindObjectAny("hCaloHitE_allTrg_s0_x1_y0");
 	hCaloHitE_rndmTrg_s0_x1_y0 = (TH1D*) gDirectory->FindObjectAny("hCaloHitE_rndmTrg_s0_x1_y0");
 
 	if (gPad == NULL) {
