@@ -10,10 +10,10 @@
 	TDirectory *dir = (TDirectory*) gDirectory->FindObjectAny("CalorimeterHits");
 	if (dir) dir->cd();
 
-	TH1D *hCaloHitE_allTrg_s0_x0_y0;
-	TH1D *hCaloHitE_allTrg_s0_x1_y0;
-	TH1D *hCaloHitE_rndmTrg_s0_x0_y0;
-	TH1D *hCaloHitE_rndmTrg_s0_x1_y0;
+	TH1D *hCaloHitE_allTrg_s0_x0_y0=0;
+	TH1D *hCaloHitE_allTrg_s0_x1_y0=0;
+	TH1D *hCaloHitE_rndmTrg_s0_x0_y0=0;
+	TH1D *hCaloHitE_rndmTrg_s0_x1_y0=0;
 
 	hCaloHitE_allTrg_s0_x0_y0 = (TH1D*) gDirectory->FindObjectAny("hCaloHitE_allTrg_s0_x0_y0");
 	hCaloHitE_rndmTrg_s0_x1_y0 = (TH1D*) gDirectory->FindObjectAny("hCaloHitE_allTrg_s0_x1_y0");
@@ -31,11 +31,14 @@
 	TCanvas *c1 = gPad->GetCanvas();
 	c1->Divide(2, 2);
 	c1->cd(1)->SetLogy();
-	hCaloHitE_allTrg_s0_x0_y0->Draw();
-	hCaloHitE_rndmTrg_s0_x0_y0->Draw("sames");
-
+	if (hCaloHitE_allTrg_s0_x0_y0!=0){
+		hCaloHitE_allTrg_s0_x0_y0->Draw();
+		if (hCaloHitE_rndmTrg_s0_x0_y0!=0) hCaloHitE_rndmTrg_s0_x0_y0->Draw("sames");
+	}
 	c1->cd(2)->SetLogy();
-	hCaloHitE_allTrg_s0_x1_y0->Draw();
-	hCaloHitE_rndmTrg_s0_x1_y0->Draw("sames");
+	if (hCaloHitE_allTrg_s0_x1_y0!=0){
+		hCaloHitE_allTrg_s0_x1_y0->Draw();
+		if (hCaloHitE_rndmTrg_s0_x1_y0!=0) hCaloHitE_rndmTrg_s0_x1_y0->Draw("sames");
+	}
 
 }
