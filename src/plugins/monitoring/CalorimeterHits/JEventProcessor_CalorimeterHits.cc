@@ -85,8 +85,8 @@ jerror_t JEventProcessor_CalorimeterHits::init(void) {
 	}
 	// back to main dir
 	main->cd();
+	japp->RootUnLock();
 
-	return NOERROR;
 
 	return NOERROR;
 }

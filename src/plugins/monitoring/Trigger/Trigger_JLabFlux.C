@@ -4,7 +4,6 @@
 // hnamepath: /Trigger/hTriggerTimes2D
 
 {
-
 	TDirectory *dir = (TDirectory*)gDirectory->FindObjectAny("TriggerTimes");
 	if(dir) dir->cd();
 
