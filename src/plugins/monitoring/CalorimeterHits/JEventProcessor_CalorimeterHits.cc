@@ -75,10 +75,10 @@ jerror_t JEventProcessor_CalorimeterHits::init(void) {
 		for (int iX = 0; iX < nX; iX++) {
 			for (int iY = 0; iY < nY; iY++) {
 				hCaloHitE_allTrg[isector][iX][iY] = new TH1D(Form("hCaloHitE_allTrg_s%i_x%i_y%i", isector, iX, iY),
-						Form("hCaloHitE_allTrg_s%i_x%i_y%i", isector, iX, iY), 210, -10., 200.);
+						Form("hCaloHitE_allTrg_s%i_x%i_y%i", isector, iX, iY), 420, -10., 200.);
 				hCaloHitE_allTrg[isector][iX][iY]->GetXaxis()->SetTitle("E(MeV)");
 				hCaloHitE_rndmTrg[isector][iX][iY] = new TH1D(Form("hCaloHitE_rndmTrg_s%i_x%i_y%i", isector, iX, iY),
-						Form("hCaloHitE_rndmTrg_s%i_x%i_y%i", isector, iX, iY), 210, -10., 200.);
+						Form("hCaloHitE_rndmTrg_s%i_x%i_y%i", isector, iX, iY), 420, -10., 200.);
 				hCaloHitE_rndmTrg[isector][iX][iY]->GetXaxis()->SetTitle("E(MeV)");
 			}
 		}
