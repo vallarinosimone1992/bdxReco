@@ -41,7 +41,7 @@ static string macro_data=""
 "	if (hTriggerBits) hTriggerBits->Draw(\"HIST\");\n"
 "	c1->cd(3)->SetLogy();\n"
 "	if (hTriggerTimes) hTriggerTimes->Draw(\"HIST\");\n"
-"	c1->cd(4);\n"
+"	c1->cd(4)->SetLogz();\n"
 "	if (hTriggerTimes2D) hTriggerTimes2D->Draw(\"colz\");\n"
 "}\n"
 ;

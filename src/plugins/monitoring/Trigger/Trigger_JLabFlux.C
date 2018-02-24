@@ -36,6 +36,6 @@
 	if (hTriggerBits) hTriggerBits->Draw("HIST");
 	c1->cd(3)->SetLogy();
 	if (hTriggerTimes) hTriggerTimes->Draw("HIST");
-	c1->cd(4);
+	c1->cd(4)->SetLogz();
 	if (hTriggerTimes2D) hTriggerTimes2D->Draw("colz");
 }

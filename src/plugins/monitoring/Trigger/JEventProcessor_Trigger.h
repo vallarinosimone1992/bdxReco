@@ -11,6 +11,8 @@
 #include <JANA/JEventProcessor.h>
 
 class TH1D;
+class TH2D;
+
 
 class JEventProcessor_Trigger:public jana::JEventProcessor{
 	public:

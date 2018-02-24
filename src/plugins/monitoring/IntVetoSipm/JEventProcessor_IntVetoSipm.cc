@@ -128,7 +128,6 @@ jerror_t JEventProcessor_IntVetoSipm::evnt(JEventLoop *loop, uint64_t eventnumbe
 	try {
 		loop->GetSingle(tData);
 	} catch (unsigned long e) {
-		jout << "JEventProcessor_IntVetoSipm::evnt::evnt no eventData bank this event" << std::endl;
 		return OBJECT_NOT_AVAILABLE;
 	}
 
