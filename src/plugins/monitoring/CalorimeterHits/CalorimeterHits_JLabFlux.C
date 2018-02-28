@@ -3,6 +3,12 @@
 
 // hnamepath: /CalorimeterHits/hCaloHitE_rndmTrg_s0_x0_y0
 // hnamepath: /CalorimeterHits/hCaloHitE_rndmTrg_s0_x1_y0
+
+// hnamepath: /CalorimeterHits/hCaloHitE_Trg0_s0_x0_y0
+// hnamepath: /CalorimeterHits/hCaloHitE_Trg0_s0_x1_y0
+
+// hnamepath: /CalorimeterHits/hCaloHitE_Trg3_s0_x0_y0
+// hnamepath: /CalorimeterHits/hCaloHitE_Trg3_s0_x1_y0
 {
 
 	TDirectory *dir = (TDirectory*) gDirectory->FindObjectAny("CalorimeterHits");
