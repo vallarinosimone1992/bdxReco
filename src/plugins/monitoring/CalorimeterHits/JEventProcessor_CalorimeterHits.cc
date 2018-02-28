@@ -30,6 +30,7 @@ static TH1D *hCaloHitE_Trg3[nSectors][nX][nY] = { 0 };
 static TH1D *hCaloHitE_Trg4[nSectors][nX][nY] = { 0 };
 static TH1D *hCaloHitE_rndmTrg[nSectors][nX][nY] = { 0 };
 
+
 // Routine used to create our JEventProcessor
 #include <JANA/JApplication.h>
 #include <JANA/JFactory.h>
