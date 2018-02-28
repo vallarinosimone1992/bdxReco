@@ -31,6 +31,12 @@ private:
 	double E,T;
 
 	TH1D *hEhit_allTrg;
+	TH1D *hEhit_Trg0;
+	TH1D *hEhit_Trg1;
+	TH1D *hEhit_Trg2;
+	TH1D *hEhit_Trg3;
+	TH1D *hEhit_Trg4;
+
 	TH1D *hEhit_rndmTrg;
 };
 

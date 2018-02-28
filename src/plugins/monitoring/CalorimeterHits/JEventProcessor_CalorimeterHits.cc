@@ -23,6 +23,11 @@ static const int nX = 4;
 static const int nY = 4;
 
 static TH1D *hCaloHitE_allTrg[nSectors][nX][nY] = { 0 };
+static TH1D *hCaloHitE_Trg0[nSectors][nX][nY] = { 0 };
+static TH1D *hCaloHitE_Trg1[nSectors][nX][nY] = { 0 };
+static TH1D *hCaloHitE_Trg2[nSectors][nX][nY] = { 0 };
+static TH1D *hCaloHitE_Trg3[nSectors][nX][nY] = { 0 };
+static TH1D *hCaloHitE_Trg4[nSectors][nX][nY] = { 0 };
 static TH1D *hCaloHitE_rndmTrg[nSectors][nX][nY] = { 0 };
 
 // Routine used to create our JEventProcessor
@@ -74,11 +79,25 @@ jerror_t JEventProcessor_CalorimeterHits::init(void) {
 	for (int isector = 0; isector < nSectors; isector++) {
 		for (int iX = 0; iX < nX; iX++) {
 			for (int iY = 0; iY < nY; iY++) {
-				hCaloHitE_allTrg[isector][iX][iY] = new TH1D(Form("hCaloHitE_allTrg_s%i_x%i_y%i", isector, iX, iY),
-						Form("hCaloHitE_allTrg_s%i_x%i_y%i", isector, iX, iY), 420, -10., 200.);
+				hCaloHitE_allTrg[isector][iX][iY] = new TH1D(Form("hCaloHitE_allTrg_s%i_x%i_y%i", isector, iX, iY), Form("hCaloHitE_allTrg_s%i_x%i_y%i", isector, iX, iY), 420, -10., 200.);
 				hCaloHitE_allTrg[isector][iX][iY]->GetXaxis()->SetTitle("E(MeV)");
-				hCaloHitE_rndmTrg[isector][iX][iY] = new TH1D(Form("hCaloHitE_rndmTrg_s%i_x%i_y%i", isector, iX, iY),
-						Form("hCaloHitE_rndmTrg_s%i_x%i_y%i", isector, iX, iY), 420, -10., 200.);
+
+				hCaloHitE_Trg0[isector][iX][iY] = new TH1D(Form("hCaloHitE_Trg0_s%i_x%i_y%i", isector, iX, iY), Form("hCaloHitE_Trg0_s%i_x%i_y%i", isector, iX, iY), 420, -10., 200.);
+				hCaloHitE_Trg0[isector][iX][iY]->GetXaxis()->SetTitle("E(MeV)");
+
+				hCaloHitE_Trg1[isector][iX][iY] = new TH1D(Form("hCaloHitE_Trg1_s%i_x%i_y%i", isector, iX, iY), Form("hCaloHitE_Trg1_s%i_x%i_y%i", isector, iX, iY), 420, -10., 200.);
+				hCaloHitE_Trg1[isector][iX][iY]->GetXaxis()->SetTitle("E(MeV)");
+
+				hCaloHitE_Trg2[isector][iX][iY] = new TH1D(Form("hCaloHitE_Trg2_s%i_x%i_y%i", isector, iX, iY), Form("hCaloHitE_Trg2_s%i_x%i_y%i", isector, iX, iY), 420, -10., 200.);
+				hCaloHitE_Trg2[isector][iX][iY]->GetXaxis()->SetTitle("E(MeV)");
+
+				hCaloHitE_Trg3[isector][iX][iY] = new TH1D(Form("hCaloHitE_Trg3_s%i_x%i_y%i", isector, iX, iY), Form("hCaloHitE_Trg3_s%i_x%i_y%i", isector, iX, iY), 420, -10., 200.);
+				hCaloHitE_Trg3[isector][iX][iY]->GetXaxis()->SetTitle("E(MeV)");
+
+				hCaloHitE_Trg4[isector][iX][iY] = new TH1D(Form("hCaloHitE_Trg4_s%i_x%i_y%i", isector, iX, iY), Form("hCaloHitE_Trg4_s%i_x%i_y%i", isector, iX, iY), 420, -10., 200.);
+				hCaloHitE_Trg4[isector][iX][iY]->GetXaxis()->SetTitle("E(MeV)");
+
+				hCaloHitE_rndmTrg[isector][iX][iY] = new TH1D(Form("hCaloHitE_rndmTrg_s%i_x%i_y%i", isector, iX, iY), Form("hCaloHitE_rndmTrg_s%i_x%i_y%i", isector, iX, iY), 420, -10., 200.);
 				hCaloHitE_rndmTrg[isector][iX][iY]->GetXaxis()->SetTitle("E(MeV)");
 			}
 		}
@@ -86,7 +105,6 @@ jerror_t JEventProcessor_CalorimeterHits::init(void) {
 	// back to main dir
 	main->cd();
 	japp->RootUnLock();
-
 
 	return NOERROR;
 }
@@ -139,17 +157,38 @@ jerror_t JEventProcessor_CalorimeterHits::evnt(JEventLoop *loop, uint64_t eventn
 		m_Y = (*data_it)->m_channel.y;
 		E = (*data_it)->E;
 		T = (*data_it)->T;
-		if ((m_sector<0)||(m_sector>=nSectors)||(m_X<0)||(m_X>=nX)||(m_Y<0)||(m_Y>=nY)){
+		if ((m_sector < 0) || (m_sector >= nSectors) || (m_X < 0) || (m_X >= nX) || (m_Y < 0) || (m_Y >= nY)) {
 			continue;
 		}
 
-		hEhit_allTrg=hCaloHitE_allTrg[m_sector][m_X][m_Y];
-		hEhit_rndmTrg=hCaloHitE_rndmTrg[m_sector][m_X][m_Y];
+		hEhit_allTrg = hCaloHitE_allTrg[m_sector][m_X][m_Y];
+		hEhit_Trg0 = hCaloHitE_Trg0[m_sector][m_X][m_Y];
+		hEhit_Trg1 = hCaloHitE_Trg1[m_sector][m_X][m_Y];
+		hEhit_Trg2 = hCaloHitE_Trg2[m_sector][m_X][m_Y];
+		hEhit_Trg3 = hCaloHitE_Trg3[m_sector][m_X][m_Y];
+		hEhit_Trg4 = hCaloHitE_Trg4[m_sector][m_X][m_Y];
+		hEhit_rndmTrg = hCaloHitE_rndmTrg[m_sector][m_X][m_Y];
 
 		hEhit_allTrg->Fill(E);
-		if ((trgWord>>rndmTrgBitID)&0x1){
+		if ((trgWord >> rndmTrgBitID) & 0x1) {
 			hEhit_rndmTrg->Fill(E);
 		}
+		if ((trgWord >> 0) & 0x1) {
+			hEhit_Trg0->Fill(E);
+		}
+		if ((trgWord >> 1) & 0x1) {
+			hEhit_Trg1->Fill(E);
+		}
+		if ((trgWord >> 2) & 0x1) {
+			hEhit_Trg2->Fill(E);
+		}
+		if ((trgWord >> 3) & 0x1) {
+			hEhit_Trg3->Fill(E);
+		}
+		if ((trgWord >> 4) & 0x1) {
+			hEhit_Trg4->Fill(E);
+		}
+
 	}
 	japp->RootUnLock();
 	return NOERROR;
