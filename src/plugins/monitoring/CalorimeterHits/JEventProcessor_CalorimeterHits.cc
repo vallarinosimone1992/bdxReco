@@ -134,7 +134,9 @@ jerror_t JEventProcessor_CalorimeterHits::evnt(JEventLoop *loop, uint64_t eventn
 	// japp->RootWriteLock();
 	//  ... fill historgrams or trees ...
 	// japp->RootUnLock();
-	int trgWord;
+
+	int word1, word2;
+	bool triggers[32]={false};
 	vector<const CalorimeterHit*> data;
 	vector<const CalorimeterHit*>::const_iterator data_it;
 	loop->Get(data);
@@ -147,9 +149,20 @@ jerror_t JEventProcessor_CalorimeterHits::evnt(JEventLoop *loop, uint64_t eventn
 		return OBJECT_NOT_AVAILABLE;
 	}
 
-	/*Decode trigger words - if it is random, then it is the first!*/
+
+
 	japp->RootWriteLock();
-	trgWord = tData->triggerWords[0];
+	/*Decode trigger words*/
+		for (int ii = 0; ii < tData->triggerWords.size() / 2; ii++) {
+			word1 = tData->triggerWords[ii * 2];
+			word2 = tData->triggerWords[ii * 2 + 1];
+			/*Take the first word, or the following if they're within 200 ns*/
+			if ((ii==0)||(word2<8)){
+				for (int jj=0;jj<32;jj++){
+					if ((word1>>jj)&0x1) triggers[jj]=true;
+				}
+			}
+		}
 
 	for (data_it = data.begin(); data_it < data.end(); data_it++) {
 		m_sector = (*data_it)->m_channel.sector;
@@ -170,22 +183,22 @@ jerror_t JEventProcessor_CalorimeterHits::evnt(JEventLoop *loop, uint64_t eventn
 		hEhit_rndmTrg = hCaloHitE_rndmTrg[m_sector][m_X][m_Y];
 
 		hEhit_allTrg->Fill(E);
-		if ((trgWord >> rndmTrgBitID) & 0x1) {
+		if (triggers[rndmTrgBitID]) {
 			hEhit_rndmTrg->Fill(E);
 		}
-		if ((trgWord >> 0) & 0x1) {
+		if (triggers[0]) {
 			hEhit_Trg0->Fill(E);
 		}
-		if ((trgWord >> 1) & 0x1) {
+		if (triggers[1]) {
 			hEhit_Trg1->Fill(E);
 		}
-		if ((trgWord >> 2) & 0x1) {
+		if (triggers[2]) {
 			hEhit_Trg2->Fill(E);
 		}
-		if ((trgWord >> 3) & 0x1) {
+		if (triggers[3]) {
 			hEhit_Trg3->Fill(E);
 		}
-		if ((trgWord >> 4) & 0x1) {
+		if (triggers[4]) {
 			hEhit_Trg4->Fill(E);
 		}
 
