@@ -7,6 +7,10 @@
 // hnamepath: /CalorimeterHits/hCaloHitE_Trg0_s0_x0_y0
 // hnamepath: /CalorimeterHits/hCaloHitE_Trg0_s0_x1_y0
 
+// hnamepath: /CalorimeterHits/hCaloHitE_Trg2_s0_x0_y0
+// hnamepath: /CalorimeterHits/hCaloHitE_Trg2_s0_x1_y0
+
+
 // hnamepath: /CalorimeterHits/hCaloHitE_Trg3_s0_x0_y0
 // hnamepath: /CalorimeterHits/hCaloHitE_Trg3_s0_x1_y0
 {
