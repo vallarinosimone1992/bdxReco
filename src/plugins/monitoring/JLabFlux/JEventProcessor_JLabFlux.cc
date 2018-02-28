@@ -66,6 +66,8 @@ jerror_t JEventProcessor_JLabFlux::init(void) {
 	gDirectory->mkdir("JLabFlux")->cd();
 
 	hAsym = new TH1D("hAsym", "hAsym", 4, -2., 2.);
+	// back to main dir
+	main->cd();
 
 	japp->RootUnLock();
 	return NOERROR;
