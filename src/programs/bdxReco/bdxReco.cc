@@ -12,7 +12,7 @@ using namespace jana;
 //factory generators
 #include <system/JFactoryGenerator_system.h>
 #include <DAQ/JFactoryGenerator_DAQ.h>
-
+#include <EPICS/JFactoryGenerator_EPICS.h>
 #include <TT/JFactoryGenerator_TT.h>
 #include <IntVeto/JFactoryGenerator_IntVeto.h>
 #include <ExtVeto/JFactoryGenerator_ExtVeto.h>
@@ -54,6 +54,8 @@ int main(int narg, char *argv[])
 	jout<<"JFactoryGenerator_system DONE"<<endl;
 	app.AddFactoryGenerator(new JFactoryGenerator_DAQ());
 	jout<<"JFactoryGenerator_DAQ DONE"<<endl;
+	app.AddFactoryGenerator(new JFactoryGenerator_EPICS());
+	jout<<"JFactoryGenerator_EPICS DONE"<<endl;
 #ifdef MC_SUPPORT_ENABLE
 	app.AddFactoryGenerator(new JFactoryGenerator_MC());
 	jout<<"JFactoryGenerator_MC DONE"<<endl;

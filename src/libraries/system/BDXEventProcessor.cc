@@ -11,11 +11,14 @@ using namespace std;
 #include "string_utilities.h"
 //DAQ
 #include <DAQ/eventData.h>
+//EPICS
+#include <EPICS/epicsData.h>
 // TT
 #include <TT/TranslationTable.h>
 
 //DST
 #include <EventBuilder/TEvent.h>
+#include <EventBuilder/TEventHeader.h>
 
 #include "TTree.h"
 
@@ -153,12 +156,40 @@ jerror_t BDXEventProcessor::evnt(JEventLoop *loop, uint64_t eventnumber) {
 
 	const eventData* tData;
 	vector<const TEvent*> events;
+	const epicsData* eData;
+
+	/*For non-MC case, check that:
+	 * There's a valid eventData (true for both VME and EPICS)
+	 * There's a valid epicsData (true for both VME and EPICS - VME uses persistency)
+	 * The event is from VME - otherwise skip. Don't want to save non-VME events.
+	 */
+	if (m_isMC == 0) {
+		try {
+			loop->GetSingle(tData);
+		} catch (unsigned long e) {
+			bout << "No eventData bank this event" << endl;
+			return OBJECT_NOT_AVAILABLE;
+		}
+		/*This is the EPICS part. The call here will force getting data from the epicsDataProcessed_factory, that takes care of persistency*/
+		try {
+			loop->GetSingle(eData);
+		} catch (unsigned long e) {
+			return OBJECT_NOT_AVAILABLE;
+		}
+
+		if (tData->eventType!=eventSource::VME){
+			return OBJECT_NOT_AVAILABLE;
+		}
+
+	}
+
 	if (m_DObuildDST) {
 		loop->Get(events, m_buildDST.c_str());
 		if (events.size() != 1) {
-			bout << "Not a single TEvent object in this event but: " << events.size() << endl;
 			return RESOURCE_UNAVAILABLE;
 		}
+		/*Add EPICS data in case of non-MC*/
+		if (m_isMC == 0) events[0]->getEventHeader()->copyEpicsData(eData);
 		japp->RootWriteLock();
 		m_event = events[0];
 		m_eventDST->Fill();
@@ -166,12 +197,7 @@ jerror_t BDXEventProcessor::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	}
 
 	if (m_isMC == 0) {
-		try {
-			loop->GetSingle(tData);
-		} catch (unsigned long e) {
-			//bout << "No eventData bank this event" << endl;
-			return OBJECT_NOT_AVAILABLE;
-		}
+
 		japp->RootWriteLock();
 		eventT = tData->time;
 		eventN = eventnumber;
@@ -182,6 +208,7 @@ jerror_t BDXEventProcessor::evnt(JEventLoop *loop, uint64_t eventnumber) {
 		if (eventT < startTime) startTime = eventT;
 		if (eventT > stopTime) stopTime = eventT;
 		japp->RootUnLock();
+
 	}
 	return NOERROR;
 }
@@ -203,9 +230,9 @@ jerror_t BDXEventProcessor::erun(void) {
 
 // fini
 jerror_t BDXEventProcessor::fini(void) {
-// If another EventProcessor is in the list ahead of this one, then
-// it will have finished before this is called. e.g. closed the
-// ROOT file!
+	// If another EventProcessor is in the list ahead of this one, then
+	// it will have finished before this is called. e.g. closed the
+	// ROOT file!
 	japp->RootWriteLock();
 	if (m_output) {
 		m_output->CloseOutput(); /*This is ok, CloseOutput takes care of m_output already closed*/
@@ -244,7 +271,8 @@ void BDXEventProcessor::updateCalibration(CalibrationHandlerBase* cal, JEventLoo
 	bool flagAll = true;
 	int calibratedOne = -1;
 	for (calibrations_it = calibrations.begin(); calibrations_it != calibrations.end(); calibrations_it++) {
-		if ((*calibrations_it)->hasLoadedCurrentRun() == false) flagAll = false;
+		if ((*calibrations_it)->hasLoadedCurrentRun() == false)
+			flagAll = false;
 		else
 			calibratedOne = std::distance(calibrations.begin(), calibrations_it); //save the index of this calibrated object
 	}
@@ -254,8 +282,10 @@ void BDXEventProcessor::updateCalibration(CalibrationHandlerBase* cal, JEventLoo
 	} else if (calibratedOne != -1) { /*It means there is at least an already-calibrated object!*/
 		bout << "Going to fill CalibrationHandlers for table: " << name << " there are: " << calibrations.size() << " Load from data: " << calibratedOne << endl;
 		for (int ical = 0; ical < calibrations.size(); ical++) {
-			if (ical == calibratedOne) continue;
-			else if (calibrations[ical]->hasLoadedCurrentRun() == true) continue;
+			if (ical == calibratedOne)
+				continue;
+			else if (calibrations[ical]->hasLoadedCurrentRun() == true)
+				continue;
 			else {
 				calibrations[ical]->fillCalib(calibrations[calibratedOne]->getRawCalibData());
 			}

@@ -9,7 +9,7 @@
 #define TEVENTHEADER_H_
 
 #include "TObject.h"
-
+class epicsData;
 typedef enum {
 	CataniaProto1Event = 1, CataniaProto2Event = 2, JLabFluxEvent = 4, CataniaProto1MC = 10, CataniaProto2MC = 20, FullMC = 30, JLabFluxEventMC = 40,
 } eventType;
@@ -25,6 +25,8 @@ private:
 	int m_eventNumber;
 	int m_eventTime; //Unix Timestamp
 	uint8_t m_eventType;
+	epicsData *m_epicsData;
+
 
 public:
 	TEventHeader();
@@ -78,8 +80,13 @@ public:
 		m_eventFineTime = eventFineTime;
 	}
 
-ClassDef(TEventHeader,1)
-	;
+
+	epicsData *getEpicsData() const;
+	void setEpicsData(epicsData *epicsData);
+	void copyEpicsData(const epicsData* epicsData);
+
+
+	ClassDef(TEventHeader,2);
 
 };
 

@@ -13,6 +13,11 @@
 
 #include "TString.h"
 //#include <vector>
+
+typedef enum {
+	VME=1,EPICS=2,CONF=3
+} eventSource;
+
 class eventData:public jana::JObject{
 	public:
 		JOBJECT_PUBLIC(eventData);
@@ -22,6 +27,9 @@ class eventData:public jana::JObject{
 		int time; //event time in UNIX time stamp (seconds)
 		std::vector<uint32_t> triggerWords;
 		
+		int eventType;
+
+
 		// This method is used primarily for pretty printing
 		// the second argument to AddString is printf style format
 		void toStrings(vector<pair<string,string> > &items)const{
@@ -33,6 +41,13 @@ class eventData:public jana::JObject{
 			}
 		}
 		
+		eventData(){
+			eventType=0;
+			eventN=0;
+			runN=0;
+			time=0;
+		}
+
 };
 
 #endif // _eventData_

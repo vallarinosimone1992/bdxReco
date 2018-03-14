@@ -63,10 +63,12 @@ public:
 private:
 	evioFileChannel *chan;   // EVIO input channel
 	evioDOMTree *EDT;        // single-event evio-DOM-tree
-	int vme_mother_tag;    //tag of the bank containing banks with data from VME
+	int vme_mother_tag;   	 //tag of the bank containing banks with data from VME
+	int epics_mother_tag; 	//tag of the bank containg data with tag vrm vme
 	int child_mode1_tag;
 	int child_mode7_tag;
 	int child_trigger_tag;
+	int child_epics_tag;
 	int eventHeader_tag;
 	int eventHeader_CODA_tag;
 	int prestart_tag;
@@ -74,7 +76,8 @@ private:
 	int curRunNumber, curEventNumber,curEventType;
 	int overwriteRunNumber;
 
-	int eventTypeEPICS = 31;
+	int eventTypeDAQ;
+	int eventTypeEPICS;
 
 
 	int m_VERBOSE;

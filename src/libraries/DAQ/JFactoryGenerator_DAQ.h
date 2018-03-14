@@ -13,24 +13,32 @@
 
 #include "fa250Mode1Hit.h"
 #include "fa250Mode7Hit.h"
-#include "eventData.h"
 #include "fa250Mode1CalibPedSubHit_factory.h"
+#include "eventData.h"
+#include "epicsRawData.h"
 
-class JFactoryGenerator_DAQ: public jana::JFactoryGenerator{
-	public:
-		JFactoryGenerator_DAQ(){}
-		virtual ~JFactoryGenerator_DAQ(){}
-		virtual const char* className(void){return static_className();}
-		static const char* static_className(void){return "JFactoryGenerator_DAQ";}
-		
-		jerror_t GenerateFactories(jana::JEventLoop *loop){
-			loop->AddFactory(new JFactory<fa250Mode1Hit>()    );
-			loop->AddFactory(new JFactory<fa250Mode7Hit>()    );
-			loop->AddFactory(new JFactory<eventData  >()    );
+class JFactoryGenerator_DAQ: public jana::JFactoryGenerator {
+public:
+	JFactoryGenerator_DAQ() {
+	}
+	virtual ~JFactoryGenerator_DAQ() {
+	}
+	virtual const char* className(void) {
+		return static_className();
+	}
+	static const char* static_className(void) {
+		return "JFactoryGenerator_DAQ";
+	}
 
-			loop->AddFactory(new fa250Mode1CalibPedSubHit_factory());
-			return NOERROR;
-		}
+	jerror_t GenerateFactories(jana::JEventLoop *loop) {
+		loop->AddFactory(new JFactory<fa250Mode1Hit>());
+		loop->AddFactory(new JFactory<fa250Mode7Hit>());
+		loop->AddFactory(new JFactory<eventData>());
+		loop->AddFactory(new JFactory<epicsRawData>());
+		loop->AddFactory(new fa250Mode1CalibPedSubHit_factory());
+
+		return NOERROR;
+	}
 
 };
 
