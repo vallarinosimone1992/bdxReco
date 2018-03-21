@@ -4,7 +4,7 @@
 #include <sstream>      // std::istringstream
 
 /*raw Data is in the format: value description \n */
-void epicsData::decode(string rawData) {
+void epicsData::decode(string rawData,int deltaTime) {
 	std::istringstream stream;
 	stream.str(rawData);
 	double val;
@@ -20,7 +20,7 @@ void epicsData::decode(string rawData) {
 		stream >> val >> desc;
 		if (stream.eof()) break;
 		this->values[desc] = val;        //the [] operator takes care of adding a new record if key "desc" doesn't exists
-		this->times[desc]  = this->time; //time should be set before calling this method
+		this->times[desc]  = this->time=deltaTime; //time should be set before calling this method
 
 	}
 

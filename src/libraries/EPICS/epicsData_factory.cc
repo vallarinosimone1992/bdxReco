@@ -17,6 +17,11 @@ using namespace jana;
 /*This is the global memory to keep track of epics data*/
 epicsData m_data;
 
+epicsData_factory::epicsData_factory(){
+
+	m_deltaTime=0;
+	gPARMS->SetDefaultParameter("EPICS:DELTA_TIME",m_deltaTime,"Time (in s) to add to all EPICS times - can be >0, =0(default), <0");
+}
 //------------------
 // init
 //------------------
@@ -57,18 +62,15 @@ jerror_t epicsData_factory::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	 * last epics event, by reading from the global memory. This is thread-save, we just read from it
 	 */
 	if (m_rawdata.size() > 0) {
-		m_data.runNumber=tData->runN;
-		m_data.time=tData->time;
-		for (int ii=0;ii<m_rawdata.size();ii++){
-			m_data.decode(m_rawdata[ii]->rawData);
+		m_data.runNumber = tData->runN;
+		m_data.time = tData->time+m_deltaTime;
+		for (int ii = 0; ii < m_rawdata.size(); ii++) {
+			m_data.decode(m_rawdata[ii]->rawData,m_deltaTime);
 		}
 	}
 
-
-
-
-	epicsData *data=new epicsData();
-	*data=m_data;
+	epicsData *data = new epicsData();
+	*data = m_data;
 
 	_data.push_back(data);
 	return NOERROR;

@@ -180,7 +180,6 @@ jerror_t BDXEventProcessor::evnt(JEventLoop *loop, uint64_t eventnumber) {
 		if (tData->eventType!=eventSource::VME){
 			return OBJECT_NOT_AVAILABLE;
 		}
-
 	}
 
 	if (m_DObuildDST) {

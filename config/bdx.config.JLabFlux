@@ -37,3 +37,6 @@ INTVETO:HIT_DT_MULTI    2000  #time-window coincidence for hits in a counter wit
 INTVETO:HIT_N_MULTI     2     #multiplicity for a detector with multi readout -> Irrelevant here
 
 INTVETO:VERBOSE  3
+
+#EPICS parameters
+EPICS:DELTA_TIME 29 #the time to add to EPICS events (s) to match with DAQ
