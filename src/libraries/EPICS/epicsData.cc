@@ -20,8 +20,7 @@ void epicsData::decode(string rawData,int deltaTime) {
 		stream >> val >> desc;
 		if (stream.eof()) break;
 		this->values[desc] = val;        //the [] operator takes care of adding a new record if key "desc" doesn't exists
-		this->times[desc]  = this->time=deltaTime; //time should be set before calling this method
-
+		this->times[desc]  = this->time+deltaTime; //time should be set before calling this method
 	}
 
 
