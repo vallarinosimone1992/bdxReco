@@ -104,7 +104,7 @@ jerror_t TEvent_factory_CataniaProto2::evnt(JEventLoop *loop, uint64_t eventnumb
 		try {
 			loop->GetSingle(tData);
 		} catch (unsigned long e) {
-			jout << "TEvent_factory_CataniaProto2::evnt no eventData bank this event" << endl;
+		//	jout << "TEvent_factory_CataniaProto2::evnt no eventData bank this event" << endl;
 			return OBJECT_NOT_AVAILABLE;
 		}
 		m_eventHeader->setEventType(CataniaProto2Event);
