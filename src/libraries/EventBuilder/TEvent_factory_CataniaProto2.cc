@@ -15,6 +15,7 @@
 #include <IntVeto/IntVetoDigiHit.h>
 #include <ExtVeto/ExtVetoDigiHit.h>
 
+#include <Calorimeter/CalorimeterCluster.h>
 #include <Calorimeter/CalorimeterHit.h>
 #include <IntVeto/IntVetoHit.h>
 #include <ExtVeto/ExtVetoHit.h>
@@ -38,12 +39,12 @@ using namespace jana;
 //------------------
 jerror_t TEvent_factory_CataniaProto2::init(void) {
 
-	m_tag="";
+	m_tag = "";
 	gPARMS->GetParameter("MC", m_isMC);
 	if (m_isMC) {
-		jout<<"CataniaProto2 event build - MC mode"<<endl;
+		jout << "CataniaProto2 event build - MC mode" << endl;
 		gPARMS->GetParameter("MC:RUN_NUMBER", m_MCRunNumber);
-		m_tag="MC";
+		m_tag = "MC";
 	}
 	if ((m_isMC) && (m_isMC != MCType::CATANIA_V2)) {
 		jout << "Error! Can use this only with MC==2, i.e. CataniaProto2" << endl;
@@ -56,13 +57,13 @@ jerror_t TEvent_factory_CataniaProto2::init(void) {
 	m_ExtVetoDigiHits = new TClonesArray("ExtVetoDigiHit");
 
 	m_CaloHits = new TClonesArray("CalorimeterHit");
+	m_CaloClusters = new TClonesArray("CalorimeterCluster");
 	m_IntVetoHits = new TClonesArray("IntVetoHit");
 	m_ExtVetoHits = new TClonesArray("ExtVetoHit");
 
-	if (m_isMC){
+	if (m_isMC) {
 		m_CaloMCRealHits = new TClonesArray("CalorimeterMCRealHit");
 	}
-
 
 	japp->RootUnLock();
 
@@ -82,12 +83,13 @@ jerror_t TEvent_factory_CataniaProto2::brun(jana::JEventLoop *eventLoop, int32_t
 jerror_t TEvent_factory_CataniaProto2::evnt(JEventLoop *loop, uint64_t eventnumber) {
 
 	vector<const fa250Mode1Hit*> fahits;
-	uint32_t fineTime=0;
+	uint32_t fineTime = 0;
 
 	vector<const CalorimeterDigiHit*> chits_digi;
 	vector<const IntVetoDigiHit*> ivhits_digi;
 	vector<const ExtVetoDigiHit*> evhits_digi;
 
+	vector<const CalorimeterCluster*> cclusters;
 	vector<const CalorimeterHit*> chits;
 	vector<const IntVetoHit*> ivhits;
 	vector<const ExtVetoHit*> evhits;
@@ -114,10 +116,10 @@ jerror_t TEvent_factory_CataniaProto2::evnt(JEventLoop *loop, uint64_t eventnumb
 		m_eventHeader->setTriggerWords(tData->triggerWords);
 
 		loop->Get(fahits); /*just to get the event fine time from slot #4 - reading calo*/
-		for (int ii=0;ii<fahits.size();ii++){
-			if (fahits[ii]->m_channel.slot!=4) continue;
-			if (fahits[ii]->m_channel.slot==4){
-				fineTime=fahits[ii]->timestamp;
+		for (int ii = 0; ii < fahits.size(); ii++) {
+			if (fahits[ii]->m_channel.slot != 4) continue;
+			if (fahits[ii]->m_channel.slot == 4) {
+				fineTime = fahits[ii]->timestamp;
 				break;
 			}
 		}
@@ -135,7 +137,7 @@ jerror_t TEvent_factory_CataniaProto2::evnt(JEventLoop *loop, uint64_t eventnumb
 	/*Loop over JANA objects, clear collections and fill them*/
 
 	/*Digi objects*/
-	loop->Get(chits_digi,m_tag.c_str());
+	loop->Get(chits_digi, m_tag.c_str());
 	m_CaloDigiHits->Clear("C");
 	for (int ii = 0; ii < chits_digi.size(); ii++) {
 		((CalorimeterDigiHit*) m_CaloDigiHits->ConstructedAt(ii))->operator=(*(chits_digi[ii]));
@@ -143,7 +145,7 @@ jerror_t TEvent_factory_CataniaProto2::evnt(JEventLoop *loop, uint64_t eventnumb
 	}
 	m_event->addCollection(m_CaloDigiHits);
 
-	loop->Get(ivhits_digi,m_tag.c_str());
+	loop->Get(ivhits_digi, m_tag.c_str());
 	m_IntVetoDigiHits->Clear("C");
 	for (int ii = 0; ii < ivhits_digi.size(); ii++) {
 		((IntVetoDigiHit*) m_IntVetoDigiHits->ConstructedAt(ii))->operator=(*(ivhits_digi[ii]));
@@ -151,7 +153,7 @@ jerror_t TEvent_factory_CataniaProto2::evnt(JEventLoop *loop, uint64_t eventnumb
 	}
 	m_event->addCollection(m_IntVetoDigiHits);
 
-	loop->Get(evhits_digi,m_tag.c_str());
+	loop->Get(evhits_digi, m_tag.c_str());
 	m_ExtVetoDigiHits->Clear("C");
 	for (int ii = 0; ii < evhits_digi.size(); ii++) {
 		((ExtVetoDigiHit*) m_ExtVetoDigiHits->ConstructedAt(ii))->operator=(*(evhits_digi[ii]));
@@ -160,6 +162,14 @@ jerror_t TEvent_factory_CataniaProto2::evnt(JEventLoop *loop, uint64_t eventnumb
 	m_event->addCollection(m_ExtVetoDigiHits);
 
 	/*Calibrated and final objects*/
+	loop->Get(cclusters);
+	m_CaloClusters->Clear("C");
+	for (int ii = 0; ii < cclusters.size(); ii++) {
+		((CalorimeterCluster*) m_CaloClusters->ConstructedAt(ii))->operator=(*(cclusters[ii]));
+		m_event->AddAssociatedObject(cclusters[ii]);
+	}
+	m_event->addCollection(m_CaloClusters);
+
 	loop->Get(chits);
 	m_CaloHits->Clear("C");
 	for (int ii = 0; ii < chits.size(); ii++) {
@@ -184,14 +194,14 @@ jerror_t TEvent_factory_CataniaProto2::evnt(JEventLoop *loop, uint64_t eventnumb
 	}
 	m_event->addCollection(m_ExtVetoHits);
 
-	if (m_isMC){
+	if (m_isMC) {
 		loop->Get(chits_MCReal);
 		m_CaloMCRealHits->Clear("C");
 		for (int ii = 0; ii < chits_MCReal.size(); ii++) {
-				((CalorimeterMCRealHit*) m_CaloMCRealHits->ConstructedAt(ii))->operator=(*(chits_MCReal[ii]));
-				m_event->AddAssociatedObject(chits_MCReal[ii]);
-			}
-			m_event->addCollection(m_CaloMCRealHits);
+			((CalorimeterMCRealHit*) m_CaloMCRealHits->ConstructedAt(ii))->operator=(*(chits_MCReal[ii]));
+			m_event->AddAssociatedObject(chits_MCReal[ii]);
+		}
+		m_event->addCollection(m_CaloMCRealHits);
 	}
 
 	/*publish the event*/
