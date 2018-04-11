@@ -88,12 +88,34 @@ jerror_t IntVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber) {
 			m_IntVetoDigiHit = m_IntVetoDigiHits[0];
 			Q = m_IntVetoDigiHit->Qphe;
 			T = m_IntVetoDigiHit->T;
+
 			if (Q > m_THR_singleReadout) {
 				m_IntVetoHit = new IntVetoHit();
 				m_IntVetoHit->m_channel = m_IntVetoDigiHit->m_channel;
 				m_IntVetoHit->m_channel.readout = 0;
 				m_IntVetoHit->Q = Q;
 				m_IntVetoHit->T = T;
+				m_IntVetoHit->AddAssociatedObject(m_IntVetoDigiHit);
+				_data.push_back(m_IntVetoHit);
+			}
+		}
+		//work-around
+		else if ((m_hit_bottom_workAround) && (m_map_it->first.component == 3)) {
+			for (int idigi = 0; idigi < m_IntVetoDigiHits.size(); idigi++) {
+				Q = m_IntVetoDigiHits[idigi]->Qphe;
+				T = m_IntVetoDigiHits[idigi]->T;
+				if (Q > Qmax) {
+					m_IntVetoDigiHit = m_IntVetoDigiHits[idigi];
+					Qmax = Q;
+					Tmax = T;
+				}
+			}
+			if (Qmax > m_THR_singleReadout) {
+				m_IntVetoHit = new IntVetoHit();
+				m_IntVetoHit->m_channel = m_IntVetoDigiHit->m_channel;
+				m_IntVetoHit->m_channel.readout = 0;
+				m_IntVetoHit->Q = Qmax;
+				m_IntVetoHit->T = Tmax;
 				m_IntVetoHit->AddAssociatedObject(m_IntVetoDigiHit);
 				_data.push_back(m_IntVetoHit);
 			}
@@ -109,17 +131,19 @@ jerror_t IntVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber) {
 					Tmax = T;
 				}
 			}
+
 			/*Now use timing too: Tmax is the time of the hit with the highest charge. See if the other counters are in coincidence with this*/
-			if (Qmax < m_THR_multipleReadout)
-				continue; //if the max charge is less than the treshold, by definition this hit is irrelevant.
+			if (Qmax < m_THR_multipleReadout) continue; //if the max charge is less than the treshold, by definition this hit is irrelevant.
 			for (int idigi = 0; idigi < m_IntVetoDigiHits.size(); idigi++) {
 				Q = m_IntVetoDigiHits[idigi]->Qphe;
 				T = m_IntVetoDigiHits[idigi]->T;
+
 				if ((Q > m_THR_multipleReadout) && (fabs(T - Tmax) < m_DT_multipleReadout)) {
 					nCountersTHR++;
 					Qtot += Q;
 				}
 			}
+
 			/*Ok. From this point on, nCountersTHR is the number of hits above thr, that are grouped together wrt the hit with the maximum charge*/
 			if (nCountersTHR >= m_N_multipleReadout) {
 				m_IntVetoHit = new IntVetoHit();
