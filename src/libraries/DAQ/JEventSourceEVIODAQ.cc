@@ -19,6 +19,7 @@ using namespace std;
 #include <DAQ/fa250Mode1Hit.h>
 #include <DAQ/fa250Mode7Hit.h>
 #include <DAQ/eventData.h>
+#include <DAQ/epicsRawData.h>
 
 // Constructor
 JEventSourceEvioDAQ::JEventSourceEvioDAQ(const char* source_name) :
@@ -26,15 +27,24 @@ JEventSourceEvioDAQ::JEventSourceEvioDAQ(const char* source_name) :
 
 	jout << "JEventSourceEvioDAQ creator: " << this << endl;
 
-	vme_mother_tag = 0x1;
+	/*Here follows some hard-coded definitions, all of them have a corresponding SetDefaultParameter call,
+	 * to be used to change this value via configuration file
+	 */
+	vme_mother_tag = 0x50;	//80
+	epics_mother_tag = 0x81; //129
 	child_mode1_tag = 0xe101;
 	child_mode7_tag = 0xe102;
 	child_trigger_tag = 0xe118;
-	eventHeader_tag = 0xE10F;      //HEAD bank
-	eventHeader_CODA_tag = 0xC000;
+	eventHeader_tag = 0xe10F;      //57615 - HEAD bank
+	eventHeader_CODA_tag = 0xc000;
+	child_epics_tag = 0xe114;
 	prestart_tag = 0x11;  //decimal 17
 	end_tag = 0x14; //decimal 20
 	overwriteRunNumber = -1;
+
+	eventTypeDAQ = 129;
+	eventTypeEPICS = 31;
+	curEventType = 0;
 
 	BUFFER_SIZE = 3000000;
 	buff = 0; /*Used just for ET*/
@@ -47,11 +57,14 @@ JEventSourceEvioDAQ::JEventSourceEvioDAQ(const char* source_name) :
 	et_connected = false;
 
 	gPARMS->SetDefaultParameter("DAQ:VME_MOTHER_TAG", vme_mother_tag);
+	gPARMS->SetDefaultParameter("DAQ:EPICS_MOTHER_TAG", epics_mother_tag);
 	gPARMS->SetDefaultParameter("DAQ:CHILD_MODE1_TAG", child_mode1_tag);
 	gPARMS->SetDefaultParameter("DAQ:CHILD_MODE7_TAG", child_mode7_tag);
 	gPARMS->SetDefaultParameter("DAQ:CHILD_TRIGGER_TAG", child_trigger_tag);
+	gPARMS->SetDefaultParameter("DAQ:CHILD_EPICS_TAG", child_epics_tag);
 	gPARMS->SetDefaultParameter("DAQ:EVENTHEADER_TAG", eventHeader_tag);
 	gPARMS->SetDefaultParameter("DAQ:PRESTART_TAG", prestart_tag);
+
 	gPARMS->SetDefaultParameter("DAQ:RUN_NUMBER", overwriteRunNumber);
 
 	gPARMS->SetDefaultParameter("DAQ:BUFFER_SIZE", BUFFER_SIZE, "Size in bytes to allocate for holding a single EVIO event.");
@@ -59,6 +72,9 @@ JEventSourceEvioDAQ::JEventSourceEvioDAQ(const char* source_name) :
 	gPARMS->SetDefaultParameter("ET:ET_STATION_NEVENTS", ET_STATION_NEVENTS, "Number of events to use if we have to create the ET station. Ignored if station already exists.");
 	gPARMS->SetDefaultParameter("ET:ET_STATION_CREATE_BLOCKING", ET_STATION_CREATE_BLOCKING, "Set this to create station in blocking mode (default is to create it in non-blocking mode). Ignored if station already exists.");
 	gPARMS->SetDefaultParameter("ET:TIMEOUT", TIMEOUT, "Set the timeout in seconds for each attempt at reading from ET system (repeated attempts will still be made indefinitely until program quits or the quit_on_et_timeout flag is set.");
+
+	gPARMS->SetDefaultParameter("DAQ:EVENT_TYPE_DAQ", eventTypeDAQ);
+	gPARMS->SetDefaultParameter("DAQ:EVENT_TYPE_EPICS", eventTypeEPICS);
 
 	gPARMS->SetDefaultParameter("DAQ:VERBOSE", m_VERBOSE, "Set verbosity level for processing and debugging statements while parsing. 0=no debugging messages. 10=all messages");
 
@@ -124,11 +140,19 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event) {
 			event.SetRef(EDT);
 			event.SetJEventSource(this);
 
-			//This part is fine for real data @ catania
 			evio::evioDOMNodeListP fullList = EDT->getNodeList();
 			evio::evioDOMNodeList::const_iterator iter;
 
+			/*Check if this is an EPICS event, if so call the  SetSequential() method on it*/
+			/*To do so, read the first tag in the nodeList, that is the one defining the event.*/
+			iter = fullList->begin();
+			curEventType = (*iter)->tag;
+			if (curEventType == eventTypeEPICS) {
+				event.SetSequential();
+			}
+
 			for (iter = fullList->begin(); iter != fullList->end(); iter++) {
+
 				if (((*iter)->tag == prestart_tag) && (overwriteRunNumber == -1)) {
 					const evio::evioCompositeDOMLeafNode *leaf = static_cast<const evio::evioCompositeDOMLeafNode*>(*iter);
 					vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
@@ -168,7 +192,7 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event) {
 		if (m_VERBOSE > 5) jout << "after new: " << buff << " I am: " << this << endl;
 		// Loop until we get an event or are told to stop
 		struct timespec timeout;
-		timeout.tv_sec = (unsigned int) floor(TIMEOUT); // set ET timeout
+		timeout.tv_sec = (unsigned int) floor(TIMEOUT);// set ET timeout
 		timeout.tv_nsec = (unsigned int) floor(1.0E9 * (TIMEOUT - (float) timeout.tv_sec));
 		et_event *pe = NULL;
 		while (!japp->GetQuittingStatus()) {
@@ -207,13 +231,13 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event) {
 		uint32_t magic = et_buff[7];
 		if (m_VERBOSE > 5) jout << "Magic word is: " << hex << et_buff[7] << endl;
 		switch (magic) {
-		case 0xc0da0100:
+			case 0xc0da0100:
 			swap_needed = false;
 			break;
-		case 0x0001dac0:
+			case 0x0001dac0:
 			swap_needed = true;
 			break;
-		default:
+			default:
 			jerr << "EVIO magic word not present!" << endl;
 			return NO_MORE_EVENTS_IN_SOURCE;
 		}
@@ -225,7 +249,7 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event) {
 		}
 
 		// Size of events in bytes
-		uint32_t bufsize_bytes = (len + 1) * sizeof(uint32_t); // +1 is for buffer length word
+		uint32_t bufsize_bytes = (len + 1) * sizeof(uint32_t);// +1 is for buffer length word
 		if (bufsize_bytes > BUFFER_SIZE) {
 			jerr << " ET event larger than our BUFFER_SIZE!!!" << endl;
 			jerr << " " << bufsize_bytes << " > " << BUFFER_SIZE << endl;
@@ -302,9 +326,16 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event) {
 		event.SetJEventSource(this);
 		if (m_VERBOSE > 5) jout << "After EDT creation and reference set" << endl;
 
-		//This part is fine for real data @ catania
 		evio::evioDOMNodeListP fullList = EDT->getNodeList();
 		evio::evioDOMNodeList::const_iterator iter;
+
+		/*Check if this is an EPICS event, if so call the  SetSequential() method on it*/
+		/*To do so, read the first tag in the nodeList, that is the one defining the event.*/
+		iter = fullList->begin();
+		curEventType=(*iter)->tag;
+		if (curEventType==eventTypeEPICS) {
+			event.SetSequential();
+		}
 
 		for (iter = fullList->begin(); iter != fullList->end(); iter++) {
 			if ((*iter)->tag == end_tag) { //it means the run ended.
@@ -337,7 +368,7 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event) {
 		jout << "does not have ET support built in! Try recompiling" << endl;
 		jout << "programs/Utilities/plugins/DAQ with ETROOT defined" << endl;
 		jout << "and pointing to an ET installation." << endl;
-
+		return OBJECT_NOT_AVAILABLE;
 #endif
 	}
 }
@@ -346,9 +377,6 @@ jerror_t JEventSourceEvioDAQ::GetEvent(JEvent &event) {
 void JEventSourceEvioDAQ::FreeEvent(JEvent &event) {
 	if (event.GetRef() != NULL) {
 		delete (evioDOMTree*) event.GetRef();
-		/*	if (buff != 0) {
-		 delete buff;
-		 }*/
 	}
 }
 
@@ -361,16 +389,17 @@ jerror_t JEventSourceEvioDAQ::GetObjects(JEvent &event, JFactory_base *factory) 
 /// Example: DCsegment needs DCHit. If DCHit doesn't exist already, then
 /// it will be read here.
 
-// We must have a factory to hold the data
+	// We must have a factory to hold the data
 	if (!factory) throw RESOURCE_UNAVAILABLE;
 
-// Get name of data class we're trying to extract
+	// Get name of data class we're trying to extract
 	string dataClassName = factory->GetDataClassName();
 
-//As suggested by David, do a check on the factory type to decide what to do
+	//As suggested by David, do a check on the factory type to decide what to do
 	JFactory<fa250Mode1Hit> *fac_fa250Mode1hit = dynamic_cast<JFactory<fa250Mode1Hit>*>(factory);
 	JFactory<fa250Mode7Hit> *fac_fa250Mode7hit = dynamic_cast<JFactory<fa250Mode7Hit>*>(factory);
 	JFactory<eventData> *fac_eventData = dynamic_cast<JFactory<eventData>*>(factory);
+	JFactory<epicsRawData> *fac_epicsData = dynamic_cast<JFactory<epicsRawData>*>(factory);
 
 	if (fac_fa250Mode1hit != NULL) {
 
@@ -406,13 +435,12 @@ jerror_t JEventSourceEvioDAQ::GetObjects(JEvent &event, JFactory_base *factory) 
 									hit->m_channel.slot = decdata[loop].slot;
 									hit->m_channel.channel = decdata[loop].channel;
 									for (int isample = 0; isample < decdata[loop].samples.size(); isample++) {
-										hit->samples.push_back(decdata[loop].samples.at(isample));
+										hit->samples.push_back(decdata[loop].samples[isample]);
 									}
 
 									hit->trigger = decdata[loop].trigger;
 									hit->timestamp = decdata[loop].time;
 
-									//	jout<<hit->m_channel.rocid<<" "<<hit->m_channel.slot<<" "<<hit->m_channel.channel<<" "<<hit->samples.size()<<" "<<hit->trigger<<" "<<hit->timestamp<<endl;
 									data.push_back(hit);
 								}
 							} catch (exception e) {
@@ -430,7 +458,6 @@ jerror_t JEventSourceEvioDAQ::GetObjects(JEvent &event, JFactory_base *factory) 
 	else if (fac_fa250Mode7hit != NULL) {
 		vector<fa250Mode7Hit*> data;
 		evioDOMTree* local_EDT = (evioDOMTree*) event.GetRef();
-		//	jout<<local_EDT->toString()<<endl;
 
 		evio::evioDOMNodeListP fullList = local_EDT->getNodeList();
 		evio::evioDOMNodeList::const_iterator iter;
@@ -495,9 +522,10 @@ jerror_t JEventSourceEvioDAQ::GetObjects(JEvent &event, JFactory_base *factory) 
 
 		for (iter = fullList->begin(); iter != fullList->end(); iter++) {
 
-			if ((*iter)->tag == vme_mother_tag) {
+			if (((*iter)->tag == vme_mother_tag) || ((*iter)->tag == epics_mother_tag)) {
 				evio::evioDOMNodeList *leafList = (*iter)->getChildList();
-
+				if ((*iter)->tag == vme_mother_tag) this_eventData->eventType = eventSource::VME;
+				if ((*iter)->tag == epics_mother_tag) this_eventData->eventType = eventSource::EPICS;
 				for (branch = leafList->begin(); branch != leafList->end(); branch++) {
 
 					if ((*branch)->tag == child_trigger_tag) {
@@ -506,7 +534,7 @@ jerror_t JEventSourceEvioDAQ::GetObjects(JEvent &event, JFactory_base *factory) 
 						vector<uint32_t> *pData = const_cast<vector<uint32_t> *>(&(leaf->data));
 						if (leafSize > 0) {
 							for (int itrigWord = 0; itrigWord < pData->size(); itrigWord++) {
-								this_eventData->triggerWords.push_back(pData->at(itrigWord));
+								this_eventData->triggerWords.push_back((*pData)[itrigWord]);
 							}
 						}
 
@@ -520,19 +548,51 @@ jerror_t JEventSourceEvioDAQ::GetObjects(JEvent &event, JFactory_base *factory) 
 						if (leafSize != 5) {  //should have 5 words in head bank
 							jerr << "Incompatible number of words in head bank: got " << leafSize << endl;
 						} else {
-							this_eventData->eventN = pData->at(2);
-							this_eventData->runN = pData->at(1);
-							this_eventData->time = pData->at(3);
+							this_eventData->eventN = (*pData)[2];
+							this_eventData->runN = (*pData)[1];
+							this_eventData->time = (*pData)[3];
 						}
 					}
 				}
 			}
 		}
-		//	jout<<"Done: "<<this_eventData->eventN<<" "<<this_eventData->runN<<" "<<this_eventData->time<<endl;
-		if (this_eventData->triggerWords.size() != 0) {
+
+		/*Only copy this further for VME or EPICS*/
+		if ((this_eventData->eventType == eventSource::VME) || (this_eventData->eventType == eventSource::EPICS)) {
 			data.push_back(this_eventData);
 			fac_eventData->CopyTo(data);
 		}
+		return NOERROR;
+	}
+
+	/*Simply get all strings from the raw epics bank and save them as a vector of epicsRawData, for further processing*/
+	else if (fac_epicsData != NULL) {
+		vector<epicsRawData*> epicsData;
+		evioDOMTree* local_EDT = (evioDOMTree*) event.GetRef();
+		evio::evioDOMNodeListP fullList = local_EDT->getNodeList();
+		evio::evioDOMNodeList::const_iterator iter;
+		evio::evioDOMNodeList::const_iterator branch;
+
+		for (iter = fullList->begin(); iter != fullList->end(); iter++) {
+			if ((*iter)->tag == epics_mother_tag) {
+				evio::evioDOMNodeList *leafList = (*iter)->getChildList();
+				for (branch = leafList->begin(); branch != leafList->end(); branch++) {
+
+					if ((*branch)->tag == child_epics_tag) {
+						const evio::evioDOMLeafNode<string> *leaf = static_cast<const evio::evioDOMLeafNode<string>*>(*branch);
+						/*EPICs data is saved as a gigantic string, in the form VALUE DESCRIPTION \n */
+						for (int istr = 0; istr < leaf->data.size(); istr++) {
+							epicsRawData *thisEpicsRawData = new epicsRawData();
+							thisEpicsRawData->rawData = (leaf->data[istr]);
+							epicsData.push_back(thisEpicsRawData);
+						}
+					}
+				}
+
+			}
+
+		}
+		fac_epicsData->CopyTo(epicsData);
 		return NOERROR;
 	}
 

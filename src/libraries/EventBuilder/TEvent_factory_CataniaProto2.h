@@ -33,6 +33,7 @@ class TEvent_factory_CataniaProto2:public jana::JFactory<TEvent>{
 		TClonesArray *m_IntVetoDigiHits;
 		TClonesArray *m_ExtVetoDigiHits;
 
+		TClonesArray *m_CaloClusters;
 		TClonesArray *m_CaloHits;
 		TClonesArray *m_IntVetoHits;
 		TClonesArray *m_ExtVetoHits;

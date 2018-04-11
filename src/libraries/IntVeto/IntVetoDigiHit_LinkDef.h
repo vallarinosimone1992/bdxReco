@@ -5,9 +5,6 @@
 #pragma link off all functions;
 #pragma link C++ nestedclasses;
 #pragma link C++ class IntVetoDigiHit+;
-#pragma link C++ struct IntVetoDigiHit::IntVetoSiPMDigiHit+;
-#pragma link C++ class vector<IntVetoDigiHit::IntVetoSiPMDigiHit>+;
-
 #pragma link C++ class vector<IntVetoDigiHit>+;
 #pragma link C++ class vector<IntVetoDigiHit*>+;
 #endif

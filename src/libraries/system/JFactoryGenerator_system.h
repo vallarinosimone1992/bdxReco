@@ -26,8 +26,6 @@ class JFactoryGenerator_system: public jana::JFactoryGenerator{
 		static const char* static_className(void){return "JFactoryGenerator_system";}
 		
 		jerror_t GenerateFactories(jana::JEventLoop *loop){
-			//loop->AddFactory(new CalibrationHandler_fa());
-
 
 			return NOERROR;
 		}

@@ -21,7 +21,6 @@ using namespace std;
 
 #include "TClonesArray.h"
 
-
 #include "TEvent_factory_JLabFlux.h"
 
 #include <JANA/JApplication.h>
@@ -39,7 +38,7 @@ jerror_t TEvent_factory_JLabFlux::init(void) {
 		gPARMS->GetParameter("MC:RUN_NUMBER", m_MCRunNumber);
 		m_tag = "MC";
 	}
-	if ((m_isMC) && (m_isMC !=  MCType::JLAB_FLUX_V1)) {
+	if ((m_isMC) && (m_isMC != MCType::JLAB_FLUX_V1)) {
 		jout << "Error! Can use this only with MC==100, i.e. JLabFlux " << endl;
 		return VALUE_OUT_OF_RANGE;
 	}
@@ -72,6 +71,8 @@ jerror_t TEvent_factory_JLabFlux::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	TEventHeader *m_eventHeader = m_event->getEventHeader();
 
 	const eventData* tData;
+
+
 	vector<const CalorimeterHit*> chits;
 	vector<const IntVetoHit*> ivhits;
 
@@ -84,12 +85,15 @@ jerror_t TEvent_factory_JLabFlux::evnt(JEventLoop *loop, uint64_t eventnumber) {
 			jout << "TEvent_factory_JLabFlux::evnt no eventData bank this event" << endl;
 			return OBJECT_NOT_AVAILABLE;
 		}
+
+
 		m_eventHeader->setEventType(JLabFluxEvent);
 		m_eventHeader->setRunNumber(tData->runN);
 		m_eventHeader->setEventNumber(tData->eventN);
 		m_eventHeader->setEventTime(tData->time);
 		m_eventHeader->setTriggerWords(tData->triggerWords);
 		m_eventHeader->setEventFineTime(0); //TODO
+
 
 	} else {
 		m_eventHeader->setEventType(JLabFluxEvent);
