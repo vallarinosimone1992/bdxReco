@@ -232,11 +232,13 @@ jerror_t BDXEventProcessor::fini(void) {
 	// If another EventProcessor is in the list ahead of this one, then
 	// it will have finished before this is called. e.g. closed the
 	// ROOT file!
+	bout<<"BDXEventProcessor fini called"<<endl;fflush(stdout);
 	japp->RootWriteLock();
 	if (m_output) {
 		m_output->CloseOutput(); /*This is ok, CloseOutput takes care of m_output already closed*/
 	}
 	japp->RootUnLock();
+	bout<<"BDXEventProcessor fini ends"<<endl;fflush(stdout);
 	return NOERROR;
 }
 
