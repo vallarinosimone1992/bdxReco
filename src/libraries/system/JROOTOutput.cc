@@ -7,12 +7,16 @@ JROOTOutput::JROOTOutput() :
 }
 
 JROOTOutput::~JROOTOutput() {
-	if (m_file) {
-		delete m_file;
-	}
+  if (m_file) {
+  		delete m_file;
+		m_file=0;
+  	}
 	if (m_objects) {
 		delete m_objects;
-	}
+		m_objects=0;
+	 }
+  
+  jout<<"JRootOutput destructor ends"<<endl;fflush(stdout);
 }
 
 int JROOTOutput::OpenOutput(string fname) {
@@ -27,12 +31,14 @@ int JROOTOutput::OpenOutput(string fname) {
 }
 
 int JROOTOutput::CloseOutput() {
-	jout << "JROOTOutput::CloseOutput is called" << endl;
-	if (m_isOpen) {
+  jout << "JROOTOutput::CloseOutput is called m_isOpen:" <<m_isOpen<< endl;
+  fflush(stdout);
+	if (m_isOpen!=0) {
+	  	m_isOpen = 0;
 		this->SaveAll();
 		m_file->Write();
 		m_file->Close();
-		m_isOpen = 0;
+	
 	} else {
 		jout << "Already closed, nothing to do" << endl;
 	}
@@ -40,34 +46,27 @@ int JROOTOutput::CloseOutput() {
 }
 
 int JROOTOutput::SaveAll() {
-	TIter *m_iter;
 	if (!m_objects) {
 		jerr << "no m_objects, doing nothing" << endl;
 		fflush(stdout);
 		return -1;
 	}
-	if (!m_file) {
+	if (m_file==0) {
 		jerr << "no m_file, doing nothing" << endl;
 		fflush(stdout);
 		return -2;
 	}
 
-	m_iter = new TIter(m_objects);
-	if (!m_iter) {
-		jerr << "no m_iter, doing nothing" << endl;
-		fflush(stdout);
-		return -1;
-	}
+	TIter m_iter(m_objects);
 	m_file->cd();
 	//Loop over the TList via a TIter
-	while ((m_cur_obj = m_iter->Next())) {
+	while ((m_cur_obj = m_iter.Next())) {
 		if (m_cur_obj != 0) {
 			jout << "JROOTOutput::saving object " << m_cur_obj->GetName() << endl;
 			fflush(stdout);
 			m_cur_obj->Write();
 		}
 	}
-	delete m_iter;
 	return 0; // prevent compiler warnings
 }
 

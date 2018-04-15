@@ -118,7 +118,7 @@ jerror_t fa250Mode1CalibPedSubHit_factory::erun(void)
 //------------------
 jerror_t fa250Mode1CalibPedSubHit_factory::fini(void)
 {
-	if (m_pedestals) delete m_pedestals;
-	return NOERROR;
+  
+  return NOERROR;
 }
 
