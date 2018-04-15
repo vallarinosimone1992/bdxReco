@@ -43,24 +43,31 @@ int JROOTOutput::SaveAll() {
 	TIter *m_iter;
 	if (!m_objects) {
 		jerr << "no m_objects, doing nothing" << endl;
+		fflush(stdout);
 		return -1;
 	}
 	if (!m_file) {
 		jerr << "no m_file, doing nothing" << endl;
+		fflush(stdout);
 		return -2;
 	}
 
 	m_iter = new TIter(m_objects);
 	if (!m_iter) {
 		jerr << "no m_iter, doing nothing" << endl;
+		fflush(stdout);
 		return -1;
 	}
 	m_file->cd();
 	//Loop over the TList via a TIter
 	while ((m_cur_obj = m_iter->Next())) {
-		jout << "JROOTOutput::saving object " << m_cur_obj->GetName() << endl;
-		m_cur_obj->Write();
+		if (m_cur_obj != 0) {
+			jout << "JROOTOutput::saving object " << m_cur_obj->GetName() << endl;
+			fflush(stdout);
+			m_cur_obj->Write();
+		}
 	}
+	delete m_iter;
 	return 0; // prevent compiler warnings
 }
 
