@@ -53,7 +53,7 @@ machine  = uname[4]
 debugSuffix = ''
 debug = ARGUMENTS.get('debug', 0)
 if debug:
-    debugSuffix = '-dbg'
+#    debugSuffix = '-dbg'
     # Compile with -g and add debugSuffix to all executable names
     env.AppendUnique(CCFLAGS = '-g')
     env.AppendUnique(CXXFLAGS = '-g')

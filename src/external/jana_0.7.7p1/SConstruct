@@ -26,7 +26,7 @@ env.PrependUnique(FORTRANFLAGS = ['-fPIC', '-Wall'])
 debug = ARGUMENTS.get('debug', 0)
 debugSuffix=''
 if debug:
-    debugSuffix = '-dbg'
+#    debugSuffix = '-dbg'
     env.PrependUnique(      CFLAGS = ['-g'])
     env.PrependUnique(    CXXFLAGS = ['-g'])
     env.PrependUnique(FORTRANFLAGS = ['-g'])
