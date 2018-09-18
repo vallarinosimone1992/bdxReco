@@ -39,15 +39,15 @@ jerror_t ExtVetofa250Converter::convertMode1Hit(ExtVetoPMTHit* output, const fa2
 	pedestal_DAQ = m_pedestals->getCalib(input->m_channel)[0];
 
 	channel = output->m_channel.ext_veto->component;
-		if (output->m_channel.ext_veto->component ==6 && output->m_channel.ext_veto->readout==2){
-			channel=output->m_channel.ext_veto->component +1;
-		}
+	if (output->m_channel.ext_veto->component == 6 && output->m_channel.ext_veto->readout == 2) {
+		channel = output->m_channel.ext_veto->component + 1;
+	}
 
 	if (Vpedestal_backup.at(channel) == 0) {
 
 		Vpedestal_backup.at(channel) = pedestal_DAQ * LSB;
 	}
-	 Thr = pedestal_DAQ*LSB +VThr;
+	Thr = pedestal_DAQ * LSB + VThr;
 	//  jout << "dopo " <<output->m_channel.ext_veto.component << " " << pedestal_DAQ <<" " <<Vpedestal_backup.at(output->m_channel.ext_veto.component) <<std::endl;
 
 	// ************************** Timing calculation ***************************************
@@ -74,8 +74,7 @@ jerror_t ExtVetofa250Converter::convertMode1Hit(ExtVetoPMTHit* output, const fa2
 		}
 	} //endfor
 
-	if (Tinf > 0)
-		T = (((Tsup - Tinf) / (Asup - Ainf)) * (Thr - Ainf)) + Tinf;
+	if (Tinf > 0) T = (((Tsup - Tinf) / (Asup - Ainf)) * (Thr - Ainf)) + Tinf;
 
 	//    jout << "component= " << output->m_channel.ext_veto.component << std::endl;
 	//    jout << "T= " << T << std::endl;
@@ -127,11 +126,9 @@ jerror_t ExtVetofa250Converter::convertMode1Hit(ExtVetoPMTHit* output, const fa2
 		//  jout << "component= "<<output->m_channel.ext_veto.component<<" "<< "Q= "<<Q<<endl;
 
 		T_index_min = T - 2;
-		if (T_index_min < 0)
-			T_index_min = 0;
+		if (T_index_min < 0) T_index_min = 0;
 		T_index_max = T + 4;
-		if (T_index_max >= (size - 1))
-			T_index_max = size - 1;
+		if (T_index_max >= (size - 1)) T_index_max = size - 1;
 
 		for (int ii = T_index_min; ii < T_index_max; ii++) {
 

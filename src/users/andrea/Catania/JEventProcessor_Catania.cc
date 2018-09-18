@@ -86,6 +86,7 @@ jerror_t JEventProcessor_Catania::init(void)
 	//
 	gPARMS->GetParameter("MC", m_isMC);
 
+	jout<<"JEventProcessor_Catania::init called. m_isMC set to: "<<m_isMC<<endl;fflush(stdout);
 
 	japp->RootWriteLock();
 	t=new TTree("CaloRate","CaloRate");
@@ -222,7 +223,7 @@ jerror_t JEventProcessor_Catania::evnt(JEventLoop *loop, uint64_t eventnumber)
 	}
 
 	if (events.size()!=1){
-		jout<<"Not a single event in this event "<<events.size()<<endl;
+		jout<<"Not a single event in this event "<<events.size()<<endl;fflush(stdout);
 		return RESOURCE_UNAVAILABLE;
 	}
 
@@ -233,7 +234,7 @@ jerror_t JEventProcessor_Catania::evnt(JEventLoop *loop, uint64_t eventnumber)
 			loop->GetSingle(evdata);
 		}
 		catch(unsigned long e){
-			jout<<"No trig bank this event"<<endl;
+			jout<<"No trig bank this event"<<endl;fflush(stdout);
 			return NOERROR;
 		}
 		int tWord=evdata->triggerWords[0];
@@ -241,7 +242,7 @@ jerror_t JEventProcessor_Catania::evnt(JEventLoop *loop, uint64_t eventnumber)
 	}
 
 	if (chits.size()==0){
-		//jout<<"No calorimeter hit this event"<<endl;
+	//	jout<<"No calorimeter hit this event"<<endl;fflush(stdout);
 		return NOERROR;
 	}
 
