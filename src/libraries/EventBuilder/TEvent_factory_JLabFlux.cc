@@ -12,15 +12,19 @@ using namespace std;
 #include <EventBuilder/TEvent.h>
 #include <EventBuilder/TEventHeader.h>
 
-#include <Calorimeter/CalorimeterMCRealHit.h>
+
+
 #include <Calorimeter/CalorimeterHit.h>
 #include <IntVeto/IntVetoHit.h>
 
 #include <DAQ/eventData.h>
 #include <MC/MCType.h>
+#ifdef MC_SUPPORT_ENABLE
+#include <Calorimeter/CalorimeterMCRealHit.h>
+#include <MC/GenParticle.h>
+#endif
 
 #include "TClonesArray.h"
-
 #include "TEvent_factory_JLabFlux.h"
 
 #include <JANA/JApplication.h>
@@ -47,8 +51,10 @@ jerror_t TEvent_factory_JLabFlux::init(void) {
 
 	m_CaloHits = new TClonesArray("CalorimeterHit");
 	m_IntVetoHits = new TClonesArray("IntVetoHit");
+#ifdef MC_SUPPORT_ENABLE
+	m_GenParticles = new TClonesArray("GenParticle");
 	m_CaloMCRealHits = new TClonesArray("CalorimeterMCRealHit");
-
+#endif
 	japp->RootUnLock();
 
 	return NOERROR;
@@ -72,11 +78,12 @@ jerror_t TEvent_factory_JLabFlux::evnt(JEventLoop *loop, uint64_t eventnumber) {
 
 	const eventData* tData;
 
-
 	vector<const CalorimeterHit*> chits;
 	vector<const IntVetoHit*> ivhits;
-
+#ifdef MC_SUPPORT_ENABLE
 	vector<const CalorimeterMCRealHit*> chits_MCReal;
+	vector<const GenParticle*> genParticles;
+#endif
 
 	if (!m_isMC) {
 		try {
@@ -86,14 +93,12 @@ jerror_t TEvent_factory_JLabFlux::evnt(JEventLoop *loop, uint64_t eventnumber) {
 			return OBJECT_NOT_AVAILABLE;
 		}
 
-
 		m_eventHeader->setEventType(JLabFluxEvent);
 		m_eventHeader->setRunNumber(tData->runN);
 		m_eventHeader->setEventNumber(tData->eventN);
 		m_eventHeader->setEventTime(tData->time);
 		m_eventHeader->setTriggerWords(tData->triggerWords);
 		m_eventHeader->setEventFineTime(0); //TODO
-
 
 	} else {
 		m_eventHeader->setEventType(JLabFluxEvent);
@@ -121,7 +126,17 @@ jerror_t TEvent_factory_JLabFlux::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	}
 	m_event->addCollection(m_IntVetoHits);
 
+#ifdef MC_SUPPORT_ENABLE
 	if (m_isMC) {
+
+		loop->Get(genParticles);
+		m_GenParticles->Clear("C");
+		for (int ii = 0; ii < genParticles.size(); ii++) {
+			((GenParticle*) m_GenParticles->ConstructedAt(ii))->operator=(*(genParticles[ii]));
+			m_event->AddAssociatedObject(genParticles[ii]);
+		}
+		m_event->addCollection(m_GenParticles);
+
 		loop->Get(chits_MCReal);
 		m_CaloMCRealHits->Clear("C");
 		for (int ii = 0; ii < chits_MCReal.size(); ii++) {
@@ -129,7 +144,9 @@ jerror_t TEvent_factory_JLabFlux::evnt(JEventLoop *loop, uint64_t eventnumber) {
 			m_event->AddAssociatedObject(chits_MCReal[ii]);
 		}
 		m_event->addCollection(m_CaloMCRealHits);
+
 	}
+#endif
 
 	/*publish the event*/
 	_data.push_back(m_event);

@@ -33,7 +33,10 @@ private:
 	TClonesArray *m_CaloHits;
 	TClonesArray *m_IntVetoHits;
 
+#ifdef MC_SUPPORT_ENABLE
+	TClonesArray *m_GenParticles;
 	TClonesArray *m_CaloMCRealHits;
+#endif
 
 	int m_isMC, m_MCRunNumber;
 	std::string m_tag;

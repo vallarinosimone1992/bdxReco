@@ -35,7 +35,7 @@ public:
 	}
 
 	jerror_t GenerateFactories(jana::JEventLoop *loop) {
-		//	loop->AddFactory(new MCEvent_factory());
+
 
 		loop->AddFactory(new CataniaEvent_factory());
 		loop->AddFactory(new TEvent_factory_CataniaProto2());
