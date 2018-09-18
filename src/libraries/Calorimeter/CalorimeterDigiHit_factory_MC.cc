@@ -112,11 +112,16 @@ jerror_t CalorimeterDigiHit_factory_MC::fini(void) {
 }
 
 void CalorimeterDigiHit_factory_MC::SetIndex(TranslationTable::CALO_Index_t &index, const CalorimeterMCHit *mchit, int MC) {
-	if ((MC == MCType::CATANIA_V1) || (MC == MCType::FULL_V1)) {
+	if (MC == MCType::FULL_V1) {
 		index.sector = mchit->sector - 1;
 		index.x = mchit->x - 1;
 		index.y = mchit->y - 1;
-	} else if (MC == MCType::CATANIA_V2) {
+	} else if ((MC == MCType::CATANIA_V1) && (mchit->sector == 100)) { /*A.C. I changed this on 2018/7/4 to have compatibility with digitization code for CATANIA_V2*/
+		index.sector = 1;
+		index.x = 0;
+		index.y = 0;
+	}
+	else if (MC == MCType::CATANIA_V2) {
 		if (mchit->sector == 1) {
 			index.sector = 0;
 			index.x = mchit->y - 1;
