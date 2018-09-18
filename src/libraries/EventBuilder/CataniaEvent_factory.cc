@@ -64,8 +64,11 @@ jerror_t CataniaEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	vector<const PaddlesHit*>::const_iterator phits_it;
 
 	const eventData *evData;
-
-	loop->Get(cdigihits);
+	if (m_isMC) {
+		loop->Get(cdigihits, "MC");
+	} else {
+		loop->Get(cdigihits);
+	}
 	loop->Get(chits);
 	loop->Get(ivhits);
 	loop->Get(evhits);
@@ -119,7 +122,7 @@ jerror_t CataniaEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber) {
 
 	for (chits_it = chits.begin(); chits_it != chits.end(); chits_it++) {
 		const CalorimeterHit *hit = (*chits_it);
-		if ((hit->m_channel.y == 0)&&(hit->m_channel.x==0)&&(hit->m_channel.sector==0)) { //this is the first crystal
+		if ((hit->m_channel.y == 0) && (hit->m_channel.x == 0)) { //this is the first crystal
 
 			E1 = hit->E;
 			T1 = hit->T;
@@ -127,7 +130,7 @@ jerror_t CataniaEvent_factory::evnt(JEventLoop *loop, uint64_t eventnumber) {
 			m_event->flag_RMS1 = flag1;
 			m_event->E1 = E1;
 
-		} else if ((hit->m_channel.y == 1)&&(hit->m_channel.x==0)&&(hit->m_channel.sector==0)) { //the second crystal
+		} else if ((hit->m_channel.y == 1) && (hit->m_channel.x == 0)) { //the second crystal, if present
 			E2 = hit->E;
 			T2 = hit->T;
 			flag2 = hit->RMSflag;
