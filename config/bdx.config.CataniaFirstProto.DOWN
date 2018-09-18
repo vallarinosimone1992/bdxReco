@@ -38,6 +38,7 @@ INTVETO:VERBOSE  2
 
 #ExtVeto parameters
 EXTVETO:VERBOSE	2
+EXTVETO:HIT_THR  0.1  #thr in energy [MeV] 
 
 #Calorimeter parameters
 CALORIMETER:THR		       4	#min amplitude of a pulse - in mV
