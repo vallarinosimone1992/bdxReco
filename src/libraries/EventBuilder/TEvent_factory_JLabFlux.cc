@@ -12,8 +12,6 @@ using namespace std;
 #include <EventBuilder/TEvent.h>
 #include <EventBuilder/TEventHeader.h>
 
-
-
 #include <Calorimeter/CalorimeterHit.h>
 #include <IntVeto/IntVetoHit.h>
 
@@ -22,6 +20,7 @@ using namespace std;
 #ifdef MC_SUPPORT_ENABLE
 #include <Calorimeter/CalorimeterMCRealHit.h>
 #include <MC/GenParticle.h>
+#include <MC/UserMCData.h>
 #endif
 
 #include "TClonesArray.h"
@@ -83,6 +82,7 @@ jerror_t TEvent_factory_JLabFlux::evnt(JEventLoop *loop, uint64_t eventnumber) {
 #ifdef MC_SUPPORT_ENABLE
 	vector<const CalorimeterMCRealHit*> chits_MCReal;
 	vector<const GenParticle*> genParticles;
+	vector<const UserMCData*> userMCdata;
 #endif
 
 	if (!m_isMC) {
@@ -99,7 +99,7 @@ jerror_t TEvent_factory_JLabFlux::evnt(JEventLoop *loop, uint64_t eventnumber) {
 		m_eventHeader->setEventTime(tData->time);
 		m_eventHeader->setTriggerWords(tData->triggerWords);
 		m_eventHeader->setEventFineTime(0); //TODO
-
+		m_eventHeader->setWeight(1);
 	} else {
 		m_eventHeader->setEventType(JLabFluxEvent);
 		m_eventHeader->setEventNumber(eventnumber);
@@ -144,6 +144,18 @@ jerror_t TEvent_factory_JLabFlux::evnt(JEventLoop *loop, uint64_t eventnumber) {
 			m_event->AddAssociatedObject(chits_MCReal[ii]);
 		}
 		m_event->addCollection(m_CaloMCRealHits);
+
+		loop->Get(userMCdata);
+
+		for (int ii=0;ii<userMCdata.size();ii++) {
+			if (userMCdata[ii]->N==1) {
+				m_eventHeader->setWeight(userMCdata[ii]->data);
+				if (m_eventHeader->getWeight()==0){
+					m_eventHeader->setWeight(1.);
+				}
+				break;
+			}
+		}
 
 	}
 #endif

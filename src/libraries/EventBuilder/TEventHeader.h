@@ -28,6 +28,8 @@ private:
 	epicsData *m_epicsData;
 
 
+	double weight;
+
 public:
 	TEventHeader();
 	virtual ~TEventHeader();
@@ -85,8 +87,14 @@ public:
 	void setEpicsData(epicsData *epicsData);
 	void copyEpicsData(const epicsData* epicsData);
 
+	double getWeight(){
+		return weight;
+	}
+	void setWeight(double w){
+		weight=w;
+	}
 
-	ClassDef(TEventHeader,2);
+	ClassDef(TEventHeader,3);
 
 };
 

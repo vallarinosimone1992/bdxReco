@@ -16,22 +16,10 @@
  */
 class CalorimeterMCHit: public jana::JObject {
 public:
-	JOBJECT_PUBLIC(CalorimeterMCHit)
-	;
+	JOBJECT_PUBLIC(CalorimeterMCHit);
 
-	// Add data members here. For example:
-	// int id;
-	// double E;
 
-	// This method is used primarily for pretty printing
-	// the second argument to AddString is printf style format
-	void toStrings(vector<pair<string, string> > &items) const {
-		AddString(items, "sector(MC)", "%i", sector);
-		AddString(items, "x(MC)", "%i", x);
-		AddString(items, "y(MC)", "%i", y);
-		AddString(items, "E", "%f", totEdep);
-		AddString(items, "pid","%i",pid);
-	}
+
 	int x, y, sector;
 
 	//dgtz banks
@@ -41,6 +29,20 @@ public:
 	//raw banks
 	double totEdep;
 	int pid;
+
+	// This method is used primarily for pretty printing
+	// the second argument to AddString is printf style format
+	void toStrings(vector<pair<string, string> > &items) const {
+		AddString(items, "sector(MC)", "%i", sector);
+		AddString(items, "x(MC)", "%i", x);
+		AddString(items, "y(MC)", "%i", y);
+		AddString(items, "E", "%f", totEdep);
+		AddString(items, "pid", "%i", pid);
+		AddString(items, "adcl", "%d", adcl);
+		AddString(items, "adcr", "%d", adcr);
+		AddString(items, "tdcl", "%d", tdcl);
+		AddString(items, "tdcr", "%d", tdcr);
+	}
 };
 
 #endif // _genParticle_

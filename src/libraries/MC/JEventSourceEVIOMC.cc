@@ -19,6 +19,8 @@ using namespace std;
 #include "ExtVetoMCHit.h"
 #include "PaddlesMCHit.h"
 #include "VetoMCHit.h"
+#include "UserMCData.h"
+
 //GEMC stuff to read simulation
 #include <MC/options.h>
 #include <gbank.h>
@@ -64,14 +66,14 @@ jerror_t JEventSourceEvioMC::GetEvent(JEvent &event) {
 	vector<string> hitTypes;
 	hitTypes.push_back("crs");
 	hitTypes.push_back("veto");
-/*
-	map<string, gBank>::iterator it;
-	for (it = banksMap.begin(); it != banksMap.end(); it++) {
-		jout << "!!! " << it->first << " " << it->second.bankName << endl;
-		for (int a = 0; a < it->second.name.size(); a++) {
-			jout << it->second.name[a] << " " << it->second.type[a] << " " << endl;
-		}
-	}*/
+	/*
+	 map<string, gBank>::iterator it;
+	 for (it = banksMap.begin(); it != banksMap.end(); it++) {
+	 jout << "!!! " << it->first << " " << it->second.bankName << endl;
+	 for (int a = 0; a < it->second.name.size(); a++) {
+	 jout << it->second.name[a] << " " << it->second.type[a] << " " << endl;
+	 }
+	 }*/
 
 	if (chan->read()) {
 		EDT = new evioDOMTree(chan);
@@ -85,8 +87,7 @@ jerror_t JEventSourceEvioMC::GetEvent(JEvent &event) {
 		event.SetEventNumber(evt->headerBank["evn"]);
 		//read here the run number from MC
 		curRunNumber = evt->headerBank["runNo"];
-		if (overwriteRunNumber != -1)
-			event.SetRunNumber(overwriteRunNumber);
+		if (overwriteRunNumber != -1) event.SetRunNumber(overwriteRunNumber);
 		else
 			event.SetRunNumber(curRunNumber);
 
@@ -159,18 +160,37 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory) {
 		fac->CopyTo(jparticles);
 		return NOERROR;
 
+	} else if (dataClassName == "UserMCData") {
+		map<string, gBank>::iterator it;
+		evio::evioDOMNodeListP fullList = EDT->getNodeList();
+		evio::evioDOMNodeList::const_iterator iter;
+		evio::evioDOMNodeList::const_iterator branch;
+		iter = fullList->begin();
+		vector<UserMCData*> userMCdata;
+		for (iter = fullList->begin(); iter != fullList->end(); iter++) {
+			if (((*iter)->tag == 11) && (((*iter)->num) > 0)) {
+
+				const evio::evioDOMLeafNode<double> *leaf = static_cast<const evio::evioDOMLeafNode<double>*>(*iter);
+				int leafSize = leaf->getSize();
+				vector<double> *pData = const_cast<vector<double> *>(&(leaf->data));
+
+				UserMCData *data = new UserMCData;
+				data->N = (*iter)->num;
+				data->data = (*pData)[0];
+				userMCdata.push_back(data);
+			}
+		}
+		JFactory<UserMCData> *fac = dynamic_cast<JFactory<UserMCData>*>(factory);
+		fac->CopyTo(userMCdata);
+		return NOERROR;
+
 	} else if (dataClassName == "CalorimeterMCHit") {
 		// getting EVIO bank
 		vector<hitOutput> bankDgt = this_event->dgtBanks["crs"];
 		vector<hitOutput> bankRaw = this_event->rawBanks["crs"];
 
-
-	//	vector<hitOutput> bankDgt = getDgtIntDataBank(*this_edt,"crs",&banksMap,2);
+		//	vector<hitOutput> bankDgt = getDgtIntDataBank(*this_edt,"crs",&banksMap,2);
 		//vector<hitOutput> bankRaw = getRawIntDataBank(*this_edt,"crs",&banksMap,2);
-
-
-
-
 
 		if (bankDgt.size() != bankRaw.size()) {
 			jerr << "Calorimeter MC banks raw and dgtz different size" << endl;
@@ -199,7 +219,6 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory) {
 			hit->sector = bankDgt[ih].getIntDgtVar("sector");
 			hit->x = bankDgt[ih].getIntDgtVar("xch");
 			hit->y = bankDgt[ih].getIntDgtVar("ych");
-
 
 			/*dgtz banks*/
 			hit->adcl = bankDgt[ih].getIntDgtVar("adcl");
@@ -236,12 +255,10 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory) {
 		vector<IntVetoMCHit*> intVetoMChits;
 		for (unsigned int ih = 0; ih < bankDgt.size(); ih++) {
 
-
-
 			if ((bankDgt[ih].getIntDgtVar("veto") != VetoMCHit::CATANIA_INTVETO) && (bankDgt[ih].getIntDgtVar("veto") != VetoMCHit::FULL_INTVETO) && (bankDgt[ih].getIntDgtVar("veto") != VetoMCHit::JLAB_FLUX)) continue;
 
 			IntVetoMCHit *hit = new IntVetoMCHit;
-			hit->totEdep =0;
+			hit->totEdep = 0;
 			/*raw banks*/
 			for (unsigned int ir = 0; ir < bankRaw.size(); ir++) {
 				if (bankRaw[ir].getIntRawVar("hitn") == bankDgt[ih].getIntDgtVar("hitn")) {
@@ -251,7 +268,7 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory) {
 				}
 			}
 
-			if (hit->totEdep <= 0.00001){
+			if (hit->totEdep <= 0.00001) {
 				delete hit;
 				hit = 0;
 				continue;
@@ -260,7 +277,7 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory) {
 			hit->sector = bankDgt[ih].getIntDgtVar("sector");
 			hit->channel = bankDgt[ih].getIntDgtVar("channel");
 
-		 //  jout << "sector "<< hit->sector << " " << hit->channel<<endl;
+			//  jout << "sector "<< hit->sector << " " << hit->channel<<endl;
 
 			hit->system = bankDgt[ih].getIntDgtVar("veto");
 
@@ -305,7 +322,7 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory) {
 			ExtVetoMCHit *hit = new ExtVetoMCHit;
 			hit->totEdep = 0.;
 
-			bool found=false;
+			bool found = false;
 			/*raw banks*/
 			for (unsigned int ir = 0; ir < bankRaw.size(); ir++) {
 				if (bankRaw[ir].getIntRawVar("hitn") == bankDgt[ih].getIntDgtVar("hitn")) {
@@ -315,11 +332,10 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory) {
 				}
 			}
 
-			if (!found){
-				jout<<"WHAT? "<<endl;
+			if (!found) {
+				jout << "WHAT? " << endl;
 			}
 			if (hit->totEdep <= 0.00001) {
-
 
 				delete hit;
 				hit = 0;

@@ -15,27 +15,28 @@
 /*This class is basically a place-holder for the data coming from EVIO file,
  * for the raw and digitized banks
  */
-class IntVetoMCHit:public VetoMCHit{
-	public:
-		JOBJECT_PUBLIC(IntVetoMCHit);
+class IntVetoMCHit: public VetoMCHit {
+public:
+	JOBJECT_PUBLIC(IntVetoMCHit)
+	;
 
-		// Add data members here. For example:
-		// int id;
-		// double E;
+	//dgtz banks
+	int adc1, adc2, adc3, adc4;
+	int tdc1, tdc2, tdc3, tdc4;
 
-		// This method is used primarily for pretty printing
-		// the second argument to AddString is printf style format
-		void toStrings(vector<pair<string,string> > &items)const{
-			 AddString(items, "id", "%4d", id);
-		}
+	//raw banks
+	double totEdep;
 
-
-		//dgtz banks
-		int adc1,adc2,adc3,adc4;
-		int tdc1,tdc2,tdc3,tdc4;
-
-		//raw banks
-		double totEdep;
+	// This method is used primarily for pretty printing
+	// the second argument to AddString is printf style format
+	void toStrings(vector<pair<string, string> > &items) const {
+		AddString(items, "id", "%4d", id);
+		AddString(items, "totEdep", "%f", totEdep);
+		AddString(items, "adc1", "%d", adc1);
+		AddString(items, "adc2", "%d", adc2);
+		AddString(items, "tdc1", "%d", tdc1);
+		AddString(items, "tdc2", "%d", tdc2);
+	}
 };
 
 #endif

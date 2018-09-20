@@ -177,7 +177,7 @@ jerror_t BDXEventProcessor::evnt(JEventLoop *loop, uint64_t eventnumber) {
 			return OBJECT_NOT_AVAILABLE;
 		}
 
-		if (tData->eventType!=eventSource::VME){
+		if (tData->eventType != eventSource::VME) {
 			return OBJECT_NOT_AVAILABLE;
 		}
 	}
@@ -188,25 +188,33 @@ jerror_t BDXEventProcessor::evnt(JEventLoop *loop, uint64_t eventnumber) {
 			return RESOURCE_UNAVAILABLE;
 		}
 		/*Add EPICS data in case of non-MC*/
-		if (m_isMC == 0) events[0]->getEventHeader()->copyEpicsData(eData);
-		japp->RootWriteLock();
-		m_event = events[0];
-		m_eventDST->Fill();
-		japp->RootUnLock();
+		if (m_output != 0) {
+
+			if (m_isMC == 0) events[0]->getEventHeader()->copyEpicsData(eData);
+			japp->RootWriteLock();
+			m_event = events[0];
+			m_eventDST->Fill();
+			japp->RootUnLock();
+		} else {
+			jerr << "No output, doing nothing!" << endl;
+		}
 	}
 
 	if (m_isMC == 0) {
-
-		japp->RootWriteLock();
-		eventT = tData->time;
-		eventN = eventnumber;
-		tWord = tData->triggerWords;
-		runN = tData->runN;
-		m_eventHeader->Fill();
-		//Time
-		if (eventT < startTime) startTime = eventT;
-		if (eventT > stopTime) stopTime = eventT;
-		japp->RootUnLock();
+		if (m_output != 0) {
+			japp->RootWriteLock();
+			eventT = tData->time;
+			eventN = eventnumber;
+			tWord = tData->triggerWords;
+			runN = tData->runN;
+			m_eventHeader->Fill();
+			//Time
+			if (eventT < startTime) startTime = eventT;
+			if (eventT > stopTime) stopTime = eventT;
+			japp->RootUnLock();
+		} else {
+			jerr << "No output2, doing nothing!" << endl;
+		}
 
 	}
 	return NOERROR;
@@ -232,13 +240,15 @@ jerror_t BDXEventProcessor::fini(void) {
 	// If another EventProcessor is in the list ahead of this one, then
 	// it will have finished before this is called. e.g. closed the
 	// ROOT file!
-	bout<<"BDXEventProcessor fini called"<<endl;fflush(stdout);
+	bout << "BDXEventProcessor fini called" << endl;
+	fflush(stdout);
 	japp->RootWriteLock();
 	if (m_output) {
 		m_output->CloseOutput(); /*This is ok, CloseOutput takes care of m_output already closed*/
 	}
 	japp->RootUnLock();
-	bout<<"BDXEventProcessor fini ends"<<endl;fflush(stdout);
+	bout << "BDXEventProcessor fini ends" << endl;
+	fflush(stdout);
 	return NOERROR;
 }
 
@@ -272,8 +282,7 @@ void BDXEventProcessor::updateCalibration(CalibrationHandlerBase* cal, JEventLoo
 	bool flagAll = true;
 	int calibratedOne = -1;
 	for (calibrations_it = calibrations.begin(); calibrations_it != calibrations.end(); calibrations_it++) {
-		if ((*calibrations_it)->hasLoadedCurrentRun() == false)
-			flagAll = false;
+		if ((*calibrations_it)->hasLoadedCurrentRun() == false) flagAll = false;
 		else
 			calibratedOne = std::distance(calibrations.begin(), calibrations_it); //save the index of this calibrated object
 	}
@@ -283,10 +292,8 @@ void BDXEventProcessor::updateCalibration(CalibrationHandlerBase* cal, JEventLoo
 	} else if (calibratedOne != -1) { /*It means there is at least an already-calibrated object!*/
 		bout << "Going to fill CalibrationHandlers for table: " << name << " there are: " << calibrations.size() << " Load from data: " << calibratedOne << endl;
 		for (int ical = 0; ical < calibrations.size(); ical++) {
-			if (ical == calibratedOne)
-				continue;
-			else if (calibrations[ical]->hasLoadedCurrentRun() == true)
-				continue;
+			if (ical == calibratedOne) continue;
+			else if (calibrations[ical]->hasLoadedCurrentRun() == true) continue;
 			else {
 				calibrations[ical]->fillCalib(calibrations[calibratedOne]->getRawCalibData());
 			}
