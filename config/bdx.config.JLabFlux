@@ -2,7 +2,7 @@
 
 #System parameters
 MC		0
-JANA_CALIB_CONTEXT "variation=JLabFlux0"
+JANA_CALIB_CONTEXT "variation=JLabFlux1"
 THREAD_TIMEOUT 300
 THREAD_TIMEOUT_FIRST_EVENT 300
 
