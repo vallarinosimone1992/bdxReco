@@ -58,6 +58,15 @@ if ((requestTable=="all")or(requestTable==table)):
         command = commandBase+table+" -r "+str(run)+"-"+str(run)+" "+file
         subprocess.call(command,shell=True)
 
+table = "/Calorimeter/sipm_gain"
+if ((requestTable=="all")or(requestTable==table)):
+    filen = variation+"/Calorimeter.sipm_gain"
+    files = glob.glob(filen+".*")
+    for file in files:
+        run=file.split("/")[1].split(".")[2]
+        print file+" ",run
+        command = commandBase+table+" -r "+str(run)+"-"+str(run)+" "+file
+        subprocess.call(command,shell=True)
 
 #InnerVeto
 table = "/InnerVeto/sipm_gain"
