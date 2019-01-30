@@ -92,6 +92,22 @@ else:
             for slot in range(2,20):
                 for channel in range(0,16):
                     outF.write("0 "+str(slot)+" "+str(channel)+" 0 0 \n")
+        else if ((variation=="BDXmini") or (variation=="BDXmini_peds")):#Write slot 0, read 1,2,3,4, then write all the others
+            slot = 0
+            for channel in range(0,16):
+                outF.write("0 "+str(slot)+" "+str(channel)+" 0 0 \n")
+            with open("DAQ_pedestals/"+fn) as inF:
+                for line in inF:
+                    data=line.split()
+                    slot=data[0]
+                    channel=data[1]
+                    ped=data[2]
+                    RMS=data[3]
+                    outF.write("0 "+str(slot)+" "+str(channel)+" "+str(ped)+" "+str(RMS)+"\n")
+            inF.close()
+            for slot in range(5,20):
+                for channel in range(0,16):
+                    outF.write("0 "+str(slot)+" "+str(channel)+" 0 0 \n")
         else:  #Write slots 1-3, then read 4-10, then write 11-19
             for slot in range(0,4):
                 for channel in range(0,16):
