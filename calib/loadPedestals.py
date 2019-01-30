@@ -92,7 +92,7 @@ else:
             for slot in range(2,20):
                 for channel in range(0,16):
                     outF.write("0 "+str(slot)+" "+str(channel)+" 0 0 \n")
-        else if ((variation=="BDXmini") or (variation=="BDXmini_peds")):#Write slot 0, read 1,2,3,4, then write all the others
+        elif ((variation=="BDXmini") or (variation=="BDXmini_peds")):#Write slot 0, read 1,2,3,4, then write all the others
             slot = 0
             for channel in range(0,16):
                 outF.write("0 "+str(slot)+" "+str(channel)+" 0 0 \n")
