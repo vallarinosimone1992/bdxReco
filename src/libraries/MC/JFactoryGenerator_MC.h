@@ -17,6 +17,7 @@
 #include "IntVetoMCHit.h"
 #include "ExtVetoMCHit.h"
 #include "PaddlesMCHit.h"
+#include "UserMCData.h"
 
 class JFactoryGenerator_MC: public jana::JFactoryGenerator{
 	public:
@@ -31,6 +32,7 @@ class JFactoryGenerator_MC: public jana::JFactoryGenerator{
 			loop->AddFactory(new JFactory<IntVetoMCHit> ());
 			loop->AddFactory(new JFactory<ExtVetoMCHit> ());
 			loop->AddFactory(new JFactory<PaddlesMCHit> ());
+			loop->AddFactory(new JFactory<UserMCData> ());
 
 			return NOERROR;
 		}

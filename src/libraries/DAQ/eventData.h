@@ -15,7 +15,7 @@
 //#include <vector>
 
 typedef enum {
-	VME=1,EPICS=2,CONF=3
+	DAQ=1,EPICS=2,CONF=3
 } eventSource;
 
 class eventData:public jana::JObject{
