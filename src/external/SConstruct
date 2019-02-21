@@ -3,7 +3,7 @@ Import('env debug et_enable')
 
 
 # Loop over libraries, building each
-libs=['evioReader']
+libs=['evioReader','TRIDAS']
 src=[]
 for lib in libs:
     src=src+Glob(lib+'/*.cc')

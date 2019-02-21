@@ -119,8 +119,12 @@ jerror_t JEventProcessor_Trigger::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	try {
 		loop->GetSingle(tData);
 	} catch (unsigned long e) {
-		jout << "JEventProcessor_IntVetoSipm::evnt::evnt no eventData bank this event" << std::endl;
+		jout << "JEventProcessor_Trigger::evnt no eventData bank this event" << std::endl;
 		return OBJECT_NOT_AVAILABLE;
+	}
+	/*If this is an EPICS event, do nothing.*/
+	if (tData->eventType == eventSource::EPICS){
+		return NOERROR;
 	}
 
 	/*Decode trigger words*/
