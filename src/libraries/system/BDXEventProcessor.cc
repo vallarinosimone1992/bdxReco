@@ -159,15 +159,15 @@ jerror_t BDXEventProcessor::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	const epicsData* eData;
 
 	/*For non-MC case, check that:
-	 * There's a valid eventData (true for both VME and EPICS)
-	 * There's a valid epicsData (true for both VME and EPICS - VME uses persistency)
-	 * The event is from VME - otherwise skip. Don't want to save non-VME events.
+	 * There's a valid eventData (true for both DAQ and EPICS)
+	 * There's a valid epicsData (true for both DAQ and EPICS - DAQ uses persistency)
+	 * The event is from DAQ - otherwise skip. Don't want to save non-DAQ events.
 	 */
 	if (m_isMC == 0) {
 		try {
 			loop->GetSingle(tData);
 		} catch (unsigned long e) {
-			bout << "No eventData bank this event" << endl;
+			bout << "No eventData bank this event " <<e<< endl;
 			return OBJECT_NOT_AVAILABLE;
 		}
 		/*This is the EPICS part. The call here will force getting data from the epicsDataProcessed_factory, that takes care of persistency*/
@@ -177,11 +177,10 @@ jerror_t BDXEventProcessor::evnt(JEventLoop *loop, uint64_t eventnumber) {
 			return OBJECT_NOT_AVAILABLE;
 		}
 
-		if (tData->eventType != eventSource::VME) {
+		if (tData->eventType != eventSource::DAQ) {
 			return OBJECT_NOT_AVAILABLE;
 		}
 	}
-
 	if (m_DObuildDST) {
 		loop->Get(events, m_buildDST.c_str());
 		if (events.size() != 1) {
@@ -195,8 +194,6 @@ jerror_t BDXEventProcessor::evnt(JEventLoop *loop, uint64_t eventnumber) {
 			m_event = events[0];
 			m_eventDST->Fill();
 			japp->RootUnLock();
-		} else {
-			jerr << "No output, doing nothing!" << endl;
 		}
 	}
 
@@ -212,10 +209,7 @@ jerror_t BDXEventProcessor::evnt(JEventLoop *loop, uint64_t eventnumber) {
 			if (eventT < startTime) startTime = eventT;
 			if (eventT > stopTime) stopTime = eventT;
 			japp->RootUnLock();
-		} else {
-			jerr << "No output2, doing nothing!" << endl;
 		}
-
 	}
 	return NOERROR;
 }
