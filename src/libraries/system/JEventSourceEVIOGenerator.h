@@ -5,8 +5,6 @@
 #include "JANA/JEventSourceGenerator.h"
 using namespace jana;
 
-// bdx headers
-
 class JEventSourceEvioGenerator:public JEventSourceGenerator
 {
 private:

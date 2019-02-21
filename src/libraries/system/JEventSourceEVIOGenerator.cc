@@ -15,7 +15,7 @@ using namespace std;
 JEventSourceEvioGenerator::JEventSourceEvioGenerator() :
 		isMC(0) {
 #ifdef MC_SUPPORT_ENABLE
-			gPARMS->SetDefaultParameter("MC", isMC, "Flag to select if analysis is runned on a MC file. 0 Means real data (default). >=1 means MC, according to: \n 1 CataniaProtoV1,\n 2 -> CataniaProtoV2,\n 4-> JLabFlux, \n 10->FullMC");
+	gPARMS->SetDefaultParameter("MC", isMC, "Flag to select if analysis is runned on a MC file. 0 Means real data (default). >=1 means MC, according to: \n 1 CataniaProtoV1,\n 2 -> CataniaProtoV2,\n 4-> JLabFlux, \n 10->FullMC");
 #endif
 }
 
@@ -26,9 +26,21 @@ const char* JEventSourceEvioGenerator::Description(void) {
 
 // Check if it's a valid file
 double JEventSourceEvioGenerator::CheckOpenable(string source) {
-	/// This always returns 100% probability of 
-	/// opening the source
-	return 1.0;
+	/*Return 1.0 if it contains "evio" string or the "ET:" string
+	 */
+	if (source.find("evio") != std::string::npos) {
+		std::cout << "JEventSourceEvioGenerator: source name " << source << "contains \"evio\" substring. Open it" << endl;
+		return 1.0;
+	} else if (source.find("EVIO") != std::string::npos) {
+		std::cout << "JEventSourceEvioGenerator: source name " << source << "contains \"EVIO\" substring. Open it" << endl;
+		return 1.0;
+	} else if (source.find("ET:") != std::string::npos) {
+		std::cout << "JEventSourceEvioGenerator: source name " << source << "contains \"ET:\" substring . Open it" << endl;
+		return 1.0;
+	} else {
+		std::cout << "JEventSourceEvioGenerator failed on source " << source << endl;
+		return 0.0;
+	}
 }
 
 // Make the file a JEventSource
