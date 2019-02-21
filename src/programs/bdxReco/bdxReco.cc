@@ -7,6 +7,7 @@ using namespace jana;
 // bdx headers
 
 #include <system/JEventSourceEVIOGenerator.h>
+#include <system/JEventSourceTRIDASGenerator.h>
 #include <system/BDXEventProcessor.h>
 
 //factory generators
@@ -49,6 +50,9 @@ int main(int narg, char *argv[])
 
 	app.AddEventSourceGenerator(new JEventSourceEvioGenerator());
 	jout<<"JEventSourceEvioGenerator DONE"<<endl;
+
+	app.AddEventSourceGenerator(new JEventSourceTRIDASGenerator());
+	jout<<"JEventSourceTRIDASGenerator DONE"<<endl;
 
 	app.AddFactoryGenerator(new JFactoryGenerator_system());
 	jout<<"JFactoryGenerator_system DONE"<<endl;
