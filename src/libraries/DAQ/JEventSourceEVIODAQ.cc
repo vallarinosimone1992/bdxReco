@@ -524,7 +524,7 @@ jerror_t JEventSourceEvioDAQ::GetObjects(JEvent &event, JFactory_base *factory) 
 
 			if (((*iter)->tag == vme_mother_tag) || ((*iter)->tag == epics_mother_tag)) {
 				evio::evioDOMNodeList *leafList = (*iter)->getChildList();
-				if ((*iter)->tag == vme_mother_tag) this_eventData->eventType = eventSource::VME;
+				if ((*iter)->tag == vme_mother_tag) this_eventData->eventType = eventSource::DAQ;
 				if ((*iter)->tag == epics_mother_tag) this_eventData->eventType = eventSource::EPICS;
 				for (branch = leafList->begin(); branch != leafList->end(); branch++) {
 
@@ -558,7 +558,7 @@ jerror_t JEventSourceEvioDAQ::GetObjects(JEvent &event, JFactory_base *factory) 
 		}
 
 		/*Only copy this further for VME or EPICS*/
-		if ((this_eventData->eventType == eventSource::VME) || (this_eventData->eventType == eventSource::EPICS)) {
+		if ((this_eventData->eventType == eventSource::DAQ) || (this_eventData->eventType == eventSource::EPICS)) {
 			data.push_back(this_eventData);
 			fac_eventData->CopyTo(data);
 		}
