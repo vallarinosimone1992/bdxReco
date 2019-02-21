@@ -16,6 +16,7 @@
 #include "fa250Mode1CalibPedSubHit_factory.h"
 #include "eventData.h"
 #include "epicsRawData.h"
+#include "fa250WaveboardV1Hit.h"
 
 class JFactoryGenerator_DAQ: public jana::JFactoryGenerator {
 public:
@@ -31,6 +32,7 @@ public:
 	}
 
 	jerror_t GenerateFactories(jana::JEventLoop *loop) {
+		loop->AddFactory(new JFactory<fa250WaveboardV1Hit>());
 		loop->AddFactory(new JFactory<fa250Mode1Hit>());
 		loop->AddFactory(new JFactory<fa250Mode7Hit>());
 		loop->AddFactory(new JFactory<eventData>());
