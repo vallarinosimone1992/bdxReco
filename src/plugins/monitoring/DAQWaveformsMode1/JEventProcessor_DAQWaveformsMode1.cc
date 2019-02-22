@@ -179,7 +179,7 @@ jerror_t JEventProcessor_DAQWaveformsMode1::evnt(JEventLoop *loop, uint64_t even
 			japp->RootUnLock();
 			return VALUE_OUT_OF_RANGE;
 		}
-		hDAQWaveform[crate][slot][channel]->GetXaxis()->SetRangeUser(0, NsamplesWfm[crate][slot][channel]);
+		hDAQWaveform[crate][slot][channel]->GetXaxis()->SetRangeUser(0, NsamplesWfm[crate][slot][channel]-1);
 		for (int isample = 0; isample < NsamplesWfm[crate][slot][channel]; isample++) {
 			hDAQWaveform[crate][slot][channel]->SetBinContent(isample, (*it)->samples[isample]);
 		}
