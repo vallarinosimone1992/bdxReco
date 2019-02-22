@@ -15,6 +15,7 @@ using namespace jana;
 #include <TStyle.h>
 
 #include "DAQ/fa250Mode1CalibPedSubHit.h"
+#include <DAQ/eventData.h>
 
 // Routine used to create our JEventProcessor
 #include <JANA/JApplication.h>
@@ -27,7 +28,7 @@ static const int nChannels = 16;
 static const int nSamples = 1000;
 // root hist pointers
 static TH1D *hDAQWaveform[nCrates][nSlots][nChannels];
-static int  NsamplesWfm[nCrates][nSlots][nChannels];
+static int NsamplesWfm[nCrates][nSlots][nChannels];
 extern "C" {
 void InitPlugin(JApplication *app) {
 	InitJANAPlugin(app);
@@ -79,8 +80,8 @@ jerror_t JEventProcessor_DAQWaveformsMode1::init(void) {
 		for (int islot = 0; islot < nSlots; islot++) {
 			for (int ichannel = 0; ichannel < nChannels; ichannel++) {
 				hDAQWaveform[icrate][islot][ichannel] = new TH1D(Form("hDAQWaveform_c%i_s%i_c%i", icrate, islot, ichannel), Form("hDAQWaveform_c%i_s%i_c%i", icrate, islot, ichannel), nSamples, -0.5, nSamples - 0.5);
-				hDAQWaveform[icrate][islot][ichannel] -> GetXaxis() ->SetTitle("Sample N.");
-				hDAQWaveform[icrate][islot][ichannel] -> GetYaxis() ->SetTitle("Ampl. (V)");
+				hDAQWaveform[icrate][islot][ichannel]->GetXaxis()->SetTitle("Sample N.");
+				hDAQWaveform[icrate][islot][ichannel]->GetYaxis()->SetTitle("Ampl. (V)");
 
 			}
 		}
@@ -92,7 +93,6 @@ jerror_t JEventProcessor_DAQWaveformsMode1::init(void) {
 	// unlock
 	japp->RootUnLock();
 	return NOERROR;
-
 
 }
 
@@ -109,11 +109,24 @@ jerror_t JEventProcessor_DAQWaveformsMode1::brun(JEventLoop *eventLoop, int32_t 
 //------------------
 jerror_t JEventProcessor_DAQWaveformsMode1::evnt(JEventLoop *loop, uint64_t eventnumber) {
 
-  int crate, slot, channel,N;
+	int crate, slot, channel, N;
 	vector<const fa250Mode1CalibPedSubHit*> m_waveforms;
 	vector<const fa250Mode1CalibPedSubHit*>::const_iterator it;
 
 	loop->Get(m_waveforms);
+
+	const eventData* tData;
+
+	try {
+		loop->GetSingle(tData);
+	} catch (unsigned long e) {
+		jout << "JEventProcessor_Trigger::evnt no eventData bank this event" << std::endl;
+		return OBJECT_NOT_AVAILABLE;
+	}
+	/*If this is an EPICS event, do nothing.*/
+	if (tData->eventType == eventSource::EPICS) {
+		return NOERROR;
+	}
 
 	// Lock ROOT
 	japp->RootWriteLock();
@@ -124,8 +137,6 @@ jerror_t JEventProcessor_DAQWaveformsMode1::evnt(JEventLoop *loop, uint64_t even
 		channel = (*it)->m_channel.channel;
 		N = (*it)->samples.size();
 
-	
-	
 		/*Check for crate-slot-channel numbers*/
 		if (crate < 0) {
 			jerr << "ERROR in DAQWaveformsMode1 plugin, crate number is <0 " << endl;
@@ -147,31 +158,30 @@ jerror_t JEventProcessor_DAQWaveformsMode1::evnt(JEventLoop *loop, uint64_t even
 			return VALUE_OUT_OF_RANGE;
 		}
 
-		if ((channel < 0)||(channel>15)) {
-			jerr << "ERROR in DAQWaveformsMode1 plugin, channel number is out of range " << channel<<endl;
+		if ((channel < 0) || (channel > 15)) {
+			jerr << "ERROR in DAQWaveformsMode1 plugin, channel number is out of range " << channel << endl;
 			japp->RootUnLock();
 			return VALUE_OUT_OF_RANGE;
 		}
 
-		if ( N!= NsamplesWfm[nCrates][nSlots][nChannels]){
-		  jerr << "ERROR in DAQWaveformsMode1 plugin nsamples "<<N<< " " <<NsamplesWfm[nCrates][nSlots][nChannels]<<endl;  
+		if (N != NsamplesWfm[nCrates][nSlots][nChannels]) {
+			jerr << "ERROR in DAQWaveformsMode1 plugin nsamples " << N << " " << NsamplesWfm[nCrates][nSlots][nChannels] << endl;
 		}
-	
 
 		/*Ok, here it means the range is fine*/
-		NsamplesWfm[nCrates][nSlots][nChannels]=N;
+		NsamplesWfm[nCrates][nSlots][nChannels] = N;
 		/*Reset histogram*/
 		hDAQWaveform[crate][slot][channel]->Reset();
 
 		/*Check for samples number*/
-		if (N>nSamples){
-			jerr << "ERROR in DAQWaveformsMode1 plugin, number of samples is too high " << (*it)->samples.size()<<" "<<nSamples<<endl;
+		if (N > nSamples) {
+			jerr << "ERROR in DAQWaveformsMode1 plugin, number of samples is too high " << (*it)->samples.size() << " " << nSamples << endl;
 			japp->RootUnLock();
 			return VALUE_OUT_OF_RANGE;
 		}
-		hDAQWaveform[crate][slot][channel]->GetXaxis()->SetRangeUser(0,(*it)->samples.size());
-		for (int isample=0;isample<N;isample++){
-			hDAQWaveform[crate][slot][channel]->SetBinContent(isample,(*it)->samples[isample]);
+		hDAQWaveform[crate][slot][channel]->GetXaxis()->SetRangeUser(0, (*it)->samples.size());
+		for (int isample = 0; isample < N; isample++) {
+			hDAQWaveform[crate][slot][channel]->SetBinContent(isample, (*it)->samples[isample]);
 		}
 
 	}
