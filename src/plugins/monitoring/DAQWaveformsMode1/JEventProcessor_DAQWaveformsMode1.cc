@@ -25,7 +25,7 @@ using namespace jana;
 static const int nCrates = 1;
 static const int nSlots = 6;
 static const int nChannels = 16;
-static const int nSamples = 1000;
+static const int nSamples = 2000;
 // root hist pointers
 static TH1D *hDAQWaveform[nCrates][nSlots][nChannels];
 static int NsamplesWfm[nCrates][nSlots][nChannels];
