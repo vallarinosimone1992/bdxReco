@@ -164,8 +164,8 @@ jerror_t JEventProcessor_DAQWaveformsMode1::evnt(JEventLoop *loop, uint64_t even
 			return VALUE_OUT_OF_RANGE;
 		}
 
-		if (N != NsamplesWfm[nCrates][nSlots][nChannels]) {
-			jerr << "ERROR in DAQWaveformsMode1 plugin nsamples " << N << " " << NsamplesWfm[nCrates][nSlots][nChannels] << endl;
+		if (N != NsamplesWfm[crate][slot][channel]) {
+			jerr << "ERROR in DAQWaveformsMode1 plugin nsamples " << N << " " << NsamplesWfm[crate][slot][channel] << endl;
 		}
 
 		/*Ok, here it means the range is fine*/
