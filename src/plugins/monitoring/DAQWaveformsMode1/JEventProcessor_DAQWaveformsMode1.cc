@@ -169,18 +169,18 @@ jerror_t JEventProcessor_DAQWaveformsMode1::evnt(JEventLoop *loop, uint64_t even
 		}
 
 		/*Ok, here it means the range is fine*/
-		NsamplesWfm[nCrates][nSlots][nChannels] = N;
+		NsamplesWfm[crate][slot][channel] = N;
 		/*Reset histogram*/
 		hDAQWaveform[crate][slot][channel]->Reset();
 
 		/*Check for samples number*/
-		if (N > nSamples) {
-			jerr << "ERROR in DAQWaveformsMode1 plugin, number of samples is too high " << (*it)->samples.size() << " " << nSamples << endl;
+		if (NsamplesWfm[crate][slot][channel] > nSamples) {
+			jerr << "ERROR in DAQWaveformsMode1 plugin, number of samples is too high " << NsamplesWfm[crate][slot][channel] << " max set in plugin: " << nSamples << endl;
 			japp->RootUnLock();
 			return VALUE_OUT_OF_RANGE;
 		}
-		hDAQWaveform[crate][slot][channel]->GetXaxis()->SetRangeUser(0, (*it)->samples.size());
-		for (int isample = 0; isample < N; isample++) {
+		hDAQWaveform[crate][slot][channel]->GetXaxis()->SetRangeUser(0, NsamplesWfm[crate][slot][channel]);
+		for (int isample = 0; isample < NsamplesWfm[crate][slot][channel]; isample++) {
 			hDAQWaveform[crate][slot][channel]->SetBinContent(isample, (*it)->samples[isample]);
 		}
 
