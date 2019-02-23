@@ -39,4 +39,4 @@ INTVETO:HIT_N_MULTI     2     #multiplicity for a detector with multi readout ->
 INTVETO:VERBOSE  3
 
 #EPICS parameters
-EPICS:DELTA_TIME 29 #the time to add to EPICS events (s) to match with DAQ
+#EPICS:DELTA_TIME 29 #the time to add to EPICS events (s) to match with DAQ
