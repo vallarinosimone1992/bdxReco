@@ -38,8 +38,11 @@ public:
 		AddString(items,"Qraw","%4f",Qraw);
 		AddString(items,"Qphe","%4f",Qphe);
 		AddString(items,"T","%4f",T);
-		AddString(items,"A","%4f",Araw);
-		AddString(items,"A","%4f",Aphe);
+		AddString(items,"Araw","%4f",Araw);
+		AddString(items,"Aphe","%4f",Aphe);
+		AddString(items,"pedMean","%4f",pedMean);
+		AddString(items,"pedRMS","%4f",pedRMS);
+		AddString(items,"rmsFlag","%i",RMSflag);
 	}
 	typedef enum{
 		noise=0,
