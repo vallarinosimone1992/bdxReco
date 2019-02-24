@@ -30,7 +30,7 @@ class IntVetofa250Converter_factory:public BDXFactory<IntVetofa250Converter>{
 
 		double m_minTot,m_thr;
 		int m_NSB,m_NSA,m_NPED;
-
+		double m_RMSTHRscale;
 };
 
 #endif // _IntVetofa250Converter_factory_

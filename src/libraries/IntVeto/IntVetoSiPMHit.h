@@ -42,7 +42,8 @@ public:
 		AddString(items,"Aphe","%4f",Aphe);
 		AddString(items,"pedMean","%4f",pedMean);
 		AddString(items,"pedRMS","%4f",pedRMS);
-		AddString(items,"rmsFlag","%i",RMSflag);
+		AddString(items,"rmsFlag","%i",1*RMSflag);
+		AddString(items,"type","%i",m_type);
 	}
 	typedef enum{
 		noise=0,
