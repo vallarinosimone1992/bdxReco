@@ -276,7 +276,7 @@ void jv_mainframe::DoSelectObject(Int_t id)
 	// Get associated to objects
 	a2objs.clear();
 	JEP->GetAssociatedTo(obj, a2objs);
-	jout<<"This object is associated to: "<<a2objs.size()<<" objects "<<endl;
+	//jout<<"This object is associated to: "<<a2objs.size()<<" objects "<<endl;
 	for(uint32_t i=0; i<a2objs.size(); i++){
 		char str[256];
 		sprintf(str, "0x%016lx %s", (unsigned long)a2objs[i], a2objs[i]->GetNameJANA().c_str());

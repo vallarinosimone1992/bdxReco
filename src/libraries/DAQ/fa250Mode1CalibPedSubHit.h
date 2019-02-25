@@ -16,7 +16,9 @@
 class fa250Mode1CalibPedSubHit:public fa250Mode1Hit{
 	public:
 		JOBJECT_PUBLIC(fa250Mode1CalibPedSubHit);
-		
+		fa250Mode1CalibPedSubHit();
+		virtual ~fa250Mode1CalibPedSubHit();
+
 		
 
 		// This method is used primarily for pretty printing
@@ -30,6 +32,9 @@ class fa250Mode1CalibPedSubHit:public fa250Mode1Hit{
 		
 		double m_ped,m_RMS; //from DB
 
+
+		virtual TCanvas* Draw(int id=0) const;
+		void toHisto(TH1D *h) const;
 };
 
 #endif // _fa250Mode1CalibHit_
