@@ -131,7 +131,6 @@ jerror_t CalorimeterSiPMHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 			//A.C. do not touch these
 			//jout<<eventnumber<<endl;
 			m_CalorimeterSiPMHit=m_Calorimeterfa250Converter->convertHit((fa250Hit*)*it_fa250Mode1CalibPedSubHit,m_channel);
-			m_CalorimeterSiPMHit->m_ch=*(m_channel.calorimeter);
 			/*Apply phe conversion if possible*/
 			m_q_calib=m_sipm_gain->getCalibSingle(*(m_channel.calorimeter));
 			if (m_q_calib>0){

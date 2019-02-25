@@ -42,6 +42,13 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output, const fa
 	std::vector<int> m_singleCrossingIndexes;
 	//std::vector<int> m_signalCrossingIndexs;
 
+	double m_NPEDs,m_NSBs,m_NSAs;
+
+	m_NPEDs=(int)(m_NPED/input->m_dT);
+	m_NSAs=(int)(m_NSAs/input->m_dT);
+	m_NSBs=(int)(m_NSBs/input->m_dT);
+
+
 	vector<double> m_waveform;
 	m_waveform.clear();
 
@@ -57,16 +64,16 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output, const fa
 	for (icheck = 0; icheck < NRMSCHECKS; icheck++) {
 		//Compute pedestal and rms starting at this point
 		istart = icheck * (size / NRMSCHECKS);
-		if ((istart + m_NPED) >= size) istart = size - m_NPED - 1;
+		if ((istart + m_NPEDs) >= size) istart = size - m_NPED - 1;
 		ped = 0;
 		pedRMS = 0;
-		for (int ii = 0; ii < m_NPED; ii++) {
-			ped += input->samples.at(ii + istart);
-			pedRMS += input->samples.at(ii + istart) * input->samples.at(ii + istart);
+		for (int ii = 0; ii < m_NPEDs; ii++) {
+			ped += input->samples[ii + istart];
+			pedRMS += input->samples[ii + istart] * input->samples[ii + istart];
 
 		}
-		ped /= m_NPED;
-		pedRMS /= m_NPED;
+		ped /= m_NPEDs;
+		pedRMS /= m_NPEDs;
 		pedRMS = sqrt(pedRMS - ped * ped);
 
 		if (pedRMS <= input->m_RMS*m_RMSTHRscale) {	//input->m_RMS is read from DB. This is the DAQ-measured RMS, equal for all hits in the same channel and the same run)
@@ -140,7 +147,7 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output, const fa
 	output->nSingles = m_singleCrossingIndexes.size();
 	if ((output->nSingles) == 0) {
 		output->m_type = IntVetoSiPMHit::noise;
-		output->Qraw = this->sumSamples(m_NSA + m_NSB, &(m_waveform.at(0)));  //for compatibility with case 1
+		output->Qraw = this->sumSamples(m_NSAs + m_NSBs, &(m_waveform.at(0)));  //for compatibility with case 1
 		output->Araw = this->getMaximum(m_waveform.size(), &(m_waveform[0]), output->T);
 		output->T = -1;
 		return NOERROR;
@@ -164,9 +171,9 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output, const fa
 		xmax = m_crossingTimes.at(imax).second;
 		max = this->getMaximum((int) xmin, (int) xmax, &(m_waveform[0]), Tmax);
 
-		xmin = Tmax - m_NSA;
+		xmin = Tmax - m_NSAs;
 		if (xmin < 0) xmin = 0;
-		xmax = Tmax + m_NSB;
+		xmax = Tmax + m_NSBs;
 		if (xmax >= size) (xmax = size - 1);
 		output->Qraw = this->sumSamples(xmin, xmax, &(m_waveform[0]));
 
@@ -175,27 +182,10 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output, const fa
 		output->T = Tmax;
 		output->T *= input->m_dT; //in NS!!!
 
-		/*if ((eventN==3093)){
-		 jout<<"AA "<<eventN<<endl;
-		 jout<<Tmax<<endl;
-		 jout<<imax<<endl;
-		 jout<<m_crossingTimes.size()<<" "<<output->nSingles<<endl;
-		 for (int im=0;im<m_crossingTimes.size();im++) jout<<im<<" "<<m_crossingTimes[im].first<<" "<<m_crossingTimes[im].second<<endl;
-		 jout<<output->m_channel.CSC.slot<<" "<<output->m_channel.CSC.channel<<endl;
-		 jout<<thr<<" "<<min<<" "<<max<<" "<<xmin<<" "<<xmax<<endl;
 
-		 TH1D *h=new TH1D("h","h",m_waveform.size(),-0.5,m_waveform.size()-0.5);
-		 for (int iii=0;iii<m_waveform.size();iii++) h->Fill(iii,m_waveform[iii]);
-		 jout<<"Draw"<<endl;
-		 TCanvas *c=new TCanvas("c","c");
-		 h->Draw();
-
-		 gui->Run(1);
-		 }
-		 */
 		return NOERROR;
 	}
-	//
+
 
 	return NOERROR;
 }

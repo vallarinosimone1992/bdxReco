@@ -34,9 +34,9 @@ class Calorimeterfa250Converter:public fa250Converter<CalorimeterSiPMHit>{
 
 
 
-
+		mutable vector<double> m_calib;
 		mutable double m_THR;
-		mutable double m_SINGLE_SIGNAL_TOT;
+		mutable double m_SIGNAL_TOT;
 		mutable double m_MIN_TOT;
 
 		int m_NSB,m_NSA;
