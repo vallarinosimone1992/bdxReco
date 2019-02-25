@@ -93,7 +93,7 @@ class jv_mainframe:public TGMainFrame{
 
 #if !defined(__CINT__) && !defined(__CLING__)
 		void UpdateObjectValues(JObject *obj);
-		void DrawObject(BDXObject *obj);
+		void DrawObject(const BDXObject *obj);
 #endif // __CINT__  __CLING__
 
 		// Helper methods for building GUI

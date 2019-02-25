@@ -293,6 +293,16 @@ void jv_mainframe::DoSelectObject(Int_t id)
 		DrawObject(obj2);
 	}
 
+	/*If the object was not a BDXObject with its own draw method, try to check if there is a reference to another object that is a BDXObject*/
+	else{
+		vector<const BDXObject*> ptrs;
+		((JObject*)vobjs[idx])->GetT(ptrs);
+		if (ptrs.size()>0){
+			DrawObject(ptrs[0]);
+		}
+	}
+
+
 }
 
 
@@ -441,7 +451,7 @@ void jv_mainframe::UpdateObjectTypeList(vector<JVFactoryInfo> &facinfo)
 // UpdateObjectValues
 //-------------------
 
-void jv_mainframe::DrawObject(BDXObject *obj)
+void jv_mainframe::DrawObject(const BDXObject *obj)
 {
 
 	canvasTMP=obj->Draw(canvas2->GetCanvasWindowId());
