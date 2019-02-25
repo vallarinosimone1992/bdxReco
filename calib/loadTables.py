@@ -73,6 +73,12 @@ filen = variation+"/Calorimeter.Ene "
 command = commandBase+table+filen
 subprocess.call(command,shell=True)
 
+table = "/Calorimeter/thr "
+filen = variation+"/Calorimeter.thr "
+command = commandBase+table+filen
+subprocess.call(command,shell=True)
+
+
 
 #InnerVeto
 table = "/InnerVeto/sipm_gain "
