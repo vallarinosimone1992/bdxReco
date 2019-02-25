@@ -28,7 +28,8 @@ class fa250Mode1CalibPedSubHit_factory:public BDXFactory<fa250Mode1CalibPedSubHi
 
 		DAQCalibrationHandler *m_pedestals;
 		DAQCalibrationHandler *m_parms;
-		double LSB;
+		double LSB; //LSB in mV
+		double dT;  //sampling time
 };
 
 #endif // _fa250Mode1PedSubHit_factory_

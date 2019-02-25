@@ -64,10 +64,24 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output, 
 	int N, n, idx;
 	double min, max, xmin, xmax, prev_xmin, prev_xmax, rms, Tmax;
 
+	int m_NPEDs, m_NSBs, m_NSAs, m_NSAMPLESs;
+
+	m_NPEDs = (int) (m_NPED / input->m_dT);
+	m_NSBs = (int) (m_NSB / input->m_dT);
+	m_NSAs = (int) (m_NSA / input->m_dT);
+	m_NSAMPLESs = (int) (m_NSAMPLES / input->m_dT);
+
 	/*Get thr and TOT from DB*/
-	m_THR = m_thrDB->getCalib(*(output->m_channel.calorimeter))[0];
-	m_MIN_TOT = m_thrDB->getCalib(*(output->m_channel.calorimeter))[1];
-	m_SINGLE_SIGNAL_TOT = m_thrDB->getCalib(*(output->m_channel.calorimeter))[2];
+	/*THR in mV
+	 * m_MIN_TOT in ns
+	 * m_SINGLE_SIGNAL_TOT in ns
+	 */
+	m_calib.clear();
+	m_calib = m_thrDB->getCalib(*(output->m_channel.calorimeter));
+
+	m_THR = m_calib[0];
+	m_MIN_TOT = m_calib[1];
+	m_SIGNAL_TOT = m_calib[2];
 
 	output->Qraw = 0;
 	output->T = 0;
@@ -99,12 +113,12 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output, 
 	//1a: compute the pedestal
 	output->pedMean = 0;
 	output->pedRMS = 0;
-	for (int ii = 0; ii < m_NPED; ii++) {
+	for (int ii = 0; ii < m_NPEDs; ii++) {
 		output->pedMean += input->samples[ii];
 		output->pedRMS += input->samples[ii] * input->samples[ii];
 	}
-	output->pedRMS /= m_NPED;
-	output->pedMean /= m_NPED;
+	output->pedRMS /= m_NPEDs;
+	output->pedMean /= m_NPEDs;
 	output->pedRMS = sqrt(output->pedRMS - output->pedMean * output->pedMean);
 
 	if (output->pedRMS <= input->m_RMS) {
@@ -147,11 +161,12 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output, 
 
 	/*Verify the ToT for each pulse*/
 	for (int itime = 0; itime < m_crossingTimes.size(); itime++) {
+
 		if (m_crossingTimesDelta[itime] < 0) {
 			jerr << "Calorimeterfa20Converter::convertMode1Hit error, negative ToT?" << std::endl;
-		} else if (m_crossingTimesDelta[itime] > m_SINGLE_SIGNAL_TOT / 4) {
+		} else if (m_crossingTimesDelta[itime] > m_SIGNAL_TOT / input->m_dT) {
 			m_signalCrossingIndexes.push_back(itime);
-		} else if ((m_crossingTimesDelta[itime] > m_MIN_TOT / 4) || (m_crossingTimes[itime].second) == (size) || (m_crossingTimes[itime].first) == (0)) {
+		} else if ((m_crossingTimesDelta[itime] > m_MIN_TOT / input->m_dT) || (m_crossingTimes[itime].second) == (size) || (m_crossingTimes[itime].first) == (0)) {
 			m_singleCrossingIndexes.push_back(itime);
 		}
 	}
@@ -162,15 +177,40 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output, 
 	if (((output->m_nSignals) == 0) && (output->m_nSingles) == 0) {
 		output->type = CalorimeterSiPMHit::noise;
 		output->T = 0;
-		output->Qraw = this->sumSamples(0, m_NSB + m_NSA, &(m_waveform[0])); //to be uniform with the case below
+		output->Qraw = this->sumSamples(0, m_NSBs + m_NSAs, &(m_waveform[0])); //to be uniform with the case below
 		output->A = 0;
 		return NOERROR;
-	} else if ((output->m_nSignals == 0) && (output->m_nSingles == 1)) {
+	} else if (output->m_nSignals >= 1) {
+		output->type = CalorimeterSiPMHit::real_signal;
+
+		idx = m_signalCrossingIndexes[0];
+		xmax = m_crossingTimes[idx].first;  //this is the time of the sample OVER m_THR
+		xmin = xmax - m_NSBs;
+		xmax = xmax - m_NSBs + m_NSAMPLESs;
+		if (xmin < 0) xmin = 0;
+		if (xmax >= size) xmax = size - 1;
+
+		output->Qraw = this->sumSamples((int) xmin, (int) xmax, &(m_waveform[0]));
+		output->A = this->getMaximum(m_waveform.size(), &(m_waveform[0]), Tmax);
+
+		xmax = m_crossingTimes[idx].first;  //this is the time of the sample OVER m_THR
+		xmin = m_crossingTimes[idx].first - 1;
+		if (xmin == 0) output->T = 0;
+		else {
+			max = m_waveform[xmax];
+			min = m_waveform[xmin];
+		}
+
+		output->T = (m_THR - min) * (xmax - xmin) / (max - min) + xmin;
+		output->T *= input->m_dT; //in NS!!!
+
+	}
+	else if ((output->m_nSignals == 0) && (output->m_nSingles == 1)) {
 		output->A = this->getMaximum(m_crossingTimes[0].first, m_crossingTimes[0].second, &(m_waveform[0]), Tmax);
 
-		if ((Tmax <= m_NSB) || (Tmax >= (size - 1 - m_NSA))) {
+		if ((Tmax <= m_NSBs) || (Tmax >= (size - 1 - m_NSAs))) {
 			output->type = CalorimeterSiPMHit::one_phe;
-			output->Qraw = this->sumSamples(0, m_NSB + m_NSA, &(m_waveform[0])); //to be uniform with the case below
+			output->Qraw = this->sumSamples(0, m_NSBs + m_NSAs, &(m_waveform[0])); //to be uniform with the case below
 			output->T = 0;
 			return NOERROR;
 		} else {
@@ -178,8 +218,8 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output, 
 			output->Qraw = this->sumSamples(m_waveform.size(), &(m_waveform[0]));
 
 			output->type = CalorimeterSiPMHit::good_one_phe;
-			xmin = Tmax - m_NSB;
-			xmax = Tmax + m_NSA;
+			xmin = Tmax - m_NSBs;
+			xmax = Tmax + m_NSAs;
 
 			/*This should never happen*/
 			if (xmin < 0) xmin = 0;
@@ -196,33 +236,9 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output, 
 			min = m_waveform[xmin];
 
 			output->T = (m_THR - min) * (xmax - xmin) / (max - min) + xmin;
-			output->T *= 4; //in NS!!!
+			output->T *= input->m_dT; //in NS!!!
 
 		}
-	} else if (output->m_nSignals >= 1) {
-		output->type = CalorimeterSiPMHit::real_signal;
-
-		idx = m_signalCrossingIndexes[0];
-		xmax = m_crossingTimes[idx].first;  //this is the time of the sample OVER m_THR
-		xmin = xmax - m_NSB;
-		xmax = xmax - m_NSB + m_NSAMPLES;
-		if (xmin < 0) xmin = 0;
-		if (xmax >= size) xmax = size - 1;
-
-		output->Qraw = this->sumSamples((int) xmin, (int) xmax, &(m_waveform[0]));
-		output->A = this->getMaximum(m_waveform.size(), &(m_waveform[0]), Tmax);
-
-		xmax = m_crossingTimes[idx].first;  //this is the time of the sample OVER m_THR
-		xmin = m_crossingTimes[idx].first - 1;
-		if (xmin == 0) output->T = 0;
-		else {
-			max = m_waveform[xmax];
-			min = m_waveform[xmin];
-		}
-
-		output->T = (m_THR - min) * (xmax - xmin) / (max - min) + xmin;
-		output->T *= 4; //in NS!!!
-
 	} else {
 		output->type = CalorimeterSiPMHit::many_phe;
 		output->A = 0;
@@ -235,8 +251,8 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output, 
 			max = this->getMaximum((int) xmin, (int) xmax, &(m_waveform[0]), Tmax);
 			if ((output->A) < max) output->A = max;
 
-			xmin = Tmax - m_NSB;
-			xmax = Tmax + m_NSA;
+			xmin = Tmax - m_NSBs;
+			xmax = Tmax + m_NSAs;
 
 			if (xmin < prev_xmin) xmin = prev_xmin;
 			if (xmax > size) xmax = (size - 1);
@@ -252,9 +268,24 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output, 
 			min = m_waveform[xmin];
 		}
 		output->T = (m_THR - min) * (xmax - xmin) / (max - min) + xmin;
-		output->T *= 4; //in NS!!!
+		output->T *= input->m_dT; //in NS!!!
 
 	}
+
+	/*This part of the code was added to handle BDXmini setup, where there are two kind of digitizers:
+	 * V1725 @250 MHz
+	 * V1730 @500 MHz
+	 *
+	 * There are calorimeter channels connected to both, and the sampling time is really a property of the DAQ, not of the detector.
+	 * Therefore, I want Qraw to already reflect this.
+	 *  If I multiply Qraw by the sampling time, this is corrected
+	 * - signals sampled at larger frequency have a lower sampling time, but more samples
+	 * - the product is constant
+	 * However, this would modify the code leaving it non retro-compatible, i.e. all previous cal. constants for the crystal would have to be replaced.
+	 * Hence, the following code that does not alter anything if input->m_dT = 4 (ns), the usual sampling time we had before
+	 */
+
+	output->Qraw = output->Qraw * (input->m_dT/4.);
 
 	return NOERROR;
 }

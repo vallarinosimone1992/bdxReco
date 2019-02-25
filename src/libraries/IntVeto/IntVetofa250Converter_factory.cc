@@ -23,13 +23,14 @@ IntVetofa250Converter_factory::IntVetofa250Converter_factory():
 	m_NSB=20;
 	m_NSA=30;
 	m_NPED=10;
+	m_RMSTHRscale=5;
 
 	gPARMS->SetDefaultParameter("INTVETO:MIN_TOT",m_minTot,"Min ToT (in ns) for a pulse to be considered");
 	gPARMS->SetDefaultParameter("INTVETO:THR",m_thr,"Min amplitude (in number of phe) for a pulse to be considered");
-	gPARMS->SetDefaultParameter("INTVETO:NSB",m_NSB,"Samples before the maximum to include in integration");
-	gPARMS->SetDefaultParameter("INTVETO:NSA",m_NSA,"Samples after the maximum to include in integration");
-	gPARMS->SetDefaultParameter("INTVETO:NPED",m_NPED,"Number of samples in pedestal evaluation");
-
+	gPARMS->SetDefaultParameter("INTVETO:NSB",m_NSB,"Samples before the maximum (in ns) to include in integration");
+	gPARMS->SetDefaultParameter("INTVETO:NSA",m_NSA,"Samples after the maximum  (in ns) to include in integration");
+	gPARMS->SetDefaultParameter("INTVETO:NPED",m_NPED,"Number of samples (in ns) in pedestal evaluation");
+	gPARMS->SetDefaultParameter("INTVETO:RMSSCALE",m_RMSTHRscale,"Scale factor for RMS in ped. subtraction");
 }
 
 //------------------
@@ -60,6 +61,9 @@ jerror_t IntVetofa250Converter_factory::brun(jana::JEventLoop *eventLoop, int32_
 	m_intVetofa250Converter->m_NSB=m_NSB;
 	m_intVetofa250Converter->m_NSA=m_NSA;
 	m_intVetofa250Converter->m_NPED=m_NPED;
+
+	m_intVetofa250Converter->m_RMSTHRscale=m_RMSTHRscale;
+
 	if (m_isFirstCallToBrun){
 		_data.push_back(m_intVetofa250Converter);
 		m_isFirstCallToBrun=0;

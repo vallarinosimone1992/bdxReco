@@ -276,7 +276,7 @@ void jv_mainframe::DoSelectObject(Int_t id)
 	// Get associated to objects
 	a2objs.clear();
 	JEP->GetAssociatedTo(obj, a2objs);
-	jout<<"This object is associated to: "<<a2objs.size()<<" objects "<<endl;
+	//jout<<"This object is associated to: "<<a2objs.size()<<" objects "<<endl;
 	for(uint32_t i=0; i<a2objs.size(); i++){
 		char str[256];
 		sprintf(str, "0x%016lx %s", (unsigned long)a2objs[i], a2objs[i]->GetNameJANA().c_str());
@@ -292,6 +292,16 @@ void jv_mainframe::DoSelectObject(Int_t id)
 	if (obj2!=0){
 		DrawObject(obj2);
 	}
+
+	/*If the object was not a BDXObject with its own draw method, try to check if there is a reference to another object that is a BDXObject*/
+	else{
+		vector<const BDXObject*> ptrs;
+		((JObject*)vobjs[idx])->GetT(ptrs);
+		if (ptrs.size()>0){
+			DrawObject(ptrs[0]);
+		}
+	}
+
 
 }
 
@@ -441,7 +451,7 @@ void jv_mainframe::UpdateObjectTypeList(vector<JVFactoryInfo> &facinfo)
 // UpdateObjectValues
 //-------------------
 
-void jv_mainframe::DrawObject(BDXObject *obj)
+void jv_mainframe::DrawObject(const BDXObject *obj)
 {
 
 	canvasTMP=obj->Draw(canvas2->GetCanvasWindowId());

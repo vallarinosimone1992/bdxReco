@@ -34,6 +34,7 @@ public:
 	double m_minTot;
 	double m_thr;
 	int m_NSB,m_NSA,m_NPED;
+	double m_RMSTHRscale;
 
 	static const int NRMSCHECKS=10;
 };

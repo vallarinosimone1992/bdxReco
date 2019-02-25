@@ -11,7 +11,7 @@
 #include "TObject.h"
 class epicsData;
 typedef enum {
-	CataniaProto1Event = 1, CataniaProto2Event = 2, JLabFluxEvent = 4, CataniaProto1MC = 10, CataniaProto2MC = 20, FullMC = 30, JLabFluxEventMC = 40,
+	CataniaProto1Event = 1, CataniaProto2Event = 2, JLabFluxEvent = 4,BDXminiEvent=5,CataniaProto1MC = 10, CataniaProto2MC = 20, FullMC = 30, JLabFluxEventMC = 40,BDXminiEventMC=50
 } eventType;
 
 class TEventHeader: public TObject {

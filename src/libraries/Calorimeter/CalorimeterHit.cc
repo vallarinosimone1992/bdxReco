@@ -24,7 +24,7 @@ TCanvas* CalorimeterHit::Draw(int id)const{
 	hWave=0;
 	if (Nwaves>0){
 		Nsamples=waves[0]->samples.size();
-		hWave=new TH1D(Form("h%i_%i_%i_%i",m_channel.sector,m_channel.x,m_channel.y),Form("h%i_%i_%i_%i",m_channel.sector,m_channel.x,m_channel.y),Nsamples,-0.5,Nsamples-0.5);
+		hWave=new TH1D(Form("h%i_%i_%i_%i",m_channel.sector,m_channel.x,m_channel.y),Form("h%i_%i_%i_%i",m_channel.sector,m_channel.x,m_channel.y),Nsamples,-0.5*waves[0]->m_dT,(Nsamples-0.5)*waves[0]->m_dT);
 		waves[0]->toHisto(hWave);
 
 	}

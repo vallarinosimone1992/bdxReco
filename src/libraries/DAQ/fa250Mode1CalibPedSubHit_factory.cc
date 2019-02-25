@@ -55,6 +55,7 @@ jerror_t fa250Mode1CalibPedSubHit_factory::evnt(JEventLoop *loop, uint64_t event
 	vector<double> DAQdata,PARMSdata;
 	double pedestal,RMS;
 	double sample=0;
+
 	TranslationTable::csc_t index;
 	loop->Get(hits);
 
@@ -81,15 +82,18 @@ jerror_t fa250Mode1CalibPedSubHit_factory::evnt(JEventLoop *loop, uint64_t event
 
 		PARMSdata=m_parms->getCalib(hit->m_channel);
 		LSB=PARMSdata[0];
+		dT=PARMSdata[1];
 
 
-
-		for(uint32_t j=0; j<hit->samples.size(); j++){
+		for(uint32_t j=0; j<hit->samples.size(); j++){  //j=0
 			sample = (double)hit->samples[j]; //get the sample
 			sample = sample - pedestal; //subtract the pedestal (in FADC units)
 			sample = sample * LSB; //convert to mV
+
+
 			CalibPedSubHit->samples.push_back(sample);
 		}
+		CalibPedSubHit->m_dT=dT;
 		CalibPedSubHit->m_ped=pedestal*LSB;
 		CalibPedSubHit->m_RMS=fabs(RMS*LSB); //a.c. there are cases (v1725) where LSB is < 0, but RMS is >0!
 		// Add original as associated object 

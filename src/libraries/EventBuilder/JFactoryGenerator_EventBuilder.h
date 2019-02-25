@@ -16,6 +16,7 @@
 #include "CataniaEvent_factory.h"
 #include "TEvent_factory_CataniaProto2.h"
 #include "TEvent_factory_JLabFlux.h"
+#include "TEvent_factory_BDXmini.h"
 
 #ifdef MC_SUPPORT_ENABLE
 #include "TEvent_factory_FullMC.h"
@@ -40,6 +41,7 @@ public:
 		loop->AddFactory(new CataniaEvent_factory());
 		loop->AddFactory(new TEvent_factory_CataniaProto2());
 		loop->AddFactory(new TEvent_factory_JLabFlux());
+		loop->AddFactory(new TEvent_factory_BDXmini());
 #ifdef MC_SUPPORT_ENABLE
 		loop->AddFactory(new TEvent_factory_FullMC());
 #endif

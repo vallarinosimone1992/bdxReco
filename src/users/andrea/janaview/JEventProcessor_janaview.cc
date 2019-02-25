@@ -32,7 +32,6 @@ void InitPlugin(JApplication *app){
 
 //==============================================================================
 
-
 //.....................................
 // FactoryNameSort
 //.....................................
@@ -222,12 +221,12 @@ void JEventProcessor_janaview::GetAssociatedTo(JObject *jobj, vector<const JObje
 		
 		// Do not activate factories that have not yet been activated
 		if(!factories[i]->evnt_was_called()) continue;
-		jout<<"Factory "<<i<<" : "<<factories[i]->GetDataClassName()<<endl;
+	//	jout<<"Factory "<<i<<" : "<<factories[i]->GetDataClassName()<<endl;
 		// Get objects for this factory and associated objects for each of those
 		vector<void*> vobjs = factories[i]->Get();
 		for(uint32_t ii=0; ii<vobjs.size(); ii++){
 			JObject *obj = (JObject*)vobjs[ii];
-			jout<<"obj ii: "<<obj->static_className()<<" "<<obj<<endl;
+		//	jout<<"obj ii: "<<obj->static_className()<<" "<<obj<<endl;
 			vector<const JObject*> associated;
 			obj->GetT(associated);
 			

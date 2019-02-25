@@ -1,9 +1,0 @@
-#!/usr/local/bin/python
-# -*- coding: utf-8 -*-
-
-import string,math,os,sys,subprocess
-
-#check current working dir
-
-if (os.getcwd() != $BDXRECO_ROOT):
-    print "Error"

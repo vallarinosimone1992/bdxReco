@@ -47,7 +47,9 @@ public:
 		AddString(items, "Qraw", "%f",Qraw);
 		AddString(items, "Qphe","%f",Qphe);
 		AddString(items, "A","%f",A);
-		AddString(items, "ped","%f",pedMean);
+		AddString(items, "T","%f",T);
+		AddString(items, "pedMean","%f",pedMean);
+		AddString(items, "pedRMS","%f",pedRMS);
 		AddString(items, "rms_flag","%i",1*RMSflag);
 		AddString(items, "type","%i",1*type);
 		AddString(items, "n_singles","%i",1*m_nSingles);
@@ -58,7 +60,7 @@ public:
 	//both crate-slot channel and detector-specific ID. Since this is a sensor-based object, the readout field will be !=0
 	TranslationTable::ChannelInfo m_channel;//!
 
-	TranslationTable::CALO_Index_t m_ch; //a.c. tmp
+
 	/*These 3 variables are: hit charge (u.a.), hit time (in ns), hit amplitude (in mV)*/
 	double Qraw,Qphe;
 	double T,A;
