@@ -45,8 +45,8 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output, const fa
 	double m_NPEDs,m_NSBs,m_NSAs;
 
 	m_NPEDs=(int)(m_NPED/input->m_dT);
-	m_NSAs=(int)(m_NSAs/input->m_dT);
-	m_NSBs=(int)(m_NSBs/input->m_dT);
+	m_NSAs=(int)(m_NSA/input->m_dT);
+	m_NSBs=(int)(m_NSB/input->m_dT);
 
 
 	vector<double> m_waveform;
