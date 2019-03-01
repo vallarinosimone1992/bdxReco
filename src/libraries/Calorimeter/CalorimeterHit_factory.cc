@@ -120,6 +120,7 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber) {
 				m_CalorimeterHit->m_channel.readout = 0;
 				m_CalorimeterHit->T = T;
 				m_CalorimeterHit->Eraw = Q;
+				m_CalorimeterHit->A = m_CalorimeterDigiHit->A;
 				m_CalorimeterHit->RMSflag = m_CalorimeterDigiHit->RMSflag;
 
 				/*Try to calibrate in energy and ped-sub*/
@@ -174,6 +175,7 @@ jerror_t CalorimeterHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber) {
 				ped = m_ene->getCalib(m_CalorimeterHit->m_channel)[1];
 				m_CalorimeterHit->E = (Qmax - ped);
 				m_CalorimeterHit->Eraw = Qmax;
+				m_CalorimeterHit->A = m_CalorimeterDigiHit->A;
 
 				if (gain != 0) {
 					m_CalorimeterHit->E /= gain;

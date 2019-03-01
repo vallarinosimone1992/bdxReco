@@ -31,7 +31,6 @@ private:
 	jerror_t fini(void);						///< Called after last event of last event source has been processed.
 
 	TClonesArray *m_CaloHits;
-	TClonesArray *m_CaloDigiHits;
 	TClonesArray *m_IntVetoHits;
 
 #ifdef MC_SUPPORT_ENABLE

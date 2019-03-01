@@ -46,6 +46,7 @@ public:
 	TranslationTable::CALO_Index_t m_channel; //Detector-specific ID. Since this is a detector-based object, the readout field will be ==0
 	double E,T;
 	double Eraw;
+	double A; //amplitude of analogue signal in mV. -1 if not applicable.
 	bool RMSflag;
 
 
