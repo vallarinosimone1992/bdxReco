@@ -118,7 +118,7 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	loop->Get(cdhits);
 	m_CaloDigiHits->Clear("C");
 	for (int ii = 0; ii < cdhits.size(); ii++) {
-		((CalorimeterHit*) m_CaloDigiHits->ConstructedAt(ii))->operator=(*(cdhits[ii]));
+		((CalorimeterDigiHit*) m_CaloDigiHits->ConstructedAt(ii))->operator=(*(cdhits[ii]));
 		m_event->AddAssociatedObject(cdhits[ii]);
 	}
 	m_event->addCollection(m_CaloDigiHits);
