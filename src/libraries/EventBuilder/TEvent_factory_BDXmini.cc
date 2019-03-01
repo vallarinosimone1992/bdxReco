@@ -6,6 +6,7 @@ using namespace std;
 #include <EventBuilder/TEventHeader.h>
 
 #include <Calorimeter/CalorimeterHit.h>
+#include <Calorimeter/CalorimeterDigiHit.h>
 #include <IntVeto/IntVetoHit.h>
 
 #include <DAQ/eventData.h>
@@ -42,6 +43,7 @@ jerror_t TEvent_factory_BDXmini::init(void) {
 	japp->RootWriteLock();
 
 	m_CaloHits = new TClonesArray("CalorimeterHit");
+	m_CaloDigiHits = new TClonesArray("CalorimeterDigiHit");
 	m_IntVetoHits = new TClonesArray("IntVetoHit");
 #ifdef MC_SUPPORT_ENABLE
 	m_GenParticles = new TClonesArray("GenParticle");
@@ -71,6 +73,7 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	const eventData* tData;
 
 	vector<const CalorimeterHit*> chits;
+	vector<const CalorimeterDigiHit*> cdhits;
 	vector<const IntVetoHit*> ivhits;
 #ifdef MC_SUPPORT_ENABLE
 	vector<const CalorimeterMCRealHit*> chits_MCReal;
@@ -110,6 +113,16 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 		m_event->AddAssociatedObject(chits[ii]);
 	}
 	m_event->addCollection(m_CaloHits);
+
+
+	loop->Get(cdhits);
+	m_CaloDigiHits->Clear("C");
+	for (int ii = 0; ii < cdhits.size(); ii++) {
+		((CalorimeterHit*) m_CaloDigiHits->ConstructedAt(ii))->operator=(*(cdhits[ii]));
+		m_event->AddAssociatedObject(cdhits[ii]);
+	}
+	m_event->addCollection(m_CaloDigiHits);
+
 
 	loop->Get(ivhits);
 	m_IntVetoHits->Clear("C");
