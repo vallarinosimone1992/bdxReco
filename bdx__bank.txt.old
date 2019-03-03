@@ -23,14 +23,6 @@
                 veto  |                tdc2  |                                              tdc2  |    9   |                  Di  
                 veto  |                tdc3  |                                              tdc3  |   10   |                  Di  
                 veto  |                tdc4  |                                              tdc4  |   11   |                  Di  
-                veto  |                adc5  |                                              adc5  |   12   |                  Di  
-                veto  |                adc6  |                                              adc6  |   13   |                  Di  
-                veto  |                adc7  |                                              adc7  |   14   |                  Di  
-                veto  |                adc8  |                                              adc8  |   15   |                  Di  
-                veto  |                tdc5  |                                              tdc5  |   16   |                  Di  
-                veto  |                tdc6  |                                              tdc6  |   17   |                  Di  
-                veto  |                tdc7  |                                              tdc7  |   18   |                  Di  
-                veto  |                tdc8  |                                              tdc8  |   19   |                  Di  
                 veto  |                hitn  |                                        hit number  |   99   |                  Di  
                  crs  |              bankid  |                                       crs bank ID  |  300   |                  Di  
                  crs  |              sector  |                                     sector number  |    1   |                  Di  

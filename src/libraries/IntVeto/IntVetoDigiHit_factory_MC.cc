@@ -80,110 +80,144 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 				m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
 			} else if (m_isMC == MCType::BDXmini_V1) { /*BDXminiV1 has 8 sipms all around each veto. Sector is 0, layer 1 is inner, 0 is outer.*/
 
-				m_IntVetoDigiHit = new IntVetoDigiHit;
-				m_IntVetoDigiHit->m_channel.sector = 0;
-				if (m_channel.layer == 7)
-					m_IntVetoDigiHit->m_channel.layer = 0; //outer veto
-				else if (m_channel.layer == 8) m_IntVetoDigiHit->m_channel.layer = 1; //inner veto
-				m_IntVetoDigiHit->m_channel.component = 1;
-				m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc1;
-				m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc1 / 1000.; //MC is in ps
-				m_IntVetoDigiHit->A = 0;
-				m_IntVetoDigiHit->RMSflag = true;
-				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
+				switch (m_channel.component) {
+				case 9: //the top cap in MC
+					m_IntVetoDigiHit = new IntVetoDigiHit;
+					m_IntVetoDigiHit->m_channel.sector = 0;
+					if (m_channel.layer == 7)
+						m_IntVetoDigiHit->m_channel.layer = 0; //outer veto
+					else if (m_channel.layer == 8) m_IntVetoDigiHit->m_channel.layer = 1; //inner veto
+					m_IntVetoDigiHit->m_channel.component = 10; //in the data, top cap is component 10
+					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc1;
+					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc1 / 1000.; //MC is in ps
+					m_IntVetoDigiHit->A = 0;
+					m_IntVetoDigiHit->RMSflag = true;
+					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+					m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
+					break;
 
-				m_IntVetoDigiHit = new IntVetoDigiHit;
-				m_IntVetoDigiHit->m_channel.sector = 0;
-				if (m_channel.layer == 7)
-					m_IntVetoDigiHit->m_channel.layer = 0; //outer veto
-				else if (m_channel.layer == 8) m_IntVetoDigiHit->m_channel.layer = 1; //inner veto
-				m_IntVetoDigiHit->m_channel.component = 2;
-				m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc2;
-				m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc2 / 1000.; //MC is in ps
-				m_IntVetoDigiHit->A = 0;
-				m_IntVetoDigiHit->RMSflag = true;
-				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
+				case 10: //the bottom cap
+					m_IntVetoDigiHit = new IntVetoDigiHit;
+					m_IntVetoDigiHit->m_channel.sector = 0;
+					if (m_channel.layer == 7)
+						m_IntVetoDigiHit->m_channel.layer = 0; //outer veto
+					else if (m_channel.layer == 8) m_IntVetoDigiHit->m_channel.layer = 1; //inner veto
+					m_IntVetoDigiHit->m_channel.component = 9; //in the data, bottom cap is component 9
+					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc1;
+					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc1 / 1000.; //MC is in ps
+					m_IntVetoDigiHit->A = 0;
+					m_IntVetoDigiHit->RMSflag = true;
+					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+					m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
+					break;
 
-				m_IntVetoDigiHit = new IntVetoDigiHit;
-				m_IntVetoDigiHit->m_channel.sector = 0;
-				if (m_channel.layer == 7)
-					m_IntVetoDigiHit->m_channel.layer = 0; //outer veto
-				else if (m_channel.layer == 8) m_IntVetoDigiHit->m_channel.layer = 1; //inner veto
-				m_IntVetoDigiHit->m_channel.component = 3;
-				m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc3;
-				m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc3 / 1000.; //MC is in ps
-				m_IntVetoDigiHit->A = 0;
-				m_IntVetoDigiHit->RMSflag = true;
-				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
+				case 1: //the full layer
 
-				m_IntVetoDigiHit = new IntVetoDigiHit;
-				m_IntVetoDigiHit->m_channel.sector = 0;
-				if (m_channel.layer == 7)
-					m_IntVetoDigiHit->m_channel.layer = 0; //outer veto
-				else if (m_channel.layer == 8) m_IntVetoDigiHit->m_channel.layer = 1; //inner veto
-				m_IntVetoDigiHit->m_channel.component = 4;
-				m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc4;
-				m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc4 / 1000.; //MC is in ps
-				m_IntVetoDigiHit->A = 0;
-				m_IntVetoDigiHit->RMSflag = true;
-				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
+					m_IntVetoDigiHit = new IntVetoDigiHit;
+					m_IntVetoDigiHit->m_channel.sector = 0;
+					if (m_channel.layer == 7)
+						m_IntVetoDigiHit->m_channel.layer = 0; //outer veto
+					else if (m_channel.layer == 8) m_IntVetoDigiHit->m_channel.layer = 1; //inner veto
+					m_IntVetoDigiHit->m_channel.component = 1;
+					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc1;
+					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc1 / 1000.; //MC is in ps
+					m_IntVetoDigiHit->A = 0;
+					m_IntVetoDigiHit->RMSflag = true;
+					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+					m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
 
-				m_IntVetoDigiHit = new IntVetoDigiHit;
-				m_IntVetoDigiHit->m_channel.sector = 0;
-				if (m_channel.layer == 7)
-					m_IntVetoDigiHit->m_channel.layer = 0; //outer veto
-				else if (m_channel.layer == 8) m_IntVetoDigiHit->m_channel.layer = 1; //inner veto
-				m_IntVetoDigiHit->m_channel.component = 5;
-				m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc5;
-				m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc5 / 1000.; //MC is in ps
-				m_IntVetoDigiHit->A = 0;
-				m_IntVetoDigiHit->RMSflag = true;
-				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
+					m_IntVetoDigiHit = new IntVetoDigiHit;
+					m_IntVetoDigiHit->m_channel.sector = 0;
+					if (m_channel.layer == 7)
+						m_IntVetoDigiHit->m_channel.layer = 0; //outer veto
+					else if (m_channel.layer == 8) m_IntVetoDigiHit->m_channel.layer = 1; //inner veto
+					m_IntVetoDigiHit->m_channel.component = 2;
+					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc2;
+					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc2 / 1000.; //MC is in ps
+					m_IntVetoDigiHit->A = 0;
+					m_IntVetoDigiHit->RMSflag = true;
+					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+					m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
 
-				m_IntVetoDigiHit = new IntVetoDigiHit;
-				m_IntVetoDigiHit->m_channel.sector = 0;
-				if (m_channel.layer == 7)
-					m_IntVetoDigiHit->m_channel.layer = 0; //outer veto
-				else if (m_channel.layer == 8) m_IntVetoDigiHit->m_channel.layer = 1; //inner veto
-				m_IntVetoDigiHit->m_channel.component = 6;
-				m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc6;
-				m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc6 / 1000.; //MC is in ps
-				m_IntVetoDigiHit->A = 0;
-				m_IntVetoDigiHit->RMSflag = true;
-				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
+					m_IntVetoDigiHit = new IntVetoDigiHit;
+					m_IntVetoDigiHit->m_channel.sector = 0;
+					if (m_channel.layer == 7)
+						m_IntVetoDigiHit->m_channel.layer = 0; //outer veto
+					else if (m_channel.layer == 8) m_IntVetoDigiHit->m_channel.layer = 1; //inner veto
+					m_IntVetoDigiHit->m_channel.component = 3;
+					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc3;
+					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc3 / 1000.; //MC is in ps
+					m_IntVetoDigiHit->A = 0;
+					m_IntVetoDigiHit->RMSflag = true;
+					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+					m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
 
-				m_IntVetoDigiHit = new IntVetoDigiHit;
-				m_IntVetoDigiHit->m_channel.sector = 0;
-				if (m_channel.layer == 7)
-					m_IntVetoDigiHit->m_channel.layer = 0; //outer veto
-				else if (m_channel.layer == 8) m_IntVetoDigiHit->m_channel.layer = 1; //inner veto
-				m_IntVetoDigiHit->m_channel.component = 7;
-				m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc7;
-				m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc7 / 1000.; //MC is in ps
-				m_IntVetoDigiHit->A = 0;
-				m_IntVetoDigiHit->RMSflag = true;
-				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
+					m_IntVetoDigiHit = new IntVetoDigiHit;
+					m_IntVetoDigiHit->m_channel.sector = 0;
+					if (m_channel.layer == 7)
+						m_IntVetoDigiHit->m_channel.layer = 0; //outer veto
+					else if (m_channel.layer == 8) m_IntVetoDigiHit->m_channel.layer = 1; //inner veto
+					m_IntVetoDigiHit->m_channel.component = 4;
+					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc4;
+					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc4 / 1000.; //MC is in ps
+					m_IntVetoDigiHit->A = 0;
+					m_IntVetoDigiHit->RMSflag = true;
+					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+					m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
 
-				m_IntVetoDigiHit = new IntVetoDigiHit;
-				m_IntVetoDigiHit->m_channel.sector = 0;
-				if (m_channel.layer == 7)
-					m_IntVetoDigiHit->m_channel.layer = 0; //outer veto
-				else if (m_channel.layer == 8) m_IntVetoDigiHit->m_channel.layer = 1; //inner veto
-				m_IntVetoDigiHit->m_channel.component = 8;
-				m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc8;
-				m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc8 / 1000.; //MC is in ps
-				m_IntVetoDigiHit->A = 0;
-				m_IntVetoDigiHit->RMSflag = true;
-				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
+					m_IntVetoDigiHit = new IntVetoDigiHit;
+					m_IntVetoDigiHit->m_channel.sector = 0;
+					if (m_channel.layer == 7)
+						m_IntVetoDigiHit->m_channel.layer = 0; //outer veto
+					else if (m_channel.layer == 8) m_IntVetoDigiHit->m_channel.layer = 1; //inner veto
+					m_IntVetoDigiHit->m_channel.component = 5;
+					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc5;
+					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc5 / 1000.; //MC is in ps
+					m_IntVetoDigiHit->A = 0;
+					m_IntVetoDigiHit->RMSflag = true;
+					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+					m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
 
+					m_IntVetoDigiHit = new IntVetoDigiHit;
+					m_IntVetoDigiHit->m_channel.sector = 0;
+					if (m_channel.layer == 7)
+						m_IntVetoDigiHit->m_channel.layer = 0; //outer veto
+					else if (m_channel.layer == 8) m_IntVetoDigiHit->m_channel.layer = 1; //inner veto
+					m_IntVetoDigiHit->m_channel.component = 6;
+					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc6;
+					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc6 / 1000.; //MC is in ps
+					m_IntVetoDigiHit->A = 0;
+					m_IntVetoDigiHit->RMSflag = true;
+					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+					m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
+
+					m_IntVetoDigiHit = new IntVetoDigiHit;
+					m_IntVetoDigiHit->m_channel.sector = 0;
+					if (m_channel.layer == 7)
+						m_IntVetoDigiHit->m_channel.layer = 0; //outer veto
+					else if (m_channel.layer == 8) m_IntVetoDigiHit->m_channel.layer = 1; //inner veto
+					m_IntVetoDigiHit->m_channel.component = 7;
+					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc7;
+					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc7 / 1000.; //MC is in ps
+					m_IntVetoDigiHit->A = 0;
+					m_IntVetoDigiHit->RMSflag = true;
+					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+					m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
+
+					m_IntVetoDigiHit = new IntVetoDigiHit;
+					m_IntVetoDigiHit->m_channel.sector = 0;
+					if (m_channel.layer == 7)
+						m_IntVetoDigiHit->m_channel.layer = 0; //outer veto
+					else if (m_channel.layer == 8) m_IntVetoDigiHit->m_channel.layer = 1; //inner veto
+					m_IntVetoDigiHit->m_channel.component = 8;
+					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc8;
+					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc8 / 1000.; //MC is in ps
+					m_IntVetoDigiHit->A = 0;
+					m_IntVetoDigiHit->RMSflag = true;
+					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+					m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
+					break;
+				}
 			}
 
 			else {
@@ -386,38 +420,47 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 				m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc1;
 
 			} else if (m_isMC == MCType::BDXmini_V1) {
-				m_IntVetoDigiHit = m_map_it->second[0];
-				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc1;
+				switch (m_channel.component) {
+				case 9:
+				case 10:
+					m_IntVetoDigiHit = m_map_it->second[0];
+					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc1;
+					break;
+				case 1:
+					m_IntVetoDigiHit = m_map_it->second[0];
+					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc1;
 
-				m_IntVetoDigiHit = m_map_it->second[1];
-				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc2;
+					m_IntVetoDigiHit = m_map_it->second[1];
+					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc2;
 
-				m_IntVetoDigiHit = m_map_it->second[2];
-				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc3;
+					m_IntVetoDigiHit = m_map_it->second[2];
+					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc3;
 
-				m_IntVetoDigiHit = m_map_it->second[3];
-				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc4;
+					m_IntVetoDigiHit = m_map_it->second[3];
+					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc4;
 
-				m_IntVetoDigiHit = m_map_it->second[4];
-				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc5;
+					m_IntVetoDigiHit = m_map_it->second[4];
+					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc5;
 
-				m_IntVetoDigiHit = m_map_it->second[5];
-				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc6;
+					m_IntVetoDigiHit = m_map_it->second[5];
+					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc6;
 
-				m_IntVetoDigiHit = m_map_it->second[6];
-				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc7;
+					m_IntVetoDigiHit = m_map_it->second[6];
+					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc7;
 
-				m_IntVetoDigiHit = m_map_it->second[7];
-				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
-				m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc8;
-
+					m_IntVetoDigiHit = m_map_it->second[7];
+					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
+					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc8;
+					break;
+				}
 			}
 
 			else {
