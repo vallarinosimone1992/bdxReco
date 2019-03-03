@@ -140,6 +140,16 @@ void CalorimeterDigiHit_factory_MC::SetIndex(TranslationTable::CALO_Index_t &ind
 		index.sector = 0;
 		index.x = 0;
 		index.y = 0;
+	} else if (MC == MCType::BDXmini_V1){
+		 /*MC uses a weird indexing, with sector==502/402 for TOP and sector==500/400 for bottom*/
+		if ((mchit->sector==502)||(mchit->sector==402)){
+			index.sector=0;
+		}
+		else if ((mchit->sector==500)||(mchit->sector==400)){
+					index.sector=1;
+		}
+		index.x = mchit->x;
+		index.y = mchit->y;
 	}
 	index.readout = 1;
 

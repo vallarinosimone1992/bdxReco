@@ -1,9 +1,9 @@
 #Configuration file for BDX run.
 
 #System parameters
-MC		100
+MC		200
 MC:RUN_NUMBER	0
-JANA_CALIB_CONTEXT "variation=JLabFluxMC"
+JANA_CALIB_CONTEXT "variation=BDXminiMC"
 THREAD_TIMEOUT 120
 THREAD_TIMEOUT_FIRST_EVENT 120
 

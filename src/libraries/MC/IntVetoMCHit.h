@@ -21,8 +21,8 @@ public:
 	;
 
 	//dgtz banks
-	int adc1, adc2, adc3, adc4;
-	int tdc1, tdc2, tdc3, tdc4;
+	int adc1, adc2, adc3, adc4,adc5,adc6,adc7,adc8;
+	int tdc1, tdc2, tdc3, tdc4,tdc5,tdc6,tdc7,tdc8;
 
 	//raw banks
 	double totEdep;

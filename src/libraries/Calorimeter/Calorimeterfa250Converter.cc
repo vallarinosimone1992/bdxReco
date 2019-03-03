@@ -72,7 +72,7 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output, 
 	m_NSAMPLESs = (int) (m_NSAMPLES / input->m_dT);
 
 	/*Get thr and TOT from DB*/
-	/*THR in mV
+	/* THR in mV
 	 * m_MIN_TOT in ns
 	 * m_SINGLE_SIGNAL_TOT in ns
 	 */

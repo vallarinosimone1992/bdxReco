@@ -54,6 +54,7 @@ class JEventSourceEvioMC:public JEventSource
 
 		int curRunNumber,curEventNumber;
 		int overwriteRunNumber;
+		int MC;
 };
 
 #endif

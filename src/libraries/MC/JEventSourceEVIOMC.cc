@@ -20,6 +20,7 @@ using namespace std;
 #include "PaddlesMCHit.h"
 #include "VetoMCHit.h"
 #include "UserMCData.h"
+#include "MCType.h"
 
 //GEMC stuff to read simulation
 #include <MC/options.h>
@@ -49,6 +50,7 @@ JEventSourceEvioMC::JEventSourceEvioMC(const char* source_name) :
 	goptions bdxOpt;
 	banksMap = read_banks(bdxOpt, allSystems);
 
+	gPARMS->GetParameter("MC", MC);
 }
 
 // Destructor
@@ -87,7 +89,8 @@ jerror_t JEventSourceEvioMC::GetEvent(JEvent &event) {
 		event.SetEventNumber(evt->headerBank["evn"]);
 		//read here the run number from MC
 		curRunNumber = evt->headerBank["runNo"];
-		if (overwriteRunNumber != -1) event.SetRunNumber(overwriteRunNumber);
+		if (overwriteRunNumber != -1)
+			event.SetRunNumber(overwriteRunNumber);
 		else
 			event.SetRunNumber(curRunNumber);
 
@@ -263,7 +266,6 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory) {
 			for (unsigned int ir = 0; ir < bankRaw.size(); ir++) {
 				if (bankRaw[ir].getIntRawVar("hitn") == bankDgt[ih].getIntDgtVar("hitn")) {
 					hit->totEdep = bankRaw[ir].getIntRawVar("totEdep");
-
 					break;
 				}
 			}
@@ -290,11 +292,16 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory) {
 			hit->tdc2 = bankDgt[ih].getIntDgtVar("tdc2");
 			hit->tdc3 = bankDgt[ih].getIntDgtVar("tdc3");
 			hit->tdc4 = bankDgt[ih].getIntDgtVar("tdc4");
-
-			//		jout << hit->adc1 << " "<< hit->tdc1 << endl;
-			//		jout << hit->adc2 << " "<< hit->tdc2 << endl;
-			//		jout << hit->adc3 << " "<< hit->tdc3 << endl;
-			//		jout << hit->adc4 << " "<< hit->tdc4 << endl;
+			if (MC == MCType::JLAB_FLUX_V1) {
+				hit->adc5 = bankDgt[ih].getIntDgtVar("adc5");
+				hit->adc6 = bankDgt[ih].getIntDgtVar("adc6");
+				hit->adc7 = bankDgt[ih].getIntDgtVar("adc7");
+				hit->adc8 = bankDgt[ih].getIntDgtVar("adc8");
+				hit->tdc5 = bankDgt[ih].getIntDgtVar("tdc5");
+				hit->tdc6 = bankDgt[ih].getIntDgtVar("tdc6");
+				hit->tdc7 = bankDgt[ih].getIntDgtVar("tdc7");
+				hit->tdc8 = bankDgt[ih].getIntDgtVar("tdc8");
+			}
 
 			intVetoMChits.push_back(hit);
 		}
