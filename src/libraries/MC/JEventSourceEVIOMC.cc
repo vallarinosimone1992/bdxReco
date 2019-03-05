@@ -89,8 +89,7 @@ jerror_t JEventSourceEvioMC::GetEvent(JEvent &event) {
 		event.SetEventNumber(evt->headerBank["evn"]);
 		//read here the run number from MC
 		curRunNumber = evt->headerBank["runNo"];
-		if (overwriteRunNumber != -1)
-			event.SetRunNumber(overwriteRunNumber);
+		if (overwriteRunNumber != -1) event.SetRunNumber(overwriteRunNumber);
 		else
 			event.SetRunNumber(curRunNumber);
 
@@ -258,7 +257,10 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory) {
 		vector<IntVetoMCHit*> intVetoMChits;
 		for (unsigned int ih = 0; ih < bankDgt.size(); ih++) {
 
-			if ((bankDgt[ih].getIntDgtVar("veto") != VetoMCHit::CATANIA_INTVETO) && (bankDgt[ih].getIntDgtVar("veto") != VetoMCHit::FULL_INTVETO) && (bankDgt[ih].getIntDgtVar("veto") != VetoMCHit::JLAB_FLUX)) continue;
+
+			if ((bankDgt[ih].getIntDgtVar("veto") != VetoMCHit::CATANIA_INTVETO) && (bankDgt[ih].getIntDgtVar("veto") != VetoMCHit::FULL_INTVETO) && (bankDgt[ih].getIntDgtVar("veto") != VetoMCHit::JLAB_FLUX) && (bankDgt[ih].getIntDgtVar("veto") != VetoMCHit::BDXMINI_INTVETO)
+					&&(bankDgt[ih].getIntDgtVar("veto") != VetoMCHit::BDXMINI_EXTVETO)) continue;
+
 
 			IntVetoMCHit *hit = new IntVetoMCHit;
 			hit->totEdep = 0;
@@ -269,6 +271,7 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory) {
 					break;
 				}
 			}
+
 
 			if (hit->totEdep <= 0.00001) {
 				delete hit;
@@ -292,7 +295,7 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory) {
 			hit->tdc2 = bankDgt[ih].getIntDgtVar("tdc2");
 			hit->tdc3 = bankDgt[ih].getIntDgtVar("tdc3");
 			hit->tdc4 = bankDgt[ih].getIntDgtVar("tdc4");
-			if (MC == MCType::JLAB_FLUX_V1) {
+			if (MC == MCType::BDXmini_V1) {
 				hit->adc5 = bankDgt[ih].getIntDgtVar("adc5");
 				hit->adc6 = bankDgt[ih].getIntDgtVar("adc6");
 				hit->adc7 = bankDgt[ih].getIntDgtVar("adc7");
@@ -306,6 +309,7 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory) {
 			intVetoMChits.push_back(hit);
 		}
 		// publish the hit
+
 		JFactory<IntVetoMCHit> *fac = dynamic_cast<JFactory<IntVetoMCHit>*>(factory);
 		fac->CopyTo(intVetoMChits);
 		return NOERROR;
