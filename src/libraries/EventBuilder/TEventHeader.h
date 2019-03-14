@@ -25,12 +25,11 @@ private:
 	int m_eventNumber;
 	int m_eventTime; //Unix Timestamp
 
+	double m_weight;
 
 	uint8_t m_eventType;
 	epicsData *m_epicsData;
 
-
-	double weight;
 
 public:
 	TEventHeader();
@@ -90,13 +89,13 @@ public:
 	void copyEpicsData(const epicsData* epicsData);
 
 	double getWeight(){
-		return weight;
+		return m_weight;
 	}
 	void setWeight(double w){
-		weight=w;
+		m_weight=w;
 	}
 
-	ClassDef(TEventHeader,3);
+	ClassDef(TEventHeader,4);
 
 };
 

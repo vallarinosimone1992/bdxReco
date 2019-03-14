@@ -15,10 +15,10 @@
 #include "TObject.h"
 #include "TObjArray.h"
 
+#include "TEventHeader.h"
 
 class TClass;
 class TClonesArray;
-class TEventHeader;
 
 using namespace std;
 
@@ -36,6 +36,12 @@ public:
 	void toStrings(vector<pair<string,string> > &items)const{
 		//AddString(items, "id", "%4d", id);
 		// AddString(items, "E", "%f", E);
+		if (m_eventHeader!=0){
+			AddString(items,"runN","%4d",m_eventHeader->getRunNumber());
+			AddString(items,"eventN","%4d",m_eventHeader->getEventNumber());
+			AddString(items,"eventW","%e",m_eventHeader->getWeight());
+
+		}
 	}
 
 

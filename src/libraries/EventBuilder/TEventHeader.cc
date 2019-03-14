@@ -16,7 +16,7 @@ TEventHeader::TEventHeader() {
 	m_eventNumber = 0;
 	m_eventType =0;
 	m_eventFineTime = 0;
-	weight = 1;
+	m_weight = 1;
 }
 
 TEventHeader::~TEventHeader() {

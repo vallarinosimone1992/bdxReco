@@ -164,24 +164,36 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory) {
 
 	} else if (dataClassName == "UserMCData") {
 		map<string, gBank>::iterator it;
-		evio::evioDOMNodeListP fullList = EDT->getNodeList();
+		evio::evioDOMNodeListP fullList = this_edt->getNodeList();
 		evio::evioDOMNodeList::const_iterator iter;
 		evio::evioDOMNodeList::const_iterator branch;
 		iter = fullList->begin();
 		vector<UserMCData*> userMCdata;
+
 		for (iter = fullList->begin(); iter != fullList->end(); iter++) {
-			if (((*iter)->tag == 11) && (((*iter)->num) > 0)) {
 
-				const evio::evioDOMLeafNode<double> *leaf = static_cast<const evio::evioDOMLeafNode<double>*>(*iter);
-				int leafSize = leaf->getSize();
-				vector<double> *pData = const_cast<vector<double> *>(&(leaf->data));
+			const evioDOMNodeP node = *iter;
+			if (((*iter)->tag == 11) && (((*iter)->num) == 0) && ((*iter)->isContainer())) {
 
-				UserMCData *data = new UserMCData;
-				data->N = (*iter)->num;
-				data->data = (*pData)[0];
-				userMCdata.push_back(data);
+				evioDOMNodeList *variablesNodes = (*iter)->getChildList();
+				for (evioDOMNodeList::const_iterator cIter = variablesNodes->begin(); cIter != variablesNodes->end(); cIter++) {
+					const evioDOMNodeP variable = *cIter;
+					int vnum = variable->num;
+					int vtag = variable->tag;
+
+					const evio::evioDOMLeafNode<double> *leaf = static_cast<const evio::evioDOMLeafNode<double>*>(variable);
+					int leafSize = leaf->getSize();
+					vector<double> *pData = const_cast<vector<double> *>(&(leaf->data));
+					UserMCData *data = new UserMCData;
+					data->N = vnum;
+					data->data = (*pData)[0];
+					userMCdata.push_back(data);
+				}
+
 			}
+
 		}
+
 		JFactory<UserMCData> *fac = dynamic_cast<JFactory<UserMCData>*>(factory);
 		fac->CopyTo(userMCdata);
 		return NOERROR;
@@ -257,10 +269,8 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory) {
 		vector<IntVetoMCHit*> intVetoMChits;
 		for (unsigned int ih = 0; ih < bankDgt.size(); ih++) {
 
-
 			if ((bankDgt[ih].getIntDgtVar("veto") != VetoMCHit::CATANIA_INTVETO) && (bankDgt[ih].getIntDgtVar("veto") != VetoMCHit::FULL_INTVETO) && (bankDgt[ih].getIntDgtVar("veto") != VetoMCHit::JLAB_FLUX) && (bankDgt[ih].getIntDgtVar("veto") != VetoMCHit::BDXMINI_INTVETO)
-					&&(bankDgt[ih].getIntDgtVar("veto") != VetoMCHit::BDXMINI_EXTVETO)) continue;
-
+					&& (bankDgt[ih].getIntDgtVar("veto") != VetoMCHit::BDXMINI_EXTVETO)) continue;
 
 			IntVetoMCHit *hit = new IntVetoMCHit;
 			hit->totEdep = 0;
@@ -271,7 +281,6 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory) {
 					break;
 				}
 			}
-
 
 			if (hit->totEdep <= 0.00001) {
 				delete hit;
@@ -422,7 +431,7 @@ jerror_t JEventSourceEvioMC::GetObjects(JEvent &event, JFactory_base *factory) {
 
 	}
 
-	// Just return. The _data vector should already be reset to have zero objects
+// Just return. The _data vector should already be reset to have zero objects
 	return OBJECT_NOT_AVAILABLE;
 }
 

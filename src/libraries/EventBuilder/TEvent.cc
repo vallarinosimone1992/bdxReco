@@ -29,7 +29,7 @@ TClonesArray* TEvent::getCollection (int id) const{
 		return m_collections.at(id);
 	}
 	else{
-		Error("TEvent","TEvent::getCollection bad id");
+		Error("TEvent","TEvent::getCollection bad id!");
 		return NULL;
 	}
 }

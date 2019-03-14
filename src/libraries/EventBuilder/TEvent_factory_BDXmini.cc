@@ -105,6 +105,7 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	}
 
 	/*Loop over JANA objects, clear collections and fill them*/
+
 	loop->Get(chits);
 	m_CaloHits->Clear("C");
 	for (int ii = 0; ii < chits.size(); ii++) {
@@ -141,7 +142,6 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 		m_event->addCollection(m_CaloMCRealHits);
 
 		loop->Get(userMCdata);
-
 		for (int ii=0;ii<userMCdata.size();ii++) {
 			if (userMCdata[ii]->N==1) {
 				m_eventHeader->setWeight(userMCdata[ii]->data);
