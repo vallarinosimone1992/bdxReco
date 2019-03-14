@@ -24,6 +24,8 @@ private:
 	int m_runNumber;
 	int m_eventNumber;
 	int m_eventTime; //Unix Timestamp
+
+
 	uint8_t m_eventType;
 	epicsData *m_epicsData;
 

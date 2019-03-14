@@ -145,10 +145,18 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 		for (int ii=0;ii<userMCdata.size();ii++) {
 			if (userMCdata[ii]->N==1) {
 				m_eventHeader->setWeight(userMCdata[ii]->data);
-				if (m_eventHeader->getWeight()==0){
+				if (m_eventHeader->getWeight()==0) {
 					m_eventHeader->setWeight(1.);
 				}
-				break;
+			}
+			/*Adding following lines of code, so that in case of LUND, the weight will be taken from the tenth number,
+			 *In other cases, when there is a single number, the event weight is taken from it (N==1)
+			 */
+			if (userMCdata[ii]->N==10) {
+				m_eventHeader->setWeight(userMCdata[ii]->data);
+				if (m_eventHeader->getWeight()==0) {
+					m_eventHeader->setWeight(1.);
+				}
 			}
 		}
 
