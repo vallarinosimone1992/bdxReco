@@ -17,7 +17,7 @@ DAQ:VERBOSE 2
 
 #Calo wave integration parameters
 CALORIMETER:NPED	       40	#num of samples to include in pedestal     (in ns: if you enter 20, it is 20ns)
-CALORIMETER:NSB		       20	#num of samples before the maximum         (in ns)
+CALORIMETER:NSB		       20	#num of samples before the maximum         (in ns) (for SiPM studies only - ignore)
 CALORIMETER:NSA		       20 	#num of samples after  the maximum         (in ns) (for SiPM studies only - ignore)
 CALORIMETER:NSAMPLES	   250  #num of samples in the integration window  (in ns) (starting NSB before the threshold)
 
@@ -25,9 +25,9 @@ CALORIMETER:NSAMPLES	   250  #num of samples in the integration window  (in ns) 
 #IntVeto wave integration parameters
 INTVETO:MIN_TOT  12    #min tot in ns to consider a pulse
 INTVETO:THR	 0.5       #min amplitude of a pulse -in phe units
-INTVETO:NPED 20        #num of samples in pedestal determination event by event
-INTVETO:NSB	 20        #num of samples before the maximum
-INTVETO:NSA	 30        #num of samples after  the maximum
+INTVETO:NPED 20        #num of ns samples in pedestal determination event by event
+INTVETO:NSB	 20        #num of ns before the maximum
+INTVETO:NSA	 30        #num of ns after  the maximum
 
 #Calorimeter parameters
 CALORIMETER:HIT_THR_SINGLE  5 #Threshold in phe (charge)
