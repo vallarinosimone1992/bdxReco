@@ -23,7 +23,7 @@
         <channel number="8" detector="CALO" sector="0" row="0" col="0" readout="1"/>
         <channel number="9" detector="CALO" sector="0" row="0" col="1" readout="1"/>
         <channel number="10" detector="CALO" sector="0" row="0" col="2" readout="1"/>
-        <channel number="11" detector="CALO" sector="0" row="1" col="-2" readout="1"/
+        <channel number="11" detector="CALO" sector="0" row="1" col="-2" readout="1"/>
     </slot>
     <slot number="2" type="fADC250">
         <channel number="0" detector="CALO" sector="0" row="1" col="-1" readout="1"/>
