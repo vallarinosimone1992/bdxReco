@@ -30,21 +30,22 @@ JEventSourceTRIDASDAQ::JEventSourceTRIDASDAQ(const char* source_name) :
 	ptReader = new PtFileReader<sample::uncompressed>(source_name);
 	source_type = kFileSource;
 
+
 	//point to the first time slice
 	it_ptReader = ptReader->begin();
 	nEventsTimeSlice = (*it_ptReader).nEvents();
-
 	//Create a new time slice
 	ptTimeSlice = new TimeSlice<sample::uncompressed>(*it_ptReader);
 	it_ptTimeSlice = ptTimeSlice->begin();
 
 	//currEventTimeSlice = 0;
+	jout << "JEventSourceTRIDASDAQ creator DONE: " << this << endl;
 
 }
 
 // Destructor
 JEventSourceTRIDASDAQ::~JEventSourceTRIDASDAQ() {
-	cout << " Closing input file " << source_name << "." << endl;
+	cout << " Closing input file " << source_name << " ." << endl;
 
 }
 
