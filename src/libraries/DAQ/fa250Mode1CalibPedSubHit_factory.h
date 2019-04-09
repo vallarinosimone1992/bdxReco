@@ -12,6 +12,7 @@
 #include <system/BDXFactory.h>
 #include <DAQ/DAQCalibrationHandler.h>
 #include "fa250Mode1CalibPedSubHit.h"
+#include "fa250WaveboardV1Hit.h"
 
 class fa250Mode1CalibPedSubHit_factory:public BDXFactory<fa250Mode1CalibPedSubHit>{
 	public:

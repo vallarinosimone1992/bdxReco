@@ -50,7 +50,8 @@ CalorimeterSiPMHit* Calorimeterfa250Converter::convertHit(const fa250Hit *hit, c
 
 	if (strcmp(hit->className(), "fa250Mode1CalibPedSubHit") == 0) {
 		this->convertMode1Hit(m_CalorimeterSiPMHit, (const fa250Mode1CalibPedSubHit*) hit);
-	} else if (strcmp(hit->className(), "fa250Mode7Hit") == 0) {
+	}
+	else if (strcmp(hit->className(), "fa250Mode7Hit") == 0) {
 		this->convertMode7Hit(m_CalorimeterSiPMHit, (const fa250Mode7Hit*) hit);
 	} else {
 		jerr << "Calorimeterfa250Converter::convertHit unsupported class name: " << hit->className() << std::endl;
