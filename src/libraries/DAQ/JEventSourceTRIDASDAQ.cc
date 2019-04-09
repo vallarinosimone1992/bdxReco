@@ -59,16 +59,13 @@ jerror_t JEventSourceTRIDASDAQ::GetEvent(JEvent &event) {
 		if (it_ptTimeSlice == ptTimeSlice->end()) {
 			it_ptReader++;
 			delete ptTimeSlice;
-			jout << "TimeSlice at the end" << endl;
 			//It the iterator on time slices is at the end, the source is completely read.
 			if (it_ptReader == ptReader->end()) {
 				jout << "Source done" << endl;
 				fflush(stdout);
 				return NO_MORE_EVENTS_IN_SOURCE;
 			} else {
-				jout << "Go to next timeSlice ";
 				nEventsTimeSlice = (*it_ptReader).nEvents();
-				jout << " It has " << nEventsTimeSlice << " events " << endl;
 				ptTimeSlice = new TimeSlice<sample::uncompressed>(*it_ptReader);
 				it_ptTimeSlice = ptTimeSlice->begin();
 
@@ -179,7 +176,7 @@ jerror_t JEventSourceTRIDASDAQ::GetObjects(JEvent & event, JFactory_base * facto
 
 				fahit->samples.push_back(*it_ptSample);
 			}
-			jout<<endl;
+
 			data.push_back(fahit);
 		}
 
