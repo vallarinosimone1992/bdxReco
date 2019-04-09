@@ -120,7 +120,7 @@ else:
                     ped=data[2]
                     RMS=data[3]
                     outF.write("0 "+str(slot)+" "+str(channel)+" "+str(ped)+" "+str(RMS)+"\n")
-            infF.close()
+            inF.close()
             for ch in range(12,16):
                 outF.write("0 "+str(slot)+" "+str(channel)+" 0 0 \n")
             for slot in range(5,20):
