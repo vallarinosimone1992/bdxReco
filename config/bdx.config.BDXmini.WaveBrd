@@ -7,7 +7,7 @@ THREAD_TIMEOUT 300
 THREAD_TIMEOUT_FIRST_EVENT 300
 
 
-DAQ:VERBOSE 2
+DAQ:VERBOSE 2 
 
 #Calo wave integration parameters
 CALORIMETER:NPED	       40	#num of samples to include in pedestal     (in ns: if you enter 20, it is 20ns)
