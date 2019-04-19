@@ -16,10 +16,10 @@ DAQ:PRESTART_TAG 17 	    #0x11
 DAQ:VERBOSE 2
 
 #Calo wave integration parameters
-CALORIMETER:NPED	       40	#num of samples to include in pedestal     (in ns: if you enter 20, it is 20ns)
-CALORIMETER:NSB		       20	#num of samples before the maximum         (in ns)
-CALORIMETER:NSA		       20 	#num of samples after  the maximum         (in ns) (for SiPM studies only - ignore)
-CALORIMETER:NSAMPLES	   250  #num of samples in the integration window  (in ns) (starting NSB before the threshold)
+CALORIMETER:NPED	       120	#num of samples to include in pedestal     (in ns: if you enter 20, it is 20ns)
+CALORIMETER:NSB		       20	#num of samples before the maximum         (in ns) 
+CALORIMETER:NSA		       28 	#num of samples after  the maximum         (in ns) (for SiPM studies only - ignore)
+CALORIMETER:NSAMPLES	   160  #num of samples in the integration window  (in ns) (starting NSB before the threshold)
 
 
 #IntVeto wave integration parameters
