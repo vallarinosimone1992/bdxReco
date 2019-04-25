@@ -1,11 +1,11 @@
-<!  PAY ATTENTION TO THE FACT THAT IN THE CALORIMETER ROW IS Y AND COL IS X-->
-<!                                                                              -->
-<!       ^                                                                      -->
-<!ROW(Y) |                                                                      -->
-<!       |                                                                      -->
-<!       |                                                                      -->
-<!       |_____>                                                                -->
-<!              ->X (COLUMN)                                                    -->
+<!--  PAY ATTENTION TO THE FACT THAT IN THE CALORIMETER ROW IS Y AND COL IS X      -->
+<!--                                                                               -->
+<!--        ^                                                                      -->
+<!-- ROW(Y) |                                                                      -->
+<!--        |                                                                      -->
+<!--        |                                                                      -->
+<!--        |_____>                                                                -->
+<!--              ->X (COLUMN)                                                     -->
 
 <bdx_translation_table version="0.2">
   <crate number="0" type="VXS">

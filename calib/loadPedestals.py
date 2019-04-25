@@ -113,6 +113,7 @@ else:
             for channel in range(0,16):
                 outF.write("0 "+str(slot)+" "+str(channel)+" 0 0 \n")
             with open("DAQ_pedestals/"+fn) as inF:
+                nl=0
                 for line in inF:
                     data=line.split()
                     slot=data[0]
@@ -120,9 +121,12 @@ else:
                     ped=data[2]
                     RMS=data[3]
                     outF.write("0 "+str(slot)+" "+str(channel)+" "+str(ped)+" "+str(RMS)+"\n")
-            infF.close()
-            for ch in range(12,16):
-                outF.write("0 "+str(slot)+" "+str(channel)+" 0 0 \n")
+            	    nl=nl+1
+		    if (nl==12):
+			for channel in range(12,16):
+				outF.write("0 "+str(slot)+" "+str(channel)+" 0 0 \n")
+			nl=0
+		inF.close()
             for slot in range(5,20):
                 for channel in range(0,16):
                     outF.write("0 "+str(slot)+" "+str(channel)+" 0 0 \n") 

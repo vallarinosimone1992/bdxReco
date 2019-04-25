@@ -24,7 +24,7 @@ class fa250WaveboardV1Hit:public fa250Hit{
 		virtual ~fa250WaveboardV1Hit();
 
 		vector <double> samples;
-
+		int chargeFirstDBnopedsub;
 		// This method is used primarily for pretty printing
 		// the second argument to AddString is printf style format
 		void toStrings(vector<pair<string,string> > &items)const{
@@ -32,7 +32,8 @@ class fa250WaveboardV1Hit:public fa250Hit{
 			 AddString(items, "slot", "%4d",  m_channel.slot);
 			 AddString(items, "channel", "%4d",  m_channel.channel);
 			 AddString(items, "timestamp","%lld",(long long)timestamp);
-
+			 AddString(items,"nsamples","%4d",samples.size());
+			 AddString(items,"charge(firstDF,noPedSub)","%4d",chargeFirstDBnopedsub);
 
 			// AddString(items, "E", "%f", E);
 		}

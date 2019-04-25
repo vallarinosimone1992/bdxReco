@@ -61,7 +61,7 @@ vector<double> DAQCalibrationHandler::getCalib(const TranslationTable::csc_t &in
 	} else {
 		it = m_calib.find(index);
 		if (it == m_calib.end()) {
-			jerr << "DAQCalibrationHandler:getCalib element not found. ROC:  " << index.rocid << " SLOT: " << index.slot << " CH: " << index.channel << endl;
+			jerr << "DAQCalibrationHandler:getCalib element not found. ROC:  " << 1.*index.rocid << " SLOT: " << 1.*index.slot << " CH: " << 1.*index.channel << endl;
 			return ret;
 		} else {
 

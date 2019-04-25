@@ -94,26 +94,30 @@ jerror_t fa250Mode1CalibPedSubHit_factory::evnt(JEventLoop *loop, uint64_t event
 		_data.push_back(CalibPedSubHit);
 	}
 
-	//Then get fa250Mode1Hit from waveboard V1
+	//Then get fa250Hit from waveboard V1
 	loop->Get(wbhitsV1);
 	for (uint32_t i = 0; i < wbhitsV1.size(); i++) {
 
-		const fa250Mode1Hit *hit = wbhitsV1[i];
+		const fa250WaveboardV1Hit *hit = wbhitsV1[i];
 
 		// Create new fa250Mode1PedSubHit
 		fa250Mode1CalibPedSubHit *CalibPedSubHit = new fa250Mode1CalibPedSubHit;
+
+		// Copy the fa250Hit part (crate, slot, channel, ...)
+		// doing it this way allow one to modify fa250 later and
+		// not have to change this code.
+		fa250Hit *a = CalibPedSubHit;
+		const fa250Hit *b = hit;
+		*a = *b;
 
 		// Copy all samples, applying PedSubration constant as we go
 		DAQdata = m_pedestals->getCalib(hit->m_channel);
 		pedestal = DAQdata[0];
 		RMS = DAQdata[1];
 
-
-
 		PARMSdata = m_parms->getCalib(hit->m_channel);
 		LSB = PARMSdata[0];
 		dT = PARMSdata[1];
-
 
 		for (uint32_t j = 0; j < hit->samples.size(); j++) {  //j=0
 			sample = (double) hit->samples[j]; //get the sample

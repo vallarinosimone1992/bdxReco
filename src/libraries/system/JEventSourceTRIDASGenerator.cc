@@ -26,7 +26,7 @@ double JEventSourceTRIDASGenerator::CheckOpenable(string source) {
 	// Typically, this will just check the file suffix.
 
 	if (source.find("pt") != std::string::npos) {
-		std::cout << "JEventSourceTRIDASGenerator: source name " << source << "contains \"pt\" substring. Open it" << endl;
+		std::cout << "JEventSourceTRIDASGenerator: source name " << source << " contains \"pt\" substring. Open it" << endl;
 		return 1.0;
 	} else {
 		std::cout << "JEventSourceTRIDASGenerator failed on source " << source << endl;
@@ -46,7 +46,7 @@ JEventSource* JEventSourceTRIDASGenerator::MakeJEventSource(string source) {
 	gPARMS->GetParameter("SYSTEM:VERBOSE", m_verbose);
 
 	if (m_isMC == 0) {
-		if (m_verbose > 2) jout << "JEventSourceTRIDASGenerator::MakeJEventSource for DAQ " << endl;
+		if (m_verbose > 2) jout << "JEventSourceTRIDASGenerator::MakeJEventSource for DATA " << endl;
 		return new JEventSourceTRIDASDAQ(source.c_str());
 	} else if (m_isMC >= 1) {
 		jerr << "MC - TRIDAS format not yet supported!!" << endl;

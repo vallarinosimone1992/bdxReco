@@ -50,8 +50,7 @@ CalorimeterSiPMHit* Calorimeterfa250Converter::convertHit(const fa250Hit *hit, c
 
 	if (strcmp(hit->className(), "fa250Mode1CalibPedSubHit") == 0) {
 		this->convertMode1Hit(m_CalorimeterSiPMHit, (const fa250Mode1CalibPedSubHit*) hit);
-	}
-	else if (strcmp(hit->className(), "fa250Mode7Hit") == 0) {
+	} else if (strcmp(hit->className(), "fa250Mode7Hit") == 0) {
 		this->convertMode7Hit(m_CalorimeterSiPMHit, (const fa250Mode7Hit*) hit);
 	} else {
 		jerr << "Calorimeterfa250Converter::convertHit unsupported class name: " << hit->className() << std::endl;
@@ -178,7 +177,11 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output, 
 	if (((output->m_nSignals) == 0) && (output->m_nSingles) == 0) {
 		output->type = CalorimeterSiPMHit::noise;
 		output->T = 0;
-		output->Qraw = this->sumSamples(0, m_NSBs + m_NSAs, &(m_waveform[0])); //to be uniform with the case below
+		if ((m_NSBs + m_NSAs) >= m_waveform.size()) {
+			output->Qraw = this->sumSamples(m_waveform.size(), &(m_waveform[0])); //to be uniform with the case below
+		} else {
+			output->Qraw = this->sumSamples(0, m_NSBs + m_NSAs, &(m_waveform[0])); //to be uniform with the case below
+		}
 		output->A = 0;
 		return NOERROR;
 	} else if (output->m_nSignals >= 1) {
@@ -205,13 +208,17 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output, 
 		output->T = (m_THR - min) * (xmax - xmin) / (max - min) + xmin;
 		output->T *= input->m_dT; //in NS!!!
 
-	}
-	else if ((output->m_nSignals == 0) && (output->m_nSingles == 1)) {
+	} else if ((output->m_nSignals == 0) && (output->m_nSingles == 1)) {
 		output->A = this->getMaximum(m_crossingTimes[0].first, m_crossingTimes[0].second, &(m_waveform[0]), Tmax);
 
 		if ((Tmax <= m_NSBs) || (Tmax >= (size - 1 - m_NSAs))) {
 			output->type = CalorimeterSiPMHit::one_phe;
-			output->Qraw = this->sumSamples(0, m_NSBs + m_NSAs, &(m_waveform[0])); //to be uniform with the case below
+			if ((m_NSBs + m_NSAs) >= m_waveform.size()) {
+				output->Qraw = this->sumSamples(m_waveform.size(), &(m_waveform[0]));
+			} else {
+				output->Qraw = this->sumSamples(0, m_NSBs + m_NSAs, &(m_waveform[0]));
+			}
+
 			output->T = 0;
 			return NOERROR;
 		} else {
@@ -286,7 +293,7 @@ jerror_t Calorimeterfa250Converter::convertMode1Hit(CalorimeterSiPMHit* output, 
 	 * Hence, the following code that does not alter anything if input->m_dT = 4 (ns), the usual sampling time we had before
 	 */
 
-	output->Qraw = output->Qraw * (input->m_dT/4.);
+	output->Qraw = output->Qraw * (input->m_dT / 4.);
 
 	return NOERROR;
 }

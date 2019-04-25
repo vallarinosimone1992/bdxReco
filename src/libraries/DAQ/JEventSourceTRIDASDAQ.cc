@@ -30,21 +30,22 @@ JEventSourceTRIDASDAQ::JEventSourceTRIDASDAQ(const char* source_name) :
 	ptReader = new PtFileReader<sample::uncompressed>(source_name);
 	source_type = kFileSource;
 
+
 	//point to the first time slice
 	it_ptReader = ptReader->begin();
 	nEventsTimeSlice = (*it_ptReader).nEvents();
-
 	//Create a new time slice
 	ptTimeSlice = new TimeSlice<sample::uncompressed>(*it_ptReader);
 	it_ptTimeSlice = ptTimeSlice->begin();
 
 	//currEventTimeSlice = 0;
+	jout << "JEventSourceTRIDASDAQ creator DONE: " << this << endl;
 
 }
 
 // Destructor
 JEventSourceTRIDASDAQ::~JEventSourceTRIDASDAQ() {
-	cout << " Closing input file " << source_name << "." << endl;
+	cout << " Closing input file " << source_name << " ." << endl;
 
 }
 
@@ -58,16 +59,13 @@ jerror_t JEventSourceTRIDASDAQ::GetEvent(JEvent &event) {
 		if (it_ptTimeSlice == ptTimeSlice->end()) {
 			it_ptReader++;
 			delete ptTimeSlice;
-			jout << "TimeSlice at the end" << endl;
 			//It the iterator on time slices is at the end, the source is completely read.
 			if (it_ptReader == ptReader->end()) {
 				jout << "Source done" << endl;
 				fflush(stdout);
 				return NO_MORE_EVENTS_IN_SOURCE;
 			} else {
-				jout << "Go to next timeSlice ";
 				nEventsTimeSlice = (*it_ptReader).nEvents();
-				jout << " It has " << nEventsTimeSlice << " events " << endl;
 				ptTimeSlice = new TimeSlice<sample::uncompressed>(*it_ptReader);
 				it_ptTimeSlice = ptTimeSlice->begin();
 
@@ -121,12 +119,31 @@ jerror_t JEventSourceTRIDASDAQ::GetObjects(JEvent & event, JFactory_base * facto
 	string dataClassName = factory->GetDataClassName();
 //As suggested by David, do a check on the factory type to decide what to do
 	JFactory<fa250WaveboardV1Hit> *fac_fa250WaveboardV1Hit = dynamic_cast<JFactory<fa250WaveboardV1Hit>*>(factory);
+
 	JFactory<eventData> *fac_eventData = dynamic_cast<JFactory<eventData>*>(factory);
 //	JFactory < epicsRawData > *fac_epicsData = dynamic_cast<JFactory<epicsRawData>*>(factory);
+
+
 	if (fac_eventData != NULL) {
 		vector<eventData*> data;
 		eventData *this_eventData = new eventData();
 		this_eventData->eventType = DAQ;
+
+		Event<sample::uncompressed> *ptEvent_pointer = (Event<sample::uncompressed>*) event.GetRef();
+		fine_time minTime = getDFHFullTime((*(ptEvent_pointer->begin())).frameHeader(0));  //take the first hit time
+		fine_time abs_time;
+		//First, find the min. hit time
+		for (Event<sample::uncompressed>::iterator it = ptEvent_pointer->begin(); it != ptEvent_pointer->end(); ++it) {
+
+			Hit<sample::uncompressed> hit = (*it);	//This is the HIT
+			abs_time = getDFHFullTime(hit.frameHeader(0));  //absolute time in 4 ns
+			if (abs_time < minTime) minTime = abs_time;
+		}
+
+		this_eventData->time = abs_time.count();
+		this_eventData->runN = 0;
+		this_eventData->eventN = 0;
+
 		data.push_back(this_eventData);
 		fac_eventData->CopyTo(data);
 		return NOERROR;
@@ -160,7 +177,7 @@ jerror_t JEventSourceTRIDASDAQ::GetObjects(JEvent & event, JFactory_base * facto
 			fahit->m_channel.channel = hit.frameHeader(0).PMTID;
 
 
-
+			fahit->chargeFirstDBnopedsub=hit.frameHeader(0).Charge;
 
 			fahit->trigger = 0; //TODO
 			fahit->timestamp = abs_time.count();
@@ -175,10 +192,9 @@ jerror_t JEventSourceTRIDASDAQ::GetObjects(JEvent & event, JFactory_base * facto
 			}
 
 			for (auto it_ptSample = hit.begin(); it_ptSample != hit.end(); it_ptSample++) {
-
 				fahit->samples.push_back(*it_ptSample);
 			}
-			jout<<endl;
+
 			data.push_back(fahit);
 		}
 

@@ -56,6 +56,7 @@ if (platform.system()=="Darwin"):
  
 env.Append(CPPPATH=Dir('#/src/external').srcnode().abspath)
 env.Append(CPPPATH=Dir('#/src/libraries').srcnode().abspath)
+env.Append(CPPPATH=Dir('#/src/plugins').srcnode().abspath)
 env.Append(CPPPATH=Dir('#/.').srcnode().abspath)
 env.Append(LIBPATH = ['#/lib'])
 
