@@ -143,6 +143,8 @@ jerror_t BDXEventProcessor::brun(JEventLoop *eventLoop, int32_t runnumber) {
 		}
 	}
 
+
+
 	if (m_isMC == 0) {
 		eventLoop->GetSingle(m_tt);
 	}
