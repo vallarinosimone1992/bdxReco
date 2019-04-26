@@ -47,6 +47,7 @@ jerror_t JEventProcessor::init(void)
 //----------------
 jerror_t JEventProcessor::brun(JEventLoop *loop, int32_t runnumber)
 {
+	jout<<"JEventProcess::brun I am the base method"<<std::endl;
 	return NOERROR;
 }
 

@@ -615,9 +615,15 @@ jerror_t JEventLoop::OneEvent(void)
 			}
 			proc->Clear_brun_called();
 		}
+
+
 		if(!proc->brun_was_called()){
+
+
 			try{
-				proc->brun(this, run_number);
+				jout<<"JEventLoop going to call brun in proc name: "<<proc->className()<<" class: "<<proc<<endl;fflush(stdout);
+				jerror_t err=proc->brun(this, run_number);
+				jout<<"JEventLoop DONE returning "<<err<<endl;fflush(stdout);
 				proc->Set_brun_called();
 				proc->Clear_erun_called();
 				proc->SetBRUN_RunNumber(run_number);
