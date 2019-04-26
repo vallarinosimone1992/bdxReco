@@ -21,6 +21,7 @@ using namespace jana;
 #include <JANA/JApplication.h>
 #include <JANA/JFactory.h>
 
+#include "TROOT.h"
 /*Here goes the histograms*/
 static const int nCrates = 1;
 static const int nSlots = 6;
@@ -72,6 +73,7 @@ jerror_t JEventProcessor_DAQWaveformsMode1::init(void) {
 		japp->RootUnLock();
 		return NOERROR;
 	}
+	gROOT->cd();
 	TDirectory *main = gDirectory;
 	gDirectory->mkdir("DAQWaveformsMode1")->cd();
 

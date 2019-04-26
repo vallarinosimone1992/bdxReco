@@ -17,6 +17,7 @@ using namespace jana;
 #include <TProfile2D.h>
 #include <TStyle.h>
 
+#include "TROOT.h"
 /*Here goes the histograms*/
 static const int nSectors = 1;
 static const int nLayers = 1;
@@ -70,6 +71,7 @@ jerror_t JEventProcessor_IntVetoSipm::init(void) {
 		japp->RootUnLock();
 		return NOERROR;
 	}
+	gROOT->cd();
 	TDirectory *main = gDirectory;
 	gDirectory->mkdir("IntVetoSipm")->cd();
 

@@ -14,6 +14,7 @@ using namespace jana;
 #include <TH1.h>
 #include <TProfile2D.h>
 #include <TStyle.h>
+#include <TROOT.h>
 
 /*Here goes the histograms*/
 TH1D *hTriggerBits = NULL;
@@ -60,6 +61,7 @@ jerror_t JEventProcessor_Trigger::init(void) {
 	//
 
 	japp->RootWriteLock();
+	gROOT->cd();
 	TDirectory *main = gDirectory;
 	gDirectory->mkdir("Trigger")->cd();
 

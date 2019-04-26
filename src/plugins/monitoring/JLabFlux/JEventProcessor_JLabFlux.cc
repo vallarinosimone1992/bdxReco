@@ -17,6 +17,7 @@ using namespace jana;
 #include <TH1.h>
 #include <TProfile2D.h>
 #include <TStyle.h>
+#include <TROOT.h>
 
 /*Here goes the histograms*/
 static TH1D* hAsym = 0;
@@ -62,6 +63,7 @@ jerror_t JEventProcessor_JLabFlux::init(void) {
 		japp->RootUnLock();
 		return NOERROR;
 	}
+	gROOT->cd();
 	TDirectory *main = gDirectory;
 	gDirectory->mkdir("JLabFlux")->cd();
 

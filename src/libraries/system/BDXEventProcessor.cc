@@ -96,6 +96,7 @@ jerror_t BDXEventProcessor::init(void) {
 	japp->RootWriteLock();
 	/*Event header and runInfo are always created - as memory resident TTrees (these are quite small)*/
 	gDirectory->cd();
+
 	m_eventHeader = new TTree("EventHeader", "EventHeader");
 	m_eventHeader->Branch("eventN", &eventN);
 	m_eventHeader->Branch("runN", &runN);
@@ -143,8 +144,6 @@ jerror_t BDXEventProcessor::brun(JEventLoop *eventLoop, int32_t runnumber) {
 		}
 	}
 
-
-
 	if (m_isMC == 0) {
 		eventLoop->GetSingle(m_tt);
 	}
@@ -169,7 +168,7 @@ jerror_t BDXEventProcessor::evnt(JEventLoop *loop, uint64_t eventnumber) {
 		try {
 			loop->GetSingle(tData);
 		} catch (unsigned long e) {
-			bout << "No eventData bank this event " <<e<< endl;
+			bout << "No eventData bank this event " << endl;
 			return OBJECT_NOT_AVAILABLE;
 		}
 		/*This is the EPICS part. The call here will force getting data from the epicsDataProcessed_factory, that takes care of persistency*/

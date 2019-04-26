@@ -16,6 +16,7 @@ using namespace jana;
 #include <TH1.h>
 #include <TProfile2D.h>
 #include <TStyle.h>
+#include "TROOT.h"
 
 /*Here goes the histograms*/
 static const int nSectors = 2;
@@ -73,6 +74,7 @@ jerror_t JEventProcessor_CalorimeterHits::init(void) {
 		japp->RootUnLock();
 		return NOERROR;
 	}
+	gROOT->cd();
 	TDirectory *main = gDirectory;
 	gDirectory->mkdir("CalorimeterHits")->cd();
 

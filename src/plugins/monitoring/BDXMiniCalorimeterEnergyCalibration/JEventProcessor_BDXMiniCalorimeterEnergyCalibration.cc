@@ -19,6 +19,7 @@ using namespace std;
 #include <system/JROOTOutput.h>
 #include <system/BDXEventProcessor.h>
 
+#include "TROOT.h"
 /*Here goes the histograms*/
 static const int nTOT = 22;
 
@@ -99,8 +100,9 @@ jerror_t JEventProcessor_BDXMiniCalorimeterEnergyCalibration::init(void) {
 		return NOERROR;
 	}
 
+	gROOT->cd();
 	TDirectory *main = gDirectory;
-	gDirectory->mkdir("BDXMiniCalorimeterEnergyCalibration")->cd();
+	gDirectory->mkdir("BDXMiniCaloEneCalib")->cd();
 
 	/*Create all the histograms*/
 	map<pair<int, int>, int>::iterator geometry_it;
@@ -132,16 +134,16 @@ jerror_t JEventProcessor_BDXMiniCalorimeterEnergyCalibration::init(void) {
 
 		id = id - 1;
 
-		hBDXMiniCalorimeterEnergyCalibrationTOP[id] = new TH1D(Form("hBDXMiniCalorimeterEnergyCalibration_s0_x%i_y%i", iX, iY), Form("hBDXMiniCalorimeterEnergyCalibration_s0_x%i_y%i", iX, iY), NQ, Qmin, Qmax);
+		hBDXMiniCalorimeterEnergyCalibrationTOP[id] = new TH1D(Form("hDXMiniCalib_s0_x%i_y%i", iX, iY), Form("hBDXMiniCalib_s0_x%i_y%i", iX, iY), NQ, Qmin, Qmax);
 		hBDXMiniCalorimeterEnergyCalibrationTOP[id]->GetXaxis()->SetTitle("Q");
 
-		hBDXMiniCalorimeterEnergyCalibrationBOTTOM[id] = new TH1D(Form("hBDXMiniCalorimeterEnergyCalibration_s1_x%i_y%i", iX, iY), Form("hBDXMiniCalorimeterEnergyCalibration_s1_x%i_y%i", iX, iY), NQ, Qmin, Qmax);
+		hBDXMiniCalorimeterEnergyCalibrationBOTTOM[id] = new TH1D(Form("hDXMiniCalib_s1_x%i_y%i", iX, iY), Form("hBDXMiniCalib_s1_x%i_y%i", iX, iY), NQ, Qmin, Qmax);
 		hBDXMiniCalorimeterEnergyCalibrationBOTTOM[id]->GetXaxis()->SetTitle("Q");
 
-		hBDXMiniCalorimeterEnergyCalibrationTOPene[id] = new TH1D(Form("hBDXMiniCalorimeterEnergyCalibrationEne_s0_x%i_y%i", iX, iY), Form("hBDXMiniCalorimeterEnergyCalibrationEne_s0_x%i_y%i", iX, iY), NE, Emin, Emax);
+		hBDXMiniCalorimeterEnergyCalibrationTOPene[id] = new TH1D(Form("hBDXMiniCalibE_s0_x%i_y%i", iX, iY), Form("hBDXMiniCalibE_s0_x%i_y%i", iX, iY), NE, Emin, Emax);
 		hBDXMiniCalorimeterEnergyCalibrationTOPene[id]->GetXaxis()->SetTitle("E");
 
-		hBDXMiniCalorimeterEnergyCalibrationBOTTOMene[id] = new TH1D(Form("hBDXMiniCalorimeterEnergyCalibrationEne_s1_x%i_y%i", iX, iY), Form("hBDXMiniCalorimeterEnergyCalibrationEne_s1_x%i_y%i", iX, iY), NE, Emin, Emax);
+		hBDXMiniCalorimeterEnergyCalibrationBOTTOMene[id] = new TH1D(Form("hBDXMiniCalibE_s1_x%i_y%i", iX, iY), Form("hBDXMiniCalibE_s1_x%i_y%i", iX, iY), NE, Emin, Emax);
 		hBDXMiniCalorimeterEnergyCalibrationBOTTOMene[id]->GetXaxis()->SetTitle("EQ");
 
 	}

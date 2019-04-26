@@ -194,6 +194,7 @@ jerror_t BDXMiniCalorimeterEnergyCalibrationHit_factory::evnt(JEventLoop *loop, 
 			m_CalorimeterCalibHit = new BDXMiniCalorimeterEnergyCalibrationHit();
 			m_CalorimeterCalibHit->m_channel = m_CaloHit->m_channel;
 			m_CalorimeterCalibHit->Q = m_CaloHit->Eraw;
+			m_CalorimeterCalibHit->E = m_CaloHit->E;
 
 			if (m_isMC) {
 				m_CalorimeterCalibHit->Q /= 1E3;
