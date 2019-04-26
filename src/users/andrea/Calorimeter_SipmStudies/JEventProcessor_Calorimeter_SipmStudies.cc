@@ -89,6 +89,8 @@ jerror_t JEventProcessor_Calorimeter_SipmStudies::init(void)
 //------------------
 jerror_t JEventProcessor_Calorimeter_SipmStudies::brun(JEventLoop *eventLoop, int32_t runnumber)
 {
+
+	jout<<"JEventProcessor_Calorimeter_SipmStudies::brun called"<<endl;
 	if (m_isFirstCallToBrun){
 		string class_name,this_class_name;
 		string joutput_name;

@@ -86,6 +86,7 @@ jerror_t BDXMiniCalorimeterEnergyCalibrationHit_factory::init(void) {
 // brun
 //------------------
 jerror_t BDXMiniCalorimeterEnergyCalibrationHit_factory::brun(jana::JEventLoop *eventLoop, uint32_t runnumber) {
+	jout<<"JEventProcessor_BDXMiniCalorimeterEnergyCalibrationHit::brun called"<<endl;
 	return NOERROR;
 }
 

@@ -16,6 +16,9 @@ using namespace std;
 #include "calibration/BDXMiniCalorimeterEnergyCalibrationHit/BDXMiniCalorimeterEnergyCalibrationHit.h"
 #include "DAQ/eventData.h"
 
+#include <system/JROOTOutput.h>
+#include <system/BDXEventProcessor.h>
+
 /*Here goes the histograms*/
 static const int nTOT = 22;
 
@@ -37,8 +40,9 @@ void InitPlugin(JApplication *app) {
 //------------------
 // JEventProcessor_BDXMiniCalorimeterEnergyCalibration (Constructor)
 //------------------
-JEventProcessor_BDXMiniCalorimeterEnergyCalibration::JEventProcessor_BDXMiniCalorimeterEnergyCalibration() {
-
+JEventProcessor_BDXMiniCalorimeterEnergyCalibration::JEventProcessor_BDXMiniCalorimeterEnergyCalibration() :
+		m_ROOTOutput(0), m_isMC(0) {
+	m_isFirstCallToBrun = 1;
 }
 
 //------------------
@@ -60,7 +64,7 @@ jerror_t JEventProcessor_BDXMiniCalorimeterEnergyCalibration::init(void) {
 	//  ... fill historgrams or trees ...
 	// japp->RootUnLock();
 	//
-
+	m_isFirstCallToBrun = 1;
 	m_isMC = 0;
 	gPARMS->GetParameter("MC", m_isMC);
 
@@ -90,37 +94,34 @@ jerror_t JEventProcessor_BDXMiniCalorimeterEnergyCalibration::init(void) {
 
 	japp->RootWriteLock();
 
-	jout << "Creating fTMP" << endl;
-	fTMP = new TFile("fTMP.root", "recreate");
-
 	if (hBDXMiniCalorimeterEnergyCalibrationTOP[0] != NULL) {
 		japp->RootUnLock();
 		return NOERROR;
 	}
 
-//	TDirectory *main = gDirectory;
-//	gDirectory->mkdir("BDXMiniCalorimeterEnergyCalibration")->cd();
+	TDirectory *main = gDirectory;
+	gDirectory->mkdir("BDXMiniCalorimeterEnergyCalibration")->cd();
 
 	/*Create all the histograms*/
 	map<pair<int, int>, int>::iterator geometry_it;
 	int iX, iY, id;
 
-	double Qmin,Qmax,Emin,Emax;
-	int NQ,NE;
+	double Qmin, Qmax, Emin, Emax;
+	int NQ, NE;
 
-	if (m_isMC){
-		Qmin=-5;
-		Qmax=200;
-		NQ=500;
-	}else{
-		Qmin=-10.;
-		Qmax=1000;
-		NQ=500;
+	if (m_isMC) {
+		Qmin = -5;
+		Qmax = 200;
+		NQ = 500;
+	} else {
+		Qmin = -10.;
+		Qmax = 1000;
+		NQ = 500;
 	}
 
-	NE=500;
-	Emin=0;
-	Emax=200;
+	NE = 500;
+	Emin = 0;
+	Emax = 200;
 
 	for (geometry_it = geometry.begin(); geometry_it != geometry.end(); geometry_it++) {
 		//Do whatever you want. To access the first part of pair(pair is the key of the map here) you should write
@@ -131,26 +132,22 @@ jerror_t JEventProcessor_BDXMiniCalorimeterEnergyCalibration::init(void) {
 
 		id = id - 1;
 
-		hBDXMiniCalorimeterEnergyCalibrationTOP[id] = new TH1D(Form("hBDXMiniCalorimeterEnergyCalibration_s0_x%i_y%i", iX, iY), Form("hBDXMiniCalorimeterEnergyCalibration_s0_x%i_y%i", iX, iY), NQ,Qmin,Qmax);
+		hBDXMiniCalorimeterEnergyCalibrationTOP[id] = new TH1D(Form("hBDXMiniCalorimeterEnergyCalibration_s0_x%i_y%i", iX, iY), Form("hBDXMiniCalorimeterEnergyCalibration_s0_x%i_y%i", iX, iY), NQ, Qmin, Qmax);
 		hBDXMiniCalorimeterEnergyCalibrationTOP[id]->GetXaxis()->SetTitle("Q");
 
-		hBDXMiniCalorimeterEnergyCalibrationBOTTOM[id] = new TH1D(Form("hBDXMiniCalorimeterEnergyCalibration_s1_x%i_y%i", iX, iY), Form("hBDXMiniCalorimeterEnergyCalibration_s1_x%i_y%i", iX, iY), NQ,Qmin,Qmax);
+		hBDXMiniCalorimeterEnergyCalibrationBOTTOM[id] = new TH1D(Form("hBDXMiniCalorimeterEnergyCalibration_s1_x%i_y%i", iX, iY), Form("hBDXMiniCalorimeterEnergyCalibration_s1_x%i_y%i", iX, iY), NQ, Qmin, Qmax);
 		hBDXMiniCalorimeterEnergyCalibrationBOTTOM[id]->GetXaxis()->SetTitle("Q");
 
-
-
-		hBDXMiniCalorimeterEnergyCalibrationTOPene[id] = new TH1D(Form("hBDXMiniCalorimeterEnergyCalibrationEne_s0_x%i_y%i", iX, iY), Form("hBDXMiniCalorimeterEnergyCalibrationEne_s0_x%i_y%i", iX, iY), NE,Emin,Emax);
+		hBDXMiniCalorimeterEnergyCalibrationTOPene[id] = new TH1D(Form("hBDXMiniCalorimeterEnergyCalibrationEne_s0_x%i_y%i", iX, iY), Form("hBDXMiniCalorimeterEnergyCalibrationEne_s0_x%i_y%i", iX, iY), NE, Emin, Emax);
 		hBDXMiniCalorimeterEnergyCalibrationTOPene[id]->GetXaxis()->SetTitle("E");
 
-		hBDXMiniCalorimeterEnergyCalibrationBOTTOMene[id] = new TH1D(Form("hBDXMiniCalorimeterEnergyCalibrationEne_s1_x%i_y%i", iX, iY), Form("hBDXMiniCalorimeterEnergyCalibrationEne_s1_x%i_y%i", iX, iY), NE,Emin,Emax);
+		hBDXMiniCalorimeterEnergyCalibrationBOTTOMene[id] = new TH1D(Form("hBDXMiniCalorimeterEnergyCalibrationEne_s1_x%i_y%i", iX, iY), Form("hBDXMiniCalorimeterEnergyCalibrationEne_s1_x%i_y%i", iX, iY), NE, Emin, Emax);
 		hBDXMiniCalorimeterEnergyCalibrationBOTTOMene[id]->GetXaxis()->SetTitle("EQ");
-
-
 
 	}
 
 	// back to main dir
-	//main->cd();
+	main->cd();
 	japp->RootUnLock();
 
 	return NOERROR;
@@ -160,7 +157,44 @@ jerror_t JEventProcessor_BDXMiniCalorimeterEnergyCalibration::init(void) {
 //------------------
 // brun
 //------------------
-jerror_t JEventProcessor_BDXMiniCalorimeterEnergyCalibration::brun(JEventLoop *eventLoop, uint32_t runnumber) {
+jerror_t JEventProcessor_BDXMiniCalorimeterEnergyCalibration::brun(JEventLoop *eventLoop, int32_t runnumber) {
+
+	jout<<m_isFirstCallToBrun<<endl;
+
+	if (m_isFirstCallToBrun) {
+
+		jout<<"JEventProcessor_BDXMiniCalorimeterEnergyCalibration::brun searching m_RootOutput"<<endl;
+		string class_name, this_class_name;
+		string joutput_name;
+		BDXEventProcessor *m_BDXEventProcessor;
+		vector<JEventProcessor*> m_processors = app->GetProcessors();
+		vector<JEventProcessor*>::iterator m_processors_it;
+
+		m_isFirstCallToBrun = 0;
+		class_name = "BDXEventProcessor";
+		joutput_name = "JROOTOutput";
+		//Now I need to determine which processor is the one holding the output. Discussing with David, he suggested just to check the class name, since
+		//a dynamic cast may not work with plugins
+		for (m_processors_it = m_processors.begin(); m_processors_it != m_processors.end(); m_processors_it++) {
+			if ((*m_processors_it) != 0) {
+				this_class_name = string((*m_processors_it)->className());
+				if (this_class_name == class_name) {
+					m_BDXEventProcessor = (BDXEventProcessor*) (*m_processors_it);
+					if (m_BDXEventProcessor->getOutput() == 0) {
+						jerr << "BDXEventProcessor JOutput is null!" << endl;
+						break;
+					}
+					if (string(m_BDXEventProcessor->getOutput()->className()) == joutput_name) {
+						m_ROOTOutput = (JROOTOutput*) (m_BDXEventProcessor->getOutput());
+						jout << "Got JROOTOutput!" << endl;
+					} else {
+						jerr << "BDXEventProcessor JOutput is not null BUT class is: " << m_BDXEventProcessor->getOutput()->className() << endl;
+					}
+				}
+			}
+		}
+	}
+
 	// This is called whenever the run number changes
 	return NOERROR;
 }
@@ -231,6 +265,20 @@ jerror_t JEventProcessor_BDXMiniCalorimeterEnergyCalibration::erun(void) {
 	// This is called whenever the run number changes, before it is
 	// changed to give you a chance to clean up before processing
 	// events from the next run number.
+
+
+	if (m_ROOTOutput != 0) {
+		jout<<"JEventProcessor_BDXMiniCalorimeterEnergyCalibartion adding histos to m_ROOTOutput"<<endl;
+		for (int ii = 0; ii < nTOT; ii++) {
+			m_ROOTOutput->AddObject(hBDXMiniCalorimeterEnergyCalibrationTOP[ii]);
+			m_ROOTOutput->AddObject(hBDXMiniCalorimeterEnergyCalibrationBOTTOM[ii]);
+		}
+		for (int ii = 0; ii < nTOT; ii++) {
+			m_ROOTOutput->AddObject(hBDXMiniCalorimeterEnergyCalibrationTOPene[ii]);
+			m_ROOTOutput->AddObject(hBDXMiniCalorimeterEnergyCalibrationBOTTOMene[ii]);
+		}
+	}
+
 	return NOERROR;
 }
 
@@ -239,17 +287,7 @@ jerror_t JEventProcessor_BDXMiniCalorimeterEnergyCalibration::erun(void) {
 //------------------
 jerror_t JEventProcessor_BDXMiniCalorimeterEnergyCalibration::fini(void) {
 	// Called before program exit after event processing is finished.
-	fTMP->cd();
 
-	for (int ii = 0; ii < nTOT; ii++) {
-		hBDXMiniCalorimeterEnergyCalibrationTOP[ii]->Write();
-		hBDXMiniCalorimeterEnergyCalibrationBOTTOM[ii]->Write();
-	}
-	for (int ii = 0; ii < nTOT; ii++) {
-		hBDXMiniCalorimeterEnergyCalibrationTOPene[ii]->Write();
-		hBDXMiniCalorimeterEnergyCalibrationBOTTOMene[ii]->Write();
-	}
-	fTMP->Close();
 	return NOERROR;
 }
 
