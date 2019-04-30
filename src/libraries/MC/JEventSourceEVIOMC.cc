@@ -87,6 +87,8 @@ jerror_t JEventSourceEvioMC::GetEvent(JEvent &event) {
 		event.SetRef(the_reference);
 
 		event.SetEventNumber(evt->headerBank["evn"]);
+		event.SetEventTS(0);
+
 		//read here the run number from MC
 		curRunNumber = evt->headerBank["runNo"];
 		if (overwriteRunNumber != -1) event.SetRunNumber(overwriteRunNumber);

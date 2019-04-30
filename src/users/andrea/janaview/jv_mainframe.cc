@@ -390,15 +390,18 @@ Bool_t jv_mainframe::HandleConfigureNotify(Event_t *event)
 //-------------------
 // UpdateInfo
 //-------------------
-void jv_mainframe::UpdateInfo(string source, int run, int event)
+void jv_mainframe::UpdateInfo(string source, int run,unsigned long int event,unsigned long int TS)
 {
 	lSource->SetText(source.c_str());
 
 	char str[256];
 	sprintf(str, "%d", run);
 	lRun->SetText(str);
-	sprintf(str, "%d", event);
+	sprintf(str, "%lu", event);
 	lEvent->SetText(str);
+
+	sprintf(str, "%lu",TS);
+	lTS->SetText(str);
 
 	Redraw(lSource);
 }
@@ -734,6 +737,7 @@ void jv_mainframe::CreateGUI(void)
 	lSource = AddNamedLabel(fInfo, "Source:");
 	lRun    = AddNamedLabel(fInfo, "   Run:");
 	lEvent  = AddNamedLabel(fInfo, " Event:        ");
+	lTS  = AddNamedLabel(fInfo, "TS:        ");
 
 	TGButton *bNext = AddButton(fInfo, "Next");
 	/*TGButton *bNextN = AddButton(fInfo, "NextN");

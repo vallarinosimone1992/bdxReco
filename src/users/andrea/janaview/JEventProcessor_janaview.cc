@@ -135,7 +135,7 @@ jerror_t JEventProcessor_janaview::evnt(JEventLoop *loop, uint64_t eventnumber)
 	
 	JEvent &jevent = loop->GetJEvent();
 	JEventSource *source = jevent.GetJEventSource();
-	JVMF->UpdateInfo(source->GetSourceName(), jevent.GetRunNumber(), jevent.GetEventNumber());
+	JVMF->UpdateInfo(source->GetSourceName(), jevent.GetRunNumber(), jevent.GetEventNumber(),jevent.GetEventTS());
 
 	vector<JVFactoryInfo> facinfo;
 	GetObjectTypes(facinfo);

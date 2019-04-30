@@ -18,6 +18,7 @@ JEvent::JEvent()
 {
 	source = NULL;
 	event_number = 0 ;
+	event_TS = 0;
 	run_number = 0;
 	ref = NULL;
 	status = 0L;

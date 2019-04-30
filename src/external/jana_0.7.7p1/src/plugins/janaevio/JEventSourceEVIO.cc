@@ -82,6 +82,7 @@ jerror_t JEventSourceEVIO::GetEvent(JEvent &event)
 	// Copy the reference info into the JEvent object
 	event.SetJEventSource(this);
 	event.SetEventNumber(event_number);
+	event.SetEventTS(0);
 	event.SetRunNumber(run_number);
 	event.SetRef(tree);
 

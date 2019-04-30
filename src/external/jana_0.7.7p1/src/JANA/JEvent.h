@@ -35,6 +35,7 @@ class JEvent{
 		template<class T> jerror_t GetObjects(vector<const T*> &t, JFactory_base *factory=NULL);
 		      inline JEventSource* GetJEventSource(void){return source;}
 		           inline uint64_t GetEventNumber(void){return event_number;}
+		           inline uint64_t GetEventTS(void){return event_TS;}
 		            inline int32_t GetRunNumber(void){return run_number;}
 		              inline void* GetRef(void){return ref;}
 		        inline JEventLoop* GetJEventLoop(void){return loop;}
@@ -42,6 +43,7 @@ class JEvent{
 		               inline void SetJEventSource(JEventSource *source){this->source=source;}
 		               inline void SetRunNumber(int32_t run_number){this->run_number=run_number;}
 		               inline void SetEventNumber(uint64_t event_number){this->event_number=event_number;}
+		               inline void SetEventTS(uint64_t event_TS){this->event_TS=event_TS;}
 		               inline void SetRef(void *ref){this->ref=ref;}
 					   inline void SetSequential(bool s=true){sequential=s;}
 		               inline void SetJEventLoop(JEventLoop *loop){this->loop=loop;}
@@ -61,7 +63,7 @@ class JEvent{
 	
 	private:
 		JEventSource *source;
-		uint64_t event_number;
+		uint64_t event_number,event_TS;
 		int32_t run_number;
 		void *ref;
 		JEventLoop *loop;

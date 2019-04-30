@@ -25,6 +25,7 @@ class JEventSource_NULL: public jana::JEventSource{
 		jerror_t GetEvent(jana::JEvent &event){
 			event.SetJEventSource(this);
 			event.SetEventNumber(++Nevents_read);
+			event.SetEventTS(0);
 			event.SetRunNumber(1);
 			event.SetRef(NULL);
 			return NOERROR;

@@ -564,6 +564,7 @@ jerror_t JApplication::NextEvent(JEvent &event)
 		event.SetJEventSource(myevent->GetJEventSource());
 		event.SetRunNumber(my_runnumber);
 		event.SetEventNumber(myevent->GetEventNumber());
+		event.SetEventTS(myevent->GetEventTS());
 		event.SetRef(myevent->GetRef());
 		event.SetID(myevent->GetID());
 		event.SetStatus(myevent->GetStatus());

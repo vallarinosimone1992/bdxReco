@@ -12,7 +12,7 @@ subdirs = ['TestSpeed', 'janadot', 'janactl', 'jana_iotest','janaevio']
 
 # Only build janarate and janaroot if ROOTSYS is set
 if os.getenv('ROOTSYS') != None :
-    subdirs += ['janaroot', 'janarate', 'janaview']
+    subdirs += ['janaroot', 'janarate']
 #if os.getenv('ROOTSYS') != None :
 #	SConscript(dirs=['janaroot', 'janarate', 'janaview'], exports='env debugSuffix', duplicate=0)
 

@@ -86,7 +86,7 @@ class jv_mainframe:public TGMainFrame{
 		void DoDoubleClickAssociatedToObject(Int_t id);
 		Bool_t HandleConfigureNotify(Event_t *event);
 		
-		void UpdateInfo(string source, int run, int event);
+		void UpdateInfo(string source, int run,unsigned long int event,unsigned long TS);
 		void UpdateObjectTypeList(vector<JVFactoryInfo> &facinfo);
 		void SelectNewObject(void *vobj);
 		void Redraw(TGFrame *lb);
@@ -108,6 +108,7 @@ class jv_mainframe:public TGMainFrame{
 		TGLabel   *lSource;
 		TGLabel   *lRun;
 		TGLabel   *lEvent;
+		TGLabel   *lTS;
 		TGLabel   *lObjectType;
 		TGLabel   *lObjectValue;
 		TGListBox *lbObjectTypes;
