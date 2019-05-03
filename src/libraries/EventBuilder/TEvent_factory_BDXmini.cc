@@ -17,6 +17,8 @@ using namespace std;
 #include <MC/UserMCData.h>
 #endif
 
+#include <BDXmini/triggerDataBDXmini.h>
+
 #include "TClonesArray.h"
 #include "TEvent_factory_BDXmini.h"
 
@@ -70,6 +72,9 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	TEventHeader *m_eventHeader = m_event->getEventHeader();
 
 	const eventData* tData;
+	const triggerDataBDXmini* bdxtData;
+
+	triggerDataBDXmini* bdxtData_write=new triggerDataBDXmini();
 
 	vector<const CalorimeterHit*> chits;
 	vector<const CalorimeterDigiHit*> cdhits;
@@ -84,7 +89,14 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 		try {
 			loop->GetSingle(tData);
 		} catch (unsigned long e) {
-			jout << "TEvent_factory_BDXmini::evnt no eventData bank this event" << endl;
+			jout << "TEvent_factory_BDXmini::evnt no triggerData bank this event" << endl;
+			return OBJECT_NOT_AVAILABLE;
+		}
+
+		try {
+			loop->GetSingle(bdxtData);
+		} catch (unsigned long e) {
+			jout << "TEvent_factory_BDXmini::evnt no triggerDataBdxmini bank this event" << endl;
 			return OBJECT_NOT_AVAILABLE;
 		}
 
@@ -92,9 +104,12 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 		m_eventHeader->setRunNumber(tData->runN);
 		m_eventHeader->setEventNumber(tData->eventN);
 		m_eventHeader->setEventTime(tData->time);
-		m_eventHeader->setTriggerWords(tData->triggerWords);
+		//m_eventHeader->setTriggerWords(tData->triggerWords); //A.C. removed, since we save directly the triggerDataBDXmini
 		m_eventHeader->setEventFineTime(0); //TODO
 		m_eventHeader->setWeight(1);
+		*bdxtData_write=*bdxtData;
+		m_event->addObject(bdxtData_write);
+
 	} else {
 		m_eventHeader->setEventType(BDXminiEvent);
 		m_eventHeader->setEventNumber(eventnumber);
@@ -105,7 +120,6 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	}
 
 	/*Loop over JANA objects, clear collections and fill them*/
-
 	loop->Get(chits);
 	m_CaloHits->Clear("C");
 	for (int ii = 0; ii < chits.size(); ii++) {

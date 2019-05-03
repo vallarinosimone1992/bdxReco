@@ -136,6 +136,8 @@ void TEvent::addObject(TObject *obj){
 	m_objects.Add(obj);
 }
 
+
+
 TObject* TEvent::getObject(string name) const{
 	TObject *ret=0;
 	ret=m_objects.FindObject(name.c_str());

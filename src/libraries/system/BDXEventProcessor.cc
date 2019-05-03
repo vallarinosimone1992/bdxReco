@@ -101,7 +101,7 @@ jerror_t BDXEventProcessor::init(void) {
 	m_eventHeader->Branch("eventN", &eventN);
 	m_eventHeader->Branch("runN", &runN);
 	m_eventHeader->Branch("T", &eventT);
-	m_eventHeader->Branch("tword", &tWord);
+
 
 	m_runInfo = new TTree("RunInfo", "RunInfo");
 	m_runInfo->Branch("runN", &runN);
@@ -203,7 +203,7 @@ jerror_t BDXEventProcessor::evnt(JEventLoop *loop, uint64_t eventnumber) {
 			japp->RootWriteLock();
 			eventT = tData->time;
 			eventN = eventnumber;
-			tWord = tData->triggerWords;
+
 			runN = tData->runN;
 			m_eventHeader->Fill();
 			//Time

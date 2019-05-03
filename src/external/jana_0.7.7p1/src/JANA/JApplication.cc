@@ -1401,6 +1401,7 @@ jerror_t JApplication::Init(void)
 		}
 	}catch(...){}
 
+
 	// Allow user to specify batch mode via configuration parameter
 	try{
 		jparms->SetDefaultParameter("JANA:BATCH_MODE", batch_mode,"Flag that, when set to TRUE, inhibits many messages from printing. (Default is FALSE)");

@@ -19,6 +19,7 @@ using namespace jana;
 #include <ExtVeto/JFactoryGenerator_ExtVeto.h>
 #include <Calorimeter/JFactoryGenerator_Calorimeter.h>
 #include <Paddles/JFactoryGenerator_Paddles.h>
+#include <BDXmini/JFactoryGenerator_BDXmini.h>
 #include <EventBuilder/JFactoryGenerator_EventBuilder.h>
 
 #ifdef MC_SUPPORT_ENABLE
@@ -74,6 +75,8 @@ int main(int narg, char *argv[])
 	jout<<"JFactoryGenerator_Calorimeter DONE"<<endl;
 	app.AddFactoryGenerator(new JFactoryGenerator_Paddles());
 	jout<<"JFactoryGenerator_Paddles DONE"<<endl;
+	app.AddFactoryGenerator(new JFactoryGenerator_BDXmini());
+	jout<<"JFactoryGenerator_BDXmini DONE"<<endl;
 	app.AddFactoryGenerator(new JFactoryGenerator_EventBuilder());
 	jout<<"JFactoryGenerator_EventBuilder DONE"<<endl;
 	app.AddProcessor(new BDXEventProcessor());

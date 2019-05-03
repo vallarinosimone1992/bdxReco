@@ -28,6 +28,11 @@ class JEventProcessor_Trigger:public jana::JEventProcessor{
 		jerror_t fini(void);						///< Called after last event of last event source has been processed.
 
 		static const int nTriggersMAX=32;
+		static const int nChansMax=64;
+		static const int MAGIC_TRG_WORD = 0xabcdabcd;
+
+		int chanTimeMin,chanTimeMax;
+
 };
 
 #endif // _JEventProcessor_Trigger_

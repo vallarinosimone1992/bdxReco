@@ -36,6 +36,8 @@ public:
 
 	double E,Q, T, A; //Energy(MeV) Charge (phe?), time (ns), Amplitude (mV)
 
+	bool isTriggerHit; //a flag to determine if this hit was in the trigger
+
 	TranslationTable::CALO_Index_t m_channel; //Detector-specific ID. Since this is a detector-based object, the readout field will be 0
 
 };

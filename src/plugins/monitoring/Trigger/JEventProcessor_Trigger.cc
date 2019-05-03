@@ -22,6 +22,14 @@ TH1D *hTriggerMultiplicity = NULL;
 TH1D *hTriggerTimes = NULL;
 TH2D *hTriggerTimes2D = NULL;
 
+/*Using the single CRS information, plot:
+ *
+ * All counts
+ * counts when triggering
+ *
+ */
+TH1D *hChannels_ALL = NULL;
+TH1D *hChannels_TRG = NULL;
 
 // Routine used to create our JEventProcessor
 #include <JANA/JApplication.h>
@@ -60,6 +68,9 @@ jerror_t JEventProcessor_Trigger::init(void) {
 	// japp->RootUnLock();
 	//
 
+	chanTimeMin = 4 * 4; //in 25 ns units
+	chanTimeMax = 4 * 4; //in 25 ns units
+
 	japp->RootWriteLock();
 	gROOT->cd();
 	TDirectory *main = gDirectory;
@@ -74,6 +85,9 @@ jerror_t JEventProcessor_Trigger::init(void) {
 	hTriggerMultiplicity = new TH1D("hTriggerMultiplicity", "hTriggerMultiplicity", 10, -0.5, 9.5);
 	hTriggerTimes = new TH1D("hTriggerTimes", "hTriggerTimes", 1000, -0.5, 999.5);
 	hTriggerTimes2D = new TH2D("hTriggerTimes2D", "hTriggerTimes2D", 1000, -0.5, 999.5, nTriggersMAX, -0.5, nTriggersMAX - 0.5);
+
+	hChannels_ALL = new TH1D("hChannels_ALL", "hChannels_ALL", 64, -0.5, 63.5); //There are 44 channels
+	hChannels_TRG = new TH1D("hChannels_TRG", "hChannels_TRG", 64, -0.5, 63.5); //There are 44 channels
 
 	// back to main dir
 	main->cd();
@@ -116,7 +130,9 @@ jerror_t JEventProcessor_Trigger::evnt(JEventLoop *loop, uint64_t eventnumber) {
 
 	bool triggers[32] = { false };
 	int nTriggers = 0;
-	int word1, word2;
+	int word1, word2, word3, word4;
+	long int chanTime;
+	unsigned long int chanMask;
 
 	try {
 		loop->GetSingle(tData);
@@ -125,19 +141,47 @@ jerror_t JEventProcessor_Trigger::evnt(JEventLoop *loop, uint64_t eventnumber) {
 		return OBJECT_NOT_AVAILABLE;
 	}
 	/*If this is an EPICS event, do nothing.*/
-	if (tData->eventType == eventSource::EPICS){
+	if (tData->eventType == eventSource::EPICS) {
 		return NOERROR;
 	}
 
 	/*Decode trigger words*/
-	for (int ii = 0; ii < tData->triggerWords.size() / 2; ii++) {
+	/*A.C. 3/5/2019: adding the single-channel information. These are the words following the MAGIC_TRG_WORD */
+
+	int ii, jj, kk, nwords;
+
+	for (ii = 0; ii < tData->triggerWords.size() / 2; ii++) {
 		word1 = tData->triggerWords[ii * 2];
 		word2 = tData->triggerWords[ii * 2 + 1];
-		for (int jj = 0; jj < nTriggersMAX; jj++) {
-			if ((word1 >> jj) & 0x1) {
+		if ((word1 == MAGIC_TRG_WORD) && (word2 == MAGIC_TRG_WORD)) break;
+
+		for (kk = 0; jj < nTriggersMAX; kk++) {
+			if ((word1 >> kk) & 0x1) {
 				nTriggers++;
-				nTriggerSingles[jj]++;
-				trgTimes[jj].push_back(word2);
+				nTriggerSingles[kk]++;
+				trgTimes[kk].push_back(word2);
+			}
+		}
+	}
+	ii++;
+	nwords = tData->triggerWords.size() - ii * 2; //these are the remaining words
+	nwords /= 4; //in blocks of 4-words
+
+	/*Second part: single channel words*/
+	for (jj = 0; jj < nwords; jj++) {
+		word1 = tData->triggerWords[ii * 2 + jj * 4];     //first 32-bits
+		word2 = tData->triggerWords[ii * 2 + jj * 4 + 1];   //second 32-bits
+		word3 = tData->triggerWords[ii * 2 + jj * 4 + 2];  //TIME, LSB
+		word4 = tData->triggerWords[ii * 2 + jj * 4 + 3];  //TIME, MSB
+
+		chanTime = (word4 << 32) + (word3);
+		chanMask = (word2 << 32) + word1;
+		for (int kk = 0; kk < nChansMax; kk++) {
+			if (chanMask & (1 << kk) != 0) {
+				hChannels_ALL->Fill(kk);
+				if ((chanTime >= chanTimeMin) && (chanTime <= chanTimeMax)) {
+					hChannels_TRG->Fill(kk);
+				}
 			}
 		}
 	}
@@ -148,19 +192,16 @@ jerror_t JEventProcessor_Trigger::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	/*Trigger multiplicity*/
 	hTriggerMultiplicity->Fill(nTriggers);
 
-
 	/*Trigger words - trigger times*/
-	for (int jj = 0; jj < nTriggersMAX; jj++){
-		if (nTriggerSingles[jj]>0) hTriggerBits->Fill(jj,nTriggerSingles[jj]);
-		for (int itime=0;itime<trgTimes[jj].size();itime++){
+	for (int jj = 0; jj < nTriggersMAX; jj++) {
+		if (nTriggerSingles[jj] > 0) hTriggerBits->Fill(jj, nTriggerSingles[jj]);
+		for (int itime = 0; itime < trgTimes[jj].size(); itime++) {
 			hTriggerTimes->Fill(trgTimes[jj][itime]);
-			hTriggerTimes2D->Fill(trgTimes[jj][itime],jj);
+			hTriggerTimes2D->Fill(trgTimes[jj][itime], jj);
 		}
 	}
 
-
-
-	app->RootUnLock();
+	japp->RootUnLock();
 	return NOERROR;
 }
 

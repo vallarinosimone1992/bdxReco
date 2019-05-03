@@ -17,6 +17,7 @@ using namespace std;
 #include "Calorimeter/CalorimeterHit.h"
 #include "IntVeto/IntVetoDigiHit.h"
 #include <DAQ/eventData.h>
+#include <BDXmini/triggerDataBDXmini.h>
 
 using namespace jana;
 
@@ -85,8 +86,11 @@ jerror_t BDXMiniCalorimeterEnergyCalibrationHit_factory::init(void) {
 //------------------
 // brun
 //------------------
-jerror_t BDXMiniCalorimeterEnergyCalibrationHit_factory::brun(jana::JEventLoop *eventLoop, uint32_t runnumber) {
-	jout<<"JEventProcessor_BDXMiniCalorimeterEnergyCalibrationHit::brun called"<<endl;
+jerror_t BDXMiniCalorimeterEnergyCalibrationHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber) {
+	jout << "JEventProcessor_BDXMiniCalorimeterEnergyCalibrationHit::brun called" << endl;
+
+
+
 	return NOERROR;
 }
 
@@ -103,6 +107,9 @@ jerror_t BDXMiniCalorimeterEnergyCalibrationHit_factory::evnt(JEventLoop *loop, 
 	vector<const IntVetoDigiHit*> intveto_hits;
 	vector<const IntVetoDigiHit*>::const_iterator intveto_hits_it;
 
+
+	const triggerDataBDXmini* tData;
+
 	int nTopCaps = 0;
 	int nBottomCaps = 0;
 	int iX, iY, sector;
@@ -111,6 +118,8 @@ jerror_t BDXMiniCalorimeterEnergyCalibrationHit_factory::evnt(JEventLoop *loop, 
 
 	double maxComponentQ0L = -999;
 	double maxComponentQ1L = -999;
+
+
 
 	BDXMiniCalorimeterEnergyCalibrationHit *m_CalorimeterCalibHit = 0;
 
@@ -122,19 +131,17 @@ jerror_t BDXMiniCalorimeterEnergyCalibrationHit_factory::evnt(JEventLoop *loop, 
 	}
 
 	loop->Get(calo_hits);
-	const eventData* tData;
 
+	/*The following happens for EPICS events*/
 	if (!m_isMC) {
 		try {
 			loop->GetSingle(tData);
 		} catch (unsigned long e) {
-			jout << "JEventProcessor_Trigger::evnt no eventData bank this event" << std::endl;
 			return OBJECT_NOT_AVAILABLE;
 		}
 	}
 
 	/*Here goes the code to create the objects*/
-
 	for (intveto_hits_it = intveto_hits.begin(); intveto_hits_it != intveto_hits.end(); intveto_hits_it++) {
 		m_IntVetoDigiHit = (*intveto_hits_it);
 		if (m_IntVetoDigiHit->m_channel.component == 10) { //TOP
@@ -180,6 +187,7 @@ jerror_t BDXMiniCalorimeterEnergyCalibrationHit_factory::evnt(JEventLoop *loop, 
 		}
 		if ((sector == 0) && (nTopCaps >= 2) && (std::find(corrTOP[maxComponent1L].begin(), corrTOP[maxComponent1L].end(), std::make_pair(iX, iY)) != corrTOP[maxComponent1L].end())) {
 			m_CalorimeterCalibHit = new BDXMiniCalorimeterEnergyCalibrationHit();
+			m_CalorimeterCalibHit->isTriggerHit = false;
 			m_CalorimeterCalibHit->m_channel = m_CaloHit->m_channel;
 			m_CalorimeterCalibHit->Q = m_CaloHit->Eraw;
 			m_CalorimeterCalibHit->E = m_CaloHit->E;
@@ -188,10 +196,22 @@ jerror_t BDXMiniCalorimeterEnergyCalibrationHit_factory::evnt(JEventLoop *loop, 
 				m_CalorimeterCalibHit->Q /= 1E3;
 			}
 			m_CalorimeterCalibHit->A = m_CaloHit->A;
+
+			/*Check the channel bit*/
+			if (!m_isMC) {
+				if (tData->hasChannelTRG(this->getCrystalChanBit(0, iX, iY))) m_CalorimeterCalibHit->isTriggerHit = true;
+			}
+
+
+
+
+
+
 
 			_data.push_back(m_CalorimeterCalibHit);
 		} else if ((sector == 1) && (nBottomCaps >= 2) && (std::find(corrBOTTOM[maxComponent1L].begin(), corrBOTTOM[maxComponent1L].end(), std::make_pair(iX, iY)) != corrBOTTOM[maxComponent1L].end())) {
 			m_CalorimeterCalibHit = new BDXMiniCalorimeterEnergyCalibrationHit();
+			m_CalorimeterCalibHit->isTriggerHit = false;
 			m_CalorimeterCalibHit->m_channel = m_CaloHit->m_channel;
 			m_CalorimeterCalibHit->Q = m_CaloHit->Eraw;
 			m_CalorimeterCalibHit->E = m_CaloHit->E;
@@ -200,6 +220,11 @@ jerror_t BDXMiniCalorimeterEnergyCalibrationHit_factory::evnt(JEventLoop *loop, 
 				m_CalorimeterCalibHit->Q /= 1E3;
 			}
 			m_CalorimeterCalibHit->A = m_CaloHit->A;
+
+			/*Check the channel bit*/
+			if (!m_isMC) {
+				if (tData->hasChannelTRG(this->getCrystalChanBit(1, iX, iY))) m_CalorimeterCalibHit->isTriggerHit = true;
+			}
 
 			_data.push_back(m_CalorimeterCalibHit);
 		}
@@ -219,7 +244,83 @@ jerror_t BDXMiniCalorimeterEnergyCalibrationHit_factory::erun(void) {
 // fini
 //------------------
 jerror_t BDXMiniCalorimeterEnergyCalibrationHit_factory::fini(void) {
-
 	return NOERROR;
 }
 
+int BDXMiniCalorimeterEnergyCalibrationHit_factory::getCrystalChanBit(int sector, int ix, int iy) {
+
+	/*I am hard-coding the map here - since from TT it is not trivial to get the
+	 * CrateSlotChannel from sector,iX,iY
+	 */
+	if (bitTOP.size() == 0) {
+		bitTOP[make_pair(-2, -2)] = 20;
+		bitTOP[make_pair(-1, -2)] = 21;
+		bitTOP[make_pair(0, -2)] = 22;
+		bitTOP[make_pair(1, -2)] = 23;
+		bitTOP[make_pair(2, -2)] = 24;
+		bitTOP[make_pair(0, -1)] = 25;
+		bitTOP[make_pair(-2, 0)] = 26;
+		bitTOP[make_pair(-1, 0)] = 27;
+		bitTOP[make_pair(0, 0)] = 28;
+		bitTOP[make_pair(1, 0)] = 29;
+		bitTOP[make_pair(2, 0)] = 30;
+		bitTOP[make_pair(-2, 1)] = 31;
+		bitTOP[make_pair(-1, 1)] = 32;
+		bitTOP[make_pair(0, 1)] = 33;
+		bitTOP[make_pair(1, 1)] = 34;
+		bitTOP[make_pair(2, 1)] = 35;
+		bitTOP[make_pair(-2, 2)] = 36;
+		bitTOP[make_pair(-1, 2)] = 37;
+		bitTOP[make_pair(1, 2)] = 38;
+		bitTOP[make_pair(2, 2)] = 39;
+		bitTOP[make_pair(-1, 3)] = 40;
+		bitTOP[make_pair(1, 3)] = 41;
+	}
+	if (bitBOTTOM.size() == 0) {
+		bitBOTTOM[make_pair(-2, -2)] = 42;
+		bitBOTTOM[make_pair(-1, -2)] = 43;
+		bitBOTTOM[make_pair(0, -2)] = 44;
+		bitBOTTOM[make_pair(1, -2)] = 45;
+		bitBOTTOM[make_pair(2, -2)] = 46;
+		bitBOTTOM[make_pair(0, -1)] = 47;
+		bitBOTTOM[make_pair(-2, 0)] = 48;
+		bitBOTTOM[make_pair(-1, 0)] = 49;
+		bitBOTTOM[make_pair(0, 0)] = 50;
+		bitBOTTOM[make_pair(1, 0)] = 51;
+		bitBOTTOM[make_pair(2, 0)] = 52;
+		bitBOTTOM[make_pair(-2, 1)] = 53;
+		bitBOTTOM[make_pair(-1, 1)] = 54;
+		bitBOTTOM[make_pair(0, 1)] = 55;
+		bitBOTTOM[make_pair(1, 1)] = 56;
+		bitBOTTOM[make_pair(2, 1)] = 57;
+		bitBOTTOM[make_pair(-2, 2)] = 58;
+		bitBOTTOM[make_pair(-1, 2)] = 59;
+		bitBOTTOM[make_pair(1, 2)] = 60;
+		bitBOTTOM[make_pair(2, 2)] = 61;
+		bitBOTTOM[make_pair(-1, 3)] = 62;
+		bitBOTTOM[make_pair(1, 3)] = 63;
+	}
+
+	if ((sector < 0) || (sector > 1)) {
+		cout << "BDXMiniCalorimeterEnergyCalibrationHit_factory::getCrystalChanBit sector error" << endl;
+		return 0;
+	}
+
+	std::map<std::pair<int, int>, int>::iterator it;
+
+	if (sector == 0) {
+		it = bitTOP.find(make_pair(ix, iy));
+		if (it == bitTOP.end()) {
+			cout << "BDXMiniCalorimeterEnergyCalibrationHit_factory::getCrystalChanBit TOP not found " << ix << " " << iy << endl;
+		} else
+			return it->second;
+	} else if (sector == 1) {
+		it = bitBOTTOM.find(make_pair(ix, iy));
+		if (it == bitBOTTOM.end()) {
+			cout << "BDXMiniCalorimeterEnergyCalibrationHit_factory::getCrystalChanBit BOTTOM not found " << ix << " " << iy << endl;
+		} else
+			return it->second;
+	}
+
+	return NOERROR;
+}
