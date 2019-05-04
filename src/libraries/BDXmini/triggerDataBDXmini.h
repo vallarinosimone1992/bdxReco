@@ -56,6 +56,8 @@ class triggerDataBDXmini:public jana::JObject{
 		void setChannelTRG(int ich);
 		void unsetChannel(int ich);
 		void unsetChannelTRG(int ich);
+
+		ClassDef(triggerDataBDXmini,1);
 };
 
 #endif // _triggerData_
