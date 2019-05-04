@@ -35,7 +35,7 @@ class triggerDataBDXmini:public jana::JObject{
 		static const int nChansMAX = 64;
 
 		unsigned int nTriggers;
-		vector<int> trgTimes[nTriggersMAX];
+		vector<vector <int>> trgTimes;
 
 		unsigned int getNTriggers() const;
 		void setNTriggers(unsigned int n);

@@ -9,6 +9,8 @@ triggerDataBDXmini::triggerDataBDXmini() {
 		channels[ii] = false;
 		channelsTRG[ii] = false;
 	}
+	trgTimes.resize(nTriggersMAX);
+
 }
 
 unsigned int triggerDataBDXmini::getNTriggers() const {
