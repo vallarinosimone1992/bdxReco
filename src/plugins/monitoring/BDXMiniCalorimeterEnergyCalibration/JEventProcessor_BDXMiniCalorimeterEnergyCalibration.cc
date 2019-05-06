@@ -269,14 +269,14 @@ jerror_t JEventProcessor_BDXMiniCalorimeterEnergyCalibration::evnt(JEventLoop *l
 		if (sector == 0) {
 			hBDXMiniCalorimeterEnergyCalibrationTOP[id]->Fill(m_CaloTrgHit->Q);
 			hBDXMiniCalorimeterEnergyCalibrationTOPene[id]->Fill(m_CaloTrgHit->E);
-			if (m_CaloTrgHit->isTriggerHit){
+			if (m_CaloTrgHit->isTriggerHit) {
 				hBDXMiniCalorimeterEnergyCalibrationTOP_thr[id]->Fill(m_CaloTrgHit->Q);
 				hBDXMiniCalorimeterEnergyCalibrationTOPene_thr[id]->Fill(m_CaloTrgHit->E);
 			}
 		} else if (sector == 1) {
 			hBDXMiniCalorimeterEnergyCalibrationBOTTOM[id]->Fill(m_CaloTrgHit->Q);
 			hBDXMiniCalorimeterEnergyCalibrationBOTTOMene[id]->Fill(m_CaloTrgHit->E);
-			if (m_CaloTrgHit->isTriggerHit){
+			if (m_CaloTrgHit->isTriggerHit) {
 				hBDXMiniCalorimeterEnergyCalibrationBOTTOM_thr[id]->Fill(m_CaloTrgHit->Q);
 				hBDXMiniCalorimeterEnergyCalibrationBOTTOMene_thr[id]->Fill(m_CaloTrgHit->E);
 			}
@@ -300,6 +300,10 @@ jerror_t JEventProcessor_BDXMiniCalorimeterEnergyCalibration::erun(void) {
 		for (int ii = 0; ii < nTOT; ii++) {
 			m_ROOTOutput->AddObject(hBDXMiniCalorimeterEnergyCalibrationTOP[ii]);
 			m_ROOTOutput->AddObject(hBDXMiniCalorimeterEnergyCalibrationBOTTOM[ii]);
+		}
+		for (int ii = 0; ii < nTOT; ii++) {
+			m_ROOTOutput->AddObject(hBDXMiniCalorimeterEnergyCalibrationTOP_thr[ii]);
+			m_ROOTOutput->AddObject(hBDXMiniCalorimeterEnergyCalibrationBOTTOM_thr[ii]);
 		}
 		for (int ii = 0; ii < nTOT; ii++) {
 			m_ROOTOutput->AddObject(hBDXMiniCalorimeterEnergyCalibrationTOPene[ii]);
