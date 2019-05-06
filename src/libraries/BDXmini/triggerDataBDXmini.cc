@@ -92,3 +92,20 @@ void triggerDataBDXmini::unsetChannelTRG(int ich) {
 	}
 	channelsTRG[ich] = false;
 }
+
+unsigned long int triggerDataBDXmini::getLongWordChannels() const{
+	unsigned long int ret = 0;
+	for (int ii = 0; ii < nChansMAX; ii++) {
+		if (channels[ii] == true) ret=ret|(unsigned long int)(((unsigned long int)0x1) << ii);
+	}
+	return ret;
+}
+
+unsigned long int triggerDataBDXmini::getLongWordChannelsTRG() const{
+	unsigned long int ret = 0;
+	for (int ii = 0; ii < nChansMAX; ii++) {
+		if (channelsTRG[ii] == true) ret=ret|(unsigned long int)(((unsigned long int)0x1) << ii);
+	}
+	return ret;
+}
+

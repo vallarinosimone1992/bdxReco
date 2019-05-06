@@ -11,53 +11,55 @@
 #include <JANA/JObject.h>
 #include <JANA/JFactory.h>
 
-class triggerDataBDXmini:public jana::JObject{
-	public:
-		JOBJECT_PUBLIC(triggerDataBDXmini);
-		
-		// Add data members here. For example:
-		// int id;
-		// double E;
-		
-		// This method is used primarily for pretty printing
-		// the second argument to AddString is printf style format
-		void toStrings(vector<pair<string,string> > &items)const{
-			// AddString(items, "id", "%4d", id);
-			// AddString(items, "E", "%f", E);
-		}
-		
+class triggerDataBDXmini: public jana::JObject {
+public:
+	JOBJECT_PUBLIC(triggerDataBDXmini)
+	;
 
-		triggerDataBDXmini();
+	// Add data members here. For example:
+	// int id;
+	// double E;
 
-		vector<unsigned int> rawWords;
+	triggerDataBDXmini();
 
-		static const int nTriggersMAX = 32;
-		static const int nChansMAX = 64;
+	vector<unsigned int> rawWords;
 
-		unsigned int nTriggers;
-		vector<vector <int>> trgTimes;
+	static const int nTriggersMAX = 32;
+	static const int nChansMAX = 64;
 
-		unsigned int getNTriggers() const;
-		void setNTriggers(unsigned int n);
-		unsigned int getNtriggers_single(int itrg) const;
+	unsigned int nTriggers;
+	vector<vector<int>> trgTimes;
 
+	unsigned int getNTriggers() const;
+	void setNTriggers(unsigned int n);
+	unsigned int getNtriggers_single(int itrg) const;
 
-		void addTriggerTime_single(int itrg,int data);
-		int getTriggerTime_single(int itrg,int n) const;
+	void addTriggerTime_single(int itrg, int data);
+	int getTriggerTime_single(int itrg, int n) const;
 
+	bool channels[nChansMAX];
+	bool channelsTRG[nChansMAX];
 
-		bool channels[nChansMAX];
-		bool channelsTRG[nChansMAX];
+	bool hasChannel(int ich) const;
+	bool hasChannelTRG(int ich) const;
 
-		bool hasChannel(int ich) const;
-		bool hasChannelTRG(int ich) const;
+	void setChannel(int ich);
+	void setChannelTRG(int ich);
+	void unsetChannel(int ich);
+	void unsetChannelTRG(int ich);
 
-		void setChannel(int ich);
-		void setChannelTRG(int ich);
-		void unsetChannel(int ich);
-		void unsetChannelTRG(int ich);
+	unsigned long int getLongWordChannels() const;
+	unsigned long int getLongWordChannelsTRG() const;
 
-		ClassDef(triggerDataBDXmini,1);
+	// This method is used primarily for pretty printing
+	// the second argument to AddString is printf style format
+	void toStrings(vector<pair<string, string> > &items) const {
+		AddString(items, "chan", "0x%lx", getLongWordChannels());
+		AddString(items, "chanTRG", "0x%lx", getLongWordChannelsTRG());
+	}
+
+	ClassDef(triggerDataBDXmini,1)
+	;
 };
 
 #endif // _triggerData_

@@ -93,7 +93,6 @@ jerror_t triggerDataBDXmini_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 	ii++;
 	nwords = tData->triggerWords.size() - ii * 2; //these are the remaining words
 	nwords /= 4; //in blocks of 4-words
-
 	/*Second part: single channel words*/
 	for (jj = 0; jj < nwords; jj++) {
 		word1 = tData->triggerWords[ii * 2 + jj * 4];     //first 32-bits
@@ -101,8 +100,8 @@ jerror_t triggerDataBDXmini_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 		word3 = tData->triggerWords[ii * 2 + jj * 4 + 2];  //TIME, LSB
 		word4 = tData->triggerWords[ii * 2 + jj * 4 + 3];  //TIME, MSB
 
-		chanTime = (word4 << 32) + (word3);
-		chanMask = (word2 << 32) + word1;
+		chanTime = ((unsigned long int)word4 << 32) + ((unsigned long int)word3);
+		chanMask = ((unsigned long int)word2 << 32) + ((unsigned long int)word1);
 
 
 		for (int kk = 0; kk < nChansMAX; kk++) {
@@ -111,7 +110,6 @@ jerror_t triggerDataBDXmini_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 				channels[kk] = true;
 				if ((chanTime >= m_chanTimeMin) && (chanTime <= m_chanTimeMax)) {
 					channelsTRG[kk] = true;
-
 				}
 			}
 		}
@@ -129,10 +127,11 @@ jerror_t triggerDataBDXmini_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 			m_triggerDataBDXmini->addTriggerTime_single(ii, trgTimes[ii][kk]);
 		}
 	}
-
 	for (int ii = 0; ii < nChansMAX; ii++) {
 		if (channels[ii]) m_triggerDataBDXmini->setChannel(ii);
-		if (channelsTRG[ii]) m_triggerDataBDXmini->setChannelTRG(ii);
+		if (channelsTRG[ii]){
+			m_triggerDataBDXmini->setChannelTRG(ii);
+		}
 	}
 
 	_data.push_back(m_triggerDataBDXmini);
