@@ -27,6 +27,10 @@ static const int nTOT = 22;
 static TH1D *hBDXMiniCalorimeterEnergyCalibrationTOP[nTOT] = { 0 };
 static TH1D *hBDXMiniCalorimeterEnergyCalibrationBOTTOM[nTOT] = { 0 };
 
+//Charge - with thr
+static TH1D *hBDXMiniCalorimeterEnergyCalibrationTOP_thr[nTOT] = { 0 };
+static TH1D *hBDXMiniCalorimeterEnergyCalibrationBOTTOM_thr[nTOT] = { 0 };
+
 //Energy
 static TH1D *hBDXMiniCalorimeterEnergyCalibrationTOPene[nTOT] = { 0 };
 static TH1D *hBDXMiniCalorimeterEnergyCalibrationBOTTOMene[nTOT] = { 0 };
@@ -144,6 +148,12 @@ jerror_t JEventProcessor_BDXMiniCalorimeterEnergyCalibration::init(void) {
 		hBDXMiniCalorimeterEnergyCalibrationBOTTOM[id] = new TH1D(Form("hBDXMiniCalib_s1_x%i_y%i", iX, iY), Form("hBDXMiniCalib_s1_x%i_y%i", iX, iY), NQ, Qmin, Qmax);
 		hBDXMiniCalorimeterEnergyCalibrationBOTTOM[id]->GetXaxis()->SetTitle("Q");
 
+		hBDXMiniCalorimeterEnergyCalibrationTOP_thr[id] = new TH1D(Form("hBDXMiniCalib_thr_s0_x%i_y%i", iX, iY), Form("hBDXMiniCalib_thr_s0_x%i_y%i", iX, iY), NQ, Qmin, Qmax);
+		hBDXMiniCalorimeterEnergyCalibrationTOP_thr[id]->GetXaxis()->SetTitle("Q");
+
+		hBDXMiniCalorimeterEnergyCalibrationBOTTOM_thr[id] = new TH1D(Form("hBDXMiniCalib_thr_s1_x%i_y%i", iX, iY), Form("hBDXMiniCalib_thr_s1_x%i_y%i", iX, iY), NQ, Qmin, Qmax);
+		hBDXMiniCalorimeterEnergyCalibrationBOTTOM_thr[id]->GetXaxis()->SetTitle("Q");
+
 		hBDXMiniCalorimeterEnergyCalibrationTOPene[id] = new TH1D(Form("hBDXMiniCalibE_s0_x%i_y%i", iX, iY), Form("hBDXMiniCalibE_s0_x%i_y%i", iX, iY), NE, Emin, Emax);
 		hBDXMiniCalorimeterEnergyCalibrationTOPene[id]->GetXaxis()->SetTitle("E");
 
@@ -259,11 +269,17 @@ jerror_t JEventProcessor_BDXMiniCalorimeterEnergyCalibration::evnt(JEventLoop *l
 		if (sector == 0) {
 			hBDXMiniCalorimeterEnergyCalibrationTOP[id]->Fill(m_CaloTrgHit->Q);
 			hBDXMiniCalorimeterEnergyCalibrationTOPene[id]->Fill(m_CaloTrgHit->E);
-			if (m_CaloTrgHit->isTriggerHit) hBDXMiniCalorimeterEnergyCalibrationTOPene_thr[id]->Fill(m_CaloTrgHit->E);
+			if (m_CaloTrgHit->isTriggerHit){
+				hBDXMiniCalorimeterEnergyCalibrationTOP_thr[id]->Fill(m_CaloTrgHit->Q);
+				hBDXMiniCalorimeterEnergyCalibrationTOPene_thr[id]->Fill(m_CaloTrgHit->E);
+			}
 		} else if (sector == 1) {
 			hBDXMiniCalorimeterEnergyCalibrationBOTTOM[id]->Fill(m_CaloTrgHit->Q);
 			hBDXMiniCalorimeterEnergyCalibrationBOTTOMene[id]->Fill(m_CaloTrgHit->E);
-			if (m_CaloTrgHit->isTriggerHit) hBDXMiniCalorimeterEnergyCalibrationBOTTOMene_thr[id]->Fill(m_CaloTrgHit->E);
+			if (m_CaloTrgHit->isTriggerHit){
+				hBDXMiniCalorimeterEnergyCalibrationBOTTOM_thr[id]->Fill(m_CaloTrgHit->Q);
+				hBDXMiniCalorimeterEnergyCalibrationBOTTOMene_thr[id]->Fill(m_CaloTrgHit->E);
+			}
 		}
 		japp->RootUnLock();
 	}
