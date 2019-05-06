@@ -142,16 +142,16 @@ jerror_t JEventProcessor_BDXMiniCalorimeterEnergyCalibration::init(void) {
 
 		id = id - 1;
 
-		hBDXMiniCalorimeterEnergyCalibrationTOP[id] = new TH1D(Form("hBDXMiniCalib_s0_x%i_y%i", iX, iY), Form("hBDXMiniCalib_s0_x%i_y%i", iX, iY), NQ, Qmin, Qmax);
+		hBDXMiniCalorimeterEnergyCalibrationTOP[id] = new TH1D(Form("hBDXMiniCalibQ_s0_x%i_y%i", iX, iY), Form("hBDXMiniCalibQ_s0_x%i_y%i", iX, iY), NQ, Qmin, Qmax);
 		hBDXMiniCalorimeterEnergyCalibrationTOP[id]->GetXaxis()->SetTitle("Q");
 
-		hBDXMiniCalorimeterEnergyCalibrationBOTTOM[id] = new TH1D(Form("hBDXMiniCalib_s1_x%i_y%i", iX, iY), Form("hBDXMiniCalib_s1_x%i_y%i", iX, iY), NQ, Qmin, Qmax);
+		hBDXMiniCalorimeterEnergyCalibrationBOTTOM[id] = new TH1D(Form("hBDXMiniCalibQ_s1_x%i_y%i", iX, iY), Form("hBDXMiniCalibQ_s1_x%i_y%i", iX, iY), NQ, Qmin, Qmax);
 		hBDXMiniCalorimeterEnergyCalibrationBOTTOM[id]->GetXaxis()->SetTitle("Q");
 
-		hBDXMiniCalorimeterEnergyCalibrationTOP_thr[id] = new TH1D(Form("hBDXMiniCalib_thr_s0_x%i_y%i", iX, iY), Form("hBDXMiniCalib_thr_s0_x%i_y%i", iX, iY), NQ, Qmin, Qmax);
+		hBDXMiniCalorimeterEnergyCalibrationTOP_thr[id] = new TH1D(Form("hBDXMiniCalibQ_thr_s0_x%i_y%i", iX, iY), Form("hBDXMiniCalibQ_thr_s0_x%i_y%i", iX, iY), NQ, Qmin, Qmax);
 		hBDXMiniCalorimeterEnergyCalibrationTOP_thr[id]->GetXaxis()->SetTitle("Q");
 
-		hBDXMiniCalorimeterEnergyCalibrationBOTTOM_thr[id] = new TH1D(Form("hBDXMiniCalib_thr_s1_x%i_y%i", iX, iY), Form("hBDXMiniCalib_thr_s1_x%i_y%i", iX, iY), NQ, Qmin, Qmax);
+		hBDXMiniCalorimeterEnergyCalibrationBOTTOM_thr[id] = new TH1D(Form("hBDXMiniCalibQ_thr_s1_x%i_y%i", iX, iY), Form("hBDXMiniCalibQ_thr_s1_x%i_y%i", iX, iY), NQ, Qmin, Qmax);
 		hBDXMiniCalorimeterEnergyCalibrationBOTTOM_thr[id]->GetXaxis()->SetTitle("Q");
 
 		hBDXMiniCalorimeterEnergyCalibrationTOPene[id] = new TH1D(Form("hBDXMiniCalibE_s0_x%i_y%i", iX, iY), Form("hBDXMiniCalibE_s0_x%i_y%i", iX, iY), NE, Emin, Emax);

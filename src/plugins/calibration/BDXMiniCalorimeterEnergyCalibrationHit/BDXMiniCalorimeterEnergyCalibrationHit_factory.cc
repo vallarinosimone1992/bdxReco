@@ -89,8 +89,6 @@ jerror_t BDXMiniCalorimeterEnergyCalibrationHit_factory::init(void) {
 jerror_t BDXMiniCalorimeterEnergyCalibrationHit_factory::brun(jana::JEventLoop *eventLoop, int32_t runnumber) {
 	jout << "JEventProcessor_BDXMiniCalorimeterEnergyCalibrationHit::brun called" << endl;
 
-
-
 	return NOERROR;
 }
 
@@ -107,7 +105,7 @@ jerror_t BDXMiniCalorimeterEnergyCalibrationHit_factory::evnt(JEventLoop *loop, 
 	vector<const IntVetoDigiHit*> intveto_hits;
 	vector<const IntVetoDigiHit*>::const_iterator intveto_hits_it;
 
-
+	const eventData* eData;
 	const triggerDataBDXmini* tData;
 
 	int nTopCaps = 0;
@@ -118,8 +116,6 @@ jerror_t BDXMiniCalorimeterEnergyCalibrationHit_factory::evnt(JEventLoop *loop, 
 
 	double maxComponentQ0L = -999;
 	double maxComponentQ1L = -999;
-
-
 
 	BDXMiniCalorimeterEnergyCalibrationHit *m_CalorimeterCalibHit = 0;
 
@@ -136,6 +132,12 @@ jerror_t BDXMiniCalorimeterEnergyCalibrationHit_factory::evnt(JEventLoop *loop, 
 	if (!m_isMC) {
 		try {
 			loop->GetSingle(tData);
+		} catch (unsigned long e) {
+			return OBJECT_NOT_AVAILABLE;
+		}
+
+		try {
+			loop->GetSingle(eData);
 		} catch (unsigned long e) {
 			return OBJECT_NOT_AVAILABLE;
 		}
@@ -200,13 +202,12 @@ jerror_t BDXMiniCalorimeterEnergyCalibrationHit_factory::evnt(JEventLoop *loop, 
 			/*Check the channel bit*/
 			if (!m_isMC) {
 				if (tData->hasChannelTRG(this->getCrystalChanBit(0, iX, iY))) m_CalorimeterCalibHit->isTriggerHit = true;
+				else {
+					if (m_CalorimeterCalibHit->E > 30) {
+						jout << "MISSING-T!! " << iX << " " << iY << " " << m_CalorimeterCalibHit->E << " " << eData->eventN << endl;
+					}
+				}
 			}
-
-
-
-
-
-
 
 			_data.push_back(m_CalorimeterCalibHit);
 		} else if ((sector == 1) && (nBottomCaps >= 2) && (std::find(corrBOTTOM[maxComponent1L].begin(), corrBOTTOM[maxComponent1L].end(), std::make_pair(iX, iY)) != corrBOTTOM[maxComponent1L].end())) {
@@ -224,6 +225,7 @@ jerror_t BDXMiniCalorimeterEnergyCalibrationHit_factory::evnt(JEventLoop *loop, 
 			/*Check the channel bit*/
 			if (!m_isMC) {
 				if (tData->hasChannelTRG(this->getCrystalChanBit(1, iX, iY))) m_CalorimeterCalibHit->isTriggerHit = true;
+
 			}
 
 			_data.push_back(m_CalorimeterCalibHit);

@@ -93,6 +93,7 @@ jerror_t triggerDataBDXmini_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 	ii++;
 	nwords = tData->triggerWords.size() - ii * 2; //these are the remaining words
 	nwords /= 4; //in blocks of 4-words
+
 	/*Second part: single channel words*/
 	for (jj = 0; jj < nwords; jj++) {
 		word1 = tData->triggerWords[ii * 2 + jj * 4];     //first 32-bits
@@ -110,6 +111,7 @@ jerror_t triggerDataBDXmini_factory::evnt(JEventLoop *loop, uint64_t eventnumber
 				channels[kk] = true;
 				if ((chanTime >= m_chanTimeMin) && (chanTime <= m_chanTimeMax)) {
 					channelsTRG[kk] = true;
+
 				}
 			}
 		}
