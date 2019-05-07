@@ -203,9 +203,9 @@ jerror_t BDXMiniCalorimeterEnergyCalibrationHit_factory::evnt(JEventLoop *loop, 
 			if (!m_isMC) {
 				if (tData->hasChannelTRG(this->getCrystalChanBit(0, iX, iY))) m_CalorimeterCalibHit->isTriggerHit = true;
 				else {
-					if (m_CalorimeterCalibHit->E > 30) {
-						jout << "MISSING-T!! " << iX << " " << iY << " " << m_CalorimeterCalibHit->E << " " << eData->eventN << endl;
-					}
+					//if (m_CalorimeterCalibHit->E > 30) {
+					//	jout << "MISSING-T!! " << iX << " " << iY << " " << m_CalorimeterCalibHit->E << " " << eData->eventN << endl;
+					//}
 				}
 			}
 

@@ -23,6 +23,14 @@ using namespace std;
 /*Here goes the histograms*/
 static const int nTOT = 22;
 
+//Amplitude
+static TH1D *hBDXMiniCalorimeterEnergyCalibrationTOPampl[nTOT] = { 0 };
+static TH1D *hBDXMiniCalorimeterEnergyCalibrationBOTTOMampl[nTOT] = { 0 };
+
+//Amplitude - with thr
+static TH1D *hBDXMiniCalorimeterEnergyCalibrationTOPampl_thr[nTOT] = { 0 };
+static TH1D *hBDXMiniCalorimeterEnergyCalibrationBOTTOMampl_thr[nTOT] = { 0 };
+
 //Charge
 static TH1D *hBDXMiniCalorimeterEnergyCalibrationTOP[nTOT] = { 0 };
 static TH1D *hBDXMiniCalorimeterEnergyCalibrationBOTTOM[nTOT] = { 0 };
@@ -116,8 +124,8 @@ jerror_t JEventProcessor_BDXMiniCalorimeterEnergyCalibration::init(void) {
 	map<pair<int, int>, int>::iterator geometry_it;
 	int iX, iY, id;
 
-	double Qmin, Qmax, Emin, Emax;
-	int NQ, NE;
+	double Qmin, Qmax, Emin, Emax, Amin, Amax;
+	int NQ, NE, NA;
 
 	if (m_isMC) {
 		Qmin = -5;
@@ -132,6 +140,10 @@ jerror_t JEventProcessor_BDXMiniCalorimeterEnergyCalibration::init(void) {
 	NE = 500;
 	Emin = 0;
 	Emax = 200;
+
+	NA = 500;
+	Amin = 0;
+	Amax = 1000;
 
 	for (geometry_it = geometry.begin(); geometry_it != geometry.end(); geometry_it++) {
 		//Do whatever you want. To access the first part of pair(pair is the key of the map here) you should write
@@ -165,6 +177,18 @@ jerror_t JEventProcessor_BDXMiniCalorimeterEnergyCalibration::init(void) {
 
 		hBDXMiniCalorimeterEnergyCalibrationBOTTOMene_thr[id] = new TH1D(Form("hBDXMiniCalibE_thr_s1_x%i_y%i", iX, iY), Form("hBDXMiniCalibE_thr_s1_x%i_y%i", iX, iY), NE, Emin, Emax);
 		hBDXMiniCalorimeterEnergyCalibrationBOTTOMene_thr[id]->GetXaxis()->SetTitle("E");
+
+		hBDXMiniCalorimeterEnergyCalibrationTOPampl[id] = new TH1D(Form("hBDXMiniCalibA_s0_x%i_y%i", iX, iY), Form("hBDXMiniCalibA_s0_x%i_y%i", iX, iY), NA, Amin, Amax);
+		hBDXMiniCalorimeterEnergyCalibrationTOPampl[id]->GetXaxis()->SetTitle("A");
+
+		hBDXMiniCalorimeterEnergyCalibrationBOTTOMampl[id] = new TH1D(Form("hBDXMiniCalibA_s1_x%i_y%i", iX, iY), Form("hBDXMiniCalibA_s1_x%i_y%i", iX, iY), NA, Amin, Amax);
+		hBDXMiniCalorimeterEnergyCalibrationBOTTOMampl[id]->GetXaxis()->SetTitle("A");
+
+		hBDXMiniCalorimeterEnergyCalibrationTOPampl_thr[id] = new TH1D(Form("hBDXMiniCalibA_thr_s0_x%i_y%i", iX, iY), Form("hBDXMiniCalibA_thr_s0_x%i_y%i", iX, iY), NA, Amin, Amax);
+		hBDXMiniCalorimeterEnergyCalibrationTOPampl_thr[id]->GetXaxis()->SetTitle("A");
+
+		hBDXMiniCalorimeterEnergyCalibrationBOTTOMampl_thr[id] = new TH1D(Form("hBDXMiniCalibA_thr_s1_x%i_y%i", iX, iY), Form("hBDXMiniCalibA_thr_s1_x%i_y%i", iX, iY), NA, Amin, Amax);
+		hBDXMiniCalorimeterEnergyCalibrationBOTTOMampl_thr[id]->GetXaxis()->SetTitle("A");
 
 	}
 
@@ -269,16 +293,20 @@ jerror_t JEventProcessor_BDXMiniCalorimeterEnergyCalibration::evnt(JEventLoop *l
 		if (sector == 0) {
 			hBDXMiniCalorimeterEnergyCalibrationTOP[id]->Fill(m_CaloTrgHit->Q);
 			hBDXMiniCalorimeterEnergyCalibrationTOPene[id]->Fill(m_CaloTrgHit->E);
+			hBDXMiniCalorimeterEnergyCalibrationTOPampl[id]->Fill(m_CaloTrgHit->A);
 			if (m_CaloTrgHit->isTriggerHit) {
 				hBDXMiniCalorimeterEnergyCalibrationTOP_thr[id]->Fill(m_CaloTrgHit->Q);
 				hBDXMiniCalorimeterEnergyCalibrationTOPene_thr[id]->Fill(m_CaloTrgHit->E);
+				hBDXMiniCalorimeterEnergyCalibrationTOPampl_thr[id]->Fill(m_CaloTrgHit->A);
 			}
 		} else if (sector == 1) {
 			hBDXMiniCalorimeterEnergyCalibrationBOTTOM[id]->Fill(m_CaloTrgHit->Q);
 			hBDXMiniCalorimeterEnergyCalibrationBOTTOMene[id]->Fill(m_CaloTrgHit->E);
+			hBDXMiniCalorimeterEnergyCalibrationBOTTOMampl[id]->Fill(m_CaloTrgHit->A);
 			if (m_CaloTrgHit->isTriggerHit) {
 				hBDXMiniCalorimeterEnergyCalibrationBOTTOM_thr[id]->Fill(m_CaloTrgHit->Q);
 				hBDXMiniCalorimeterEnergyCalibrationBOTTOMene_thr[id]->Fill(m_CaloTrgHit->E);
+				hBDXMiniCalorimeterEnergyCalibrationBOTTOMampl_thr[id]->Fill(m_CaloTrgHit->A);
 			}
 		}
 		japp->RootUnLock();
@@ -305,6 +333,16 @@ jerror_t JEventProcessor_BDXMiniCalorimeterEnergyCalibration::erun(void) {
 			m_ROOTOutput->AddObject(hBDXMiniCalorimeterEnergyCalibrationTOP_thr[ii]);
 			m_ROOTOutput->AddObject(hBDXMiniCalorimeterEnergyCalibrationBOTTOM_thr[ii]);
 		}
+
+		for (int ii = 0; ii < nTOT; ii++) {
+			m_ROOTOutput->AddObject(hBDXMiniCalorimeterEnergyCalibrationTOPampl[ii]);
+			m_ROOTOutput->AddObject(hBDXMiniCalorimeterEnergyCalibrationBOTTOMampl[ii]);
+		}
+		for (int ii = 0; ii < nTOT; ii++) {
+			m_ROOTOutput->AddObject(hBDXMiniCalorimeterEnergyCalibrationTOPampl_thr[ii]);
+			m_ROOTOutput->AddObject(hBDXMiniCalorimeterEnergyCalibrationBOTTOMampl_thr[ii]);
+		}
+
 		for (int ii = 0; ii < nTOT; ii++) {
 			m_ROOTOutput->AddObject(hBDXMiniCalorimeterEnergyCalibrationTOPene[ii]);
 			m_ROOTOutput->AddObject(hBDXMiniCalorimeterEnergyCalibrationBOTTOMene[ii]);
