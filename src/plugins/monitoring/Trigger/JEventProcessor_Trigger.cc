@@ -68,7 +68,7 @@ jerror_t JEventProcessor_Trigger::init(void) {
 	// japp->RootUnLock();
 	//
 
-	chanTimeMin = 4 * 4; //in 25 ns units
+	chanTimeMin = -4 * 4; //in 25 ns units
 	chanTimeMax = 4 * 4; //in 25 ns units
 
 	japp->RootWriteLock();
@@ -155,7 +155,7 @@ jerror_t JEventProcessor_Trigger::evnt(JEventLoop *loop, uint64_t eventnumber) {
 		word2 = tData->triggerWords[ii * 2 + 1];
 		if ((word1 == MAGIC_TRG_WORD) && (word2 == MAGIC_TRG_WORD)) break;
 
-		for (kk = 0; jj < nTriggersMAX; kk++) {
+		for (kk = 0; kk < nTriggersMAX; kk++) {
 			if ((word1 >> kk) & 0x1) {
 				nTriggers++;
 				nTriggerSingles[kk]++;
