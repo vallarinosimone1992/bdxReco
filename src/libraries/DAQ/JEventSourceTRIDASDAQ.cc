@@ -142,10 +142,10 @@ jerror_t JEventSourceTRIDASDAQ::GetObjects(JEvent & event, JFactory_base * facto
 
 		this_eventData->triggerWords.push_back(Event<sample::uncompressed>::max_plugins_number); //currently 8
 		for (int ii = 0; ii < Event<sample::uncompressed>::max_plugins_number; ii++) {
-			this_eventData->triggerWords.push_back(ptEvent_pointer->plugin_trigtype(ii));
+			this_eventData->triggerWords.push_back(ptEvent_pointer->plugin_nseeds(ii));
 		}
 		for (int ii = 0; ii < Event<sample::uncompressed>::max_plugins_number; ii++) {
-			this_eventData->triggerWords.push_back(ptEvent_pointer->plugin_nseeds(ii));
+			this_eventData->triggerWords.push_back(ptEvent_pointer->plugin_trigtype(ii));
 		}
 
 		data.push_back(this_eventData);
