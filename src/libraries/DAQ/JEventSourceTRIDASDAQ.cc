@@ -78,7 +78,6 @@ jerror_t JEventSourceTRIDASDAQ::GetEvent(JEvent &event) {
 		event.SetEventNumber(ptEvent->id());
 		event.SetEventTS(ptTimeSlice->id());
 
-
 		curRunNumber = ptReader->runNumber();
 		fflush(stdout);
 		if (overwriteRunNumber != -1) {
@@ -119,7 +118,6 @@ jerror_t JEventSourceTRIDASDAQ::GetObjects(JEvent & event, JFactory_base * facto
 	JFactory<fa250WaveboardV1Hit> *fac_fa250WaveboardV1Hit = dynamic_cast<JFactory<fa250WaveboardV1Hit>*>(factory);
 	JFactory<eventData> *fac_eventData = dynamic_cast<JFactory<eventData>*>(factory);
 
-
 	if (fac_eventData != NULL) {
 		vector<eventData*> data;
 		eventData *this_eventData = new eventData();
@@ -130,18 +128,24 @@ jerror_t JEventSourceTRIDASDAQ::GetObjects(JEvent & event, JFactory_base * facto
 		//take the first hit time (4 ns from 1 Jan. 2000) -- all hits in the event are within the same second!
 		fine_time minTime = getDFHFullTime((*(ptEvent_pointer->begin())).frameHeader(0));
 
-
 		this_eventData->time = std::chrono::duration_cast<std::chrono::seconds>(minTime).count(); //seconds from 1 Jan. 2000
 		this_eventData->time += 946684800; //unix time of 1 Jan 2000 first second
-
-
-
 
 		this_eventData->runN = event.GetRunNumber();
 		this_eventData->eventN = event.GetEventNumber();
 		this_eventData->eventTS = event.GetEventTS();
 
+		this_eventData->triggerWords.push_back(Event<sample::uncompressed>::max_triggers_number);
 
+		for (int ii = 0; ii < Event<sample::uncompressed>::max_triggers_number; ii++) { //currently 5
+			this_eventData->triggerWords.push_back(ptEvent_pointer->nseeds(ii));
+		}
+		for (int ii = 0; ii < Event<sample::uncompressed>::max_triggers_number; ii++) { //currently 5
+			this_eventData->triggerWords.push_back(ptEvent_pointer->plugin_trigtype(ii));
+		}
+		for (int ii = 0; ii < Event<sample::uncompressed>::max_triggers_number; ii++) { //currently 5
+			this_eventData->triggerWords.push_back(ptEvent_pointer->plugin_nseeds(ii));
+		}
 
 		data.push_back(this_eventData);
 		fac_eventData->CopyTo(data);
