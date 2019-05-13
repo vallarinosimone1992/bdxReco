@@ -135,15 +135,16 @@ jerror_t JEventSourceTRIDASDAQ::GetObjects(JEvent & event, JFactory_base * facto
 		this_eventData->eventN = event.GetEventNumber();
 		this_eventData->eventTS = event.GetEventTS();
 
-		this_eventData->triggerWords.push_back(Event<sample::uncompressed>::max_triggers_number);
-
-		for (int ii = 0; ii < Event<sample::uncompressed>::max_triggers_number; ii++) { //currently 5
+		this_eventData->triggerWords.push_back(Event<sample::uncompressed>::max_triggers_number); //currently 5
+		for (int ii = 0; ii < Event<sample::uncompressed>::max_triggers_number; ii++) {
 			this_eventData->triggerWords.push_back(ptEvent_pointer->nseeds(ii));
 		}
-		for (int ii = 0; ii < Event<sample::uncompressed>::max_triggers_number; ii++) { //currently 5
+
+		this_eventData->triggerWords.push_back(Event<sample::uncompressed>::max_plugins_number); //currently 8
+		for (int ii = 0; ii < Event<sample::uncompressed>::max_plugins_number; ii++) {
 			this_eventData->triggerWords.push_back(ptEvent_pointer->plugin_trigtype(ii));
 		}
-		for (int ii = 0; ii < Event<sample::uncompressed>::max_triggers_number; ii++) { //currently 5
+		for (int ii = 0; ii < Event<sample::uncompressed>::max_plugins_number; ii++) {
 			this_eventData->triggerWords.push_back(ptEvent_pointer->plugin_nseeds(ii));
 		}
 

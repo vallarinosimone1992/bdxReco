@@ -180,6 +180,7 @@ public:
 	}
 
 	const static int max_triggers_number = MAX_TRIGGERS_NUMBER;
+	const static int max_plugins_number = MAX_PLUGINS_NUMBER;
 
 	// Access to header members
 
@@ -213,12 +214,12 @@ public:
 	}
 
 	uint32_t plugin_trigtype(std::size_t n) const {
-		assert(n < max_triggers_number);
+		assert(n < max_plugins_number);
 		return m_head.plugin_trigtype[n];
 	}
 
 	uint32_t plugin_nseeds(std::size_t n) const {
-		assert(n < max_triggers_number);
+		assert(n < max_plugins_number);
 		return m_head.plugin_nseeds[n];
 	}
 
