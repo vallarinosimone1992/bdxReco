@@ -14,7 +14,8 @@ TEventHeader::TEventHeader() {
 	m_eventTime = 0;
 	m_runNumber = 0;
 	m_eventNumber = 0;
-	m_eventType =0;
+	m_eventTS = 0;
+	m_eventType = 0;
 	m_eventFineTime = 0;
 	m_weight = 1;
 }
@@ -24,7 +25,6 @@ TEventHeader::~TEventHeader() {
 	if (m_epicsData) delete m_epicsData;
 }
 
-
 epicsData* TEventHeader::getEpicsData() const {
 	return m_epicsData;
 }
@@ -32,6 +32,6 @@ epicsData* TEventHeader::getEpicsData() const {
 void TEventHeader::setEpicsData(epicsData *epicsData) {
 	m_epicsData = epicsData;
 }
-void TEventHeader::copyEpicsData(const epicsData* epicsData){
+void TEventHeader::copyEpicsData(const epicsData* epicsData) {
 	*m_epicsData = *epicsData;
 }

@@ -106,6 +106,7 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 		m_eventHeader->setEventType(BDXminiEvent);
 		m_eventHeader->setRunNumber(tData->runN);
 		m_eventHeader->setEventNumber(tData->eventN);
+		m_eventHeader->setEventTS(tData->eventTS);
 		m_eventHeader->setEventTime(tData->time);
 		if (m_ADD_TRIGGER_WORDS) {
 			m_eventHeader->setTriggerWords(tData->triggerWords);

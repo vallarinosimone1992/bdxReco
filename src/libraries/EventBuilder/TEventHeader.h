@@ -11,7 +11,7 @@
 #include "TObject.h"
 class epicsData;
 typedef enum {
-	CataniaProto1Event = 1, CataniaProto2Event = 2, JLabFluxEvent = 4,BDXminiEvent=5,CataniaProto1MC = 10, CataniaProto2MC = 20, FullMC = 30, JLabFluxEventMC = 40,BDXminiEventMC=50
+	CataniaProto1Event = 1, CataniaProto2Event = 2, JLabFluxEvent = 4, BDXminiEvent = 5, CataniaProto1MC = 10, CataniaProto2MC = 20, FullMC = 30, JLabFluxEventMC = 40, BDXminiEventMC = 50
 } eventType;
 
 class TEventHeader: public TObject {
@@ -23,13 +23,14 @@ private:
 
 	int m_runNumber;
 	int m_eventNumber;
+	int m_eventTS;
+
 	int m_eventTime; //Unix Timestamp
 
 	double m_weight;
 
 	uint8_t m_eventType;
 	epicsData *m_epicsData;
-
 
 public:
 	TEventHeader();
@@ -41,6 +42,14 @@ public:
 
 	void setEventNumber(int eventNumber) {
 		m_eventNumber = eventNumber;
+	}
+
+	int getEventTS() const {
+		return m_eventTS;
+	}
+
+	void setEventTS(int eventTS) {
+		m_eventTS = eventTS;
 	}
 
 	int getRunNumber() const {
@@ -83,19 +92,19 @@ public:
 		m_eventFineTime = eventFineTime;
 	}
 
-
 	epicsData *getEpicsData() const;
 	void setEpicsData(epicsData *epicsData);
 	void copyEpicsData(const epicsData* epicsData);
 
-	double getWeight(){
+	double getWeight() {
 		return m_weight;
 	}
-	void setWeight(double w){
-		m_weight=w;
+	void setWeight(double w) {
+		m_weight = w;
 	}
 
-	ClassDef(TEventHeader,4);
+ClassDef(TEventHeader,4)
+	;
 
 };
 
