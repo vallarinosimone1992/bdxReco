@@ -52,6 +52,9 @@ jerror_t TEvent_factory_BDXmini::init(void) {
 #endif
 	japp->RootUnLock();
 
+	m_ADD_TRIGGER_WORDS = 1;
+	gPARMS->SetDefaultParameter("EVBUILDER:ADD_TRIGGER_WORDS ", m_ADD_TRIGGER_WORDS, "Add trigger words to event header");
+
 	return NOERROR;
 }
 
@@ -74,7 +77,7 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	const eventData* tData;
 	const triggerDataBDXmini* bdxtData;
 
-	triggerDataBDXmini* bdxtData_write=new triggerDataBDXmini();
+	triggerDataBDXmini* bdxtData_write = new triggerDataBDXmini();
 
 	vector<const CalorimeterHit*> chits;
 	vector<const CalorimeterDigiHit*> cdhits;
@@ -104,10 +107,12 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 		m_eventHeader->setRunNumber(tData->runN);
 		m_eventHeader->setEventNumber(tData->eventN);
 		m_eventHeader->setEventTime(tData->time);
-		//m_eventHeader->setTriggerWords(tData->triggerWords); //A.C. removed, since we save directly the triggerDataBDXmini
+		if (m_ADD_TRIGGER_WORDS) {
+			m_eventHeader->setTriggerWords(tData->triggerWords);
+		}
 		m_eventHeader->setEventFineTime(0); //TODO
 		m_eventHeader->setWeight(1);
-		*bdxtData_write=*bdxtData;
+		*bdxtData_write = *bdxtData;
 		m_event->addObject(bdxtData_write);
 
 	} else {

@@ -40,6 +40,8 @@ private:
 
 	int m_isMC, m_MCRunNumber;
 	std::string m_tag;
+
+	int m_ADD_TRIGGER_WORDS;
 };
 
 #endif // _TEvent_factory_BDXmini_

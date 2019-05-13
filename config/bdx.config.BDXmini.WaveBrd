@@ -31,8 +31,9 @@ INTVETO:HIT_THR_SINGLE    5   #thr in phe charge for a detector with single read
 INTVETO:HIT_THR_MULTI   -30   #thr in phe charge for a detector with multiple readout -> Irrelevant here
 INTVETO:HIT_DT_MULTI    2000  #time-window coincidence for hits in a counter with multiple readout ->Irrelevant here
 INTVETO:HIT_N_MULTI     2     #multiplicity for a detector with multi readout -> Irrelevant here
-
 INTVETO:VERBOSE  3
+
+EVBUILDER:ADD_TRIGGER_WORDS 1
 
 #EPICS parameters
 #EPICS:DELTA_TIME 29 #the time to add to EPICS events (s) to match with DAQ
