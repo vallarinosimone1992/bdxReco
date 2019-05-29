@@ -10,6 +10,8 @@ using namespace std;
 #include <IntVeto/IntVetoHit.h>
 
 #include <DAQ/eventData.h>
+#include <DAQ/fa250Mode1CalibPedSubHit.h>
+
 #include <MC/MCType.h>
 #ifdef MC_SUPPORT_ENABLE
 #include <Calorimeter/CalorimeterMCRealHit.h>
@@ -46,6 +48,8 @@ jerror_t TEvent_factory_BDXmini::init(void) {
 
 	m_CaloHits = new TClonesArray("CalorimeterHit");
 	m_IntVetoHits = new TClonesArray("IntVetoHit");
+	m_fa250Mode1CalibPedSubHit = new TClonesArray("fa250Mode1CalibPedSubHit");
+
 #ifdef MC_SUPPORT_ENABLE
 	m_GenParticles = new TClonesArray("GenParticle");
 	m_CaloMCRealHits = new TClonesArray("CalorimeterMCRealHit");
@@ -54,6 +58,21 @@ jerror_t TEvent_factory_BDXmini::init(void) {
 
 	m_ADD_TRIGGER_WORDS = 1;
 	gPARMS->SetDefaultParameter("EVBUILDER:ADD_TRIGGER_WORDS ", m_ADD_TRIGGER_WORDS, "Add trigger words to event header");
+
+	/*Following is to decide whenever to save waveforms or not in the collections of object for the event
+	 * We save ALL waveforms in an event if
+	 *
+	 * -> There is at least one electromagnetic cluster with energy > thrEneTot (thrEneTot=100 MeV default, programmable)
+	 * AND
+	 * -> All the veto counter sipm hits see LESS THAN thrNpheVeto phe (thrNpheVeto=5, programmable)
+	 *
+	 * The idea is to not leave any important event - to be further scrutinized - behind
+	 */
+	m_thrNpheVeto = 5;
+	m_thrEneTot = 100;
+
+	gPARMS->SetDefaultParameter("TEVENT_FACTORY_BDXMINI:thrEneTot", m_thrEneTot, "Threshold energy for calorimeter clusters to decide whenever to save all waveforms of an egent");
+	gPARMS->SetDefaultParameter("TEVENT_FACTORY_BDXMINI:thrNpheVeto", m_thrNpheVeto, "Threshold number of photo-electrons per each Veto SiPM to decide whenever to save all waveforms of an egent");
 
 	return NOERROR;
 }
@@ -82,6 +101,12 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	vector<const CalorimeterHit*> chits;
 	vector<const CalorimeterDigiHit*> cdhits;
 	vector<const IntVetoHit*> ivhits;
+
+	vector<const fa250Mode1CalibPedSubHit*> fa250Hits;
+
+	bool saveWaveforms_flagCalo = false;
+	bool saveWaveforms_flagVeto = true;
+
 #ifdef MC_SUPPORT_ENABLE
 	vector<const CalorimeterMCRealHit*> chits_MCReal;
 	vector<const GenParticle*> genParticles;
@@ -131,6 +156,9 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	for (int ii = 0; ii < chits.size(); ii++) {
 		((CalorimeterHit*) m_CaloHits->ConstructedAt(ii))->operator=(*(chits[ii]));
 		m_event->AddAssociatedObject(chits[ii]);
+
+		//Check for high-energy clusters
+		if ((chits[ii])->E > m_thrEneTot) saveWaveforms_flagCalo = true; //flag is there is at least one cluster at high Energy
 	}
 	m_event->addCollection(m_CaloHits);
 
@@ -139,8 +167,24 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	for (int ii = 0; ii < ivhits.size(); ii++) {
 		((IntVetoHit*) m_IntVetoHits->ConstructedAt(ii))->operator=(*(ivhits[ii]));
 		m_event->AddAssociatedObject(ivhits[ii]);
+
+		//Check for the presence of activity in the veto
+		if ((ivhits[ii])->Q > m_thrNpheVeto) saveWaveforms_flagVeto = false; //flag if all counters are below threshold. If there is even one with Q > threshold, dont'save
+
 	}
 	m_event->addCollection(m_IntVetoHits);
+
+	/*fa250Hits -only non MC*/
+	if (!m_isMC) {
+		m_fa250Mode1CalibPedSubHit->Clear("C");
+		if ((saveWaveforms_flagVeto && saveWaveforms_flagCalo)) {
+			loop->Get(fa250Hits);
+			for (int ii = 0; ii < fa250Hits.size(); ii++) {
+				((fa250Mode1CalibPedSubHit*) m_fa250Mode1CalibPedSubHit->ConstructedAt(ii))->operator=(*(fa250Hits[ii]));
+				m_event->AddAssociatedObject(fa250Hits[ii]);
+			}
+		}
+	}
 
 #ifdef MC_SUPPORT_ENABLE
 	if (m_isMC) {

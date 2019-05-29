@@ -32,6 +32,10 @@ INTVETO:NSA	 30        #num of ns after  the maximum
 #Calorimeter parameters
 CALORIMETER:HIT_THR_SINGLE  5 #Threshold in phe (charge)
 
+#Calorimeter clusters
+CALORIMETER:CLUSTER_HIT_THR  10
+CALORIMETER:CLUSTER_SEED_THR 20
+
 
 INTVETO:HIT_THR_SINGLE    5   #thr in phe charge for a detector with single readout
 INTVETO:HIT_THR_MULTI   -30   #thr in phe charge for a detector with multiple readout -> Irrelevant here
@@ -39,6 +43,17 @@ INTVETO:HIT_DT_MULTI    2000  #time-window coincidence for hits in a counter wit
 INTVETO:HIT_N_MULTI     2     #multiplicity for a detector with multi readout -> Irrelevant here
 
 INTVETO:VERBOSE  3
+
+
+#####Event Builder##########
+#We save ALL waveforms in an event if
+#-> There is at least one electromagnetic cluster with energy > thrEneTot (thrEneTot=100 MeV default, programmable)
+# AND
+#-> All the veto counter sipm hits see LESS THAN thrNpheVeto phe (thrNpheVeto=5, programmable)
+# The idea is to not leave any important event - to be further scrutinized - behind
+
+EVENT_FACTORY_BDXMINI:thrEneTot   100
+EVENT_FACTORY_BDXMINI:thrNpheVeto   5
 
 #EPICS parameters
 #EPICS:DELTA_TIME 29 #the time to add to EPICS events (s) to match with DAQ

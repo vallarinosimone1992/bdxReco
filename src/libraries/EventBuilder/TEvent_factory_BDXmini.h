@@ -32,6 +32,7 @@ private:
 
 	TClonesArray *m_CaloHits;
 	TClonesArray *m_IntVetoHits;
+	TClonesArray *m_fa250Mode1CalibPedSubHit;
 
 #ifdef MC_SUPPORT_ENABLE
 	TClonesArray *m_GenParticles;
@@ -42,6 +43,8 @@ private:
 	std::string m_tag;
 
 	int m_ADD_TRIGGER_WORDS;
+	int m_thrNpheVeto;
+	double m_thrEneTot;
 };
 
 #endif // _TEvent_factory_BDXmini_
