@@ -41,7 +41,7 @@ jerror_t BDXMiniCalorimeterEnergyCalibrationHit_factory::init(void) {
 	gPARMS->SetDefaultParameter("BDXMiniCalorimeterEnergyCalibration:THR_CAPS", m_thrIntVetoCaps, "Threshold in phe (charge) for each of the caps");
 
 	m_thrIntVetoL = 10;
-	gPARMS->SetDefaultParameter("BDXMiniCalorimeterEnergyCalibration:THR_1L", m_thrIntVetoL, "Threshold in phe (charge) for each of the caps");
+	gPARMS->SetDefaultParameter("BDXMiniCalorimeterEnergyCalibration:THR_1L", m_thrIntVetoL, "Threshold in phe (charge) for each of the lateral counters");
 
 	//The hard-coded correspondance
 	corrTOP[1].push_back(make_pair(0, -1));
