@@ -41,6 +41,7 @@ class fa250Mode1Hit:public fa250Hit{
 		virtual TCanvas* Draw(int id=0) const;
 
 		double m_dT; //sampling time
+		double m_RMS,m_ped;
 
 	protected:
 		mutable TH1D *hWave;

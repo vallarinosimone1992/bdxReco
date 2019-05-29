@@ -14,6 +14,7 @@
 #include "fa250Mode1Hit.h"
 #include "fa250Mode7Hit.h"
 #include "fa250Mode1CalibPedSubHit_factory.h"
+#include "fa250Mode1CalibPedSubHitFFT_factory.h"
 #include "eventData.h"
 #include "epicsRawData.h"
 #include "fa250WaveboardV1Hit.h"
@@ -38,7 +39,7 @@ public:
 		loop->AddFactory(new JFactory<eventData>());
 		loop->AddFactory(new JFactory<epicsRawData>());
 		loop->AddFactory(new fa250Mode1CalibPedSubHit_factory());
-
+		loop->AddFactory(new fa250Mode1CalibPedSubHitFFT_factory());
 		return NOERROR;
 	}
 

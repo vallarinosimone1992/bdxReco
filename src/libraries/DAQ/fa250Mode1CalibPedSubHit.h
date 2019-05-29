@@ -35,6 +35,8 @@ class fa250Mode1CalibPedSubHit:public fa250Mode1Hit{
 
 		virtual TCanvas* Draw(int id=0) const;
 		void toHisto(TH1D *h) const;
+
+		ClassDef(fa250Mode1CalibPedSubHit,1);
 };
 
 #endif // _fa250Mode1CalibHit_
