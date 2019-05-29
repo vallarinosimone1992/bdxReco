@@ -271,7 +271,7 @@ jerror_t JEventProcessor_BDXMiniCalorimeterEnergyCalibration::evnt(JEventLoop *l
 		try {
 			loop->GetSingle(tData);
 		} catch (unsigned long e) {
-			jout << "JEventProcessor_Trigger::evnt no eventData bank this event" << std::endl;
+			jout << "JEventProcessor_BDXMiniCalorimeterEnergyCalibration::evnt no eventData bank this event" << std::endl;
 			return OBJECT_NOT_AVAILABLE;
 		}
 	}
