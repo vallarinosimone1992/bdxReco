@@ -33,12 +33,16 @@ using namespace jana;
 
 //All events
 static TH1D *hBDXMiniStability_allEvents = 0;
-
+static TH1D *hBDXMiniStability_allEvents_distr = 0;
 //Trgs
 static TH1D *hBDXMiniStability_trg[triggerDataBDXmini::nTriggersMAX] = { 0 };
+static TH1D *hBDXMiniStability_trg_distr[triggerDataBDXmini::nTriggersMAX] = { 0 };
 
+//High-E and High-E, antiVeto
 static TH1D *hBDXMiniStability_highE = 0;
 static TH1D *hBDXMiniStability_highE_antiVeto = 0;
+
+
 
 extern "C" {
 void InitPlugin(JApplication *app) {
@@ -73,7 +77,7 @@ jerror_t JEventProcessor_BDXMiniStability::init(void) {
 	//  ... fill historgrams or trees ...
 	// japp->RootUnLock();
 	//
-
+	m_isFirstCallToBrun = 1;
 	m_isMC = 0;
 	gPARMS->GetParameter("MC", m_isMC);
 
@@ -236,7 +240,7 @@ jerror_t JEventProcessor_BDXMiniStability::evnt(JEventLoop *loop, uint64_t event
 	if (nHighEnergy) {
 		highE[index] = highE[index] + 1;
 		if ((nVetoL0 == 0) && (nVetoL1 == 0)) {
-			jout << "BDXMiniStability:highE_antiVeto " << eData->eventN << " " << nVetoL0 << " " << nVetoL1 << endl << endl;
+			//jout << "BDXMiniStability:highE_antiVeto " << eData->eventN << " " << nVetoL0 << " " << nVetoL1 << endl << endl;
 			highE_antiVeto[index] = highE_antiVeto[index] + 1;
 		}
 	}
@@ -267,22 +271,28 @@ jerror_t JEventProcessor_BDXMiniStability::erun(void) {
 
 	//the "allEvents" map size should determine all binning for all histograms.
 	hBDXMiniStability_allEvents = new TH1D("hBDXMiniStability_allEvents", "hBDXMiniStability_allEvents", m_nbins, 0, m_nbins * m_dT);
-
+	hBDXMiniStability_allEvents_distr = new TH1D("hBDXMiniStability_allEvents_distr", "hBDXMiniStability_allEvents_distr", 400, 0, 20);
 	//Trgs
 	for (int itrg = 0; itrg < triggerDataBDXmini::nTriggersMAX; itrg++) {
 		hBDXMiniStability_trg[itrg] = new TH1D(Form("hBDXMiniStability_trg_%i", itrg), Form("hBDXMiniStability_trg_%i", itrg), m_nbins, 0, m_nbins * m_dT);
+		hBDXMiniStability_trg_distr[itrg] = new TH1D(Form("hBDXMiniStability_trg_distr_%i", itrg), Form("hBDXMiniStability_trg_distr_%i", itrg), 400, 0, 20);
 	}
+
 	hBDXMiniStability_highE = new TH1D("hBDXMiniStability_highE", "hBDXMiniStability_highE", m_nbins, 0, m_nbins * m_dT);
 	hBDXMiniStability_highE_antiVeto = new TH1D("hBDXMiniStability_highE_antiVeto", "hBDXMiniStability_highE_antiVeto", m_nbins, 0, m_nbins * m_dT);
+
 
 	for (map_it = allEvents.begin(); map_it != allEvents.end(); map_it++) {
 		index = map_it->first;
 
 		hBDXMiniStability_allEvents->SetBinContent(index, 1. * allEvents[index] / m_dT);
 		hBDXMiniStability_allEvents->SetBinError(index, sqrt(1. * allEvents[index]) / m_dT);
+		hBDXMiniStability_allEvents_distr->Fill(1. * allEvents[index] / m_dT);
+
 		for (int itrg = 0; itrg < triggerDataBDXmini::nTriggersMAX; itrg++) {
 			hBDXMiniStability_trg[itrg]->SetBinContent(index, 1. * trgs[itrg][index] / m_dT);
 			hBDXMiniStability_trg[itrg]->SetBinError(index, sqrt(1. * trgs[itrg][index]) / m_dT);
+			hBDXMiniStability_trg_distr[itrg]->Fill(1. * trgs[itrg][index] / m_dT);
 		}
 
 		hBDXMiniStability_highE->SetBinContent(index, 1. * highE[index] / m_dT);
@@ -298,10 +308,11 @@ jerror_t JEventProcessor_BDXMiniStability::erun(void) {
 
 	if (m_ROOTOutput != 0) {
 		m_ROOTOutput->AddObject(hBDXMiniStability_allEvents);
+		m_ROOTOutput->AddObject(hBDXMiniStability_allEvents_distr);
 		for (int itrg = 0; itrg < triggerDataBDXmini::nTriggersMAX; itrg++) {
 			m_ROOTOutput->AddObject(hBDXMiniStability_trg[itrg]);
+			m_ROOTOutput->AddObject(hBDXMiniStability_trg_distr[itrg]);
 		}
-
 		m_ROOTOutput->AddObject(hBDXMiniStability_highE);
 		m_ROOTOutput->AddObject(hBDXMiniStability_highE_antiVeto);
 	}
