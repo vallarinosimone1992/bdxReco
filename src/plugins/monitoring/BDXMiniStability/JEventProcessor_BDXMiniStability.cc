@@ -42,8 +42,6 @@ static TH1D *hBDXMiniStability_trg_distr[triggerDataBDXmini::nTriggersMAX] = { 0
 static TH1D *hBDXMiniStability_highE = 0;
 static TH1D *hBDXMiniStability_highE_antiVeto = 0;
 
-
-
 extern "C" {
 void InitPlugin(JApplication *app) {
 	InitJANAPlugin(app);
@@ -280,7 +278,6 @@ jerror_t JEventProcessor_BDXMiniStability::erun(void) {
 
 	hBDXMiniStability_highE = new TH1D("hBDXMiniStability_highE", "hBDXMiniStability_highE", m_nbins, 0, m_nbins * m_dT);
 	hBDXMiniStability_highE_antiVeto = new TH1D("hBDXMiniStability_highE_antiVeto", "hBDXMiniStability_highE_antiVeto", m_nbins, 0, m_nbins * m_dT);
-
 
 	for (map_it = allEvents.begin(); map_it != allEvents.end(); map_it++) {
 		index = map_it->first;
