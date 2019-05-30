@@ -57,7 +57,7 @@ jerror_t TEvent_factory_BDXmini::init(void) {
 	japp->RootUnLock();
 
 	m_ADD_TRIGGER_WORDS = 1;
-	gPARMS->SetDefaultParameter("EVBUILDER:ADD_TRIGGER_WORDS ", m_ADD_TRIGGER_WORDS, "Add trigger words to event header");
+	gPARMS->SetDefaultParameter("TEVENT_FACTORY_BDXMINI:ADD_TRIGGER_WORDS ", m_ADD_TRIGGER_WORDS, "Add trigger words to event header");
 
 	/*Following is to decide whenever to save waveforms or not in the collections of object for the event
 	 * We save ALL waveforms in an event if

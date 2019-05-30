@@ -52,8 +52,11 @@ INTVETO:VERBOSE  3
 #-> All the veto counter sipm hits see LESS THAN thrNpheVeto phe (thrNpheVeto=5, programmable)
 # The idea is to not leave any important event - to be further scrutinized - behind
 
-EVENT_FACTORY_BDXMINI:thrEneTot   100
-EVENT_FACTORY_BDXMINI:thrNpheVeto   5
+TEVENT_FACTORY_BDXMINI:thrEneTot   100
+TEVENT_FACTORY_BDXMINI:thrNpheVeto   5
+
+#Save the trigger words in the event header?
+TEVENT_FACTORY_BDXMINI:ADD_TRIGGER_WORDS 1 
 
 #EPICS parameters
 #EPICS:DELTA_TIME 29 #the time to add to EPICS events (s) to match with DAQ
