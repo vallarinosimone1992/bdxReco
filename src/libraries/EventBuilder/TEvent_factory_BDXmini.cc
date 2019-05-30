@@ -27,11 +27,36 @@ using namespace std;
 #include <JANA/JApplication.h>
 using namespace jana;
 
+TEvent_factory_BDXmini::TEvent_factory_BDXmini() {
+	m_isMC=0;
+	m_MCRunNumber=0;
+	m_IntVetoHits=0;
+	m_CaloHits=0;
+	m_fa250Mode1CalibPedSubHits=0;
+	m_ADD_TRIGGER_WORDS = 1;
+	gPARMS->SetDefaultParameter("TEVENT_FACTORY_BDXMINI:ADD_TRIGGER_WORDS", m_ADD_TRIGGER_WORDS, "Add trigger words to event header");
+
+	/*Following is to decide whenever to save waveforms or not in the collections of object for the event
+	 * We save ALL waveforms in an event if
+	 *
+	 * -> There is at least one electromagnetic cluster with energy > thrEneTot (thrEneTot=100 MeV default, programmable)
+	 * AND
+	 * -> All the veto counter sipm hits see LESS THAN thrNpheVeto phe (thrNpheVeto=5, programmable)
+	 *
+	 * The idea is to not leave any important event - to be further scrutinized - behind
+	 */
+	m_thrNpheVeto = 5;
+	m_thrEneTot = 100;
+
+	gPARMS->SetDefaultParameter("TEVENT_FACTORY_BDXMINI:thrEneTot", m_thrEneTot, "Threshold energy for calorimeter clusters to decide whenever to save all waveforms of an egent");
+	gPARMS->SetDefaultParameter("TEVENT_FACTORY_BDXMINI:thrNpheVeto", m_thrNpheVeto, "Threshold number of photo-electrons per each Veto SiPM to decide whenever to save all waveforms of an egent");
+}
 //------------------
 // init
 //------------------
 jerror_t TEvent_factory_BDXmini::init(void) {
 
+	jout << "TEvent_factory_BDXmini::init was called" << endl;
 	m_tag = "";
 	gPARMS->GetParameter("MC", m_isMC);
 	if (m_isMC) {
@@ -48,31 +73,13 @@ jerror_t TEvent_factory_BDXmini::init(void) {
 
 	m_CaloHits = new TClonesArray("CalorimeterHit");
 	m_IntVetoHits = new TClonesArray("IntVetoHit");
-	m_fa250Mode1CalibPedSubHit = new TClonesArray("fa250Mode1CalibPedSubHit");
+	m_fa250Mode1CalibPedSubHits = new TClonesArray("fa250Mode1CalibPedSubHit");
 
 #ifdef MC_SUPPORT_ENABLE
 	m_GenParticles = new TClonesArray("GenParticle");
 	m_CaloMCRealHits = new TClonesArray("CalorimeterMCRealHit");
 #endif
 	japp->RootUnLock();
-
-	m_ADD_TRIGGER_WORDS = 1;
-	gPARMS->SetDefaultParameter("TEVENT_FACTORY_BDXMINI:ADD_TRIGGER_WORDS ", m_ADD_TRIGGER_WORDS, "Add trigger words to event header");
-
-	/*Following is to decide whenever to save waveforms or not in the collections of object for the event
-	 * We save ALL waveforms in an event if
-	 *
-	 * -> There is at least one electromagnetic cluster with energy > thrEneTot (thrEneTot=100 MeV default, programmable)
-	 * AND
-	 * -> All the veto counter sipm hits see LESS THAN thrNpheVeto phe (thrNpheVeto=5, programmable)
-	 *
-	 * The idea is to not leave any important event - to be further scrutinized - behind
-	 */
-	m_thrNpheVeto = 5;
-	m_thrEneTot = 100;
-
-	gPARMS->SetDefaultParameter("TEVENT_FACTORY_BDXMINI:thrEneTot", m_thrEneTot, "Threshold energy for calorimeter clusters to decide whenever to save all waveforms of an egent");
-	gPARMS->SetDefaultParameter("TEVENT_FACTORY_BDXMINI:thrNpheVeto", m_thrNpheVeto, "Threshold number of photo-electrons per each Veto SiPM to decide whenever to save all waveforms of an egent");
 
 	return NOERROR;
 }
@@ -176,11 +183,11 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 
 	/*fa250Hits -only non MC*/
 	if (!m_isMC) {
-		m_fa250Mode1CalibPedSubHit->Clear("C");
+		m_fa250Mode1CalibPedSubHits->Clear("C");
 		if ((saveWaveforms_flagVeto && saveWaveforms_flagCalo)) {
 			loop->Get(fa250Hits);
 			for (int ii = 0; ii < fa250Hits.size(); ii++) {
-				((fa250Mode1CalibPedSubHit*) m_fa250Mode1CalibPedSubHit->ConstructedAt(ii))->operator=(*(fa250Hits[ii]));
+				((fa250Mode1CalibPedSubHit*) m_fa250Mode1CalibPedSubHits->ConstructedAt(ii))->operator=(*(fa250Hits[ii]));
 				m_event->AddAssociatedObject(fa250Hits[ii]);
 			}
 		}

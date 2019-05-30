@@ -3,6 +3,8 @@
 #include "TCanvas.h"
 
 fa250Mode1CalibPedSubHit::fa250Mode1CalibPedSubHit(){
+	m_RMS=0;
+	m_ped=0;
 }
 
 fa250Mode1CalibPedSubHit::~fa250Mode1CalibPedSubHit(){

@@ -19,6 +19,8 @@ public:
 	TranslationTable::csc_t m_channel;
 	int trigger;
 	uint64_t timestamp;
+
+	ClassDef(fa250Hit,1)
 };
 
 #endif /* FA250HIT_H_ */

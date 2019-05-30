@@ -13,9 +13,7 @@
 
 class TEvent_factory_BDXmini: public jana::JFactory<TEvent> {
 public:
-	TEvent_factory_BDXmini() {
-	}
-	;
+	TEvent_factory_BDXmini();
 	~TEvent_factory_BDXmini() {
 	}
 	;
@@ -32,7 +30,7 @@ private:
 
 	TClonesArray *m_CaloHits;
 	TClonesArray *m_IntVetoHits;
-	TClonesArray *m_fa250Mode1CalibPedSubHit;
+	TClonesArray *m_fa250Mode1CalibPedSubHits;
 
 #ifdef MC_SUPPORT_ENABLE
 	TClonesArray *m_GenParticles;
