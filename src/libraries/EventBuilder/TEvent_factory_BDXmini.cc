@@ -177,7 +177,6 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 
 		//Check for the presence of activity in the veto
 		if ((ivhits[ii])->Q > m_thrNpheVeto) saveWaveforms_flagVeto = false; //flag if all counters are below threshold. If there is even one with Q > threshold, dont'save
-
 	}
 	m_event->addCollection(m_IntVetoHits);
 
@@ -190,7 +189,9 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 				((fa250Mode1CalibPedSubHit*) m_fa250Mode1CalibPedSubHits->ConstructedAt(ii))->operator=(*(fa250Hits[ii]));
 				m_event->AddAssociatedObject(fa250Hits[ii]);
 			}
+			m_event->addCollection(m_fa250Mode1CalibPedSubHits); //So that the collection is here only if it is not empty
 		}
+
 	}
 
 #ifdef MC_SUPPORT_ENABLE
