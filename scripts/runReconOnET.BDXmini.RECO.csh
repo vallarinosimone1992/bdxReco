@@ -18,7 +18,7 @@ echo runReconOnET: RunNumber is: $1
 
 setenv JANA_CALIB_URL mysql://bdxwriter:e1tocome@clasdb/BDX
 
-$BDXRECO_ROOT/bin/bdxReco --config=$BDXRECO_ROOT/config/bdx.config.BDXmini.online -PPLUGINS=monitoring_BDXMiniCalorimeterEnergyCalibration,calibration_BDXMiniCalorimeterEnergyCalibrationHit -PSYSTEM:OUTPUT="root,/work/DST/BDX_MINI_ONLINE/$runNumber.onlineReco.root" ET:bdxtest:RECO:jdaq8:11111
+$BDXRECO_ROOT/bin/bdxReco --config=$BDXRECO_ROOT/config/bdx.config.BDXmini.online -PPLUGINS=monitoring_BDXMiniCalorimeterClusters,monitoring_BDXMiniStability,monitoring_BDXMiniCalorimeterEnergyCalibration,calibration_BDXMiniCalorimeterEnergyCalibrationHit -PSYSTEM:OUTPUT="root,/work/DST/BDX_MINI_ONLINE/$runNumber.onlineReco.root" ET:bdxtest:RECO:jdaq8:11111
 
 # -PSYSTEM:OUTPUT="root,/work/DST/BDX_MINI_ONLINE/$runNumber.onlineReco.root" ET:bdxtest:DSTMaker:jdaq8:11111
 

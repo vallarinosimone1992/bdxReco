@@ -81,13 +81,13 @@ jerror_t JEventProcessor_BDXMiniStability::init(void) {
 
 	//The width (in s) of binning in s;
 	m_dT = 60;
-	gPARMS->SetDefaultParameter("BDXMiniStability::dT", m_dT, "Width of time binning in s");
+	gPARMS->SetDefaultParameter("BDXMiniStability:dT", m_dT, "Width of time binning in s");
 
 	//The energy threshold in MeV
 	m_thrEneTot = 100;
-	gPARMS->SetDefaultParameter("BDXMiniStability::thrEneTot", m_thrEneTot, "Energy tot threshold in MeV");
+	gPARMS->SetDefaultParameter("BDXMiniStability:thrEneTot", m_thrEneTot, "Energy tot threshold in MeV");
 	m_thrEneSeed = 20;
-	gPARMS->SetDefaultParameter("BDXMiniStability::thrEneSeed", m_thrEneSeed, "Energy seed threshold in MeV");
+	gPARMS->SetDefaultParameter("BDXMiniStability:thrEneSeed", m_thrEneSeed, "Energy seed threshold in MeV");
 
 	m_thrVetoCaps = 5.;
 	// gPARMS->SetDefaultParameter("BDXMiniCalorimeterEnergyCalibration:THR_CAPS", m_thrIntVetoCaps, "Threshold in phe (charge) for each of the caps");
