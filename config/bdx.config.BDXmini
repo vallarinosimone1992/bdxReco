@@ -44,8 +44,9 @@ INTVETO:HIT_N_MULTI     2     #multiplicity for a detector with multi readout ->
 
 INTVETO:VERBOSE  3
 
-
-#####Event Builder##########
+##################################
+##########Event Builder###########
+##################################
 #We save ALL waveforms in an event if
 #-> There is at least one electromagnetic cluster with energy > thrEneTot (thrEneTot=100 MeV default, programmable)
 # AND
@@ -53,10 +54,22 @@ INTVETO:VERBOSE  3
 # The idea is to not leave any important event - to be further scrutinized - behind
 
 TEVENT_FACTORY_BDXMINI:thrEneTot   100
-TEVENT_FACTORY_BDXMINI:thrNpheVeto   5
+TEVENT_FACTORY_BDXMINI:thrNpheVeto  10
 
 #Save the trigger words in the event header?
 TEVENT_FACTORY_BDXMINI:ADD_TRIGGER_WORDS 1 
 
 #EPICS parameters
 #EPICS:DELTA_TIME 29 #the time to add to EPICS events (s) to match with DAQ
+
+
+################################
+############PLUGINS#############
+################################
+
+###### BDXMiniStability #######
+BDXMiniStability:dT           60         #Time-width (in s) of a bin for the rate measurement
+BDXMiniStability:thrEneTot   100         #Threshold for the "high-energy" EM clusters - total energy
+BDXMiniStability:thrEneSeed   20         #Threshold for the "high-energy" EM clusters - seed energy
+ 
+

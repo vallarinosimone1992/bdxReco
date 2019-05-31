@@ -33,5 +33,23 @@ INTVETO:HIT_THR_SINGLE    5   #thr in phe charge for a detector with single read
 INTVETO:HIT_THR_MULTI   -30   #thr in phe charge for a detector with multiple readout -> Irrelevant here
 INTVETO:HIT_DT_MULTI    2000  #time-window coincidence for hits in a counter with multiple readout ->Irrelevant here
 INTVETO:HIT_N_MULTI     2     #multiplicity for a detector with multi readout -> Irrelevant here
-
 INTVETO:VERBOSE  3
+
+#Calorimeter parameters
+CALORIMETER:HIT_THR_SINGLE  5 #Threshold in phe (charge)
+
+#Calorimeter clusters
+CALORIMETER:CLUSTER_HIT_THR  10
+CALORIMETER:CLUSTER_SEED_THR 20
+
+################################
+############PLUGINS#############
+################################
+
+###### BDXMiniStability #######
+BDXMiniStability:dT           60         #Time-width (in s) of a bin for the rate measurement
+BDXMiniStability:thrEneTot   100         #Threshold for the "high-energy" EM clusters - total energy
+BDXMiniStability:thrEneSeed   20         #Threshold for the "high-energy" EM clusters - seed energy
+ 
+
+
