@@ -32,6 +32,7 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output, const fa
 	int N, n, idx, imax;
 	int istart, istartmin, icheck;
 	double min, max, xmin, xmax, prev_xmin, prev_xmax, rms, Tmax;
+	int ixmin, ixmax;
 	double ped, pedRMS, thr, pedRMSmin, pedmin;
 	bool found;
 	std::pair<int, int> m_thisCrossingTime;
@@ -42,12 +43,11 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output, const fa
 	std::vector<int> m_singleCrossingIndexes;
 	//std::vector<int> m_signalCrossingIndexs;
 
-	double m_NPEDs,m_NSBs,m_NSAs;
+	double m_NPEDs, m_NSBs, m_NSAs;
 
-	m_NPEDs=(int)(m_NPED/input->m_dT);
-	m_NSAs=(int)(m_NSA/input->m_dT);
-	m_NSBs=(int)(m_NSB/input->m_dT);
-
+	m_NPEDs = (int) (m_NPED / input->m_dT);
+	m_NSAs = (int) (m_NSA / input->m_dT);
+	m_NSBs = (int) (m_NSB / input->m_dT);
 
 	vector<double> m_waveform;
 	m_waveform.clear();
@@ -76,7 +76,7 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output, const fa
 		pedRMS /= m_NPEDs;
 		pedRMS = sqrt(pedRMS - ped * ped);
 
-		if (pedRMS <= input->m_RMS*m_RMSTHRscale) {	//input->m_RMS is read from DB. This is the DAQ-measured RMS, equal for all hits in the same channel and the same run)
+		if (pedRMS <= input->m_RMS * m_RMSTHRscale) {	//input->m_RMS is read from DB. This is the DAQ-measured RMS, equal for all hits in the same channel and the same run)
 			found = true;
 			break;
 		}
@@ -96,13 +96,14 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output, const fa
 
 	//1: compute the average
 	for (int ii = 0; ii < size; ii++) {
-		output->average += m_waveform.at(ii);
+		output->average += m_waveform[ii];
 	}
 	output->average /= m_waveform.size();
 
 	thr = m_thrCalib->getCalibSingle(*output->m_channel.int_veto); //this is the 1 phe ampl FROM DB
 
 	thr = thr * m_thr;   //put a very low thr at this level
+
 
 	//2: find thr crossings
 	m_thisCrossingTime.first = -1;
@@ -133,12 +134,12 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output, const fa
 	//3a: if no crossing times are found
 	/*Compute ToT */
 	for (int itime = 0; itime < m_crossingTimes.size(); itime++) {
-		m_crossingTimesDelta.push_back(m_crossingTimes.at(itime).second - m_crossingTimes.at(itime).first);
+		m_crossingTimesDelta.push_back(m_crossingTimes[itime].second - m_crossingTimes[itime].first);
 	}
 
 	/*Verify the ToT for each pulse*/
 	for (int itime = 0; itime < m_crossingTimes.size(); itime++) {
-		if (m_crossingTimesDelta.at(itime) < 0) {
+		if (m_crossingTimesDelta[itime] < 0) {
 			jerr << "IntVetofa20Converter::convertMode1Hit error, negative ToT?" << std::endl;
 		} else if ((m_crossingTimesDelta[itime] > (m_minTot / input->m_dT)) || (m_crossingTimes[itime].second) == (size) || (m_crossingTimes.at(itime).first) == (0)) {
 			m_singleCrossingIndexes.push_back(itime);
@@ -161,15 +162,29 @@ jerror_t IntVetofa250Converter::convertMode1Hit(IntVetoSiPMHit* output, const fa
 			idx = m_singleCrossingIndexes.at(iphe);
 			xmin = m_crossingTimes.at(idx).first;
 			xmax = m_crossingTimes.at(idx).second;
-			max = this->getMaximum((int) xmin, (int) xmax, &(m_waveform[0]), Tmax);
+			ixmin = (int) xmin;
+			ixmax = (int) xmax;
+			if (ixmin < 0) ixmin = 0;
+			if (ixmax >= m_waveform.size()) ixmax = m_waveform.size() - 1;
+
+			max = this->getMaximum(ixmin,ixmax, &(m_waveform[0]), Tmax);
 			if ((output->Araw) < max) {
 				output->Araw = max;
 				imax = idx;
 			}
 		}
-		xmin = m_crossingTimes.at(imax).first;
-		xmax = m_crossingTimes.at(imax).second;
-		max = this->getMaximum((int) xmin, (int) xmax, &(m_waveform[0]), Tmax);
+
+		xmin = m_crossingTimes[imax].first;
+		xmax = m_crossingTimes[imax].second;
+
+		ixmin = (int) xmin;
+		ixmax = (int) xmax;
+
+		if (ixmin < 0) ixmin = 0;
+		if (ixmax >= m_waveform.size()) ixmax = m_waveform.size() - 1;
+
+		max = this->getMaximum(ixmin, ixmax, &(m_waveform[0]), Tmax);
+
 
 		xmin = Tmax - m_NSAs;
 		if (xmin < 0) xmin = 0;

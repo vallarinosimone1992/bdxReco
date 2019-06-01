@@ -103,6 +103,7 @@ void TEvent::printCollections()const{
 	cout<<"Available collections: "<<m_collections.size()<<"class name - collection name"<<endl;
 	for (it=m_collections.begin();it!=m_collections.end();it++){
 		cout<<(*it)->GetClass()->GetName()<<" "<<(*it)->GetName()<<" TClonesArrayPointer: "<<(*it)<<endl;
+		cout<<"Entries: "<<(*it)->GetEntries()<<endl;
 	}
 }
 
