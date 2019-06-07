@@ -5,6 +5,7 @@ using namespace std;
 #include <EventBuilder/TEvent.h>
 #include <EventBuilder/TEventHeader.h>
 
+#include <Calorimeter/CalorimeterCluster.h>
 #include <Calorimeter/CalorimeterHit.h>
 #include <Calorimeter/CalorimeterDigiHit.h>
 #include <IntVeto/IntVetoHit.h>
@@ -28,11 +29,11 @@ using namespace std;
 using namespace jana;
 
 TEvent_factory_BDXmini::TEvent_factory_BDXmini() {
-	m_isMC=0;
-	m_MCRunNumber=0;
-	m_IntVetoHits=0;
-	m_CaloHits=0;
-	m_fa250Mode1CalibPedSubHits=0;
+	m_isMC = 0;
+	m_MCRunNumber = 0;
+	m_IntVetoHits = 0;
+	m_CaloHits = 0;
+	m_fa250Mode1CalibPedSubHits = 0;
 	m_ADD_TRIGGER_WORDS = 1;
 	gPARMS->SetDefaultParameter("TEVENT_FACTORY_BDXMINI:ADD_TRIGGER_WORDS", m_ADD_TRIGGER_WORDS, "Add trigger words to event header");
 
@@ -105,8 +106,10 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 
 	triggerDataBDXmini* bdxtData_write = new triggerDataBDXmini();
 
+	vector<const CalorimeterCluster*> cclusters;
 	vector<const CalorimeterHit*> chits;
 	vector<const CalorimeterDigiHit*> cdhits;
+
 	vector<const IntVetoHit*> ivhits;
 
 	vector<const fa250Mode1CalibPedSubHit*> fa250Hits;
@@ -163,18 +166,21 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 	for (int ii = 0; ii < chits.size(); ii++) {
 		((CalorimeterHit*) m_CaloHits->ConstructedAt(ii))->operator=(*(chits[ii]));
 		m_event->AddAssociatedObject(chits[ii]);
-
-		//Check for high-energy clusters
-		if ((chits[ii])->E > m_thrEneTot) saveWaveforms_flagCalo = true; //flag is there is at least one cluster at high Energy
 	}
 	m_event->addCollection(m_CaloHits);
+
+	//Check for high-energy clusters
+	//A.C. At the moment, we don't save these in the event collections
+	loop->Get(cclusters);
+	for (int ii = 0; ii < cclusters.size(); ii++) {
+		if ((cclusters[ii])->E > m_thrEneTot) saveWaveforms_flagCalo = true; //flag is there is at least one cluster at high Energy
+	}
 
 	loop->Get(ivhits);
 	m_IntVetoHits->Clear("C");
 	for (int ii = 0; ii < ivhits.size(); ii++) {
 		((IntVetoHit*) m_IntVetoHits->ConstructedAt(ii))->operator=(*(ivhits[ii]));
 		m_event->AddAssociatedObject(ivhits[ii]);
-
 		//Check for the presence of activity in the veto
 		if ((ivhits[ii])->Q > m_thrNpheVeto) saveWaveforms_flagVeto = false; //flag if all counters are below threshold. If there is even one with Q > threshold, dont'save
 	}
@@ -191,7 +197,6 @@ jerror_t TEvent_factory_BDXmini::evnt(JEventLoop *loop, uint64_t eventnumber) {
 			}
 			m_event->addCollection(m_fa250Mode1CalibPedSubHits); //So that the collection is here only if it is not empty
 		}
-
 	}
 
 #ifdef MC_SUPPORT_ENABLE
