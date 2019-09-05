@@ -203,6 +203,8 @@ jerror_t JEventProcessor_BDXMiniStability::evnt(JEventLoop *loop, uint64_t event
 	m_T = (eData->time - m_T0);
 	index = m_T / m_dT;
 
+	if (index<0) return OBJECT_NOT_AVAILABLE;
+
 	//the position in the map is given by m_T/m_dT
 
 	//all events
@@ -242,6 +244,16 @@ jerror_t JEventProcessor_BDXMiniStability::evnt(JEventLoop *loop, uint64_t event
 			highE_antiVeto[index] = highE_antiVeto[index] + 1;
 		}
 	}
+
+
+	//Stability of VETO Sipms ins phe
+	//0->Change with SIPM INDEX from 0 to 9 (component-1)
+
+	//Determine charge index (Q-Qmin)/dQ
+	if (vetoSIPM_L1[0].find(index) == vetoSIPM_L1[0].end()){
+		vetoSIPM_L1[0][index].resize(20); //20 is the number of bins in charge
+	}
+	vetoSIPM_L1[0][index][13]=vetoSIPM_L1[0][index][13]+1;
 
 	japp->RootUnLock();
 

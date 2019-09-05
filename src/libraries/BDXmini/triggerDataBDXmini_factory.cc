@@ -20,7 +20,7 @@ jerror_t triggerDataBDXmini_factory::init(void) {
 	m_isMC = 0;
 	gPARMS->GetParameter("MC", m_isMC);
 
-	/*Min and max time to assume that a channel fired when trigger fired*/
+	/*Min and max time to assume that a channel fired when trigger fired - 25 ns units*/
 	m_chanTimeMin = -4 * 4;
 	m_chanTimeMax = 4 * 4;
 

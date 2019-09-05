@@ -39,7 +39,7 @@ void fa250Mode1CalibPedSubHit::toHisto(TH1D *h)const{
 	int N=this->samples.size();
 	h->Reset();
 	for (int ii=0;ii<N;ii++){
-		h->Fill(ii*m_dT,this->samples[ii]);
+		h->Fill(ii*this->m_dT,this->samples[ii]);
 	}
 	for (int ii=0;ii<=h->GetNbinsX();ii++){
 		h->SetBinError(ii,0.);

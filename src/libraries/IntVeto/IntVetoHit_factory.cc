@@ -78,8 +78,8 @@ jerror_t IntVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber) {
 		m_map[m_channel].push_back(*it);
 	}
 
-	/*Now the map is full: each key is a PHYSICAL element of the detector (readout==0), and the value is a vector with IntVetoDigiHits belonging to that element*/
 
+	/*Now the map is full: each key is a PHYSICAL element of the detector (readout==0), and the value is a vector with IntVetoDigiHits belonging to that element*/
 	for (m_map_it = m_map.begin(); m_map_it != m_map.end(); m_map_it++) {
 		m_IntVetoDigiHits = m_map_it->second;
 		Qmax = -9999;
@@ -88,6 +88,7 @@ jerror_t IntVetoHit_factory::evnt(JEventLoop *loop, uint64_t eventnumber) {
 			m_IntVetoDigiHit = m_IntVetoDigiHits[0];
 			Q = m_IntVetoDigiHit->Qphe;
 			T = m_IntVetoDigiHit->T;
+
 
 			if (Q > m_THR_singleReadout) {
 				m_IntVetoHit = new IntVetoHit();

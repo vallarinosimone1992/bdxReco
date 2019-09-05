@@ -21,7 +21,7 @@ TCanvas* IntVetoDigiHit::Draw(int id) const {
 	}
 
 	cout<<Nsamples<<endl;
-	hWave = new TH1D(Form("h%i_%i_%i_%i", m_channel.sector, m_channel.layer, m_channel.component, m_channel.readout), Form("h%i_%i_%i_%i", m_channel.sector, m_channel.layer, m_channel.component, m_channel.readout), Nsamples, -0.5, Nsamples - 0.5);
+	hWave = new TH1D(Form("h%i_%i_%i_%i", m_channel.sector, m_channel.layer, m_channel.component, m_channel.readout), Form("h%i_%i_%i_%i", m_channel.sector, m_channel.layer, m_channel.component, m_channel.readout), Nsamples, -0.5*wave->m_dT, (Nsamples - 0.5)*wave->m_dT);
 	if (wave!=0){
 		wave->toHisto(hWave);
 	}

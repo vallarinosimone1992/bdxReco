@@ -59,7 +59,8 @@ private:
 	//Large energy events - veto anticoincidence
 	map<unsigned long int,unsigned int> highE_antiVeto;
 
-
+	//Maps for VETO SIPM stability
+	map<unsigned long int,vector<unsigned int>> vetoSIPM_L1[10];
 
 
 };

@@ -265,6 +265,7 @@ jerror_t JEventProcessor_BDXMiniCalorimeterEnergyCalibration::evnt(JEventLoop *l
 
 	vector<const BDXMiniCalorimeterEnergyCalibrationHit*> calo_hits;
 	vector<const BDXMiniCalorimeterEnergyCalibrationHit*>::const_iterator calo_hits_it;
+	const BDXMiniCalorimeterEnergyCalibrationHit *m_CaloTrgHit;
 
 	const eventData* tData;
 	if (!m_isMC) {
@@ -277,7 +278,7 @@ jerror_t JEventProcessor_BDXMiniCalorimeterEnergyCalibration::evnt(JEventLoop *l
 	}
 	loop->Get(calo_hits);
 
-	const BDXMiniCalorimeterEnergyCalibrationHit *m_CaloTrgHit;
+
 
 	int sector, X, Y, id;
 	for (calo_hits_it = calo_hits.begin(); calo_hits_it != calo_hits.end(); calo_hits_it++) {

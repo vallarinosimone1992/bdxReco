@@ -77,8 +77,8 @@ jerror_t JEventProcessor_BDXMiniVetoCalibration::init(void) {
 	TDirectory *main = gDirectory;
 	gDirectory->mkdir("BDXMiniVetoCalib")->cd();
 
-	double Qmin, Qmax, Emin, Emax, Amin, Amax;
-	int NQ, NE, NA;
+	double Qmin, Qmax;
+	int NQ;
 
 	if (m_isMC) {
 		Qmin = -10.5;
@@ -90,13 +90,7 @@ jerror_t JEventProcessor_BDXMiniVetoCalibration::init(void) {
 		NQ = 211 * 4;
 	}
 
-	NE = 500;
-	Emin = 0;
-	Emax = 200;
 
-	NA = 250;
-	Amin = 0;
-	Amax = 250;
 
 	for (int id = 0; id < 10; id++) {
 
@@ -215,6 +209,7 @@ jerror_t JEventProcessor_BDXMiniVetoCalibration::evnt(JEventLoop *loop, uint64_t
 		sector = m_VetoHit->m_channel.sector;
 		layer = m_VetoHit->m_channel.layer;
 		component = m_VetoHit->m_channel.component; //from 1 to 10
+
 
 		component = component - 1; //from 0 to 9
 		japp->RootWriteLock();

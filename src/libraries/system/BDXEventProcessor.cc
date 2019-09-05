@@ -179,6 +179,7 @@ jerror_t BDXEventProcessor::evnt(JEventLoop *loop, uint64_t eventnumber) {
 		}
 
 		if (tData->eventType != eventSource::DAQ) {
+		//	jout<<"BDXEventProcessor exit: tData->eventType: "<<tData->eventType<<endl;
 			return OBJECT_NOT_AVAILABLE;
 		}
 	}

@@ -100,6 +100,10 @@ jerror_t BDXMiniVetoCalibrationHit_factory::evnt(JEventLoop *loop, uint64_t even
 	/*Here goes the code to create the objects*/
 	for (intveto_hits_it = intveto_hits.begin(); intveto_hits_it != intveto_hits.end(); intveto_hits_it++) {
 		m_IntVetoDigiHit = (*intveto_hits_it);
+
+		//A.C. skip SIPM in csc (0,1,2), i.e. Sector0 Layer0 Component3
+		if ((m_IntVetoDigiHit->m_channel.layer == 0) && (m_IntVetoDigiHit->m_channel.component == 3)) continue;
+
 		if (m_IntVetoDigiHit->m_channel.component == 10) { //TOP
 			if (m_IntVetoDigiHit->Qphe > m_thrIntVetoCaps) {
 				nTopCaps++;
@@ -141,6 +145,8 @@ jerror_t BDXMiniVetoCalibrationHit_factory::evnt(JEventLoop *loop, uint64_t even
 
 	for (intveto_hits_it = intveto_hits.begin(); intveto_hits_it != intveto_hits.end(); intveto_hits_it++) {
 		m_IntVetoDigiHit = (*intveto_hits_it);
+		if ((m_IntVetoDigiHit->m_channel.layer == 0) && (m_IntVetoDigiHit->m_channel.component == 3)) continue;
+
 		m_VetoCalibHit = new BDXMiniVetoCalibrationHit();
 		m_VetoCalibHit->isMatched = 1;
 		m_VetoCalibHit->m_channel = m_IntVetoDigiHit->m_channel;
@@ -148,36 +154,56 @@ jerror_t BDXMiniVetoCalibrationHit_factory::evnt(JEventLoop *loop, uint64_t even
 		else
 			m_VetoCalibHit->m_channel.sector = 1;
 
-		//For OV and IV lateral, select hits when the other veto has a hit.
-		//Mark those in correspondance
 		if ((m_VetoCalibHit->m_channel.layer == 0) && (m_VetoCalibHit->m_channel.component <= 8)) { //OV
 			if (maxComponent1L == -1) {
 				delete m_VetoCalibHit;
 				m_VetoCalibHit = 0;
 				continue;
 			}
-			sel1 = m_VetoCalibHit->m_channel.component;
-			sel2 = m_VetoCalibHit->m_channel.component - 1;
-			if (sel2 == 0) sel2 = 8;
-
-			if ((maxComponent1L != sel1) && (maxComponent1L != sel2)) {
+			if (maxComponent1L != 1) {
 				m_VetoCalibHit->isMatched = 0;
 			}
-
 		} else if ((m_VetoCalibHit->m_channel.layer == 1) && (m_VetoCalibHit->m_channel.component <= 8)) {  //IV
 			if (maxComponent0L == -1) {
 				delete m_VetoCalibHit;
 				m_VetoCalibHit = 0;
 				continue;
 			}
-
-			sel1 = m_VetoCalibHit->m_channel.component;
-			sel2 = m_VetoCalibHit->m_channel.component + 1;
-			if (sel2 == 9) sel2 = 1;
-			if ((maxComponent0L != sel1) && (maxComponent0L != sel2)) {
+			if (maxComponent0L != 1) {
 				m_VetoCalibHit->isMatched = 0;
 			}
 		}
+		/*
+		 //For OV and IV lateral, select hits when the other veto has a hit.
+		 //Mark those in correspondance
+		 if ((m_VetoCalibHit->m_channel.layer == 0) && (m_VetoCalibHit->m_channel.component <= 8)) { //OV
+		 if (maxComponent1L == -1) {
+		 delete m_VetoCalibHit;
+		 m_VetoCalibHit = 0;
+		 continue;
+		 }
+		 sel1 = m_VetoCalibHit->m_channel.component;
+		 sel2 = m_VetoCalibHit->m_channel.component - 1;
+		 if (sel2 == 0) sel2 = 8;
+
+		 if ((maxComponent1L != sel1) && (maxComponent1L != sel2)) {
+		 m_VetoCalibHit->isMatched = 0;
+		 }
+
+		 } else if ((m_VetoCalibHit->m_channel.layer == 1) && (m_VetoCalibHit->m_channel.component <= 8)) {  //IV
+		 if (maxComponent0L == -1) {
+		 delete m_VetoCalibHit;
+		 m_VetoCalibHit = 0;
+		 continue;
+		 }
+
+		 sel1 = m_VetoCalibHit->m_channel.component;
+		 sel2 = m_VetoCalibHit->m_channel.component + 1;
+		 if (sel2 == 9) sel2 = 1;
+		 if ((maxComponent0L != sel1) && (maxComponent0L != sel2)) {
+		 m_VetoCalibHit->isMatched = 0;
+		 }
+		 }*/
 
 		m_VetoCalibHit->Qraw = m_IntVetoDigiHit->Qraw;
 		m_VetoCalibHit->Qphe = m_IntVetoDigiHit->Qphe;

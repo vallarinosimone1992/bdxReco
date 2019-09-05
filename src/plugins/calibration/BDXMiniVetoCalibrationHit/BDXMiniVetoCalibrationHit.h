@@ -30,7 +30,7 @@ public:
 		 AddString(items, "Qphe", "%f",Qphe);
 		 AddString(items, "T","%4f",T);
 		 AddString(items, "A","%4f",A);
-
+		 AddString(items, "isMatched","%4d",isMatched*1);
 		// AddString(items, "id", "%4d", id);
 		// AddString(items, "E", "%f", E);
 	}
