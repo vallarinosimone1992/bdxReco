@@ -141,9 +141,9 @@ jerror_t JEventProcessor_BDXMiniCalorimeterEnergyCalibration::init(void) {
 	Emin = 0;
 	Emax = 200;
 
-	NA = 250;
+	NA = 1000;
 	Amin = 0;
-	Amax = 250;
+	Amax = 1000;
 
 	for (geometry_it = geometry.begin(); geometry_it != geometry.end(); geometry_it++) {
 		//Do whatever you want. To access the first part of pair(pair is the key of the map here) you should write
