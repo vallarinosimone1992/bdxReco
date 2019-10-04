@@ -39,16 +39,30 @@ private:
 
 	double m_thrEneTot,m_thrEneSeed;
 
-	unsigned long int m_dT;
+	unsigned long int m_dT, m_dT2;
 	unsigned long int    m_T0,m_T;
 	int m_isT0Set;
-	unsigned long int index;
+	unsigned long int index, index2;
 
 	int m_nbins;
+
+	int m_nbinsL0[10];
+	int m_nbinsL1[10];
+
+	static const int m_nchargestep =80;
+	static constexpr double m_chargemin = 0;
+	static constexpr double m_chargemax = 10;
+
+
 	/*This algorithm is also supposed to run online.
 	 * Hence, we don't know a priori the run length. We use maps to accumulate statistics.
 	 */
 	map<unsigned long int,unsigned int>::iterator map_it;
+	map<unsigned long int,unsigned int[m_nchargestep]>::iterator rateL0_it[10];
+	map<unsigned long int,unsigned int[m_nchargestep]>::iterator rateL1_it[10];
+	//Rate: Layer 0 - Layer 1
+	map<unsigned long int,unsigned int[m_nchargestep]> rateL0[10];
+	map<unsigned long int,unsigned int[m_nchargestep]> rateL1[10];
 
 	map<unsigned long int,unsigned int> allEvents;
 	vector< map<unsigned long int,unsigned int> > trgs;
@@ -59,8 +73,7 @@ private:
 	//Large energy events - veto anticoincidence
 	map<unsigned long int,unsigned int> highE_antiVeto;
 
-	//Maps for VETO SIPM stability
-	map<unsigned long int,vector<unsigned int>> vetoSIPM_L1[10];
+
 
 
 };

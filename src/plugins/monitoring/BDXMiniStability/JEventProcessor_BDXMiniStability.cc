@@ -29,6 +29,7 @@ using namespace jana;
 #include <BDXmini/triggerDataBDXmini.h>
 
 #include "TH1D.h"
+#include "TH2D.h"
 #include "TROOT.h"
 
 //All events
@@ -37,6 +38,10 @@ static TH1D *hBDXMiniStability_allEvents_distr = 0;
 //Trgs
 static TH1D *hBDXMiniStability_trg[triggerDataBDXmini::nTriggersMAX] = { 0 };
 static TH1D *hBDXMiniStability_trg_distr[triggerDataBDXmini::nTriggersMAX] = { 0 };
+//Veto Rates
+static TH2D *hBDXMiniStability_VetoL0_Ch[10] = { 0 };
+static TH2D *hBDXMiniStability_VetoL1_Ch[10] = { 0 };
+
 
 //High-E and High-E, antiVeto
 static TH1D *hBDXMiniStability_highE = 0;
@@ -81,6 +86,9 @@ jerror_t JEventProcessor_BDXMiniStability::init(void) {
 
 	//The width (in s) of binning in s;
 	m_dT = 60;
+	//The width (in s) of binning in s for Vetos diff. rate is;
+	m_dT2 = 3000;
+
 	gPARMS->SetDefaultParameter("BDXMiniStability:dT", m_dT, "Width of time binning in s");
 
 	//The energy threshold in MeV
@@ -167,6 +175,8 @@ jerror_t JEventProcessor_BDXMiniStability::evnt(JEventLoop *loop, uint64_t event
 	const eventData* eData;
 	const triggerDataBDXmini* tData;
 
+	int Qbin;
+
 	//plugin doesn't work for MC.
 	if (m_isMC) {
 		return NOERROR;
@@ -202,6 +212,7 @@ jerror_t JEventProcessor_BDXMiniStability::evnt(JEventLoop *loop, uint64_t event
 	}
 	m_T = (eData->time - m_T0);
 	index = m_T / m_dT;
+	index2 = m_T / m_dT2;
 
 	if (index<0) return OBJECT_NOT_AVAILABLE;
 
@@ -237,6 +248,18 @@ jerror_t JEventProcessor_BDXMiniStability::evnt(JEventLoop *loop, uint64_t event
 		}
 	}
 
+	for (int ii = 0; ii < intVetoDigiHits.size(); ii++) {
+		if ((intVetoDigiHits[ii]->Qphe<m_chargemin)||(intVetoDigiHits[ii]->Qphe>m_chargemax)) continue;
+		Qbin = int(m_nchargestep*(intVetoDigiHits[ii]->Qphe-m_chargemin)/(m_chargemax-m_chargemin));
+
+		if (intVetoDigiHits[ii]->m_channel.layer == 0) {
+			rateL0[intVetoDigiHits[ii]->m_channel.component-1][index2][Qbin] = rateL0[intVetoDigiHits[ii]->m_channel.component-1][index2][Qbin] +1;
+		}
+		else if (intVetoDigiHits[ii]->m_channel.layer == 1) {
+			rateL1[intVetoDigiHits[ii]->m_channel.component-1][index2][Qbin] = rateL1[intVetoDigiHits[ii]->m_channel.component-1][index2][Qbin] +1;
+		}
+	}
+
 	if (nHighEnergy) {
 		highE[index] = highE[index] + 1;
 		if ((nVetoL0 == 0) && (nVetoL1 == 0)) {
@@ -246,14 +269,7 @@ jerror_t JEventProcessor_BDXMiniStability::evnt(JEventLoop *loop, uint64_t event
 	}
 
 
-	//Stability of VETO Sipms ins phe
-	//0->Change with SIPM INDEX from 0 to 9 (component-1)
 
-	//Determine charge index (Q-Qmin)/dQ
-	if (vetoSIPM_L1[0].find(index) == vetoSIPM_L1[0].end()){
-		vetoSIPM_L1[0][index].resize(20); //20 is the number of bins in charge
-	}
-	vetoSIPM_L1[0][index][13]=vetoSIPM_L1[0][index][13]+1;
 
 	japp->RootUnLock();
 
@@ -312,6 +328,39 @@ jerror_t JEventProcessor_BDXMiniStability::erun(void) {
 
 	}
 
+
+
+	for(int i =0; i< 10; i++){
+
+		m_nbinsL0[i] = rateL0[i].size();
+		m_nbinsL1[i] = rateL1[i].size();
+
+
+
+
+		hBDXMiniStability_VetoL0_Ch[i] = new TH2D(Form("hBDXMiniStability_VetoL0_Ch%i", i+1), Form("hBDXMiniStability_VetoL0_Ch%i", i+1), m_nbinsL0[i],0, m_dT2*m_nbinsL0[i],m_nchargestep,m_chargemin,m_chargemax);
+		hBDXMiniStability_VetoL1_Ch[i] = new TH2D(Form("hBDXMiniStability_VetoL1_Ch%i", i+1), Form("hBDXMiniStability_VetoL1_Ch%i", i+1), m_nbinsL1[i],0, m_dT2*m_nbinsL1[i],m_nchargestep,m_chargemin,m_chargemax);
+	}
+
+
+	for(int i =0; i < 10; i++){
+		for (rateL0_it[i] = rateL0[i].begin(); rateL0_it[i] != rateL0[i].end(); rateL0_it[i]++) {
+			for (int k =0; k< m_nchargestep; k++){
+				    hBDXMiniStability_VetoL0_Ch[i]->Fill( (rateL0_it[i]->first)*m_dT2 ,m_chargemin+k*(m_chargemax-m_chargemin)/m_nchargestep ,rateL0_it[i]->second[k]);
+			}
+		}
+	}
+
+	for(int i =0; i < 10; i++){
+			for (rateL1_it[i] = rateL1[i].begin(); rateL1_it[i] != rateL1[i].end(); rateL1_it[i]++) {
+
+				for (int k =0; k< m_nchargestep; k++){
+					hBDXMiniStability_VetoL1_Ch[i]->Fill((rateL1_it[i]->first)*m_dT2 ,m_chargemin+k*(m_chargemax-m_chargemin)/m_nchargestep,rateL1_it[i]->second[k]);
+				}
+			}
+		}
+
+
 	mainD->cd();
 	japp->RootUnLock();
 
@@ -322,6 +371,14 @@ jerror_t JEventProcessor_BDXMiniStability::erun(void) {
 			m_ROOTOutput->AddObject(hBDXMiniStability_trg[itrg]);
 			m_ROOTOutput->AddObject(hBDXMiniStability_trg_distr[itrg]);
 		}
+		for(int i = 0; i<10; i++) {
+
+			m_ROOTOutput->AddObject(hBDXMiniStability_VetoL0_Ch[i]);
+		}
+		for(int i = 0; i<10; i++) {
+
+			m_ROOTOutput->AddObject(hBDXMiniStability_VetoL1_Ch[i]);
+				}
 		m_ROOTOutput->AddObject(hBDXMiniStability_highE);
 		m_ROOTOutput->AddObject(hBDXMiniStability_highE_antiVeto);
 	}
