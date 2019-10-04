@@ -30,7 +30,7 @@ public:
 		 AddString(items, "Qphe", "%f",Qphe);
 		 AddString(items, "T","%4f",T);
 		 AddString(items, "A","%4f",A);
-		 AddString(items, "isMatched","%4d",isMatched*1);
+		 AddString(items, "match","%4d",match);
 		// AddString(items, "id", "%4d", id);
 		// AddString(items, "E", "%f", E);
 	}
@@ -38,7 +38,7 @@ public:
 	double Qraw,Qphe;
 	double T,A;
 
-	int isMatched; //relevant for lateral veto only. Is this matched to an hit in the corresponding veto?
+	int match;
 
 	TranslationTable::INT_VETO_Index_t m_channel; //Detector-specific ID. Since this is a detector-based object, the readout field will be 0
 

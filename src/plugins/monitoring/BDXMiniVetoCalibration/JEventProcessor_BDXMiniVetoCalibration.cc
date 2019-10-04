@@ -90,8 +90,6 @@ jerror_t JEventProcessor_BDXMiniVetoCalibration::init(void) {
 		NQ = 211 * 4;
 	}
 
-
-
 	for (int id = 0; id < 10; id++) {
 
 		hBDXMiniIVetoChargeCalibrationTOP[id] = new TH1D(Form("hBDXMiniIVetoCalibQTOP_c%i", id + 1), Form("hBDXMiniIVetoCalibQTOP_c%i", id + 1), NQ, Qmin, Qmax);
@@ -165,6 +163,12 @@ jerror_t JEventProcessor_BDXMiniVetoCalibration::brun(JEventLoop *eventLoop, int
 				}
 			}
 		}
+
+		/*For ALL objects you want to add to ROOT file, use the following:*/
+		if (m_ROOTOutput) {
+		//	m_ROOTOutput->AddObject(h);
+		//	m_ROOTOutput->AddObject(t);
+		}
 	}
 
 	// This is called whenever the run number changes
@@ -209,27 +213,9 @@ jerror_t JEventProcessor_BDXMiniVetoCalibration::evnt(JEventLoop *loop, uint64_t
 		sector = m_VetoHit->m_channel.sector;
 		layer = m_VetoHit->m_channel.layer;
 		component = m_VetoHit->m_channel.component; //from 1 to 10
-
-
 		component = component - 1; //from 0 to 9
 		japp->RootWriteLock();
-		if (sector == 0) { //TOP
-			if (layer == 0) { //OV
-				hBDXMiniOVetoChargeCalibrationTOP[component]->Fill(m_VetoHit->Qphe);
-				if (m_VetoHit->isMatched) hBDXMiniOVetoChargeCalibrationTOPmatched[component]->Fill(m_VetoHit->Qphe);
-			} else if (layer == 1) { //IV
-				hBDXMiniIVetoChargeCalibrationTOP[component]->Fill(m_VetoHit->Qphe);
-				if (m_VetoHit->isMatched) hBDXMiniIVetoChargeCalibrationTOPmatched[component]->Fill(m_VetoHit->Qphe);
-			}
-		} else if (sector == 1) { //BOT
-			if (layer == 0) { //OV
-				hBDXMiniOVetoChargeCalibrationBOT[component]->Fill(m_VetoHit->Qphe);
-				if (m_VetoHit->isMatched) hBDXMiniOVetoChargeCalibrationBOTmatched[component]->Fill(m_VetoHit->Qphe);
-			} else if (layer == 1) { //IV
-				hBDXMiniIVetoChargeCalibrationBOT[component]->Fill(m_VetoHit->Qphe);
-				if (m_VetoHit->isMatched) hBDXMiniIVetoChargeCalibrationBOTmatched[component]->Fill(m_VetoHit->Qphe);
-			}
-		}
+
 		japp->RootUnLock();
 	}
 	return NOERROR;
