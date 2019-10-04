@@ -102,7 +102,7 @@ jerror_t BDXMiniVetoSIPMCalibrationHit_factory::evnt(JEventLoop *loop, uint64_t 
 		m_BDXMiniVetoSIPMCalibrationHit->m_channel = m_IntVetoDigiHit->m_channel;
 		m_BDXMiniVetoSIPMCalibrationHit->Qraw = m_IntVetoDigiHit->Qraw;
 		m_BDXMiniVetoSIPMCalibrationHit->Qphe = m_IntVetoDigiHit->Qphe;
-		m_BDXMiniVetoSIPMCalibrationHit->A = m_IntVetoDigiHit->A;
+		m_BDXMiniVetoSIPMCalibrationHit->A = m_IntVetoDigiHit->Araw;
 		m_BDXMiniVetoSIPMCalibrationHit->T = m_IntVetoDigiHit->T;
 
 		_data.push_back(m_BDXMiniVetoSIPMCalibrationHit);

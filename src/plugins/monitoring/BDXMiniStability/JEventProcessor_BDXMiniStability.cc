@@ -1,3 +1,4 @@
+
 // $Id$
 //
 //    File: JEventProcessor_BDXMiniStability.cc
@@ -249,8 +250,9 @@ jerror_t JEventProcessor_BDXMiniStability::evnt(JEventLoop *loop, uint64_t event
 	}
 
 	for (int ii = 0; ii < intVetoDigiHits.size(); ii++) {
-		if ((intVetoDigiHits[ii]->Qphe<m_chargemin)||(intVetoDigiHits[ii]->Qphe>m_chargemax)) continue;
-		Qbin = int(m_nchargestep*(intVetoDigiHits[ii]->Qphe-m_chargemin)/(m_chargemax-m_chargemin));
+		if ((intVetoDigiHits[ii]->Aphe<m_chargemin)||(intVetoDigiHits[ii]->Aphe>m_chargemax)) continue;
+		if ((intVetoDigiHits[ii]->T<m_timemin)||(intVetoDigiHits[ii]->T>m_timemax)) continue;
+		Qbin = int(m_nchargestep*(intVetoDigiHits[ii]->Aphe-m_chargemin)/(m_chargemax-m_chargemin));
 
 		if (intVetoDigiHits[ii]->m_channel.layer == 0) {
 			rateL0[intVetoDigiHits[ii]->m_channel.component-1][index2][Qbin] = rateL0[intVetoDigiHits[ii]->m_channel.component-1][index2][Qbin] +1;
@@ -346,7 +348,7 @@ jerror_t JEventProcessor_BDXMiniStability::erun(void) {
 	for(int i =0; i < 10; i++){
 		for (rateL0_it[i] = rateL0[i].begin(); rateL0_it[i] != rateL0[i].end(); rateL0_it[i]++) {
 			for (int k =0; k< m_nchargestep; k++){
-				    hBDXMiniStability_VetoL0_Ch[i]->Fill( (rateL0_it[i]->first)*m_dT2 ,m_chargemin+k*(m_chargemax-m_chargemin)/m_nchargestep ,rateL0_it[i]->second[k]);
+				    hBDXMiniStability_VetoL0_Ch[i]->Fill( (rateL0_it[i]->first)*m_dT2 ,m_chargemin+(k+0.5)*(m_chargemax-m_chargemin)/m_nchargestep ,rateL0_it[i]->second[k]);
 			}
 		}
 	}
@@ -355,7 +357,7 @@ jerror_t JEventProcessor_BDXMiniStability::erun(void) {
 			for (rateL1_it[i] = rateL1[i].begin(); rateL1_it[i] != rateL1[i].end(); rateL1_it[i]++) {
 
 				for (int k =0; k< m_nchargestep; k++){
-					hBDXMiniStability_VetoL1_Ch[i]->Fill((rateL1_it[i]->first)*m_dT2 ,m_chargemin+k*(m_chargemax-m_chargemin)/m_nchargestep,rateL1_it[i]->second[k]);
+					hBDXMiniStability_VetoL1_Ch[i]->Fill((rateL1_it[i]->first)*m_dT2 ,m_chargemin+(k+0.5)*(m_chargemax-m_chargemin)/m_nchargestep,rateL1_it[i]->second[k]);
 				}
 			}
 		}

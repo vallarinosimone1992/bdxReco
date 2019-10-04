@@ -43,7 +43,8 @@ public:
 		AddString(items, "Qphe","%4f",Qphe);
 		AddString(items, "Qraw","%4f",Qraw);
 		AddString(items, "T","%4f",T);
-		AddString(items, "A","%4f",A);
+		AddString(items, "Araw","%4f",Araw);
+		AddString(items, "Aphe","%4f",Aphe);
 		AddString(items, "pedMean","%4f",pedMean);
 		AddString(items, "pedRMS","%4f",pedRMS);
 		AddString(items, "RMSflag","%4d",1*RMSflag);
@@ -55,7 +56,7 @@ public:
 	virtual TCanvas* Draw(int id=0) const;//!  //Exclude from root dictionary
 	mutable TH1D* hWave; //!  //Exclude from root dictionary
 
-	double Qphe,Qraw,T,A;
+	double Qphe,Qraw,T,Araw,Aphe;
 	double pedMean,pedRMS;
 	bool RMSflag;
 

@@ -80,7 +80,8 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 				m_IntVetoDigiHit->m_channel.readout = 1;
 				m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc1;
 				m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc1 / 1000.; //MC is in ps
-				m_IntVetoDigiHit->A = 0;
+				m_IntVetoDigiHit->Araw = 0;
+				m_IntVetoDigiHit->Aphe = m_IntVetoDigiHit->Qphe;
 				m_IntVetoDigiHit->RMSflag = true;
 				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 				m_map[m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
@@ -93,7 +94,8 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 					m_IntVetoDigiHit->m_channel = m_channel;
 					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc1;
 					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc1 / 1000.; //MC is in ps
-					m_IntVetoDigiHit->A = 0;
+					m_IntVetoDigiHit->Araw = 0;
+					m_IntVetoDigiHit->Aphe = m_IntVetoDigiHit->Qphe;
 					m_IntVetoDigiHit->RMSflag = true;
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_map[m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
@@ -106,7 +108,8 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 					m_IntVetoDigiHit->m_channel.component = 1;
 					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc1;
 					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc1 / 1000.; //MC is in ps
-					m_IntVetoDigiHit->A = 0;
+					m_IntVetoDigiHit->Araw = 0;
+					m_IntVetoDigiHit->Aphe = m_IntVetoDigiHit->Qphe;
 					m_IntVetoDigiHit->RMSflag = true;
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_map[m_IntVetoDigiHit->m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
@@ -116,7 +119,8 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 					m_IntVetoDigiHit->m_channel.component = 2;
 					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc2;
 					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc2 / 1000.; //MC is in ps
-					m_IntVetoDigiHit->A = 0;
+					m_IntVetoDigiHit->Araw = 0;
+					m_IntVetoDigiHit->Aphe = m_IntVetoDigiHit->Qphe;
 					m_IntVetoDigiHit->RMSflag = true;
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_map[m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
@@ -126,7 +130,8 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 					m_IntVetoDigiHit->m_channel.component = 3;
 					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc3;
 					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc3 / 1000.; //MC is in ps
-					m_IntVetoDigiHit->A = 0;
+					m_IntVetoDigiHit->Araw = 0;
+					m_IntVetoDigiHit->Aphe = m_IntVetoDigiHit->Qphe;
 					m_IntVetoDigiHit->RMSflag = true;
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_map[m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
@@ -136,7 +141,8 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 					m_IntVetoDigiHit->m_channel.component = 4;
 					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc4;
 					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc4 / 1000.; //MC is in ps
-					m_IntVetoDigiHit->A = 0;
+					m_IntVetoDigiHit->Araw = 0;
+					m_IntVetoDigiHit->Aphe = m_IntVetoDigiHit->Qphe;
 					m_IntVetoDigiHit->RMSflag = true;
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_map[m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
@@ -146,7 +152,8 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 					m_IntVetoDigiHit->m_channel.component = 5;
 					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc5;
 					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc5 / 1000.; //MC is in ps
-					m_IntVetoDigiHit->A = 0;
+					m_IntVetoDigiHit->Araw = 0;
+					m_IntVetoDigiHit->Aphe = m_IntVetoDigiHit->Qphe;
 					m_IntVetoDigiHit->RMSflag = true;
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_map[m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
@@ -156,7 +163,8 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 					m_IntVetoDigiHit->m_channel.component = 6;
 					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc6;
 					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc6 / 1000.; //MC is in ps
-					m_IntVetoDigiHit->A = 0;
+					m_IntVetoDigiHit->Araw = 0;
+					m_IntVetoDigiHit->Aphe = m_IntVetoDigiHit->Qphe;
 					m_IntVetoDigiHit->RMSflag = true;
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_map[m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
@@ -166,7 +174,8 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 					m_IntVetoDigiHit->m_channel.component = 7;
 					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc7;
 					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc7 / 1000.; //MC is in ps
-					m_IntVetoDigiHit->A = 0;
+					m_IntVetoDigiHit->Araw = 0;
+					m_IntVetoDigiHit->Aphe = m_IntVetoDigiHit->Qphe;
 					m_IntVetoDigiHit->RMSflag = true;
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_map[m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
@@ -176,7 +185,8 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 					m_IntVetoDigiHit->m_channel.component = 8;
 					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc8;
 					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc8 / 1000.; //MC is in ps
-					m_IntVetoDigiHit->A = 0;
+					m_IntVetoDigiHit->Araw = 0;
+					m_IntVetoDigiHit->Aphe = m_IntVetoDigiHit->Qphe;
 					m_IntVetoDigiHit->RMSflag = true;
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_map[m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
@@ -193,7 +203,8 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 					m_IntVetoDigiHit->m_channel.readout = 1;
 					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc1;
 					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc1 / 1000.; //MC is in ps
-					m_IntVetoDigiHit->A = 0;
+					m_IntVetoDigiHit->Araw = 0;
+					m_IntVetoDigiHit->Aphe = m_IntVetoDigiHit->Qphe;
 					m_IntVetoDigiHit->RMSflag = true;
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_map[m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
@@ -203,7 +214,8 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 					m_IntVetoDigiHit->m_channel.readout = 2;
 					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc2;
 					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc2 / 1000.; //MC is in ps
-					m_IntVetoDigiHit->A = 0;
+					m_IntVetoDigiHit->Araw = 0;
+					m_IntVetoDigiHit->Aphe = m_IntVetoDigiHit->Qphe;
 					m_IntVetoDigiHit->RMSflag = true;
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_map[m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
@@ -213,7 +225,8 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 					m_IntVetoDigiHit->m_channel.readout = 3;
 					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc3;
 					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc3 / 1000.; //MC is in ps
-					m_IntVetoDigiHit->A = 0;
+					m_IntVetoDigiHit->Araw = 0;
+					m_IntVetoDigiHit->Aphe = m_IntVetoDigiHit->Qphe;
 					m_IntVetoDigiHit->RMSflag = true;
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_map[m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
@@ -223,7 +236,8 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 					m_IntVetoDigiHit->m_channel.readout = 4;
 					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc4;
 					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc4 / 1000.; //MC is in ps
-					m_IntVetoDigiHit->A = 0;
+					m_IntVetoDigiHit->Araw = 0;
+					m_IntVetoDigiHit->Aphe = m_IntVetoDigiHit->Qphe;
 					m_IntVetoDigiHit->RMSflag = true;
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_map[m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
@@ -237,7 +251,8 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 					m_IntVetoDigiHit->m_channel.readout = 1;
 					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc4;
 					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc4 / 1000.; //MC is in ps
-					m_IntVetoDigiHit->A = 0;
+					m_IntVetoDigiHit->Araw = 0;
+					m_IntVetoDigiHit->Aphe = m_IntVetoDigiHit->Qphe;
 					m_IntVetoDigiHit->RMSflag = true;
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_map[m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
@@ -247,7 +262,8 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 					m_IntVetoDigiHit->m_channel.readout = 2;
 					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc3;
 					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc3 / 1000.; //MC is in ps
-					m_IntVetoDigiHit->A = 0;
+					m_IntVetoDigiHit->Araw = 0;
+					m_IntVetoDigiHit->Aphe = m_IntVetoDigiHit->Qphe;
 					m_IntVetoDigiHit->RMSflag = true;
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_map[m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
@@ -257,7 +273,8 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 					m_IntVetoDigiHit->m_channel.readout = 3;
 					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc2;
 					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc2 / 1000.; //MC is in ps
-					m_IntVetoDigiHit->A = 0;
+					m_IntVetoDigiHit->Araw = 0;
+					m_IntVetoDigiHit->Aphe = m_IntVetoDigiHit->Qphe;
 					m_IntVetoDigiHit->RMSflag = true;
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_map[m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
@@ -267,7 +284,8 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 					m_IntVetoDigiHit->m_channel.readout = 4;
 					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc1;
 					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc1 / 1000.; //MC is in ps
-					m_IntVetoDigiHit->A = 0;
+					m_IntVetoDigiHit->Araw = 0;
+					m_IntVetoDigiHit->Aphe = m_IntVetoDigiHit->Qphe;
 					m_IntVetoDigiHit->RMSflag = true;
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_map[m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
@@ -280,7 +298,8 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 						m_IntVetoDigiHit->m_channel.readout = 1;
 						m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc1;
 						m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc1 / 1000.; //MC is in ps
-						m_IntVetoDigiHit->A = 0;
+						m_IntVetoDigiHit->Araw = 0;
+						m_IntVetoDigiHit->Aphe = m_IntVetoDigiHit->Qphe;
 						m_IntVetoDigiHit->RMSflag = true;
 						m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 						m_map[m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
@@ -290,7 +309,8 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 						m_IntVetoDigiHit->m_channel.readout = 2;
 						m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc4;
 						m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc4 / 1000.; //MC is in ps
-						m_IntVetoDigiHit->A = 0;
+						m_IntVetoDigiHit->Araw = 0;
+						m_IntVetoDigiHit->Aphe = m_IntVetoDigiHit->Qphe;
 						m_IntVetoDigiHit->RMSflag = true;
 						m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 						m_map[m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
@@ -300,7 +320,8 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 						m_IntVetoDigiHit->m_channel.readout = 3;
 						m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc3;
 						m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc3 / 1000.; //MC is in ps
-						m_IntVetoDigiHit->A = 0;
+						m_IntVetoDigiHit->Araw = 0;
+						m_IntVetoDigiHit->Aphe = m_IntVetoDigiHit->Qphe;
 						m_IntVetoDigiHit->RMSflag = true;
 						m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 						m_map[m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
@@ -310,7 +331,8 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 						m_IntVetoDigiHit->m_channel.readout = 4;
 						m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc2;
 						m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc2 / 1000.; //MC is in ps
-						m_IntVetoDigiHit->A = 0;
+						m_IntVetoDigiHit->Araw = 0;
+						m_IntVetoDigiHit->Aphe = m_IntVetoDigiHit->Qphe;
 						m_IntVetoDigiHit->RMSflag = true;
 						m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 						m_map[m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
@@ -321,7 +343,8 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 						m_IntVetoDigiHit->m_channel.readout = 1;
 						m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc1;
 						m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc1 / 1000.; //MC is in ps
-						m_IntVetoDigiHit->A = 0;
+						m_IntVetoDigiHit->Araw = 0;
+						m_IntVetoDigiHit->Aphe = m_IntVetoDigiHit->Qphe;
 						m_IntVetoDigiHit->RMSflag = true;
 						m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 						m_map[m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
@@ -331,7 +354,8 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 						m_IntVetoDigiHit->m_channel.readout = 2;
 						m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc2;
 						m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc2 / 1000.; //MC is in ps
-						m_IntVetoDigiHit->A = 0;
+						m_IntVetoDigiHit->Araw = 0;
+						m_IntVetoDigiHit->Aphe = m_IntVetoDigiHit->Qphe;
 						m_IntVetoDigiHit->RMSflag = true;
 						m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 						m_map[m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
@@ -341,7 +365,8 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 						m_IntVetoDigiHit->m_channel.readout = 3;
 						m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc3;
 						m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc3 / 1000.; //MC is in ps
-						m_IntVetoDigiHit->A = 0;
+						m_IntVetoDigiHit->Araw = 0;
+						m_IntVetoDigiHit->Aphe = m_IntVetoDigiHit->Qphe;
 						m_IntVetoDigiHit->RMSflag = true;
 						m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 						m_map[m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
@@ -351,7 +376,8 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 						m_IntVetoDigiHit->m_channel.readout = 4;
 						m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc4;
 						m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc4 / 1000.; //MC is in ps
-						m_IntVetoDigiHit->A = 0;
+						m_IntVetoDigiHit->Araw = 0;
+						m_IntVetoDigiHit->Aphe = m_IntVetoDigiHit->Qphe;
 						m_IntVetoDigiHit->RMSflag = true;
 						m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 						m_map[m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
@@ -366,7 +392,8 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 					m_IntVetoDigiHit->m_channel.readout = 1;
 					m_IntVetoDigiHit->Qphe = m_IntVetoMCHit->adc1;
 					m_IntVetoDigiHit->T = m_IntVetoMCHit->tdc1 / 1000.; //MC is in ps
-					m_IntVetoDigiHit->A = 0;
+					m_IntVetoDigiHit->Araw = 0;
+					m_IntVetoDigiHit->Aphe = m_IntVetoDigiHit->Qphe;
 					m_IntVetoDigiHit->RMSflag = true;
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_map[m_channel].push_back(m_IntVetoDigiHit); /*Add to the map*/
@@ -379,6 +406,7 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 				m_IntVetoDigiHit = m_map_it->second[0];
 				m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 				m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc1;
+				m_IntVetoDigiHit->Aphe += m_IntVetoMCHit->adc1;
 
 			} else if (m_isMC == MCType::BDXmini_V1) {
 				switch (m_channel.component) {
@@ -387,39 +415,49 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 					m_IntVetoDigiHit = m_map_it->second[0];
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc1;
+					m_IntVetoDigiHit->Aphe += m_IntVetoMCHit->adc1;
 					break;
 				case 1:
 					m_IntVetoDigiHit = m_map_it->second[0];
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc1;
+					m_IntVetoDigiHit->Aphe += m_IntVetoMCHit->adc1;
 
 					m_IntVetoDigiHit = m_map_it->second[1];
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc2;
+					m_IntVetoDigiHit->Aphe += m_IntVetoMCHit->adc2;
+
 
 					m_IntVetoDigiHit = m_map_it->second[2];
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc3;
+					m_IntVetoDigiHit->Aphe += m_IntVetoMCHit->adc3;
 
 					m_IntVetoDigiHit = m_map_it->second[3];
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc4;
+					m_IntVetoDigiHit->Aphe += m_IntVetoMCHit->adc4;
 
 					m_IntVetoDigiHit = m_map_it->second[4];
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc5;
+					m_IntVetoDigiHit->Aphe += m_IntVetoMCHit->adc5;
 
 					m_IntVetoDigiHit = m_map_it->second[5];
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc6;
+					m_IntVetoDigiHit->Aphe += m_IntVetoMCHit->adc6;
 
 					m_IntVetoDigiHit = m_map_it->second[6];
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc7;
+					m_IntVetoDigiHit->Aphe += m_IntVetoMCHit->adc7;
 
 					m_IntVetoDigiHit = m_map_it->second[7];
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc8;
+					m_IntVetoDigiHit->Aphe += m_IntVetoMCHit->adc8;
 
 					break;
 				}
@@ -433,15 +471,19 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 					m_IntVetoDigiHit = m_map_it->second[0];
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc1;
+					m_IntVetoDigiHit->Aphe += m_IntVetoMCHit->adc1;
 					m_IntVetoDigiHit = m_map_it->second[1];
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc2;
+					m_IntVetoDigiHit->Aphe += m_IntVetoMCHit->adc2;
 					m_IntVetoDigiHit = m_map_it->second[2];
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc3;
+					m_IntVetoDigiHit->Aphe += m_IntVetoMCHit->adc3;
 					m_IntVetoDigiHit = m_map_it->second[3];
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc4;
+					m_IntVetoDigiHit->Aphe += m_IntVetoMCHit->adc4;
 					break;
 				}
 				case (1): //left
@@ -450,15 +492,19 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 					m_IntVetoDigiHit = m_map_it->second[0];
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc4;
+					m_IntVetoDigiHit->Aphe += m_IntVetoMCHit->adc4;
 					m_IntVetoDigiHit = m_map_it->second[1];
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc3;
+					m_IntVetoDigiHit->Aphe += m_IntVetoMCHit->adc3;
 					m_IntVetoDigiHit = m_map_it->second[2];
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc2;
+					m_IntVetoDigiHit->Aphe += m_IntVetoMCHit->adc2;
 					m_IntVetoDigiHit = m_map_it->second[3];
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc1;
+					m_IntVetoDigiHit->Aphe += m_IntVetoMCHit->adc1;
 					break;
 				}
 				case (3): //bottom
@@ -467,29 +513,37 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 						m_IntVetoDigiHit = m_map_it->second[0];
 						m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 						m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc1;
+						m_IntVetoDigiHit->Aphe += m_IntVetoMCHit->adc1;
 						m_IntVetoDigiHit = m_map_it->second[1];
 						m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 						m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc4;
+						m_IntVetoDigiHit->Aphe += m_IntVetoMCHit->adc4;
 						m_IntVetoDigiHit = m_map_it->second[2];
 						m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 						m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc3;
+						m_IntVetoDigiHit->Aphe += m_IntVetoMCHit->adc3;
 						m_IntVetoDigiHit = m_map_it->second[3];
 						m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 						m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc2;
+						m_IntVetoDigiHit->Aphe += m_IntVetoMCHit->adc2;
 						break;
 					} else {
 						m_IntVetoDigiHit = m_map_it->second[0];
 						m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 						m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc1;
+						m_IntVetoDigiHit->Aphe += m_IntVetoMCHit->adc1;
 						m_IntVetoDigiHit = m_map_it->second[1];
 						m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 						m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc2;
+						m_IntVetoDigiHit->Aphe += m_IntVetoMCHit->adc2;
 						m_IntVetoDigiHit = m_map_it->second[2];
 						m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 						m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc3;
+						m_IntVetoDigiHit->Aphe += m_IntVetoMCHit->adc3;
 						m_IntVetoDigiHit = m_map_it->second[3];
 						m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 						m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc4;
+						m_IntVetoDigiHit->Aphe += m_IntVetoMCHit->adc4;
 						break;
 					}
 				}
@@ -499,6 +553,7 @@ jerror_t IntVetoDigiHit_factory_MC::evnt(JEventLoop *loop, uint64_t eventnumber)
 					m_IntVetoDigiHit = m_map_it->second[0];
 					m_IntVetoDigiHit->AddAssociatedObject(m_IntVetoMCHit);
 					m_IntVetoDigiHit->Qphe += m_IntVetoMCHit->adc1;
+					m_IntVetoDigiHit->Aphe += m_IntVetoMCHit->adc1;
 				}
 				}
 			}

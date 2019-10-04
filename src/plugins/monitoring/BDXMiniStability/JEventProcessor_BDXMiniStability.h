@@ -49,9 +49,12 @@ private:
 	int m_nbinsL0[10];
 	int m_nbinsL1[10];
 
-	static const int m_nchargestep =80;
+	static const int m_nchargestep =200;
 	static constexpr double m_chargemin = 0;
 	static constexpr double m_chargemax = 10;
+
+	static constexpr double m_timemin = 200;
+	static constexpr double m_timemax = 400;
 
 
 	/*This algorithm is also supposed to run online.

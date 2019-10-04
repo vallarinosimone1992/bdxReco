@@ -177,7 +177,7 @@ jerror_t BDXMiniVetoCalibrationHit_factory::evnt(JEventLoop *loop, uint64_t even
 		m_VetoCalibHit->Qraw = m_IntVetoDigiHit->Qraw;
 		m_VetoCalibHit->Qphe = m_IntVetoDigiHit->Qphe;
 		m_VetoCalibHit->T = m_IntVetoDigiHit->T;
-		m_VetoCalibHit->A = m_IntVetoDigiHit->A;
+		m_VetoCalibHit->A = m_IntVetoDigiHit->Araw;
 
 		_data.push_back(m_VetoCalibHit);
 	}
