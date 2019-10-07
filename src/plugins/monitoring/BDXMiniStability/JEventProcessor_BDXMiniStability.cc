@@ -59,7 +59,7 @@ void InitPlugin(JApplication *app) {
 // JEventProcessor_BDXMiniStability (Constructor)
 //------------------
 JEventProcessor_BDXMiniStability::JEventProcessor_BDXMiniStability() {
-
+	m_ROOTOutput=0;
 }
 
 //------------------
@@ -336,9 +336,6 @@ jerror_t JEventProcessor_BDXMiniStability::erun(void) {
 
 		m_nbinsL0[i] = rateL0[i].size();
 		m_nbinsL1[i] = rateL1[i].size();
-
-
-
 
 		hBDXMiniStability_VetoL0_Ch[i] = new TH2D(Form("hBDXMiniStability_VetoL0_Ch%i", i+1), Form("hBDXMiniStability_VetoL0_Ch%i", i+1), m_nbinsL0[i],0, m_dT2*m_nbinsL0[i],m_nchargestep,m_chargemin,m_chargemax);
 		hBDXMiniStability_VetoL1_Ch[i] = new TH2D(Form("hBDXMiniStability_VetoL1_Ch%i", i+1), Form("hBDXMiniStability_VetoL1_Ch%i", i+1), m_nbinsL1[i],0, m_dT2*m_nbinsL1[i],m_nchargestep,m_chargemin,m_chargemax);
