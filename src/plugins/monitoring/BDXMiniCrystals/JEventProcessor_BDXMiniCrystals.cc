@@ -108,22 +108,14 @@ jerror_t JEventProcessor_BDXMiniCrystals::init(void) {
 	map<pair<int, int>, int>::iterator geometry_it;
 	int iX, iY, id;
 
-	double Qmin, Qmax, Emin, Emax, Amin, Amax;
-	int NQ, NE, NA;
+	double Emin, Emax;
+	int NE;
 
-	if (m_isMC) {
-		Qmin = -5;
-		Qmax = 200;
-		NQ = 500;
-	} else {
-		Qmin = -10.;
-		Qmax = 1000;
-		NQ = 500;
-	}
+
 
 	NE = 500;
-	Emin = 0;
-	Emax = 100;
+	Emin = 100;
+	Emax = 600;
 
 	for (geometry_it = geometry.begin(); geometry_it != geometry.end(); geometry_it++) {
 		//Do whatever you want. To access the first part of pair(pair is the key of the map here) you should write
