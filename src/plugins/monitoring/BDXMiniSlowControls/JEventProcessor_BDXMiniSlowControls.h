@@ -37,20 +37,23 @@ private:
 	unsigned long int index;
 
 	map<unsigned long int, unsigned int> arduinoEvents;
-	map<unsigned long int,unsigned int>::iterator arduinoEvents_it;
+	map<unsigned long int, unsigned int>::iterator arduinoEvents_it;
 	map<unsigned long int, double> arduinoT1;
 	map<unsigned long int, double> arduinoT2;
 	map<unsigned long int, double> arduinoH1;
 	map<unsigned long int, double> arduinoH2;
 
-
 	map<unsigned long int, unsigned int> daqEvents;
-	map<unsigned long int,unsigned int>::iterator daqEvents_it;
+	map<unsigned long int, unsigned int>::iterator daqEvents_it;
 	map<unsigned long int, double> daqLT;
 
 	map<unsigned long int, unsigned int> beamEvents;
-	map<unsigned long int,unsigned int>::iterator beamEvents_it;
-	map<unsigned long int, double> beamI,beamE;
+	map<unsigned long int, unsigned int>::iterator beamEvents_it;
+	map<unsigned long int, double> beamI, beamE;
+
+	map<unsigned long int, unsigned int> envtentEvents;
+	map<unsigned long int, unsigned int>::iterator envtentEvents_it;
+	map<unsigned long int, double> envtentT1, envtentT2,envtentH1,envtentH2;
 
 };
 
