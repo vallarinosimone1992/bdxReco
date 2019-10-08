@@ -271,7 +271,7 @@ void BDXEventProcessor::updateCalibration(CalibrationHandlerBase* cal, JEventLoo
 	/*Since we are multi-thread mode, it is possible this method is called by different factories at different times.
 	 * Need to perform a clever check:
 	 * 1) Loop over all the calibrations handlers for the given table.
-	 * 1A) If ALL off them have been loaded, do nothing
+	 * 1A) If ALL of them have been loaded, do nothing
 	 * 1B) If NONE of them have been loaded, do that
 	 * 1C) If ONE of them at least have been loaded, use it for all the non-calibrated ones
 	 */
@@ -283,10 +283,10 @@ void BDXEventProcessor::updateCalibration(CalibrationHandlerBase* cal, JEventLoo
 			calibratedOne = std::distance(calibrations.begin(), calibrations_it); //save the index of this calibrated object
 	}
 	if (flagAll) { /*flagAll is true if ALL off them have been loaded*/
-		bout << "Going to fill CalibrationHandlers for table: " << name << " there are: " << calibrations.size() << " ALREADY DONE " << endl;
+		bout << "Going to fill CalibrationHandlers for table: " << name << " there are: " << calibrations.size() << " I AM: "<<this<<" ALREADY DONE " << endl;
 		return;
 	} else if (calibratedOne != -1) { /*It means there is at least an already-calibrated object!*/
-		bout << "Going to fill CalibrationHandlers for table: " << name << " there are: " << calibrations.size() << " Load from data: " << calibratedOne << endl;
+		bout << "Going to fill CalibrationHandlers for table: " << name << " there are: " << calibrations.size() << " I AM: "<<this<<" Load from data: " << calibratedOne << endl;
 		for (int ical = 0; ical < calibrations.size(); ical++) {
 			if (ical == calibratedOne) continue;
 			else if (calibrations[ical]->hasLoadedCurrentRun() == true) continue;
@@ -298,13 +298,14 @@ void BDXEventProcessor::updateCalibration(CalibrationHandlerBase* cal, JEventLoo
 		/*Get the data*/
 		vector<vector<double> > m_data;
 		eventLoop->GetCalib(name, m_data);
-		bout << "Going to fill CalibrationHandlers for table: " << name << " there are: " << calibrations.size() << " Load from DB " << endl;
+		bout << "Going to fill CalibrationHandlers for table: " << name << " there are: " << calibrations.size() << " I AM: "<<this<<" Load from DB " << endl;
 		for (calibrations_it = calibrations.begin(); calibrations_it != calibrations.end(); calibrations_it++) {
 			(*calibrations_it)->fillCalib(m_data);
 			(*calibrations_it)->setLoadedCurrentRun(true);
 		}
 	}
-	bout << "Done table" << name << endl;
+	bout << "Done table: " << name << endl;
+	return;
 }
 
 void BDXEventProcessor::clearCalibration(CalibrationHandlerBase* cal) {

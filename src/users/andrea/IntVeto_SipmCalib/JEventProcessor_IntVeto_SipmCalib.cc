@@ -46,6 +46,7 @@ JEventProcessor_IntVeto_SipmCalib::JEventProcessor_IntVeto_SipmCalib() :
 		m_ROOTOutput(0) {
 	m_isFirstCallToBrun = 1;
 	h = new TH1D("h", "h", 500, -0.5, 499.5);
+	t=0;
 }
 
 //------------------
