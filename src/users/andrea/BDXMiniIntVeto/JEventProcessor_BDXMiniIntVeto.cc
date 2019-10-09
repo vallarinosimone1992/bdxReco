@@ -72,8 +72,11 @@ jerror_t JEventProcessor_BDXMiniIntVeto::init(void) {
 	t->Branch("AL1", AL1, "AL1[8]/D");
 	t->Branch("maxL0", &maxL0);
 	t->Branch("maxL1", &maxL1);
-	t->Branch("crsTOP", crsTOP, "crsTOP[22]/O");
-	t->Branch("crsBOT", crsBOT, "crsBOT[22]/O");
+	t->Branch("crsTOPl", crsTOPl, "crsTOPl[22]/O");
+	t->Branch("crsBOTl", crsBOTl, "crsBOTl[22]/O");
+	t->Branch("crsTOPh", crsTOPh, "crsTOPh[22]/O");
+	t->Branch("crsBOTh", crsBOTh, "crsBOTh[22]/O");
+
 	t->Branch("topbottom", &topbottom);
 	japp->RootUnLock();
 
@@ -196,8 +199,10 @@ jerror_t JEventProcessor_BDXMiniIntVeto::evnt(JEventLoop *loop, uint64_t eventnu
 	}
 
 	for (int ii = 0; ii < 22; ii++) {
-		crsBOT[ii] = false;
-		crsTOP[ii] = false;
+		crsBOTl[ii] = false;
+		crsTOPl[ii] = false;
+		crsBOTh[ii] = false;
+		crsTOPh[ii] = false;
 	}
 
 	/*Crystals thresholds*/
@@ -211,9 +216,17 @@ jerror_t JEventProcessor_BDXMiniIntVeto::evnt(JEventLoop *loop, uint64_t eventnu
 
 		if (m_CaloHit->E > m_thrCrystalsH) {
 			if (m_CaloHit->m_channel.sector == 0) {
-				crsTOP[id] = true;
+				crsTOPh[id] = true;
 			} else {
-				crsBOT[id] = true;
+				crsBOTh[id] = true;
+			}
+		}
+
+		if (m_CaloHit->E > m_thrCrystalsL) {
+			if (m_CaloHit->m_channel.sector == 0) {
+				crsTOPl[id] = true;
+			} else {
+				crsBOTl[id] = true;
 			}
 		}
 	}
