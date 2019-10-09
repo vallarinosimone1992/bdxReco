@@ -38,10 +38,15 @@ class JEventProcessor_BDXMiniIntVeto:public jana::JEventProcessor{
 		double AL0[8],AL1[8];
 		int maxL0,maxL1;
 		int topbottom;
+		bool crsTOP[22];
+		bool crsBOT[22];
+
 
 		JROOTOutput *m_ROOTOutput;
 
-		double m_thrIntVetoCaps;
+		double m_thrIntVetoCaps,m_thrCrystals;
+		std::map<std::pair<int,int>,int> geometry;
+
 
 };
 

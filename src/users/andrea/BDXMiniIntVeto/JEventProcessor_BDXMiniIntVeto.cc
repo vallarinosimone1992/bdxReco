@@ -18,6 +18,7 @@ using namespace jana;
 
 #include "system/BDXEventProcessor.h"
 #include "IntVeto/IntVetoDigiHit.h"
+#include "Calorimeter/CalorimeterHit.h"
 #include "DAQ/eventData.h"
 
 extern "C" {
@@ -35,6 +36,7 @@ JEventProcessor_BDXMiniIntVeto::JEventProcessor_BDXMiniIntVeto() :
 	m_isFirstCallToBrun = 1;
 	t = 0;
 	m_thrIntVetoCaps = 5; //for now hardcoded!
+	m_thrCrystals = 15; //for now hardcoded!
 }
 
 //------------------
@@ -68,8 +70,34 @@ jerror_t JEventProcessor_BDXMiniIntVeto::init(void) {
 	t->Branch("AL1", AL1, "AL1[8]/D");
 	t->Branch("maxL0", &maxL0);
 	t->Branch("maxL1", &maxL1);
+	t->Branch("crsTOP", crsTOP, "crsTOP[22]/O");
+	t->Branch("crsBOT", crsBOT, "crsBOT[22]/O");
 	t->Branch("topbottom", &topbottom);
 	japp->RootUnLock();
+
+	/*Hard-coded XY -> id geometry*/
+	geometry[make_pair(-2, -2)] = 1;
+	geometry[make_pair(-1, -2)] = 2;
+	geometry[make_pair(0, -2)] = 3;
+	geometry[make_pair(1, -2)] = 4;
+	geometry[make_pair(2, -2)] = 5;
+	geometry[make_pair(0, -1)] = 6;
+	geometry[make_pair(-2, 0)] = 7;
+	geometry[make_pair(-1, 0)] = 8;
+	geometry[make_pair(0, 0)] = 9;
+	geometry[make_pair(1, 0)] = 10;
+	geometry[make_pair(2, 0)] = 11;
+	geometry[make_pair(-2, 1)] = 12;
+	geometry[make_pair(-1, 1)] = 13;
+	geometry[make_pair(0, 1)] = 14;
+	geometry[make_pair(1, 1)] = 15;
+	geometry[make_pair(2, 1)] = 16;
+	geometry[make_pair(-2, 2)] = 17;
+	geometry[make_pair(-1, 2)] = 18;
+	geometry[make_pair(1, 2)] = 19;
+	geometry[make_pair(2, 2)] = 20;
+	geometry[make_pair(-1, 3)] = 21;
+	geometry[make_pair(1, 3)] = 22;
 
 	return NOERROR;
 }
@@ -134,11 +162,18 @@ jerror_t JEventProcessor_BDXMiniIntVeto::evnt(JEventLoop *loop, uint64_t eventnu
 	vector<const IntVetoDigiHit*> digi_hits;
 	vector<const IntVetoDigiHit*>::iterator digi_hits_it;
 	const IntVetoDigiHit* digi_hit;
-	try {
-		loop->GetSingle(tData);
-	} catch (unsigned long e) {
-		//	jout << "JEventProcessor_IntVetoSipm::evnt::evnt no eventData bank this event" << std::endl;
-		return OBJECT_NOT_AVAILABLE;
+
+	const CalorimeterHit* m_CaloHit;
+	vector<const CalorimeterHit*> calo_hits;
+	vector<const CalorimeterHit*>::const_iterator calo_hits_it;
+
+	if (!m_isMC) {
+		try {
+			loop->GetSingle(tData);
+		} catch (unsigned long e) {
+			//	jout << "JEventProcessor_IntVetoSipm::evnt::evnt no eventData bank this event" << std::endl;
+			return OBJECT_NOT_AVAILABLE;
+		}
 	}
 	int nTopCaps = 0;
 	int nBottomCaps = 0;
@@ -149,7 +184,7 @@ jerror_t JEventProcessor_BDXMiniIntVeto::evnt(JEventLoop *loop, uint64_t eventnu
 	double maxComponentQ0L = -9999;
 	double maxComponentQ1L = -9999;
 
-	loop->Get(digi_hits);
+	int X, Y, id;
 
 	/*Get objects from JANA factories*/
 	if (m_isMC) {
@@ -158,6 +193,27 @@ jerror_t JEventProcessor_BDXMiniIntVeto::evnt(JEventLoop *loop, uint64_t eventnu
 		loop->Get(digi_hits);
 	}
 
+	for (int ii = 0; ii < 22; ii++) {
+		crsBOT[ii] = false;
+		crsTOP[ii] = false;
+	}
+
+	/*Crystals thresholds*/
+	loop->Get(calo_hits);
+	for (calo_hits_it = calo_hits.begin(); calo_hits_it != calo_hits.end(); calo_hits_it++) {
+		m_CaloHit = *calo_hits_it;
+		if (m_CaloHit->E > m_thrCrystals) {
+			X = m_CaloHit->m_channel.x;
+			Y = m_CaloHit->m_channel.y;
+			id = geometry[make_pair(X, Y)];
+			id = id - 1;
+			if (m_CaloHit->m_channel.sector == 0) {
+				crsTOP[id] = true;
+			} else {
+				crsBOT[id] = true;
+			}
+		}
+	}
 
 	/*Here goes the code to create the objects*/
 	for (digi_hits_it = digi_hits.begin(); digi_hits_it != digi_hits.end(); digi_hits_it++) {
@@ -176,15 +232,15 @@ jerror_t JEventProcessor_BDXMiniIntVeto::evnt(JEventLoop *loop, uint64_t eventnu
 			}
 		} else if (digi_hit->m_channel.component <= 8) {
 			if (digi_hit->m_channel.layer == 0) {
-				QL0[digi_hit->m_channel.component-1]=digi_hit->Qphe;
-				AL0[digi_hit->m_channel.component-1]=digi_hit->Aphe;
+				QL0[digi_hit->m_channel.component - 1] = digi_hit->Qphe;
+				AL0[digi_hit->m_channel.component - 1] = digi_hit->Aphe;
 				if (digi_hit->Aphe > maxComponentQ0L) {
 					maxComponent0L = digi_hit->m_channel.component;
 					maxComponentQ0L = digi_hit->Aphe;
 				}
 			} else if (digi_hit->m_channel.layer == 1) {
-				QL1[digi_hit->m_channel.component-1]=digi_hit->Qphe;
-				AL1[digi_hit->m_channel.component-1]=digi_hit->Aphe;
+				QL1[digi_hit->m_channel.component - 1] = digi_hit->Qphe;
+				AL1[digi_hit->m_channel.component - 1] = digi_hit->Aphe;
 				if ((digi_hit->Aphe > maxComponentQ1L)) {
 					maxComponent1L = digi_hit->m_channel.component;
 					maxComponentQ1L = digi_hit->Aphe;
@@ -192,13 +248,14 @@ jerror_t JEventProcessor_BDXMiniIntVeto::evnt(JEventLoop *loop, uint64_t eventnu
 			}
 		}
 	}
-	maxL0=maxComponent0L;
-	maxL1=maxComponent1L;
+	maxL0 = maxComponent0L;
+	maxL1 = maxComponent1L;
 
-	if ((nTopCaps==2)||(nBottomCaps==2)){
-		if ((nTopCaps==2)&&(nBottomCaps==0)) topbottom=0;
-		else if ((nTopCaps==0)&&(nBottomCaps==2)) topbottom=1;
-		else topbottom=2;
+	if ((nTopCaps == 2) || (nBottomCaps == 2)) {
+		if ((nTopCaps == 2) && (nBottomCaps == 0)) topbottom = 0;
+		else if ((nTopCaps == 0) && (nBottomCaps == 2)) topbottom = 1;
+		else
+			topbottom = 2;
 
 		japp->RootWriteLock();
 		t->Fill();
@@ -212,9 +269,9 @@ jerror_t JEventProcessor_BDXMiniIntVeto::evnt(JEventLoop *loop, uint64_t eventnu
 // erun
 //------------------
 jerror_t JEventProcessor_BDXMiniIntVeto::erun(void) {
-	// This is called whenever the run number changes, before it is
-	// changed to give you a chance to clean up before processing
-	// events from the next run number.
+// This is called whenever the run number changes, before it is
+// changed to give you a chance to clean up before processing
+// events from the next run number.
 	return NOERROR;
 }
 
@@ -222,7 +279,7 @@ jerror_t JEventProcessor_BDXMiniIntVeto::erun(void) {
 // fini
 //------------------
 jerror_t JEventProcessor_BDXMiniIntVeto::fini(void) {
-	// Called before program exit after event processing is finished.
+// Called before program exit after event processing is finished.
 	return NOERROR;
 }
 
