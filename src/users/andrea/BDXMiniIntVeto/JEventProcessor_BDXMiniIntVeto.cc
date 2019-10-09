@@ -36,7 +36,9 @@ JEventProcessor_BDXMiniIntVeto::JEventProcessor_BDXMiniIntVeto() :
 	m_isFirstCallToBrun = 1;
 	t = 0;
 	m_thrIntVetoCaps = 5; //for now hardcoded!
-	m_thrCrystals = 15; //for now hardcoded!
+	m_thrCrystalsH = 15; //for now hardcoded!
+	m_thrCrystalsL = 5; //for now hardcoded!
+
 }
 
 //------------------
@@ -202,11 +204,12 @@ jerror_t JEventProcessor_BDXMiniIntVeto::evnt(JEventLoop *loop, uint64_t eventnu
 	loop->Get(calo_hits);
 	for (calo_hits_it = calo_hits.begin(); calo_hits_it != calo_hits.end(); calo_hits_it++) {
 		m_CaloHit = *calo_hits_it;
-		if (m_CaloHit->E > m_thrCrystals) {
-			X = m_CaloHit->m_channel.x;
-			Y = m_CaloHit->m_channel.y;
-			id = geometry[make_pair(X, Y)];
-			id = id - 1;
+		X = m_CaloHit->m_channel.x;
+		Y = m_CaloHit->m_channel.y;
+		id = geometry[make_pair(X, Y)];
+		id = id - 1;
+
+		if (m_CaloHit->E > m_thrCrystalsH) {
 			if (m_CaloHit->m_channel.sector == 0) {
 				crsTOP[id] = true;
 			} else {

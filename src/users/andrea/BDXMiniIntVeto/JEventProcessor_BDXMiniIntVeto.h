@@ -44,7 +44,7 @@ class JEventProcessor_BDXMiniIntVeto:public jana::JEventProcessor{
 
 		JROOTOutput *m_ROOTOutput;
 
-		double m_thrIntVetoCaps,m_thrCrystals;
+		double m_thrIntVetoCaps,m_thrCrystalsH,m_thrCrystalsL;
 		std::map<std::pair<int,int>,int> geometry;
 
 
