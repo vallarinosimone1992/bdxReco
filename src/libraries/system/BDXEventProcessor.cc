@@ -102,7 +102,6 @@ jerror_t BDXEventProcessor::init(void) {
 	m_eventHeader->Branch("runN", &runN);
 	m_eventHeader->Branch("T", &eventT);
 
-
 	m_runInfo = new TTree("RunInfo", "RunInfo");
 	m_runInfo->Branch("runN", &runN);
 	m_runInfo->Branch("dT", &deltaTime);
@@ -179,7 +178,7 @@ jerror_t BDXEventProcessor::evnt(JEventLoop *loop, uint64_t eventnumber) {
 		}
 
 		if (tData->eventType != eventSource::DAQ) {
-		//	jout<<"BDXEventProcessor exit: tData->eventType: "<<tData->eventType<<endl;
+			//	jout<<"BDXEventProcessor exit: tData->eventType: "<<tData->eventType<<endl;
 			return OBJECT_NOT_AVAILABLE;
 		}
 	}
@@ -283,28 +282,32 @@ void BDXEventProcessor::updateCalibration(CalibrationHandlerBase* cal, JEventLoo
 			calibratedOne = std::distance(calibrations.begin(), calibrations_it); //save the index of this calibrated object
 	}
 	if (flagAll) { /*flagAll is true if ALL off them have been loaded*/
-		bout << "Going to fill CalibrationHandlers for table: " << name << " there are: " << calibrations.size() << " I AM: "<<this<<" ALREADY DONE " << endl;
+		bout << "Going to fill CalibrationHandlers for table: " << name << " there are: " << calibrations.size() << " I AM: " << this << " ALREADY DONE " << endl;
 		return;
 	} else if (calibratedOne != -1) { /*It means there is at least an already-calibrated object!*/
-		bout << "Going to fill CalibrationHandlers for table: " << name << " there are: " << calibrations.size() << " I AM: "<<this<<" Load from data: " << calibratedOne << endl;
+		bout << "Going to fill CalibrationHandlers for table: " << name << " there are: " << calibrations.size() << " I AM: " << this << " Load from data: " << calibratedOne << endl;
+		fflush(stdout);
 		for (int ical = 0; ical < calibrations.size(); ical++) {
 			if (ical == calibratedOne) continue;
 			else if (calibrations[ical]->hasLoadedCurrentRun() == true) continue;
 			else {
 				calibrations[ical]->fillCalib(calibrations[calibratedOne]->getRawCalibData());
+				calibrations[ical]->setLoadedCurrentRun(true);
 			}
 		}
 	} else {
 		/*Get the data*/
 		vector<vector<double> > m_data;
 		eventLoop->GetCalib(name, m_data);
-		bout << "Going to fill CalibrationHandlers for table: " << name << " there are: " << calibrations.size() << " I AM: "<<this<<" Load from DB " << endl;
+		bout << "Going to fill CalibrationHandlers for table: " << name << " there are: " << calibrations.size() << " I AM: " << this << " Load from DB " << endl;
+
 		for (calibrations_it = calibrations.begin(); calibrations_it != calibrations.end(); calibrations_it++) {
 			(*calibrations_it)->fillCalib(m_data);
 			(*calibrations_it)->setLoadedCurrentRun(true);
 		}
 	}
 	bout << "Done table: " << name << endl;
+	fflush(stdout);
 	return;
 }
 
