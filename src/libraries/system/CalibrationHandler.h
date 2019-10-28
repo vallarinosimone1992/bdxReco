@@ -136,9 +136,14 @@ template<class T> vector<double> CalibrationHandler<T>::getCalib(const T &index)
 	typename std::vector<T>::iterator vit;
 	typename std::map<T, vector<double> >::iterator it;
 
+	int trials=100;
 	while(this->hasLoadedCurrentRun()==false){
 		usleep(100000); //10ms
-		cout<<this<<endl;
+		trials--;
+		if (trials==0){
+			jout<<"CalibrationHandler very bad break"<<endl;
+			break;
+		}
 	}
 
 	vit = find(m_actualCalibIndex.begin(), m_actualCalibIndex.end(), index);

@@ -458,10 +458,11 @@ void jv_mainframe::DrawObject(const BDXObject *obj)
 {
 
 	canvasTMP=obj->Draw(canvas2->GetCanvasWindowId());
-	canvas2->AdoptCanvas(canvasTMP);
-	canvasTMP->Modified();
-	canvasTMP->Update();
-
+	if (canvasTMP!=0){
+		canvas2->AdoptCanvas(canvasTMP);
+		canvasTMP->Modified();
+		canvasTMP->Update();
+	}
 }
 
 //-------------------
